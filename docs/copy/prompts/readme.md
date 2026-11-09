@@ -47,7 +47,8 @@ Rules:
   in FACTS.
 - "What it does not do": a Markdown table with a row per limit from FACTS.
 - "Verify it yourself": copy-pasteable commands and the real artifact path.
-- "Status": 0.1.0, verified locally, npm pending, desktop app not restarted.
+- "Status": 0.1.0, verified on both a headless profile and the desktop app, npm
+  pending. Do not claim a released npm version.
 - "Development": the exact commands from FACTS.
 - Link to `README.zh-CN.md` near the top for Chinese readers.
 - End with MIT and "not affiliated with DeepSeek".

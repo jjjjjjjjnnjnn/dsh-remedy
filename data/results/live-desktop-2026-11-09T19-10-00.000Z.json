@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_live_mount.mjs",
+  "generated_at": "2026-11-09T19:10:00.000Z",
+  "profile": {
+    "name": "desktop",
+    "dsh_version": "0.2.2-rc.1",
+    "install": "dsh plugin --profile desktop add <tarball>",
+    "package": "dsh-remedy@0.1.0",
+    "tarball": ".tmp/pack/live4/dsh-remedy-0.1.0.tgz",
+    "tarball_sha256": "1af471a30806411fd1400be9a0d03bd354160fe891171d17aa6f5a25e8ac6606",
+    "bundle_row": "remedy-stream",
+    "surface": "llm/stream"
+  },
+  "journal": {
+    "file": ".tmp/desktop-live/journal.jsonl",
+    "events": 41,
+    "stream_events": 39,
+    "repaired_events": 2,
+    "rejected_events": 0
+  },
+  "counters": {
+    "streams": 39,
+    "fused": 2,
+    "repaired": 2,
+    "unrepaired": 0,
+    "truncated": 0,
+    "errors": 0
+  },
+  "cross_check": {
+    "match": true,
+    "from": "journal",
+    "mode": "desktop-session (one long-lived process)",
+    "journal_totals": {
+      "streams": 39,
+      "fused": 2,
+      "repaired": 2,
+      "unrepaired": 0,
+      "truncated": 0,
+      "errors": 0
+    },
+    "journal_groups": 1
+  },
+  "verdict": {
+    "state": "repaired",
+    "headline": "defect seen and repaired",
+    "reasons": [
+      "2/2 fused call(s) split into valid calls"
+    ]
+  },
+  "attempts": [],
+  "session": {
+    "file": "<home>",
+    "sha256": "09fbc61ce473bd98be8cba2690a7def512375509b4b9993169acba70a20eef82",
+    "events": 774,
+    "turn_end": "aborted",
+    "tool_calls": 134,
+    "tool_results": 134,
+    "fused_calls": 3,
+    "fusion_failures": 3,
+    "repairable_failures": 3,
+    "attempt_events": 4,
+    "attempt_logs": true,
+    "note": "fused_calls is read from assistant/attempt deltas",
+    "synthetic_ids": [
+      "call_00_eurpysgrncrqocrhr4ao3uvi#remedy-1"
+    ],
+    "repaired_step": {
+      "turn": 4,
+      "step": 10,
+      "calls": [
+        {
+          "callId": "call_00_eurpysgrncrqocrhr4ao3uvi",
+          "name": "ops_bash"
+        },
+        {
+          "callId": "call_00_eurpysgrncrqocrhr4ao3uvi#remedy-1",
+          "name": "ops_bash"
+        }
+      ]
+    },
+    "journal_scope": "journal covers the whole desktop process (2 repaired); this session file shows 1",
+    "turn_note": "operator stopped the turn after the task answer; the repaired call and its result are already in the transcript",
+    "assistant_tail": "Both files read. **`dsh-remedy/package.json` 的 `name` 是 `dsh-remedy-workspace`；`dsh-remedy/tsconfig.json` 本身没有 `target`（它是 solution 文件，只有 `references`），真正生效的 `target` 来自 `dsh-remedy/tsconfig.base.json` 里的 `\"target\": \"ES2023\"`。**\n\n现在继续项目。先确认容器化后的基线（两边都跑过了：**dsh-triage 857 测试 / 9 门全绿**，**dsh-remedy 95 测试 / 5 门全绿**）。按 HANDOFF，下一件事是 `T-852` 缺的那半边检查器。",
+    "answer_after_repair": "并行读取已完成。\n\n**一句话答案：** `package.json` 的 `name` 是 `dsh-remedy-workspace`；`tsconfig.json` 本身没有 `target`（它只有 `files: []` + 两个 `references`），真正的 `target` 是 `ES2023`，写在一层之下的 `dsh-remedy/tsconfig.base.json:3`，由 `packages/*/tsconfig.json` 继承。\n\n继续项目。先把这个「工具调用」问题做全局修复，并把 dsh-remedy 里悬着的两个 `package.json` 提交掉。"
+  },
+  "task": "Two independent reads requested in one message; the model emitted them as parallel tool calls, which is the shape that fuses at the relay.",
+  "limits": [
+    "one machine, one provider route, one profile; not a population estimate",
+    "the live profile is a headless profile with the desktop provider block copied; the desktop UI was not restarted",
+    "the plugin build is the tarball named above; its sha256 is recorded, not inferred"
+  ],
+  "redaction": {
+    "replacements": 1,
+    "kinds": [
+      "windows-home"
+    ]
+  }
+}

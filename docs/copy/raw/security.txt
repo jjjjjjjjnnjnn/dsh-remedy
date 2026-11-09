@@ -11,10 +11,10 @@ Older or unlisted versions are not supported.
 
 ## Reporting a vulnerability
 
-Report vulnerabilities through GitHub private vulnerability reporting on the intended repository:
+Report vulnerabilities through GitHub private vulnerability reporting on the public repository:
 https://github.com/jjjjjjjjnnjnn/dsh-remedy
 
-Because the repository is not created yet, open a minimal issue without details to request establishing a private advisory channel before sharing sensitive data. Do not include vulnerability details in a public issue.
+Do not open public issues for security vulnerabilities. No public contact email is provided.
 
 ## What is in scope
 

@@ -21,8 +21,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jjjjjjjjnnjnn/dsh-triage.git",
-    "directory": "dsh-remedy/packages/core"
+    "url": "git+https://github.com/jjjjjjjjnnjnn/dsh-remedy.git",
+    "directory": "packages/core"
   },
   "engines": {
     "node": ">=22.19"
@@ -30,5 +30,9 @@
   "dependencies": {},
   "scripts": {
     "build": "tsc -b"
+  },
+  "homepage": "https://github.com/jjjjjjjjnnjnn/dsh-remedy#readme",
+  "bugs": {
+    "url": "https://github.com/jjjjjjjjnnjnn/dsh-remedy/issues"
   }
 }

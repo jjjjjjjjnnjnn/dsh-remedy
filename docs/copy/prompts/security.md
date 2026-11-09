@@ -16,10 +16,8 @@ Rules:
 
 - Supported versions: a small table; `0.1.x` is supported, older or unlisted
   versions are not. Do not invent a support window in years.
-- Reporting: GitHub private vulnerability reporting on the intended repository;
-  do not invent an email address. If the repository is not created yet, say so
-  and tell the reporter to open a minimal issue without details until the
-  advisory channel exists.
+- Reporting: GitHub private vulnerability reporting is enabled on the public
+  repository; do not invent an email address.
 - In scope: the `llm/stream` repair path, the CLI, the session-log reader, and the
   redaction used before evidence leaves the machine.
 - Out of scope: upstream DSH, the model relay, provider credentials, and a

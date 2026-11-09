@@ -38,8 +38,13 @@
     },
     {
       "id": "BS-08",
-      "status": "accepted",
-      "note": "The live run used a tarball install into remedy-live; the desktop profile still loads the last published version from its own node_modules. Verification applies to the recorded tarball sha256, not to whatever the desktop app has cached."
+      "status": "closed",
+      "note": "Closed 2026-11-09: dsh-remedy was mounted on the desktop profile, the app was restarted, and the desktop process repaired 2 fused calls across 39 streams (data/results/live-desktop-2026-11-09T19-10-00.000Z.json). The tarball sha256 is still what the evidence covers."
+    },
+    {
+      "id": "BS-09",
+      "status": "open",
+      "note": "The desktop journal covers the whole app process, so its 2 repaired calls span two sessions while the attached session file shows 1. The artifact records journal_scope explicitly; a per-session journal would make the two agree."
     }
   ]
 }

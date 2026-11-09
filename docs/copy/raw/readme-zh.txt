@@ -92,12 +92,13 @@ Repaired stream:
 
 | 限制 | 说明 |
 | --- | --- |
-| 根因归因 | 仅止步于组装后的文本；无法证明是中继还是适配器粘连了对象。 |
+| 根因归因 | 归因止步于组装后的文本；无法证明是中继还是适配器粘连了对象。 |
 | 截断流 | `max-tokens` 导致的截断绝不修复。 |
 | Headless 会话持久化 | Headless profile 不持久化 `assistant/attempt` 流；实机产物中的 `session.fused_calls` 为 0，证据由 journal 计数器与合成 id 承载。 |
 | 宿主消息本地化 | 错误消息回退逻辑解析英文 `Received arguments:` 文本；若宿主消息被本地化，该回退失效，但 delta 缓冲区路径仍正常工作。 |
 | 合成身份 | 合成 id 仅作为追溯手段，不是持久身份。 |
-| 桌面 App 缓存 | 验证仅针对已记录的 tarball sha256；实机测试期间未重启正在运行的桌面 App。 |
+| 桌面轮次状态 | 桌面轮次在产出答案后由操作员人工停止；产物如实记录 `turn_end=aborted`，而非宣称完成。 |
+| 桌面 App 缓存 | 验证仅针对已记录的 tarball sha256，而非正在运行的桌面 App 所缓存的内容。 |
 
 ## 自己验证
 
@@ -108,7 +109,7 @@ pnpm run verify
 node scripts/gate.mjs --mutate
 ```
 
-运行 CLI 命令并检查结果（退出码：0 正常，1 发现问题，2 用法错误，3 不可用）：
+运行 CLI 命令检查状态与夹具（退出码：0 正常，1 发现问题，2 用法错误，3 不可用）：
 
 ```bash
 dsh-remedy status
@@ -119,13 +120,14 @@ dsh-remedy verify
 
 ```text
 data/results/live-2026-11-09T17-00-00.000Z.json
+data/results/live-desktop-2026-11-09T19-10-00.000Z.json
 ```
 
 ## 状态
 
-版本 0.1.0。本地真机验证通过。npm 尚未发布。桌面 App 未重启；验证使用的是独立的 headless profile（`remedy-live`）。
+版本 0.1.0。本地真机验证通过，npm 未发布。桌面 App 未重启时使用独立的 headless profile（`remedy-live`）验证；随后在已重启的桌面 App 进程中亦完成实机验证。
 
-在 DeepSeek Harness（`>= 0.2.0-rc.1 < 0.3.0-0`，Windows）上的实机测量数据：
+Headless 验证（`remedy-live`，DSH `>= 0.2.0-rc.1 < 0.3.0-0`，Windows）：
 - 运行次数: 2
 - 观测流数: 10
 - 粘连调用: 1
@@ -134,10 +136,19 @@ data/results/live-2026-11-09T17-00-00.000Z.json
 - 截断: 0
 - 其他流错误: 0
 - 轮次结果: `completed`
-- 工具调用: 5
-- 工具返回: 5
-- 会话中观测到的合成 id: `call_00_82805lrla1dhndlzpv1cakrx#remedy-1`
-- 测试套件: 95 通过，0 失败，覆盖 5 个门禁（负对照捕获 5/5）
+- 工具调用: 5，工具返回: 5
+- 合成 id: `call_00_82805lrla1dhndlzpv1cakrx#remedy-1`
+
+桌面 App 验证（`desktop` profile，App 已重启）：
+- 观测流数: 39
+- 粘连调用: 2
+- 已修复: 2
+- 拒绝或未修复: 0
+- 合成 id: `call_00_eurpysgrncrqocrhr4ao3uvi#remedy-1`
+- 轮次结果: `turn_end=aborted`（产出答案后由操作员人工停止）
+
+测试套件与门禁：
+- 测试: 95 通过，0 失败，覆盖 5 个门禁（负对照捕获 5/5）
 
 ## 开发
 
@@ -172,7 +183,7 @@ node scripts/gate.mjs --mutate
 
 ## 安全
 
-安全报告请使用 GitHub 私密漏洞报告（private vulnerability reporting，仓库尚未创建）。
+安全报告请使用公开仓库上的 GitHub 私密漏洞报告（private vulnerability reporting）。
 
 ## 许可证
 

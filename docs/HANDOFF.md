@@ -16,35 +16,42 @@ node packages/plugin/dist/cli.js verify   # OK 5 fixture(s)
 
 ## 当前批次
 
-**R2（2026-11-09）· P-0001 真机验证通过（`tested` → `verified`）。**
+**R3（2026-11-09）· 桌面 profile 挂载 + App 重启，桌面进程内修复 2 次。**
 
-- 真机 profile：`~/.dsh/profiles/remedy-live`（headless 模板 + desktop 的 provider 配置），
-  用官方 `dsh plugin --profile remedy-live add <tarball>` 安装；dsh `0.2.2-rc.1`。
-- 任务：同一条消息要求两次独立 `read`，第二次运行命中粘连。
-- 结果：插件在 `llm/stream` 把一个 index 里的两个对象拆成两个调用；
-  session 里能看到原 id + `call_00_…lzpv1cakrx#remedy-1`，两个 `tool/result` 都回来，
-  `turn/end` 是 `completed`，最终答案正确。
-- 计数：journal 与 attempts 交叉核对 `streams=10 / fused=1 / repaired=1 / unrepaired=0`。
-- 产物：`data/results/live-2026-11-09T17-00-00.000Z.json`（+ `.sha256`），
-  `produced_by: scripts/record_live_mount.mjs`，tarball sha256 一并记录。
-- 第一次挂载抓到的真实缺陷：`llm/stream` 是**同步** waterfall，`async` 监听器会把流包成
-  Promise，agent loop 报 `stream is not async iterable`。已改成同步包装，`tests/unit/plugin-mount.test.ts` 钉住。
+- `dsh-remedy` 已用官方 `dsh plugin --profile desktop add <tarball>` 装进桌面 profile，
+  `.dsh/profiles/desktop` 的 `package.json` / `pnpm-workspace.yaml` / `cordis.patch.yml`
+  改动前已备份到 `dsh-remedy/.tmp/desktop-profile-backup-*`。
+- App 重启（带 `--remote-debugging-port=9222`），通过 CDP 在真实输入框发任务；
+  同一进程 journal：**39 条流 / 2 次粘连 / 2 次修复 / 0 未修复**。
+- 证据 `data/results/live-desktop-2026-11-09T19-10-00.000Z.json`：附带的
+  `session-9045e2ec` 里能看到 `call_00_eurpysgrncrqocrhr4ao3uvi#remedy-1`，
+  任务答案已产出；答案后人工停止，`turn_end=aborted`，artifact 如实记录。
+- 桌面 journal 覆盖整个进程，2 次修复跨 2 个会话，session 文件只显示 1 个；
+  artifact 的 `journal_scope` 写明（`BS-09`）。
+- GitHub 公共仓库已创建并推送：`https://github.com/jjjjjjjjnnjnn/dsh-remedy`。
+
+**R2（2026-11-09）· P-0001 真机验证通过（`tested` → `verified`）。**
+headless `remedy-live` 第 2 次运行命中，10 条流 / 1 次修复 / 整轮 `completed`；
+证据 `data/results/live-2026-11-09T17-00-00.000Z.json`。
 
 ## 第一件事
 
-**把同一个 tarball 挂到 `desktop` profile（或发布后 `dsh-triage` 命名空间下的正式包），重启
-桌面 App，跑一次真实的双工具任务；命中就再录一份 `data/results/live-*.json`，没命中就如实写 `quiet`。**
+**npm 由你手动发布：`pnpm -r publish --access public --no-git-checks --otp <code>`
+（先 core 后 plugin）；发布后跑 `node scripts/record_publish.mjs --stamp <ISO> --retries 3`
+记录 registry 状态。然后更新事实包（npm 已发布）、重新生成全部 copy 文件、打 `v0.1.0` tag。**
 
 验收：
 
-1. `gate_registry` 绿（`verified` 必须能找到 `data/results/live-*`）；
-2. 新的 live 产物里 `counters.streams > 0`，且 `state` 是 `repaired` 或 `quiet`；
-3. 如果桌面 App 一次都没撞上，产物如实写 `quiet`，**不要**为了再升一次状态去伪造修复。
+1. `npm view dsh-remedy version` 与 `npm view @dsh-remedy/core version` 都是 `0.1.0`；
+2. `data/results/publish-*.json` 由脚本产出，`ok: true`，`git_dirty=false`；
+3. 事实包改动后所有 copy 文件重新生成，`node scripts/gate_copy.mjs` 绿；
+4. 验证码只出现在命令里，不写进仓库、不写进任何 artifact。
 
 ## 已知坑
 
 | 坑 | 说明 |
 |---|---|
+| 桌面 UI 自动化 | App 用 `--remote-debugging-port=9222` 重启后，`Input.insertText` + Enter 可发任务；"新建会话"按钮不一定存在，先查 `button` 文本 |
 | `llm/stream` 是同步 waterfall | 监听器不能写成 `async`；否则流被包成 Promise，报 `stream is not async iterable`。`agent/request-error` 相反，是 await 的 |
 | headless profile 的 `credentials` 默认 disabled | 要在 profile 的 `cordis.patch.yml` 里写 `- id: credentials` + `disabled: false`，否则 `MISSING_CREDENTIAL` |
 | 会话日志是多帧 zstd | `zstdDecompressSync` 只解第一帧；用 `decompressSessionLog`（`packages/plugin/src/session-log.ts`） |

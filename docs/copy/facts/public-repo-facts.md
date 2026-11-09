@@ -10,8 +10,8 @@
 - Package names: `dsh-remedy` (plugin), `@dsh-remedy/core` (engine).
 - Version: 0.1.0
 - License: MIT
-- Intended repository URL: https://github.com/jjjjjjjjnnjnn/dsh-remedy (not created yet; badges may point here)
-- npm: `dsh-remedy` (not published yet)
+- Repository: https://github.com/jjjjjjjjnnjnn/dsh-remedy (public, created 2026-11-09)
+- npm: `dsh-remedy` (not published yet; the maintainer publishes manually with an OTP)
 - Independent project; not affiliated with DeepSeek.
 - Language of code and CLI: English. Chinese README is a translation.
 
@@ -62,6 +62,8 @@
 - Synthetic id observed in the session: `call_00_82805lrla1dhndlzpv1cakrx#remedy-1`.
 - Evidence file: `data/results/live-2026-11-09T17-00-00.000Z.json`.
 - First mount failed with `stream is not async iterable`: `llm/stream` is a synchronous waterfall and an `async` listener returns a Promise. Fixed; pinned by a unit test.
+- Desktop profile: the same tarball was installed with `dsh plugin --profile desktop add`, the app was restarted, and the desktop process repaired 2 fused calls across 39 streams with 0 unrepaired.
+- Desktop evidence: `data/results/live-desktop-2026-11-09T19-10-00.000Z.json`. The attached session shows `call_00_eurpysgrncrqocrhr4ao3uvi#remedy-1`; the turn was stopped by the operator after the answer and the artifact records `turn_end=aborted`.
 
 ## Tests and gates
 
@@ -89,7 +91,7 @@
 - Synthetic ids are traceability aids, not durable identities.
 - The message fallback parses the English `Received arguments:` text; a localized host message disables that fallback, but the delta buffer path still works.
 - A `max-tokens` truncation is not repaired.
-- The desktop app was not restarted; the live run used a separate headless profile.
+- The desktop turn was stopped by the operator after the task answer; the artifact records `turn_end=aborted` instead of claiming completion.
 - Verification applies to the recorded tarball sha256, not to whatever a running desktop app has cached.
 
 ## Repository layout
@@ -111,8 +113,8 @@
 - Gates use Node built-ins only; a new gate must be registered in `audit/gate_ledger.json`.
 - No new runtime dependency in `@dsh-remedy/core`.
 - A patch cannot claim `verified` without a `data/results/live-*` artifact.
-- Security reports should use GitHub private vulnerability reporting (the repository is not created yet).
+- Security reports should use GitHub private vulnerability reporting on the public repository (enabled 2026-11-09).
 
 ## Numbers allowed in copy
 
-0 1 2 3 4 5 6 7 8 9 10 11 19 22 27 37 47 79 86 95 4427 0.1.0 0.2.0 0.3.0
+0 1 2 3 4 5 6 7 8 9 10 11 19 22 27 37 39 47 79 86 95 4427 0.1.0 0.2.0 0.3.0

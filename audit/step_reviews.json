@@ -105,14 +105,15 @@
       "gate": "registry",
       "title": "The patch was verified on a real Host, not only in tests",
       "axes": {
-        "correctness": "One fused call in a real headless DSH run was split; both calls ran (two tool/call, two tool/result) and the turn ended completed.",
-        "reproducibility": "scripts/record_live_mount.mjs reads the plugin journal and the session log, cross-checks counters across two processes, and refuses to write an unmeasured artifact.",
-        "compliance": "The live profile is a separate profile; the desktop profile was not modified. Home paths are redacted before the artifact is written.",
-        "ssot": "data/results/live-2026-11-09T17-00-00.000Z.json carries produced_by, generated_at, schema_version and a sha256 sidecar.",
-        "adversarial": "The first mount failed with 'stream is not async iterable' because an async listener wrapped the synchronous waterfall; tests/unit/plugin-mount.test.ts pins the synchronous return."
+        "correctness": "One fused call in a real headless DSH run was split; both calls ran (two tool/call, two tool/result) and the turn ended completed. The same patch was then mounted on the desktop profile, the app was restarted, and 2 fused calls were repaired across 39 streams with 0 unrepaired.",
+        "reproducibility": "scripts/record_live_mount.mjs reads the plugin journal and the session log, cross-checks counters across two processes (headless) or one long-lived process (desktop), and refuses to write an unmeasured artifact.",
+        "compliance": "The headless profile is separate; the desktop profile was backed up before the bundle was added. Home paths are redacted before the artifact is written.",
+        "ssot": "data/results/live-2026-11-09T17-00-00.000Z.json and data/results/live-desktop-2026-11-09T19-10-00.000Z.json carry produced_by, generated_at, schema_version and sha256 sidecars.",
+        "adversarial": "The first mount failed with 'stream is not async iterable' because an async listener wrapped the synchronous waterfall; tests/unit/plugin-mount.test.ts pins the synchronous return. The desktop turn was stopped after the answer, and the artifact records turn_end=aborted instead of claiming completion."
       },
       "evidence": [
         "data/results/live-2026-11-09T17-00-00.000Z.json",
+        "data/results/live-desktop-2026-11-09T19-10-00.000Z.json",
         "scripts/record_live_mount.mjs",
         "tests/unit/plugin-mount.test.ts",
         "tests/unit/session-log.test.ts"

@@ -118,10 +118,21 @@ Cross-check: the plugin journal and the runner's per-attempt counters agree
 `assistant/attempt` streams, so `session.fused_calls` is 0 by construction; the
 repair is evidenced by the journal and the synthetic id (`BS-07`).
 
+### Desktop profile (same day)
+
+The tarball was installed with `dsh plugin --profile desktop add`, the desktop app
+was restarted, and the same task was sent through the real UI. The desktop process
+repaired **2** fused calls across **39** streams with **0** unrepaired. The
+attached session shows `call_00_eurpysgrncrqocrhr4ao3uvi#remedy-1`; the turn was
+stopped by the operator after the answer was produced, so the artifact records
+`turn_end=aborted` and says so (`turn_note`). Evidence:
+`data/results/live-desktop-2026-11-09T19-10-00.000Z.json`.
+
 ## Evidence
 
 - `data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json` — real fused text
 - `data/fixtures/toolcall-fusion/valid-two-calls.json` — counter-evidence shape
-- `data/results/live-2026-11-09T17-00-00.000Z.json` — real Host mount
+- `data/results/live-2026-11-09T17-00-00.000Z.json` — real headless Host mount
+- `data/results/live-desktop-2026-11-09T19-10-00.000Z.json` — real desktop Host mount
 - `tests/unit/json-split.test.ts`, `tests/unit/toolcall-repair.test.ts`,
   `tests/unit/repair-stream.test.ts`, `tests/unit/plugin-mount.test.ts`

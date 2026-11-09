@@ -93,11 +93,12 @@ All-or-nothing rule: if any buffer cannot be proven, nothing is emitted and the 
 | Limit | Detail |
 | --- | --- |
 | Root cause attribution | Attribution stops at assembled text; cannot prove whether relay or adapter glued objects. |
-| Truncated streams | A `max-tokens` truncation is never repaired. |
+| Truncated streams | A `max-tokens` truncation is not repaired. |
 | Headless session persistence | Headless profile does not persist `assistant/attempt` streams; `session.fused_calls` in live artifact is 0, with proof carried by journal counters and synthetic ids. |
 | Host message localization | Message fallback parses English `Received arguments:` text; a localized host message disables that fallback, but delta buffer path still works. |
 | Synthetic identities | Synthetic ids are traceability aids, not durable identities. |
-| Desktop app cache | Verification applies to recorded tarball sha256; running desktop application was not restarted during headless testing. |
+| Desktop turn status | Desktop turn was stopped by the operator after the task answer; artifact records `turn_end=aborted` instead of claiming completion. |
+| Desktop app cache | Verification applies to recorded tarball sha256, not to whatever a running desktop app has cached. |
 
 ## Verify it yourself
 
@@ -108,24 +109,25 @@ pnpm run verify
 node scripts/gate.mjs --mutate
 ```
 
-Run CLI commands and inspect findings (exit codes: 0 ok, 1 finding, 2 usage, 3 unavailable):
+Run CLI commands to inspect status and fixtures (exit codes: 0 ok, 1 finding, 2 usage, 3 unavailable):
 
 ```bash
 dsh-remedy status
 dsh-remedy verify
 ```
 
-The live verification evidence artifact is recorded at:
+Live verification evidence artifacts:
 
 ```text
 data/results/live-2026-11-09T17-00-00.000Z.json
+data/results/live-desktop-2026-11-09T19-10-00.000Z.json
 ```
 
 ## Status
 
-Version 0.1.0. Verified locally. npm publication pending. The desktop app was not restarted; verification used a separate headless profile (`remedy-live`).
+Version 0.1.0. Verified on both a headless profile (`remedy-live`) and the desktop app. npm publication pending.
 
-Measured live verification on DeepSeek Harness (`>= 0.2.0-rc.1 < 0.3.0-0`, Windows):
+Headless verification (`remedy-live`, DSH `>= 0.2.0-rc.1 < 0.3.0-0`, Windows):
 - Runs: 2
 - Streams observed: 10
 - Fused calls: 1
@@ -134,10 +136,19 @@ Measured live verification on DeepSeek Harness (`>= 0.2.0-rc.1 < 0.3.0-0`, Windo
 - Truncated: 0
 - Other stream errors: 0
 - Turn outcome: `completed`
-- Tool calls: 5
-- Tool results: 5
-- Synthetic id observed in the session: `call_00_82805lrla1dhndlzpv1cakrx#remedy-1`
-- Test suite: 95 pass, 0 fail across 5 gates (5 of 5 negative controls caught)
+- Tool calls: 5, tool results: 5
+- Synthetic id: `call_00_82805lrla1dhndlzpv1cakrx#remedy-1`
+
+Desktop app verification (`desktop` profile, app restarted):
+- Streams observed: 39
+- Fused calls: 2
+- Repaired: 2
+- Rejected or unrepaired: 0
+- Synthetic id: `call_00_eurpysgrncrqocrhr4ao3uvi#remedy-1`
+- Turn outcome: `turn_end=aborted` (stopped by operator after the answer)
+
+Test suite and gates:
+- Tests: 95 pass, 0 fail across 5 gates (5 of 5 negative controls caught)
 
 ## Development
 
@@ -172,7 +183,7 @@ Issues and pull requests are welcome.
 
 ## Security
 
-Security reports should use GitHub private vulnerability reporting (the repository is not created yet).
+Security reports should use GitHub private vulnerability reporting on the public repository.
 
 ## License
 

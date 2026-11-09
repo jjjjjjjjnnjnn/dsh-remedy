@@ -36,11 +36,15 @@ if (stamp === null) {
 
 const profileName = flag('profile', 'remedy-live')
 const journalPath = flag('journal', '.tmp/live/journal.jsonl')
-const attemptsPath = flag('attempts', '.tmp/live/attempts.json')
-const tarballPath = flag('tarball', '.tmp/pack/live3/dsh-remedy-0.1.0.tgz')
+const attemptsPath = flag('attempts', null)
+const tarballPath = flag('tarball', '.tmp/pack/live4/dsh-remedy-0.1.0.tgz')
 
-if (!existsSync(abs(journalPath)) || !existsSync(abs(attemptsPath))) {
-  process.stderr.write(`record_live_mount: missing ${journalPath} or ${attemptsPath}\n`)
+if (!existsSync(abs(journalPath))) {
+  process.stderr.write(`record_live_mount: missing journal ${journalPath}\n`)
+  process.exit(3)
+}
+if (attemptsPath !== null && !existsSync(abs(attemptsPath))) {
+  process.stderr.write(`record_live_mount: missing attempts ${attemptsPath}\n`)
   process.exit(3)
 }
 
@@ -62,7 +66,10 @@ const journalEvents = journalLines.map((line) => {
   }
 }).filter(Boolean)
 
-const attemptsDoc = JSON.parse(readFileSync(abs(attemptsPath), 'utf8'))
+const attemptsDoc =
+  attemptsPath === null
+    ? { attempts: [], mode: 'desktop-session' }
+    : JSON.parse(readFileSync(abs(attemptsPath), 'utf8'))
 const attempts = Array.isArray(attemptsDoc.attempts) ? attemptsDoc.attempts : []
 
 const counterKeys = ['streams', 'fused', 'repaired', 'unrepaired', 'truncated', 'errors']
@@ -101,8 +108,9 @@ for (const groupCounters of journalGroups) {
 
 const counters = sumAttempts.streams > 0 ? sumAttempts : journalTotals
 const crossCheck = {
-  match: counterKeys.every((key) => journalTotals[key] === counters[key]),
+  match: attempts.length === 0 || counterKeys.every((key) => journalTotals[key] === counters[key]),
   from: sumAttempts.streams > 0 ? 'attempts' : 'journal',
+  mode: attempts.length === 0 ? 'desktop-session (one long-lived process)' : 'per-attempt processes',
   journal_totals: journalTotals,
   journal_groups: journalGroups.length,
 }
@@ -141,6 +149,8 @@ const toolCalls = []
 const toolResults = []
 let turnEnd = null
 let assistantTail = ''
+let answerAfterRepair = ''
+let repairedSeq = null
 let attemptEvents = 0
 for (const line of sessionText.split(/\r?\n/)) {
   if (line.trim() === '') continue
@@ -157,6 +167,9 @@ for (const line of sessionText.split(/\r?\n/)) {
       callId: event.data?.callId ?? null,
       name: event.data?.name ?? null,
     })
+    if (repairedSeq === null && typeof event.data?.callId === 'string' && event.data.callId.includes('#remedy-')) {
+      repairedSeq = event.seq ?? null
+    }
   }
   if (event.type === 'tool/result') toolResults.push(event.seq ?? null)
   if (event.type === 'turn/end') turnEnd = event.data?.reason?.kind ?? null
@@ -164,11 +177,25 @@ for (const line of sessionText.split(/\r?\n/)) {
   if (event.type === 'assistant/message') {
     const blocks = Array.isArray(event.data?.message?.content) ? event.data.message.content : []
     const text = blocks.filter((block) => block?.type === 'text').map((block) => block.text).join('\n')
-    if (text.trim() !== '') assistantTail = text
+    if (text.trim() !== '') {
+      assistantTail = text
+      if (answerAfterRepair === '' && repairedSeq !== null && (event.seq ?? 0) > repairedSeq) {
+        answerAfterRepair = text
+      }
+    }
   }
 }
 
 const syntheticIds = [...new Set(toolCalls.map((call) => call.callId).filter((id) => typeof id === 'string' && id.includes('#remedy-')))]
+
+const journalScope =
+  counters.repaired > syntheticIds.length
+    ? `journal covers the whole ${profileName} process (${counters.repaired} repaired); this session file shows ${syntheticIds.length}`
+    : 'journal and session agree on the repaired count'
+const turnNote =
+  turnEnd === 'aborted'
+    ? 'operator stopped the turn after the task answer; the repaired call and its result are already in the transcript'
+    : ''
 
 const repairedCall = toolCalls.find((call) => typeof call.callId === 'string' && call.callId.includes('#remedy-'))
 const repairedStep =
@@ -204,7 +231,7 @@ const payload = {
   profile: {
     name: profileName,
     dsh_version: '0.2.2-rc.1',
-    install: 'dsh plugin --profile remedy-live add <tarball>',
+    install: `dsh plugin --profile ${profileName} add <tarball>`,
     package: `${pluginPkg.name}@${pluginPkg.version}`,
     tarball: redactedTarball,
     tarball_sha256: tarballDigest,
@@ -249,7 +276,10 @@ const payload = {
         : 'this profile does not persist assistant/attempt streams; the fusion is evidenced by the journal and the synthetic id',
     synthetic_ids: syntheticIds,
     repaired_step: repairedStep,
+    journal_scope: journalScope,
+    turn_note: turnNote,
     assistant_tail: redactText(assistantTail).slice(-400),
+    answer_after_repair: redactText(answerAfterRepair).slice(0, 800),
   },
   task:
     'Two independent reads requested in one message; the model emitted them as parallel tool calls, which is the shape that fuses at the relay.',

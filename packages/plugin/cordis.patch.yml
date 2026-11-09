@@ -1,0 +1,21 @@
+# dsh-remedy profile patch layer.
+#
+# Rules (enforced by scripts/gate_namespace.mjs):
+# - every row id MUST be prefixed `remedy-` and must not reuse an upstream row id
+#   (`plugin-manager`, `tools`, `session`, `llm`, `web`, `permission`, `plugin-market`);
+# - the module specifier must be this package's bare name, so the loader resolves
+#   `dist/index.js` and nothing else;
+# - every row MUST be added through `insert:` — a bare `- id: …` patches an existing
+#   entry, and upstream skips an unknown patch target with a stderr warning. A bundle
+#   shipped that way mounts nothing while looking installed.
+- insert:
+    - id: remedy-stream
+      name: dsh-remedy
+      config:
+        # Repair is on by default: the seam is the whole product.
+        repair: true
+        # Retry is a stop-gap, not the fix. Keep it off so a repair that cannot
+        # happen is visible instead of being retried into a token bill.
+        retryOnMalformed: 0
+        # Ceiling on calls synthesized from one fused block.
+        maxCalls: 8

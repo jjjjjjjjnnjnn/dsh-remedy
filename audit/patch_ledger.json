@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "patches": [
+    {
+      "id": "P-0001",
+      "status": "verified",
+      "owner": "remedy",
+      "since": "0.1.0",
+      "verified_at": "2026-11-09T17:00:00.000Z",
+      "evidence": [
+        "data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json",
+        "data/fixtures/toolcall-fusion/valid-two-calls.json",
+        "data/results/live-2026-11-09T17-00-00.000Z.json",
+        "data/results/patch-registry-2026-11-09T16-40-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/json-split.test.ts",
+        "tests/unit/toolcall-repair.test.ts",
+        "tests/unit/repair-stream.test.ts",
+        "tests/unit/plugin-mount.test.ts",
+        "tests/unit/session-log.test.ts",
+        "scripts/gate_registry.mjs",
+        "scripts/record_live_mount.mjs"
+      ]
+    }
+  ]
+}

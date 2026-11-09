@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_patch_registry.mjs",
+  "generated_at": "2026-11-09T16:40:00.000Z",
+  "source": {
+    "git_head": "7fc5647fc7f795c9c7c397fc72740db3ba3f5f0c",
+    "git_dirty": true
+  },
+  "patches": [
+    {
+      "id": "P-0001",
+      "title": "Split fused tool-call arguments into separate calls",
+      "symptom": "Tool call \"<name>\": Unexpected non-whitespace character after JSON at position N — Received arguments:\\n{...}{...}",
+      "rootCause": "The relay can stream two tool calls into one index. @earendil-works/pi-ai parseToolCallArguments (dist/utils/json-parse.js) receives the concatenation, throws LlmError(MALFORMED_RESPONSE), and @deepseek-ai/dsh-agent-loop re-throws because MALFORMED_RESPONSE is not in the default retryableCodes. Measured at dsh-llm-pi-ai/lib/index.js:1656 and confirmed upstream in deepseek-harness discussion #4427.",
+      "surface": "llm/stream",
+      "status": "tested",
+      "severity": "critical",
+      "evidence": [
+        "data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json",
+        "data/fixtures/toolcall-fusion/valid-two-calls.json",
+        "data/results/patch-registry-2026-11-09T16-40-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/json-split.test.ts",
+        "tests/unit/toolcall-repair.test.ts",
+        "tests/unit/repair-stream.test.ts",
+        "scripts/gate_registry.mjs"
+      ],
+      "limits": [
+        "cannot recover a call whose tail was cut by max-tokens (finish.reason.kind === length)",
+        "does not fix the relay or adapter that assigned one index to two calls",
+        "does not reorder or rename calls; the first call keeps the original id",
+        "cannot attribute which upstream stage glued the objects; it only sees the assembled text"
+      ]
+    }
+  ]
+}

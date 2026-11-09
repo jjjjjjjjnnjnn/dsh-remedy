@@ -1,0 +1,12 @@
+{
+  "name": "braces-in-string",
+  "source": "synthetic boundary test",
+  "note": "a }{ inside a JSON string is not a call boundary",
+  "tool": "edit",
+  "call_id": "call_boundary",
+  "arguments": "{\"text\":\"}{ is not a boundary\"}{\"path\":\"data/results/x.json\"}",
+  "expect": {
+    "status": "repaired",
+    "fragments": 2
+  }
+}

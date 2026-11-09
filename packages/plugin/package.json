@@ -1,0 +1,64 @@
+{
+  "name": "dsh-remedy",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness plugin that intercepts stream errors caused by fused tool calls, splits glued top-level JSON objects, and re-throws unprovable buffers.",
+  "type": "module",
+  "bin": {
+    "dsh-remedy": "./dist/cli.js",
+    "dsr": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./repair-stream": {
+      "types": "./dist/repair-stream.d.ts",
+      "default": "./dist/repair-stream.js"
+    },
+    "./session-scan": {
+      "types": "./dist/session-scan.d.ts",
+      "default": "./dist/session-scan.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "remedy",
+    "repair",
+    "tool-call",
+    "malformed-response"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jjjjjjjjnnjnn/dsh-triage.git",
+    "directory": "dsh-remedy/packages/plugin"
+  },
+  "engines": {
+    "node": ">=22.19",
+    "dsh": ">=0.2.0-rc.1 <0.3.0-0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "@dsh-remedy/core": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}

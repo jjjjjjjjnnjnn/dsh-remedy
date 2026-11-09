@@ -1,0 +1,11 @@
+{
+  "name": "valid-two-calls",
+  "source": "counter-evidence from the same failure family: a successful attempt with distinct ids call_00_uboz5255pcf39waca51ss537 / call_01_ei992roe30zruzcqw1yd4i48",
+  "note": "the relay sometimes sends correct indexes; arguments are a representative valid object, not the original bytes",
+  "tool": "ops_bash",
+  "call_id": "call_00_uboz5255pcf39waca51ss537",
+  "arguments": "{\"command\":\"ls scripts/lib/\",\"description\":\"List scripts/lib modules\"}",
+  "expect": {
+    "status": "unchanged"
+  }
+}

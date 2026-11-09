@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "blind_spots": [
+    {
+      "id": "BS-01",
+      "status": "open",
+      "note": "Attribution stops at the assembled text: the plugin can prove a fusion happened but cannot prove whether the relay or the adapter assigned one index to two calls."
+    },
+    {
+      "id": "BS-02",
+      "status": "closed",
+      "note": "Closed 2026-11-09: P-0001 was verified on a real headless DSH profile (remedy-live, dsh 0.2.2-rc.1). Evidence: data/results/live-2026-11-09T17-00-00.000Z.json. The desktop profile was not restarted; that remains the next mount."
+    },
+    {
+      "id": "BS-03",
+      "status": "accepted",
+      "note": "The plugin journal is off by default. A repair that happens in a session with no journal leaves only the session log as evidence."
+    },
+    {
+      "id": "BS-04",
+      "status": "accepted",
+      "note": "Synthetic ids are deterministic per call but not stable across replays; they are traceability aids, not durable identities."
+    },
+    {
+      "id": "BS-05",
+      "status": "open",
+      "note": "The message fallback parses `Received arguments:` from the adapter's English failure text. A localized host message would disable that fallback; the delta buffer path still works."
+    },
+    {
+      "id": "BS-06",
+      "status": "accepted",
+      "note": "A max-tokens truncation is never repaired: the tail is missing, and inventing it would dispatch a call the model did not make."
+    },
+    {
+      "id": "BS-07",
+      "status": "open",
+      "note": "The live headless profile does not persist assistant/attempt streams, so the artifact's session.fused_calls is 0 even on a repaired turn. The repair is evidenced by the journal counters and the synthetic tool-call id; a profile that logs attempts would make the two agree."
+    },
+    {
+      "id": "BS-08",
+      "status": "accepted",
+      "note": "The live run used a tarball install into remedy-live; the desktop profile still loads the last published version from its own node_modules. Verification applies to the recorded tarball sha256, not to whatever the desktop app has cached."
+    }
+  ]
+}

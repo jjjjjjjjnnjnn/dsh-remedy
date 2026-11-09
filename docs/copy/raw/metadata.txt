@@ -1,0 +1,18 @@
+{
+  "description": "Resident repair layer for DeepSeek Harness that detects fused tool calls and splits glued JSON objects at top-level boundaries.",
+  "plugin_description": "DeepSeek Harness plugin that intercepts stream errors caused by fused tool calls, splits glued top-level JSON objects, and re-throws unprovable buffers.",
+  "core_description": "Pure tool-call splitting and repair engine for DeepSeek Harness. Guarantees that unproven buffers are never emitted and original failures are re-thrown unchanged.",
+  "topics": [
+    "deepseek-harness",
+    "tool-call-fusion",
+    "fused-tool-calls",
+    "malformed-response",
+    "stream-repair",
+    "json-split",
+    "runtime-repair",
+    "plugin",
+    "typescript"
+  ],
+  "release_blurb": "### 0.1.0\n\nFirst release of dsh-remedy. Patch P-0001 is verified on a real host using the remedy-live headless profile on DeepSeek Harness. Across 2 runs and 10 observed streams, 1 fused tool call was repaired with 0 rejections, yielding 5 completed tool calls and 5 tool results with outcome completed.\n\nLive evidence: [data/results/live-2026-11-09T17-00-00.000Z.json](data/results/live-2026-11-09T17-00-00.000Z.json)",
+  "social_preview": "Diagram showing dsh-remedy intercepting fused tool calls in DeepSeek Harness and splitting glued JSON objects into discrete invocations."
+}

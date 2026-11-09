@@ -1,0 +1,21 @@
+# --- Node / pnpm ---
+node_modules/
+*.tsbuildinfo
+**/dist/
+.pnpm-store/
+
+# --- local runtime scratch (never committed) ---
+.env
+.env.*
+!/.env.example
+*.log
+coverage/
+.tmp/
+local/
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "steps": [
+    {
+      "id": "S1",
+      "gate": "ssot",
+      "title": "Root cause measured at the adapter, not guessed",
+      "axes": {
+        "correctness": "parseToolCallArguments throws on the concatenation; MALFORMED_RESPONSE is absent from the default retryableCodes; the turn stops.",
+        "reproducibility": "The failing attempt is preserved byte-for-byte in data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json.",
+        "compliance": "Session text is redacted before it leaves the machine; no credentials or home paths remain.",
+        "ssot": "The failure signature and the measured file/line are written into docs/patches/P-0001-toolcall-fusion.md.",
+        "adversarial": "Counter-evidence is kept: one successful attempt used distinct ids, so the defect is intermittent, not universal."
+      },
+      "evidence": [
+        "docs/patches/P-0001-toolcall-fusion.md",
+        "data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json"
+      ]
+    },
+    {
+      "id": "S2",
+      "gate": "registry",
+      "title": "The splitter refuses anything it cannot prove",
+      "axes": {
+        "correctness": "Depth and string state are tracked separately; `}{` inside a string is not a boundary.",
+        "reproducibility": "Every case is a table-driven test with the exact input text and expected slice count.",
+        "compliance": "Pure function, no I/O, no dependency.",
+        "ssot": "The splitter is the only implementation; the plugin and the scanner both import it.",
+        "adversarial": "Unterminated strings, unbalanced braces, top-level arrays and trailing garbage each have a rejection test."
+      },
+      "evidence": [
+        "tests/unit/json-split.test.ts",
+        "packages/core/src/json-split.ts"
+      ]
+    },
+    {
+      "id": "S3",
+      "gate": "registry",
+      "title": "A repair is all-or-nothing",
+      "axes": {
+        "correctness": "A valid value is never rewritten; a truncated tail is never repaired; every fragment must parse to an object.",
+        "reproducibility": "The real fused fixture and four synthetic negative controls run through the same engine.",
+        "compliance": "Synthetic ids are suffixed and collision-checked; the first call keeps the original id.",
+        "ssot": "The registry records the patch as `tested`, not `verified`: no live host run exists yet.",
+        "adversarial": "One fused call plus one unrepairable call aborts the rescue and re-throws the original failure."
+      },
+      "evidence": [
+        "tests/unit/toolcall-repair.test.ts",
+        "tests/unit/repair-stream.test.ts",
+        "packages/core/src/toolcall-repair.ts"
+      ]
+    },
+    {
+      "id": "S4",
+      "gate": "namespace",
+      "title": "The patch layer can only mount this package",
+      "axes": {
+        "correctness": "Every row is under insert:, is prefixed remedy-, and names the bare package specifier.",
+        "reproducibility": "The YAML is parsed by a dependency-free scanner, so the gate runs without pnpm.",
+        "compliance": "No upstream row id and no config key that shadows an upstream service.",
+        "ssot": "The row id and module name are the ones the package actually publishes.",
+        "adversarial": "The mutate run injects a bare `- id: tools` row and the parser must flag it."
+      },
+      "evidence": [
+        "packages/plugin/cordis.patch.yml",
+        "scripts/gate_namespace.mjs"
+      ]
+    },
+    {
+      "id": "S5",
+      "gate": "ssot",
+      "title": "Evidence is produced by a tool, never typed",
+      "axes": {
+        "correctness": "The scanner counts fused calls from attempt deltas and dead turns from turn/end failures separately.",
+        "reproducibility": "The scan report carries produced_by, generated_at, schema_version and a sha256 sidecar.",
+        "compliance": "Redaction runs over every example before it is printed or written.",
+        "ssot": "The registry snapshot is written by scripts/record_patch_registry.mjs and hash-locked.",
+        "adversarial": "An unreadable line is counted, not skipped; a missing journal is exit 3, not an empty success."
+      },
+      "evidence": [
+        "packages/plugin/src/session-scan.ts",
+        "packages/plugin/src/cli.ts",
+        "scripts/record_patch_registry.mjs"
+      ]
+    },
+    {
+      "id": "S6",
+      "gate": "step-review",
+      "title": "The gates are not vacuously green",
+      "axes": {
+        "correctness": "Each gate has a declared negative control and a --mutate path that must exit non-zero.",
+        "reproducibility": "The gate ledger is the registry; tests/governance fails if a gate file is missing from it.",
+        "compliance": "Gate scripts use Node built-ins only.",
+        "ssot": "A gate run can record its own artifact, with durations deliberately excluded.",
+        "adversarial": "The step-review mutate run removes an axis and the gate must go red."
+      },
+      "evidence": [
+        "scripts/gate.mjs",
+        "audit/gate_ledger.json",
+        "tests/governance/ledgers.test.ts"
+      ]
+    },
+    {
+      "id": "S7",
+      "gate": "registry",
+      "title": "The patch was verified on a real Host, not only in tests",
+      "axes": {
+        "correctness": "One fused call in a real headless DSH run was split; both calls ran (two tool/call, two tool/result) and the turn ended completed.",
+        "reproducibility": "scripts/record_live_mount.mjs reads the plugin journal and the session log, cross-checks counters across two processes, and refuses to write an unmeasured artifact.",
+        "compliance": "The live profile is a separate profile; the desktop profile was not modified. Home paths are redacted before the artifact is written.",
+        "ssot": "data/results/live-2026-11-09T17-00-00.000Z.json carries produced_by, generated_at, schema_version and a sha256 sidecar.",
+        "adversarial": "The first mount failed with 'stream is not async iterable' because an async listener wrapped the synchronous waterfall; tests/unit/plugin-mount.test.ts pins the synchronous return."
+      },
+      "evidence": [
+        "data/results/live-2026-11-09T17-00-00.000Z.json",
+        "scripts/record_live_mount.mjs",
+        "tests/unit/plugin-mount.test.ts",
+        "tests/unit/session-log.test.ts"
+      ]
+    },
+    {
+      "id": "S8",
+      "gate": "copy",
+      "title": "Externally visible text is generated from facts and cannot drift",
+      "axes": {
+        "correctness": "Every public file's bytes match the manifest hash, and every entry names the pinned copy model.",
+        "reproducibility": "The raw agy output, prompt hash, facts hash and output hash are recorded; changing the fact pack fails every entry until regeneration.",
+        "compliance": "No public prose is hand-written; no placeholder token remains; package descriptions come from the generated metadata.",
+        "ssot": "The fact pack is the only number source; the number audit ignores URLs, code fences and inline code, and fails on any other token.",
+        "adversarial": "The copy gate's mutate run corrupts the stored hash and must go red."
+      },
+      "evidence": [
+        "scripts/gate_copy.mjs",
+        "docs/copy/manifest.json",
+        "tests/governance/public-copy.test.ts"
+      ]
+    }
+  ]
+}

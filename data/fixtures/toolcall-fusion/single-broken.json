@@ -1,0 +1,11 @@
+{
+  "name": "single-broken",
+  "source": "synthetic negative control",
+  "note": "one object that does not parse is a different defect; splitting it would fabricate a call",
+  "tool": "edit",
+  "call_id": "call_single",
+  "arguments": "{\"path\": \"a.ts\", \"content\": \"x\"",
+  "expect": {
+    "status": "rejected"
+  }
+}

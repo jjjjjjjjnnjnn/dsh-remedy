@@ -1,0 +1,12 @@
+{
+  "name": "truncated",
+  "source": "synthetic max-tokens case",
+  "note": "a truncated tail is not a fusion and must never be repaired",
+  "tool": "ops_bash",
+  "call_id": "call_truncated",
+  "arguments": "{\"command\": \"ls\", \"descrip",
+  "truncated": true,
+  "expect": {
+    "status": "rejected"
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_live_mount.mjs",
+  "generated_at": "2026-11-09T17:00:00.000Z",
+  "profile": {
+    "name": "remedy-live",
+    "dsh_version": "0.2.2-rc.1",
+    "install": "dsh plugin --profile remedy-live add <tarball>",
+    "package": "dsh-remedy@0.1.0",
+    "tarball": ".tmp/pack/live3/dsh-remedy-0.1.0.tgz",
+    "tarball_sha256": "c63b71355d25a6baa0f06e94fea305adde3e6ded3cc98cbee69c7c290ecf7a60",
+    "bundle_row": "remedy-stream",
+    "surface": "llm/stream"
+  },
+  "journal": {
+    "file": ".tmp/live/journal.jsonl",
+    "events": 11,
+    "stream_events": 10,
+    "repaired_events": 1,
+    "rejected_events": 0
+  },
+  "counters": {
+    "streams": 10,
+    "fused": 1,
+    "repaired": 1,
+    "unrepaired": 0,
+    "truncated": 0,
+    "errors": 0
+  },
+  "cross_check": {
+    "match": true,
+    "from": "attempts",
+    "journal_totals": {
+      "streams": 10,
+      "fused": 1,
+      "repaired": 1,
+      "unrepaired": 0,
+      "truncated": 0,
+      "errors": 0
+    },
+    "journal_groups": 2
+  },
+  "verdict": {
+    "state": "repaired",
+    "headline": "defect seen and repaired",
+    "reasons": [
+      "1/1 fused call(s) split into valid calls"
+    ]
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "exit_code": 0,
+      "timed_out": false,
+      "stream_events": 5,
+      "repaired_events": 0,
+      "rejected_events": 0,
+      "counters": {
+        "streams": 5,
+        "fused": 0,
+        "repaired": 0,
+        "unrepaired": 0,
+        "truncated": 0,
+        "errors": 0
+      },
+      "stdout_tail": "两次读取已在同一条消息中并行发出并完成。\n\npackage.json 的 name 是 `dsh-remedy-workspace`；tsconfig.json 本身是一个仅含 `files: []` 与 `references` 的 solution 文件，不直接声明 target，其 target 经 `packages/*/tsconfig.json` 继承 `tsconfig.base.json` 后为 `ES2023`。\n\n补充一处发现（未改动任何文件）：`package.json` 第 23–24 行的 `devDependencies` 把内部包 `@dsh-remedy/core`、`dsh-remedy` 写成了 `workspace:*`，若只是根工作区聚合配置本不该依赖自身 workspace 包，疑似与原 `dependencies` 位置写反，值得后续核对。"
+    },
+    {
+      "attempt": 2,
+      "exit_code": 0,
+      "timed_out": false,
+      "stream_events": 5,
+      "repaired_events": 1,
+      "rejected_events": 0,
+      "counters": {
+        "streams": 5,
+        "fused": 1,
+        "repaired": 1,
+        "unrepaired": 0,
+        "truncated": 0,
+        "errors": 0
+      },
+      "stdout_tail": "两个文件并行读取完成。\n\n一句话总结：`package.json` 的 name 是 **dsh-remedy-workspace**，`tsconfig.json` 本身不含 `target`，因为它只是 `files: []` 加两个子包 references 的 solution 文件；实际的 `target` 定义在它引用的 `tsconfig.base.json` 里，值为 **ES2023**。\n\n（补充说明：根 `tsconfig.json` 只有 references，没有 `compilerOptions`；`packages/core` 和 `packages/plugin` 的 tsconfig 均 `extends \"../../tsconfig.base.json\"`，所以编译目标统一是 ES2023。）"
+    }
+  ],
+  "session": {
+    "file": "<home>\\.dsh\\sessions\\--C-Users-rongj-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-14601d8a-b0d3-45c3-ba39-b10aa8422f9c\\session.v4.jsonl.zstd",
+    "sha256": "a2ee7e962b186c861bda77568a6d4119aca10b1f142fe1003cd2e17e50ad47ec",
+    "events": 40,
+    "turn_end": "completed",
+    "tool_calls": 5,
+    "tool_results": 5,
+    "fused_calls": 0,
+    "fusion_failures": 0,
+    "repairable_failures": 0,
+    "attempt_events": 0,
+    "attempt_logs": false,
+    "note": "this profile does not persist assistant/attempt streams; the fusion is evidenced by the journal and the synthetic id",
+    "synthetic_ids": [
+      "call_00_82805lrla1dhndlzpv1cakrx#remedy-1"
+    ],
+    "repaired_step": {
+      "turn": 1,
+      "step": 1,
+      "calls": [
+        {
+          "callId": "call_00_82805lrla1dhndlzpv1cakrx",
+          "name": "read"
+        },
+        {
+          "callId": "call_00_82805lrla1dhndlzpv1cakrx#remedy-1",
+          "name": "read"
+        }
+      ]
+    },
+    "assistant_tail": "两个文件并行读取完成。\n\n一句话总结：`package.json` 的 name 是 **dsh-remedy-workspace**，`tsconfig.json` 本身不含 `target`，因为它只是 `files: []` 加两个子包 references 的 solution 文件；实际的 `target` 定义在它引用的 `tsconfig.base.json` 里，值为 **ES2023**。\n\n（补充说明：根 `tsconfig.json` 只有 references，没有 `compilerOptions`；`packages/core` 和 `packages/plugin` 的 tsconfig 均 `extends \"../../tsconfig.base.json\"`，所以编译目标统一是 ES2023。）"
+  },
+  "task": "Two independent reads requested in one message; the model emitted them as parallel tool calls, which is the shape that fuses at the relay.",
+  "limits": [
+    "one machine, one provider route, one profile; not a population estimate",
+    "the live profile is a headless profile with the desktop provider block copied; the desktop UI was not restarted",
+    "the plugin build is the tarball named above; its sha256 is recorded, not inferred"
+  ],
+  "redaction": {
+    "replacements": 1,
+    "kinds": [
+      "windows-home"
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.tgz binary
+*.zstd binary
+
+# The live session log is large and machine-written; the artifact next to it is
+# the reviewable evidence.
+data/raw/** -text

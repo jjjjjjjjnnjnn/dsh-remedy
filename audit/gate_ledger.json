@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "gates": [
+    {
+      "id": "ssot",
+      "script": "scripts/gate_ssot.mjs",
+      "requires_build": false,
+      "negative_control": "corrupts the sha256 comparison of every data/results artifact"
+    },
+    {
+      "id": "registry",
+      "script": "scripts/gate_registry.mjs",
+      "requires_build": true,
+      "negative_control": "appends a duplicate patch id, which registryProblems and the snapshot comparison must catch"
+    },
+    {
+      "id": "namespace",
+      "script": "scripts/gate_namespace.mjs",
+      "requires_build": true,
+      "negative_control": "appends a bare `- id: tools` row at column 0 (an upstream id outside insert:)"
+    },
+    {
+      "id": "step-review",
+      "script": "scripts/gate_step_review.mjs",
+      "requires_build": false,
+      "negative_control": "removes the adversarial axis from the first reviewed step"
+    },
+    {
+      "id": "copy",
+      "script": "scripts/gate_copy.mjs",
+      "requires_build": false,
+      "negative_control": "corrupts the stored output hash of every manifest entry"
+    }
+  ]
+}

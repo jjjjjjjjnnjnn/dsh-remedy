@@ -60,7 +60,7 @@ Follow these 5 steps when introducing a patch:
 - Relative imports end in `.js`.
 - `erasableSyntaxOnly` is on.
 - Gates in `scripts/` use Node built-ins only.
-- `@dsh-remedy/core` has no runtime dependency.
+- `dsh-remedy-core` has no runtime dependency.
 
 ## Evidence rules
 

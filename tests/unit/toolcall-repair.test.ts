@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
-import { repairToolCallArguments, type ToolCallInput } from '@dsh-remedy/core'
+import { repairToolCallArguments, type ToolCallInput } from 'dsh-remedy-core'
 
 const call = (args: string, id = 'call_1', name = 'ops_bash'): ToolCallInput => ({ id, name, arguments: args })
 const fixture = (name: string) =>

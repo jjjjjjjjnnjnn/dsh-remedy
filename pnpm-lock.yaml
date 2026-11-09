@@ -166,15 +166,15 @@ importers:
 
   .:
     devDependencies:
-      '@dsh-remedy/core':
-        specifier: workspace:*
-        version: link:packages/core
       '@types/node':
         specifier: ^24.10.1
         version: 24.19.2
       dsh-remedy:
         specifier: workspace:*
         version: link:packages/plugin
+      dsh-remedy-core:
+        specifier: workspace:*
+        version: link:packages/core
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -183,7 +183,7 @@ importers:
 
   packages/plugin:
     dependencies:
-      '@dsh-remedy/core':
+      dsh-remedy-core:
         specifier: workspace:*
         version: link:../core
 

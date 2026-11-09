@@ -5,20 +5,16 @@
 | Version | Supported |
 | --- | --- |
 | 0.1.x | Yes |
-| < 0.1.0 | No |
-
-Older or unlisted versions are not supported.
+| Older or unlisted | No |
 
 ## Reporting a vulnerability
 
 Report vulnerabilities through GitHub private vulnerability reporting on the public repository:
 https://github.com/jjjjjjjjnnjnn/dsh-remedy
 
-Do not open public issues for security vulnerabilities. No public contact email is provided.
+Do not open a public issue.
 
 ## What is in scope
-
-The following components and paths are in scope:
 
 - The `llm/stream` repair path
 - The CLI
@@ -27,16 +23,14 @@ The following components and paths are in scope:
 
 ## What is out of scope
 
-The following items are out of scope:
-
 - Upstream DSH
 - The model relay
 - Provider credentials
-- A `max-tokens` truncation (which the plugin deliberately does not repair)
+- A `max-tokens` truncation, which the plugin deliberately does not repair
 
 ## What to include
 
-When submitting a report, include:
+When reporting an issue, provide:
 
 - Plugin version
 - DSH version
@@ -49,4 +43,4 @@ Never paste a real API key or an unredacted session log.
 
 ## Disclosure
 
-This project follows coordinated disclosure. Reports will be investigated and addressed before public release. There is no bug bounty program and no fixed response SLA.
+This project follows coordinated disclosure. There is no bounty program and no service level agreement.

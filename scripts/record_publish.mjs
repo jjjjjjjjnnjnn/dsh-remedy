@@ -27,7 +27,7 @@ if (stamp === null) {
 }
 const retries = Math.max(1, Number.parseInt(flag('retries', '1'), 10) || 1)
 
-const packages = ['@dsh-remedy/core', 'dsh-remedy'].map((name) => {
+const packages = ['dsh-remedy-core', 'dsh-remedy'].map((name) => {
   const dir = name === 'dsh-remedy' ? 'packages/plugin' : 'packages/core'
   const pkg = JSON.parse(readFileSync(abs(join(dir, 'package.json')), 'utf8'))
   return { name, dir, version: pkg.version }

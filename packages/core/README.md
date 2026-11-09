@@ -1,4 +1,4 @@
-# @dsh-remedy/core
+# dsh-remedy-core
 
 Pure repair engine. No I/O, no host, no clock except what the caller passes in.
 
@@ -17,7 +17,7 @@ is no partial success, no "best effort", and no rewrite of a value that already
 parses.
 
 ```ts
-import { repairToolCallArguments } from '@dsh-remedy/core'
+import { repairToolCallArguments } from 'dsh-remedy-core'
 
 const result = repairToolCallArguments({
   id: 'call_1',

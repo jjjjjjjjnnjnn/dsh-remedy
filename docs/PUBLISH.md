@@ -47,7 +47,7 @@ node scripts/gate.mjs --mutate
 pnpm -r publish --access public --no-git-checks --otp <code>
 ```
 
-Two packages publish in order: `@dsh-remedy/core` first, then `dsh-remedy`
+Two packages publish in order: `dsh-remedy-core` first, then `dsh-remedy`
 (which depends on the exact core version). Record the registry state as soon as
 `npm view` agrees:
 

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { formatRemedyVerdict, judgeRemedy, type RemedyCounters } from '@dsh-remedy/core'
+import { formatRemedyVerdict, judgeRemedy, type RemedyCounters } from 'dsh-remedy-core'
 
 const counters = (overrides: Partial<RemedyCounters> = {}): RemedyCounters => ({
   streams: 1,

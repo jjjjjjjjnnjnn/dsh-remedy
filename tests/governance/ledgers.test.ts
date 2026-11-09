@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { test } from 'node:test'
-import { PATCHES } from '@dsh-remedy/core'
+import { PATCHES } from 'dsh-remedy-core'
 
 const root = new URL('../../', import.meta.url)
 const read = (path: string) => readFileSync(new URL(path, root), 'utf8')

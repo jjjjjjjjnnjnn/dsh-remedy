@@ -55,7 +55,7 @@ dsh plugin --profile <name> add dsh-remedy
 Or install as a library after the first release:
 
 ```bash
-pnpm add dsh-remedy @dsh-remedy/core
+pnpm add dsh-remedy dsh-remedy-core
 ```
 
 ## How it works
@@ -178,7 +178,7 @@ Issues and pull requests are welcome.
 - `pnpm run verify` must pass.
 - `node scripts/gate.mjs --mutate` must catch every gate (5 of 5).
 - Gates use Node built-ins only; a new gate must be registered in `audit/gate_ledger.json`.
-- No new runtime dependency in `@dsh-remedy/core`.
+- No new runtime dependency in `dsh-remedy-core`.
 - A patch cannot claim `verified` without a `data/results/live-*` artifact.
 
 ## Security

@@ -21,7 +21,7 @@ import {
   type RemedyCounters,
   type RemedyVerdict,
   type ToolCallInput,
-} from '@dsh-remedy/core'
+} from 'dsh-remedy-core'
 
 export interface LlmFailure {
   readonly code?: string

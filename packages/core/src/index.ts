@@ -1,5 +1,5 @@
 /**
- * Public surface of `@dsh-remedy/core`.
+ * Public surface of `dsh-remedy-core`.
  *
  * Everything exported here is stable API: the plugin, the CLI, the gates and
  * the evidence scanner consume it. Keep the surface small; add capabilities as

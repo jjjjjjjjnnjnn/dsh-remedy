@@ -24,7 +24,7 @@ import {
   repairToolCallArguments,
   splitTopLevelJsonObjects,
   type RemedyCounters,
-} from '@dsh-remedy/core'
+} from 'dsh-remedy-core'
 import { redactReport, scanSessionText, type ScanReport } from './session-scan.js'
 
 const EXIT_OK = 0

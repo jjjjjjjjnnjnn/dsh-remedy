@@ -7,7 +7,7 @@ Keys:
   npm publication status here.
 - `plugin_description`: the npm `description` for the `dsh-remedy` package, at
   most 200 characters, same rules.
-- `core_description`: the npm `description` for the `@dsh-remedy/core` package, at
+- `core_description`: the npm `description` for the `dsh-remedy-core` package, at
   most 200 characters; name the pure engine and the guarantee.
 - `topics`: 8 to 12 lowercase GitHub topics, no `#`, no spaces. Include the DSH
   ecosystem, the defect family, the category, and `typescript`. Do not use

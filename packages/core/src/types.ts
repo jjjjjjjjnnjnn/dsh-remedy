@@ -1,5 +1,5 @@
 /**
- * Domain types for `@dsh-remedy/core`.
+ * Domain types for `dsh-remedy-core`.
  *
  * The vocabulary is deliberately narrow: a *patch* names one defect and the
  * evidence that it is fixed; a *tool call* is the exact block shape the DSH

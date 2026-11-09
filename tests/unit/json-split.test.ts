@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { isFusedJsonObjectText, splitTopLevelJsonObjects } from '@dsh-remedy/core'
+import { isFusedJsonObjectText, splitTopLevelJsonObjects } from 'dsh-remedy-core'
 
 const ACCEPTED: Array<{ name: string; text: string; slices: string[] }> = [
   { name: 'one object', text: '{"a":1}', slices: ['{"a":1}'] },

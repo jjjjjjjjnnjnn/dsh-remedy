@@ -55,7 +55,7 @@ dsh plugin --profile <name> add dsh-remedy
 首次发布后亦可作为库安装：
 
 ```bash
-pnpm add dsh-remedy @dsh-remedy/core
+pnpm add dsh-remedy dsh-remedy-core
 ```
 
 ## 工作方式
@@ -178,7 +178,7 @@ node scripts/gate.mjs --mutate
 - 必须通过 `pnpm run verify`。
 - `node scripts/gate.mjs --mutate` 必须捕获所有门禁（5/5）。
 - 门禁脚本必须仅使用 Node 内置模块；新门禁必须在 `audit/gate_ledger.json` 中登记。
-- `@dsh-remedy/core` 不得引入新的运行时依赖。
+- `dsh-remedy-core` 不得引入新的运行时依赖。
 - 未提供 `data/results/live-*` 证据产物的补丁不能标记为 `verified` 状态。
 
 ## 安全

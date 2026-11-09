@@ -16,7 +16,7 @@
 
 import { appendFileSync, mkdirSync } from 'node:fs'
 import { dirname } from 'node:path'
-import { PATCHES, redactValue } from '@dsh-remedy/core'
+import { PATCHES, redactValue } from 'dsh-remedy-core'
 import { RemedyMonitor, repairStream, type RepairEvent } from './repair-stream.js'
 
 export interface RemedyLogger {

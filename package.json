@@ -20,7 +20,7 @@
     "cli": "node packages/plugin/dist/cli.js"
   },
   "devDependencies": {
-    "@dsh-remedy/core": "workspace:*",
+    "dsh-remedy-core": "workspace:*",
     "dsh-remedy": "workspace:*",
     "@types/node": "^24.10.1",
     "typescript": "^5.9.3"

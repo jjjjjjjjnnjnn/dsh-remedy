@@ -56,7 +56,7 @@
     }
   },
   "dependencies": {
-    "@dsh-remedy/core": "workspace:*"
+    "dsh-remedy-core": "workspace:*"
   },
   "scripts": {
     "build": "tsc -b"

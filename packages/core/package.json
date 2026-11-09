@@ -1,5 +1,5 @@
 {
-  "name": "@dsh-remedy/core",
+  "name": "dsh-remedy-core",
   "version": "0.1.0",
   "description": "Pure tool-call splitting and repair engine for DeepSeek Harness. Guarantees that unproven buffers are never emitted and original failures are re-thrown unchanged.",
   "type": "module",

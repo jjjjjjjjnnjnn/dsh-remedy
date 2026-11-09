@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { redact, redactValue } from '@dsh-remedy/core'
+import { redact, redactValue } from 'dsh-remedy-core'
 
 test('API keys and bearer tokens are removed', () => {
   const result = redact('key=sk-abcdefghijklmnopqrstuvwxyz012345 Authorization: Bearer abcdefghijklmnop')

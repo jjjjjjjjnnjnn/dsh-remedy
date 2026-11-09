@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { findPatch, PATCHES, patchRegistrySnapshot, registryProblems, type PatchRecord } from '@dsh-remedy/core'
+import { findPatch, PATCHES, patchRegistrySnapshot, registryProblems, type PatchRecord } from 'dsh-remedy-core'
 
 test('the shipped registry has no structural problems', () => {
   assert.deepEqual(registryProblems(), [])

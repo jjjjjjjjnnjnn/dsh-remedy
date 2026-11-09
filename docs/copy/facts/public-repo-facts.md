@@ -7,7 +7,7 @@
 
 - Name: dsh-remedy
 - Tagline (internal, not final copy): a resident repair layer for DeepSeek Harness.
-- Package names: `dsh-remedy` (plugin), `@dsh-remedy/core` (engine).
+- Package names: `dsh-remedy` (plugin), `dsh-remedy-core` (engine).
 - Version: 0.1.0
 - License: MIT
 - Repository: https://github.com/jjjjjjjjnnjnn/dsh-remedy (public, created 2026-11-09)
@@ -78,7 +78,7 @@
 ## Install and use
 
 - Install into a DSH profile: `dsh plugin --profile <name> add dsh-remedy`.
-- Embed as a library: `pnpm add dsh-remedy @dsh-remedy/core`.
+- Embed as a library: `pnpm add dsh-remedy dsh-remedy-core`.
 - CLI commands: `dsh-remedy status`, `dsh-remedy repair [file]`, `dsh-remedy scan <session.jsonl>`, `dsh-remedy verify`.
 - CLI exit codes: 0 ok, 1 finding, 2 usage, 3 unavailable.
 - Scan accepts a `.jsonl` session log; a `.jsonl.zstd` log is read by the library helper `decompressSessionLog`.
@@ -111,7 +111,7 @@
 - A behavior change needs a failing test first.
 - `pnpm run verify` must pass; `node scripts/gate.mjs --mutate` must catch every gate.
 - Gates use Node built-ins only; a new gate must be registered in `audit/gate_ledger.json`.
-- No new runtime dependency in `@dsh-remedy/core`.
+- No new runtime dependency in `dsh-remedy-core`.
 - A patch cannot claim `verified` without a `data/results/live-*` artifact.
 - Security reports should use GitHub private vulnerability reporting on the public repository (enabled 2026-11-09).
 

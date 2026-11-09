@@ -42,7 +42,7 @@ headless `remedy-live` 第 2 次运行命中，10 条流 / 1 次修复 / 整轮 
 
 验收：
 
-1. `npm view dsh-remedy version` 与 `npm view @dsh-remedy/core version` 都是 `0.1.0`；
+1. `npm view dsh-remedy version` 与 `npm view dsh-remedy-core version` 都是 `0.1.0`；
 2. `data/results/publish-*.json` 由脚本产出，`ok: true`，`git_dirty=false`；
 3. 事实包改动后所有 copy 文件重新生成，`node scripts/gate_copy.mjs` 绿；
 4. 验证码只出现在命令里，不写进仓库、不写进任何 artifact。

@@ -10,8 +10,8 @@
  * unreadable line is counted, not skipped silently.
  */
 
-import { isFusedJsonObjectText, redact, redactValue, splitTopLevelJsonObjects, wouldRepair } from '@dsh-remedy/core'
-import type { RedactionSummary } from '@dsh-remedy/core'
+import { isFusedJsonObjectText, redact, redactValue, splitTopLevelJsonObjects, wouldRepair } from 'dsh-remedy-core'
+import type { RedactionSummary } from 'dsh-remedy-core'
 
 export interface ScanExample {
   readonly seq: number | null

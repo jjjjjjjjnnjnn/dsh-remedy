@@ -1,6 +1,7 @@
 # dsh-remedy
 
 [![CI](https://github.com/jjjjjjjjnnjnn/dsh-remedy/actions/workflows/ci.yml/badge.svg)](https://github.com/jjjjjjjjnnjnn/dsh-remedy/actions)
+[![npm](https://img.shields.io/npm/v/dsh-remedy.svg)](https://www.npmjs.com/package/dsh-remedy)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/jjjjjjjjnnjnn/dsh-remedy/blob/main/LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D%2022.19-brightgreen)](https://nodejs.org)
 [![Status](https://img.shields.io/badge/status-verified-brightgreen)](https://github.com/jjjjjjjjnnjnn/dsh-remedy)
@@ -37,25 +38,25 @@ Counter-evidence shows 1 successful attempt carried 2 distinct ids, confirming t
 
 ## Install
 
-The package is not published to npm yet. Install and build from source:
+Install the plugin into a DeepSeek Harness profile:
+
+```bash
+dsh plugin --profile <name> add dsh-remedy
+```
+
+Or install as a library dependency:
+
+```bash
+pnpm add dsh-remedy dsh-remedy-core
+```
+
+For contributors building from source:
 
 ```bash
 git clone https://github.com/jjjjjjjjnnjnn/dsh-remedy.git
 cd dsh-remedy
 pnpm install
 pnpm run verify
-```
-
-After the first release, install directly into a DeepSeek Harness profile:
-
-```bash
-dsh plugin --profile <name> add dsh-remedy
-```
-
-Or install as a library after the first release:
-
-```bash
-pnpm add dsh-remedy dsh-remedy-core
 ```
 
 ## How it works
@@ -73,9 +74,9 @@ Repaired stream:
   finish: { kind: 'stop' }
 ```
 
-The first call keeps its original id. Subsequent calls receive `<id>#remedy-N`. The error finish is replaced with `{kind:'stop'}`.
+The first call keeps its original id. Subsequent calls receive synthetic ids formatted as `<id>#remedy-N`. The error finish is replaced with `{kind:'stop'}`.
 
-All-or-nothing rule: if any buffer cannot be proven, nothing is emitted and the original failure is re-thrown.
+All-or-nothing rule: if any buffer cannot be proven, nothing is emitted and the original failure is re-thrown. A single object that fails to parse is rejected, not split.
 
 ## Safety guarantees
 
@@ -92,31 +93,31 @@ All-or-nothing rule: if any buffer cannot be proven, nothing is emitted and the 
 
 | Limit | Detail |
 | --- | --- |
-| Root cause attribution | Attribution stops at assembled text; cannot prove whether relay or adapter glued objects. |
+| Root cause attribution | Attribution stops at the assembled text: the plugin cannot prove whether the relay or the adapter glued the objects. |
 | Truncated streams | A `max-tokens` truncation is not repaired. |
-| Headless session persistence | Headless profile does not persist `assistant/attempt` streams; `session.fused_calls` in live artifact is 0, with proof carried by journal counters and synthetic ids. |
-| Host message localization | Message fallback parses English `Received arguments:` text; a localized host message disables that fallback, but delta buffer path still works. |
+| Headless session persistence | The headless profile does not persist `assistant/attempt` streams, so `session.fused_calls` in the live artifact is 0; the journal counters and the synthetic id carry the proof. |
+| Host message localization | The message fallback parses the English `Received arguments:` text; a localized host message disables that fallback, but the delta buffer path still works. |
 | Synthetic identities | Synthetic ids are traceability aids, not durable identities. |
-| Desktop turn status | Desktop turn was stopped by the operator after the task answer; artifact records `turn_end=aborted` instead of claiming completion. |
-| Desktop app cache | Verification applies to recorded tarball sha256, not to whatever a running desktop app has cached. |
+| Desktop turn status | The desktop turn was stopped by the operator after the task answer; the artifact records `turn_end=aborted` instead of claiming completion. |
+| Desktop app cache | Verification applies to the recorded tarball `sha256`, not to whatever a running desktop app has cached. |
 
 ## Verify it yourself
 
-Run verification commands locally:
+Run verification commands:
 
 ```bash
 pnpm run verify
 node scripts/gate.mjs --mutate
 ```
 
-Run CLI commands to inspect status and fixtures (exit codes: 0 ok, 1 finding, 2 usage, 3 unavailable):
+Run CLI commands (exit codes: 0 ok, 1 finding, 2 usage, 3 unavailable):
 
 ```bash
 dsh-remedy status
 dsh-remedy verify
 ```
 
-Live verification evidence artifacts:
+Real verification artifacts:
 
 ```text
 data/results/live-2026-11-09T17-00-00.000Z.json
@@ -125,9 +126,9 @@ data/results/live-desktop-2026-11-09T19-10-00.000Z.json
 
 ## Status
 
-Version 0.1.0. Verified on both a headless profile (`remedy-live`) and the desktop app. npm publication pending.
+Version 0.1.0 is published to npm (`dsh-remedy` and `dsh-remedy-core`). Verified on a headless profile (`remedy-live`) and the desktop app.
 
-Headless verification (`remedy-live`, DSH `>= 0.2.0-rc.1 < 0.3.0-0`, Windows):
+Headless verification (`remedy-live` profile, Windows):
 - Runs: 2
 - Streams observed: 10
 - Fused calls: 1
@@ -148,7 +149,8 @@ Desktop app verification (`desktop` profile, app restarted):
 - Turn outcome: `turn_end=aborted` (stopped by operator after the answer)
 
 Test suite and gates:
-- Tests: 95 pass, 0 fail across 5 gates (5 of 5 negative controls caught)
+- Tests: 95 pass, 0 fail
+- Gates: 5 pass, 5 of 5 negative controls caught
 
 ## Development
 
@@ -166,7 +168,7 @@ Repository layout:
 - `scripts/`: gates and recorders, Node built-ins only.
 - `tests/`: unit, governance, e2e (5 fixtures).
 - `data/fixtures`: real fused text, counter-evidence, negative controls.
-- `data/results`: script-produced evidence with sha256 sidecars.
+- `data/results`: script-produced evidence with `sha256` sidecars.
 - `audit/`: gate ledger, patch ledger, step reviews, blind spots, AI disclosure.
 - `docs/`: handoff, patch record, ADR, copy channel.
 

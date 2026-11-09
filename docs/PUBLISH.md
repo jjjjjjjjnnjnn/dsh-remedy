@@ -65,6 +65,17 @@ After `ok: true`:
 2. Commit, push `main`, then `git subtree split` and push again.
 3. Tag `v0.1.0` on the public repository.
 
+## Published 0.1.0 (2026-11-09)
+
+- `dsh-remedy-core@0.1.0` and `dsh-remedy@0.1.0` are on the public registry;
+  `latest` is `0.1.0` for both.
+- Evidence: `data/results/publish-2026-11-09T20-00-00.000Z.json` (`ok: true`,
+  `git_dirty: false`).
+- The `@dsh-remedy` scope does not exist on npm, so the core package is unscoped
+  (`dsh-remedy-core`).
+- The 0.1.0 tarball README predates the publish update; the GitHub README is
+  current. A 0.1.1 bump is the way to refresh the npm page.
+
 ## After the first release
 
 - The README install section says "after the first release"; regenerate it from

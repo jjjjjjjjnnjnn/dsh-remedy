@@ -30,25 +30,24 @@ Required structure (use these exact H2 headings):
 
 Rules:
 
-- Badges: CI status, MIT license, Node >= 22.19, and a static "status: verified"
-  badge. Use the intended repository URL from FACTS. Do not add an npm version
-  badge, because the package is not published yet.
+- Badges: CI status, npm version, MIT license, Node >= 22.19, and a static
+  "status: verified" badge. Use the intended repository URL from FACTS.
 - First screen must answer: what is it, what does it fix, how do I get it.
 - "What it fixes": name the defect, show the failure signature in one fenced
   block, give the measured sample numbers exactly once, and name the upstream
   discussion from FACTS.
-- "Install": be honest that npm is not published yet. Give the source workflow
-  (clone, pnpm install, pnpm run verify). Show the future profile install
-  command and label it "after the first release". Do not pretend a command works
-  today if FACTS say it does not.
+- "Install": the npm package is published. Show
+  `dsh plugin --profile <name> add dsh-remedy` first and
+  `pnpm add dsh-remedy dsh-remedy-core` second. Keep the source workflow
+  (clone, pnpm install, pnpm run verify) for contributors, clearly marked.
 - "How it works": one short fenced sequence showing the measured chunk order and
   the repaired output. Explain the all-or-nothing rule.
 - "Safety guarantees": a bullet list, one guarantee per line, each one already
   in FACTS.
 - "What it does not do": a Markdown table with a row per limit from FACTS.
 - "Verify it yourself": copy-pasteable commands and the real artifact path.
-- "Status": 0.1.0, verified on both a headless profile and the desktop app, npm
-  pending. Do not claim a released npm version.
+- "Status": 0.1.0 is published to npm (`dsh-remedy` and `dsh-remedy-core`),
+  verified on a headless profile and the desktop app.
 - "Development": the exact commands from FACTS.
 - Link to `README.zh-CN.md` near the top for Chinese readers.
 - End with MIT and "not affiliated with DeepSeek".

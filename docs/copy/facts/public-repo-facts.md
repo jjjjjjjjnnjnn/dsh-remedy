@@ -11,7 +11,7 @@
 - Version: 0.1.0
 - License: MIT
 - Repository: https://github.com/jjjjjjjjnnjnn/dsh-remedy (public, created 2026-11-09)
-- npm: `dsh-remedy` (not published yet; the maintainer publishes manually with an OTP)
+- npm: `dsh-remedy` and `dsh-remedy-core` are published at 0.1.0 (2026-11-09); `latest` is 0.1.0.
 - Independent project; not affiliated with DeepSeek.
 - Language of code and CLI: English. Chinese README is a translation.
 

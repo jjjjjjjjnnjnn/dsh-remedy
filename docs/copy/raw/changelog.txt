@@ -24,7 +24,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - Evidence recorded in `data/results/live-2026-11-09T17-00-00.000Z.json`.
 
 ### Notes
-- Version 0.1.0 is the first release and is not published to npm yet.
+- Version 0.1.0 is the first release and is published to npm for both packages (`dsh-remedy` and `dsh-remedy-core`).
 - Operating limits are documented in `audit/blind_spots.json`.
 - No retry-as-fix: `retryOnMalformed` defaults to 0.
 - No asar patching: operates at the runtime seam without modifying `app.asar`.

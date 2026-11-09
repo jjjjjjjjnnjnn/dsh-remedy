@@ -23,6 +23,6 @@ Rules:
 
 - Output only the JSON object. No code fence, no commentary, valid JSON.
 - Use only numbers from FACTS.
-- Do not claim npm publication or a user count.
+- npm publication is a fact now (0.1.0); do not claim a user count.
 - The description must be honest that npm is not published yet only if it fits
   in 160 characters; otherwise leave that to the README status section.

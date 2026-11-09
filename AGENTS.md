@@ -2,11 +2,12 @@
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
 > **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.1.0`
-> **Stand**：R3（2026-11-09，**桌面 profile 挂载 + App 重启**：真实桌面进程 **39 条流 / 2 次粘连 /
-> 2 次修复 / 0 未修复**；`live-desktop-2026-11-09T19-10-00.000Z.json` 记录合成 id 与任务答案；
-> 答案后人工停止，`turn_end=aborted` 如实写。GitHub 公共仓库已创建。
-> **95 测试 / 5 门**)｜R2（2026-11-09，P-0001 升 `verified`：headless `remedy-live` 命中，
-> 10 条流 / 1 次修复 / 整轮 `completed`；第一次挂载抓到同步 waterfall 缺陷并修复）｜
+> **Stand**：R4（2026-11-09，**npm 0.1.0 已发布**：`dsh-remedy` + `dsh-remedy-core`，
+> `latest=0.1.0`；core 因 `@dsh-remedy` scope 不存在改为无 scope 包名；
+> 证据 `data/results/publish-2026-11-09T20-00-00.000Z.json`（`ok`、`git_dirty=false`）。
+> **95 测试 / 5 门**)｜R3（2026-11-09，桌面 profile 挂载 + App 重启：39 条流 / 2 次修复；
+> `live-desktop-2026-11-09T19-10-00.000Z.json`）｜R2（2026-11-09，P-0001 升 `verified`：
+> headless `remedy-live` 命中，10 条流 / 1 次修复 / 整轮 `completed`）｜
 > R1（2026-11-09，首个补丁 P-0001 落地；5 夹具 / 4 门 / `tested`）
 > **接手先读**：`docs/HANDOFF.md` → `PROJECT_RULES.md` → `INDEX.md`
 

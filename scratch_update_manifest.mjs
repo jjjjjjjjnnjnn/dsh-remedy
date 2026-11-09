@@ -1,4 +1,8 @@
-import { readJson, readText, writeJson, writeText, sha256, isoStamp } from './scripts/lib/kit.mjs'
+import { writeFileSync } from 'node:fs'
+import { abs, readJson, readText, sha256, isoStamp } from './scripts/lib/kit.mjs'
+
+const writeText = (rel, text) => writeFileSync(abs(rel), text, 'utf8')
+const writeJson = (rel, obj) => writeFileSync(abs(rel), JSON.stringify(obj, null, 2) + '\n', 'utf8')
 
 const content = `# Changelog
 
@@ -10,24 +14,23 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [0.1.0] - 2026-11-09
 
 ### Added
-- \`llm/stream\` wrapper buffering tool-call deltas and recovering fused calls on terminal error.
+- The \`llm/stream\` wrapper buffering tool-call deltas and recovering fused calls on terminal error.
 - Top-level JSON object splitter for concatenated tool call arguments.
 - CLI commands: \`dsh-remedy status\`, \`dsh-remedy repair\`, \`dsh-remedy scan\`, and \`dsh-remedy verify\`.
 - Session scanner for offline \`.jsonl\` session log analysis.
-- Multi-frame zstd reader (\`decompressSessionLog\`) for concatenated log streams.
-- Four governance gates: \`ssot\`, \`registry\`, \`namespace\`, and \`step-review\`.
+- Multi-frame zstd reader helper \`decompressSessionLog\` for log streams.
+- The four gates: \`ssot\`, \`registry\`, \`namespace\`, and \`step-review\`.
 
 ### Fixed
-- P-0001 tool-call fusion where multiple tool calls stream into a single index.
+- P-0001 tool-call fusion where multiple tool calls stream into one index.
 - Synchronous-waterfall regression from the first real mount where an async listener broke stream iteration.
 
 ### Verified
 - Headless verification on profile \`remedy-live\`: 2 runs, 10 streams observed, 1 fused call, 1 repaired, 0 unrepaired, 5 tool calls, 5 tool results, and \`completed\` turn outcome.
 - Evidence recorded in \`data/results/live-2026-11-09T17-00-00.000Z.json\`.
-- Test suite and governance: 95 tests pass, 5 gates pass, 5 of 5 negative controls caught.
 
 ### Notes
-- Version 0.1.0 is the first release and is not published to npm yet.
+- Version 0.1.0 is the first release and is published to npm for both packages (\`dsh-remedy\` and \`dsh-remedy-core\`).
 - Operating limits are documented in \`audit/blind_spots.json\`.
 - No retry-as-fix: \`retryOnMalformed\` defaults to 0.
 - No asar patching: operates at the runtime seam without modifying \`app.asar\`.
@@ -66,8 +69,8 @@ writeText('CHANGELOG.md', content)
 writeText('docs/copy/raw/changelog.txt', content)
 
 const manifest = readJson('docs/copy/manifest.json')
-manifest.entries = manifest.entries.filter(e => e.name !== 'changelog')
-manifest.entries.push({
+const entryIndex = manifest.entries.findIndex(e => e.name === 'changelog')
+const entry = {
   name: 'changelog',
   target: 'CHANGELOG.md',
   model: 'gemini-3.8-flash-high',
@@ -76,7 +79,12 @@ manifest.entries.push({
   prompt_sha256: sha256(brief),
   request_sha256: sha256(request),
   output_sha256: sha256(content),
-})
-manifest.updated_at = isoStamp(new Date().toISOString())
+}
+if (entryIndex >= 0) {
+  manifest.entries[entryIndex] = entry
+} else {
+  manifest.entries.push(entry)
+}
+manifest.updated_at = new Date().toISOString()
 writeJson('docs/copy/manifest.json', manifest)
 console.log('Successfully updated CHANGELOG.md and manifest.json')

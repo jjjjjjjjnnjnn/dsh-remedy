@@ -1,6 +1,7 @@
 # dsh-remedy
 
 [![CI](https://github.com/jjjjjjjjnnjnn/dsh-remedy/actions/workflows/ci.yml/badge.svg)](https://github.com/jjjjjjjjnnjnn/dsh-remedy/actions)
+[![npm](https://img.shields.io/npm/v/dsh-remedy.svg)](https://www.npmjs.com/package/dsh-remedy)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/jjjjjjjjnnjnn/dsh-remedy/blob/main/LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D%2022.19-brightgreen)](https://nodejs.org)
 [![Status](https://img.shields.io/badge/status-verified-brightgreen)](https://github.com/jjjjjjjjnnjnn/dsh-remedy)
@@ -75,7 +76,7 @@ Repaired stream:
 
 首个调用保留原始 id，后续调用使用 `<id>#remedy-N`。错误的 finish 被替换为 `{kind:'stop'}`。
 
-全有或全无原则：若任意缓冲区无法被严格证明，则不分发任何内容，原样重新抛出原始失败。
+全有或全无原则：若任意缓冲区无法被严格证明，则不分发任何内容，原样重新抛出原始失败。单个无法解析的对象直接拒绝，绝不切分。
 
 ## 安全保证
 

@@ -16,19 +16,22 @@ node packages/plugin/dist/cli.js verify   # OK 5 fixture(s)
 
 ## 当前批次
 
-**R3（2026-11-09）· 桌面 profile 挂载 + App 重启，桌面进程内修复 2 次。**
+**R4（2026-11-09）· npm 0.1.0 已发布。**
 
-- `dsh-remedy` 已用官方 `dsh plugin --profile desktop add <tarball>` 装进桌面 profile，
-  `.dsh/profiles/desktop` 的 `package.json` / `pnpm-workspace.yaml` / `cordis.patch.yml`
-  改动前已备份到 `dsh-remedy/.tmp/desktop-profile-backup-*`。
-- App 重启（带 `--remote-debugging-port=9222`），通过 CDP 在真实输入框发任务；
-  同一进程 journal：**39 条流 / 2 次粘连 / 2 次修复 / 0 未修复**。
-- 证据 `data/results/live-desktop-2026-11-09T19-10-00.000Z.json`：附带的
-  `session-9045e2ec` 里能看到 `call_00_eurpysgrncrqocrhr4ao3uvi#remedy-1`，
-  任务答案已产出；答案后人工停止，`turn_end=aborted`，artifact 如实记录。
-- 桌面 journal 覆盖整个进程，2 次修复跨 2 个会话，session 文件只显示 1 个；
-  artifact 的 `journal_scope` 写明（`BS-09`）。
-- GitHub 公共仓库已创建并推送：`https://github.com/jjjjjjjjnnjnn/dsh-remedy`。
+- npm 账号没有 `@dsh-remedy` organization，发布 `@dsh-remedy/core` 返回
+  `Scope not found`；core 已改成无 scope 的 **`dsh-remedy-core`**（插件本来就是
+  `dsh-remedy`），imports / lockfile / 文档 / 全部 copy 文件同步更新。
+- 手动发布完成：`dsh-remedy-core@0.1.0` + `dsh-remedy@0.1.0`，官方 registry
+  `latest` 都是 `0.1.0`。
+- 证据：`data/results/publish-2026-11-09T20-00-00.000Z.json`（`ok: true`、
+  `git_dirty: false`）。
+- 公开仓库 `https://github.com/jjjjjjjjnnjnn/dsh-remedy` 已推送、CI 绿、
+  topics 与私密漏洞报告已设置。
+
+**R3（2026-11-09）· 桌面 profile 挂载 + App 重启，桌面进程内修复 2 次。**
+`39 条流 / 2 次粘连 / 2 次修复 / 0 未修复`；证据
+`data/results/live-desktop-2026-11-09T19-10-00.000Z.json`，答案后人工停止，
+`turn_end=aborted` 如实记录。
 
 **R2（2026-11-09）· P-0001 真机验证通过（`tested` → `verified`）。**
 headless `remedy-live` 第 2 次运行命中，10 条流 / 1 次修复 / 整轮 `completed`；
@@ -36,16 +39,15 @@ headless `remedy-live` 第 2 次运行命中，10 条流 / 1 次修复 / 整轮 
 
 ## 第一件事
 
-**npm 由你手动发布：`pnpm -r publish --access public --no-git-checks --otp <code>`
-（先 core 后 plugin）；发布后跑 `node scripts/record_publish.mjs --stamp <ISO> --retries 3`
-记录 registry 状态。然后更新事实包（npm 已发布）、重新生成全部 copy 文件、打 `v0.1.0` tag。**
+**0.1.1（只刷新 npm 页面文案）：0.1.0 的 tarball 是在「npm 待发布」文案下打的，
+npm 页面上的 README 仍写着未发布；GitHub README 已经正确。若要 npm 页面同步，
+把两个包 bump 到 0.1.1、重新发布、再跑 `record_publish`；不追求同步就进入 P-0002。**
 
 验收：
 
-1. `npm view dsh-remedy version` 与 `npm view dsh-remedy-core version` 都是 `0.1.0`；
+1. `npm view dsh-remedy version` 与 `npm view dsh-remedy-core version` 一致；
 2. `data/results/publish-*.json` 由脚本产出，`ok: true`，`git_dirty=false`；
-3. 事实包改动后所有 copy 文件重新生成，`node scripts/gate_copy.mjs` 绿；
-4. 验证码只出现在命令里，不写进仓库、不写进任何 artifact。
+3. 事实包改动后所有 copy 文件重新生成，`node scripts/gate_copy.mjs` 绿。
 
 ## 已知坑
 

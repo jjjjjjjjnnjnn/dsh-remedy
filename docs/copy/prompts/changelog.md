@@ -21,8 +21,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 Rules:
 
-- `0.1.0` is the first release and is not published to npm yet; say so under
-  Notes, not under Added.
+- `0.1.0` is the first release and is published to npm for both packages; say so
+  under Notes, not under Added.
 - Added: the `llm/stream` wrapper, the splitter, the CLI commands, the session
   scanner, the multi-frame zstd reader, the four gates.
 - Fixed: P-0001 tool-call fusion; the synchronous-waterfall regression found on

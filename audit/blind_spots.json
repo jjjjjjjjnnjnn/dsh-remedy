@@ -59,7 +59,7 @@
     {
       "id": "BS-12",
       "status": "closed",
-      "note": "Closed 2026-11-10 by P-0003: recordRejected no longer increments fused for every rejection. A refusal that never proved a fusion moves refused only (so a stream whose only defect is bad JSON reads quiet), a withdrawal moves withdrawn, and unrepaired now means exactly one thing: a proven fusion that was not repaired. What stays open is narrower and recorded in the patch doc: the four verdict states are unchanged, so a state name still cannot say 'observed, refused, and correctly not repaired' (only the counter row can), and old journal lines keep the six-field counter shape because no migration rewrites them."
+      "note": "Closed 2026-11-10 by P-0003, and verified live the same day: recordRejected no longer increments fused for every rejection. A refusal that never proved a fusion moves refused only (so a stream whose only defect is bad JSON reads quiet), a withdrawal moves withdrawn, and unrepaired now means exactly one thing: a proven fusion that was not repaired. The live budget-refusal run (data/results/live-2026-11-10T16-30-00.000Z.json) wrote fused:1 refused:1 unrepaired:1 and verdict degraded with turn_end=error — it declined to repair and said so instead of claiming a repair. What stays open is narrower and recorded in the patch doc: the four verdict states are unchanged, so a state name still cannot say 'observed, refused, and correctly not repaired' (only the counter row can), old journal lines keep the six-field counter shape because no migration rewrites them, and a live stream that moves withdrawn is still unmeasured."
     }
   ]
 }

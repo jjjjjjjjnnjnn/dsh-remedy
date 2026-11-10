@@ -48,11 +48,11 @@ Rules:
   从六个名字长到八个。
 - "它不做什么": a table, one row per limit.
 - "自己验证": commands plus the real artifact path.
-- "状态": 0.3.x 已发布到 npm；P-0001 与 P-0002 为 `verified`（P-0001 在 headless
-  profile 与桌面 App，P-0002 在 2026-11-10 的 headless 真机运行里修好了一次真实的
-  两调用粘连，并看到合成 id 被真的派发执行）；P-0003 为 `tested`（只有单元测试与
-  负对照；真机确实写出全部八个计数器，但那次是干净修复，`refused` 与 `withdrawn`
-  只被写成 0）。加一小段
+- "状态": 0.3.x 已发布到 npm；P-0001、P-0002 与 P-0003 都为 `verified`（P-0001 在
+  headless profile 与桌面 App；P-0002 在 2026-11-10 的 headless 真机运行里修好了一次
+  真实的两调用粘连，并看到合成 id 被真的派发执行；P-0003 在 2026-11-10 的另一次
+  headless 运行里，代码拒绝修复一次预算超限的粘连，journal 里 `refused` 第一次非零）。
+  加一小段
   包体积说明（0.3.0 tarball 的压缩/条目/解包/分量、不再进包的 sourcemap、`dist/*.js`
   的字节预算），数字只能来自 FACTS。
 - Link back to `README.md` for English.

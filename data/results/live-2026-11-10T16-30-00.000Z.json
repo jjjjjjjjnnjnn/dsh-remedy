@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_live_mount.mjs",
+  "generated_at": "2026-11-10T16:30:00.000Z",
+  "profile": {
+    "name": "remedy-live",
+    "dsh_version": "0.2.2-rc.1",
+    "install": "dsh plugin --profile remedy-live add <tarball>",
+    "package": "dsh-remedy@0.3.0",
+    "tarball": ".tmp/pack9/dsh-remedy-0.3.0.tgz",
+    "tarball_sha256": "5f73032548c761174aea697167c14b0ef25e1d881ddf2c6e2c0182fe73e99aeb",
+    "bundle_row": "remedy-stream",
+    "surface": "llm/stream"
+  },
+  "journal": {
+    "file": ".tmp/live040/journal.jsonl",
+    "events": 6,
+    "stream_events": 5,
+    "repaired_events": 0,
+    "rejected_events": 1
+  },
+  "counters": {
+    "streams": 5,
+    "fused": 1,
+    "repaired": 0,
+    "unrepaired": 1,
+    "truncated": 0,
+    "errors": 0,
+    "refused": 1,
+    "withdrawn": 0
+  },
+  "cross_check": {
+    "match": true,
+    "from": "journal",
+    "mode": "desktop-session (one long-lived process)",
+    "journal_totals": {
+      "streams": 5,
+      "fused": 1,
+      "repaired": 0,
+      "unrepaired": 1,
+      "truncated": 0,
+      "errors": 0,
+      "refused": 1,
+      "withdrawn": 0
+    },
+    "journal_groups": 2
+  },
+  "verdict": {
+    "state": "degraded",
+    "headline": "repair incomplete",
+    "reasons": [
+      "1 fused call(s), 1 could not be repaired",
+      "the original failure was re-thrown, not swallowed"
+    ]
+  },
+  "attempts": [],
+  "session": {
+    "file": "C:/Users/rongj/.dsh/sessions/--C-Users-rongj-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--/session-155e3d77-014a-42a7-b97a-667f168a83da/session.v4.jsonl.zstd",
+    "sha256": "215f71494782e808d22617f02eae1a30b022ee4e7ee43d1d5d18cfed44caffbd",
+    "events": 21,
+    "turn_end": "error",
+    "tool_calls": 0,
+    "tool_results": 0,
+    "fused_calls": 1,
+    "fusion_failures": 1,
+    "repairable_failures": 1,
+    "attempt_events": 1,
+    "attempt_logs": true,
+    "note": "fused_calls is read from assistant/attempt deltas",
+    "synthetic_ids": [],
+    "repaired_step": null,
+    "journal_scope": "journal and session agree on the repaired count",
+    "turn_note": "",
+    "assistant_tail": "",
+    "answer_after_repair": ""
+  },
+  "task": "Two independent reads requested in one message; the model emitted them as parallel tool calls, which is the shape that fuses at the relay.",
+  "limits": [
+    "one machine, one provider route, one profile; not a population estimate",
+    "the live profile is a headless profile with the desktop provider block copied; the desktop UI was not restarted",
+    "the plugin build is the tarball named above; its sha256 is recorded, not inferred"
+  ],
+  "redaction": {
+    "replacements": 0,
+    "kinds": []
+  }
+}

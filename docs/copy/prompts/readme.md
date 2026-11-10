@@ -58,12 +58,12 @@ Rules:
 - "What it does not do": a Markdown table with a row per limit from FACTS.
 - "Verify it yourself": copy-pasteable commands and the real artifact path.
 - "Status": 0.3.x is published to npm (`dsh-remedy` and `dsh-remedy-core`);
-  P-0001 and P-0002 are `verified` on a real host (P-0001 on the headless profile
-  and the desktop app, P-0002 on a 2026-11-10 headless run that repaired a real
-  two-call fusion and saw the synthesized call dispatched), and P-0003 is `tested`
-  with negative controls — a live host does write all eight counters, but only
-  as zeros on a clean repair. Do not hardcode a patch version; the npm badge is
-  the version.
+  P-0001, P-0002 and P-0003 are all `verified` on a real host (P-0001 on the
+  headless profile and the desktop app, P-0002 on a 2026-11-10 headless run that
+  repaired a real two-call fusion and saw the synthesized call dispatched, and
+  P-0003 on a 2026-11-10 headless run whose journal wrote a non-zero `refused`
+  after the code declined to repair a budget refusal). Do not hardcode a patch
+  version; the npm badge is the version.
 - Include one short paragraph or table listing the package size: the shipped
   0.3.0 tarball size, entries, unpacked size, the unpacked breakdown, the
   sourcemaps that are no longer shipped, and the `dist/*.js` byte budget.

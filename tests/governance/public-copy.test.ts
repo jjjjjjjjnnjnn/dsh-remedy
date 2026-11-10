@@ -63,7 +63,12 @@ test('the English README carries every required section', () => {
     assert.match(text, new RegExp(`^${heading}$`, 'm'), `missing ${heading}`)
   }
   assert.match(text, /README\.zh-CN\.md/)
-  assert.match(text, /data\/results\/live-2026-11-09T17-00-00\.000Z\.json/)
+  // The README must cite a live artifact, and the file it names must exist. It deliberately
+  // does not pin a stamp: every new verification adds a newer artifact and demotes the old one.
+  const liveLinks = [...text.matchAll(/data\/results\/live-[^\s()[\]]+\.json/g)]
+    .map((match) => match[0])
+  assert.ok(liveLinks.length > 0, 'the README must cite at least one live artifact')
+  for (const target of liveLinks) assert.ok(exists(target), `missing live artifact: ${target}`)
   assert.match(text, /#4427/)
 })
 

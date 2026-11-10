@@ -47,7 +47,7 @@ Follow the five steps in order:
 4. Live-verify before moving status to `verified`.
 5. Record the registry snapshot and update the ledger.
 
-P-0002 is the worked example of a patch that went all the way to `verified` (it has a live artifact). P-0003 is the worked example of a `tested` patch: negative controls, a registry entry and an audited blind-spot list, but no live artifact that shows the new counters moving off zero.
+P-0002 and P-0003 are the two worked examples of a patch that went all the way to `verified` with a live artifact: P-0002 has a run that repaired a real two-call fusion, and P-0003 has a run whose journal wrote a non-zero `refused`. Contrast them: a `drafted` entry is only a written symptom, and a `tested` entry is negative controls without a host run.
 
 ## Pull requests
 
@@ -68,7 +68,7 @@ P-0002 is the worked example of a patch that went all the way to `verified` (it 
 
 - `data/results` is written by scripts, not by hand.
 - Every artifact has `produced_by`, `generated_at`, `schema_version` and a `.sha256`.
-- A patch cannot claim `verified` without a `data/results/live-*` file.
+- `verified` requires a `data/results/live-*` file.
 
 ## Scope
 

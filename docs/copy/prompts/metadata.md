@@ -14,11 +14,10 @@ Keys:
   language names other than `typescript`, and do not repeat `deepseek` when
   `deepseek-harness` is already present.
 - `release_blurb`: a short Markdown section for the current release (0.3.0). It
-  must mention that P-0001 and P-0002 are verified on a real host, that P-0003 is
-  `tested` with negative controls (a live host writes the eight counters but only
-  as zeros on a clean repair), that the counter
-  line now carries eight names while the four verdict words are unchanged, and
-  link to the live evidence path.
+  must mention that P-0001, P-0002 and P-0003 are all verified on a real host
+  (P-0003's live run is the one whose journal wrote a non-zero `refused`), that
+  the counter line now carries eight names while the four verdict words are
+  unchanged, and link to the live evidence paths.
 - `social_preview`: one sentence of alt text for a social preview image. No
   invented image URL.
 

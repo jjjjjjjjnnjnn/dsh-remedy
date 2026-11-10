@@ -46,11 +46,13 @@
     },
     {
       "id": "P-0003",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.2.0",
+      "verified_at": "2026-11-10T16:30:00.000Z",
       "evidence": [
         "docs/patches/P-0003-refusal-observability.md",
+        "data/results/live-2026-11-10T16-30-00.000Z.json",
         "tests/unit/verdict.test.ts",
         "tests/unit/repair-stream.test.ts"
       ],

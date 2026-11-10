@@ -1,6 +1,6 @@
 # P-0003 — A refusal must be observable, and a withdrawal must not read as a repair
 
-**Status**: `tested` (unit tests + negative controls; no live host run yet)
+**Status**: `verified` (unit tests, negative controls, plus a live host run on 2026-11-10 whose journal wrote a non-zero `refused`)
 **Severity**: minor — the repair behaviour is unchanged; what changes is whether the journal can tell the truth about it
 **Surface**: `llm/stream`
 **Depends on**: P-0001 and P-0002 (same seam; this patch only changes how the seam accounts for itself)
@@ -33,11 +33,12 @@ rescue-integrity work. This patch is that separate seam.
 - The measured adapter for this host emits no `block-end` for a tool call (session
   9045e2ec, seq 524), so the counters for the `block-end` path are proven by unit
   tests only. The `planRescue` path (the one that was measured live) is covered.
-- No live journal exists yet in which `refused` or `withdrawn` is **non-zero**. The live
-  run of 2026-11-10 (`data/results/live-2026-11-10T14-45-00.000Z.json`) does prove the
-  eight-field row is written by a real host — the `repaired` event carries
-  `refused:0, withdrawn:0` — but that stream was a clean repair, so the new buckets were
-  only ever written as zero. They stay `tested`, not `verified`.
+- The live run of 2026-11-10 does prove the **budget-refusal** branch on a real host:
+  with `maxCalls: 1` and a two-object fusion, the journal wrote
+  `{"kind":"rejected","code":"too-many-calls","detail":"2 objects exceeds the ceiling of 1"}`
+  and `fused:1, refused:1, unrepaired:1, withdrawn:0`. What is still unmeasured live is
+  the `withdrawn` bucket (a mid-stream withdrawal or a truncation on a real host); it
+  stays covered by unit tests only.
 - The four verdict states are frozen. `fused` is now honest (it means a fusion was
   actually seen), but `repaired`/`degraded` still cannot express "observed, refused,
   and correctly not repaired" — only the counters can.
@@ -117,3 +118,6 @@ node packages/plugin/dist/cli.js status --json
   (a mixed-shape journal is not migrated)
 - `data/results/live-2026-11-10T14-45-00.000Z.json` — the first real-host journal that
   writes all eight counters (`refused:0, withdrawn:0` on a clean repair)
+- `data/results/live-2026-11-10T16-30-00.000Z.json` — the first real-host journal with a
+  non-zero `refused` (budget refusal: `fused:1, refused:1, unrepaired:1`, verdict
+  `degraded`, session `turn_end=error`, no repair claimed)

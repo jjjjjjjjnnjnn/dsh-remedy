@@ -68,7 +68,7 @@
 
 ## The observability (P-0003)
 
-- Status: `tested` — unit tests and negative controls. The live run of 2026-11-10 does write all eight counters on a real host, but on a clean repair, so `refused` and `withdrawn` were only ever written as zero.
+- Status: `verified` — the live run of 2026-11-10 proves the budget-refusal branch on a real host, and the eight counters are written by the shipped code.
 - What it separates: a refusal that was never repairable, a repair that was withdrawn, and a repair that failed. Before 0.3.0 every refusal also incremented the fusion counter, so a stream whose only defect was bad JSON read as `degraded`.
 - New counters: `refused` (seen and correctly rejected, never repairable) and `withdrawn` (repairable but given up: a later block was rejected, the consumer stopped, or the stream was truncated).
 - A pure refusal raises `refused` only; it never raises `fused`.
@@ -101,6 +101,10 @@
 - 0.3.0 live run (2026-11-10): a headless `remedy-live` host running the shipped 0.3.0 tarball was asked four times to issue two tool calls in one message; the fourth task produced a real fusion. The journal holds 18 events (17 `stream` plus 1 `repaired`), the `repaired` event carrying `fused=1, repaired=1, unrepaired=0, truncated=0, errors=0, refused=0, withdrawn=0`.
 - That session shows seq 18 `call_00_6zgcmtvebmpnr8613wbr7wk9` (README.md), seq 19 `call_00_6zgcmtvebmpnr8613wbr7wk9#remedy-1` (CHANGELOG.md), the two matching tool results, and `turn/end` `kind=completed` — the synthesized call was dispatched and answered.
 - 0.3.0 live evidence: `data/results/live-2026-11-10T14-45-00.000Z.json`; tarball sha256 `5f73032548c761174aea697167c14b0ef25e1d881ddf2c6e2c0182fe73e99aeb`; DSH 0.2.2-rc.1; journal and session cross-check agree.
+- 0.3.0 refusal live run (2026-11-10): the same headless host with `maxCalls: 1` was asked to issue two tool calls in one message, and the shipped code refused instead of repairing. The journal wrote one `rejected` event with `code=too-many-calls` and `detail=2 objects exceeds the ceiling of 1`, leaving `fused=1, repaired=0, unrepaired=1, refused=1, withdrawn=0`.
+- The session that run produced has 21 events, zero tool calls, no synthetic id, and `turn_end` `kind=error`: the refusal re-threw the original failure rather than pretending to repair it.
+- That verdict was `degraded` with `1 fused call(s), 1 could not be repaired` and `the original failure was re-thrown, not swallowed`.
+- 0.3.0 refusal live evidence: `data/results/live-2026-11-10T16-30-00.000Z.json`; the same tarball; `cross_check.match` true.
 
 ## Tests and gates
 

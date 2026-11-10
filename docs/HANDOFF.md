@@ -8,7 +8,7 @@
 | 项 | 值 |
 |---|---|
 | 版本 | `dsh-remedy@0.3.0`；`dsh-remedy-core@0.3.0` |
-| 补丁 | **P-0001 `verified`**（headless + 桌面两次真机）· **P-0002 `verified`**（2026-11-10 headless 真机修好一次真实两调用粘连、合成 id 被派发执行）· **P-0003 `tested`**（负对照齐；真机写全八计数器但只写成 0） |
+| 补丁 | **P-0001 `verified`**（headless + 桌面两次真机）· **P-0002 `verified`**（2026-11-10 headless 真机修好一次真实两调用粘连、合成 id 被派发执行）· **P-0003 `verified`**（2026-11-10 headless 真机 journal 第一次写出非零 `refused`：`too-many-calls` 拒绝而不是假装修好） |
 | 基线 | **126 tests / 5 gates / `--mutate` 5-5** |
 | 包体 | **0.3.0 = 22 418 B 压缩 / 20 条目 / 74 014 B 解包**（`dist/*.js` 52 247 / `dist/*.d.ts` 13 797 / fixtures 2 694 / 包根 5 276；0.2.0 是 19 569 / 64 933，0.1.1 是 26 345 / 98 424 / 30 文件） |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1`（`v0.2.0` / `v0.3.0` 待推） |
@@ -58,6 +58,33 @@ git -C .. log --oneline -3
 
 ## 当前批次（R8 → R1）
 
+**R9（2026-11-10）· 真机把 P-0003 也升到 `verified`：拒绝被记成拒绝。**
+
+- **做了什么**：把 `remedy-live/cordis.patch.yml` 的 `maxCalls` 从 8 临时改成 **1**、`journalPath`
+  改指 `journal.jsonl`（备份在 `.tmp/live040-cordis.before.yml`），用 `.tmp/live040/drive.sh`
+  发一个「一条消息里发两个工具调用」的任务。第 2 个任务命中：代码**拒绝**而不是拆开。
+- **journal**（`.tmp/live040/journal.jsonl`，6 事件 = 5 `stream` + 1 `rejected`）：那条
+  `{"kind":"rejected","tool":"read","callId":"call_00_betg5p96i68k8c0m2tk0l4pc","code":"too-many-calls","detail":"2 objects exceeds the ceiling of 1","counters":{"streams":2,"fused":1,"repaired":0,"unrepaired":1,"truncated":0,"errors":0,"refused":1,"withdrawn":0}}`
+  —— **`refused` 第一次在真机非零**。
+- **会话侧证明**（`session-155e3d77-…`）：21 个事件、`tool_calls:0`、**没有合成 id**、
+  `turn/end` `kind=error`。拒绝就是把原失败重新抛出，不是把失败变成成功。
+- **产物**：`data/results/live-2026-11-10T16-30-00.000Z.json` + `.sha256`；
+  `cross_check.match=true`（journal_totals 与 counters 全等，2 个 group）；
+  verdict `degraded` —`1 fused call(s), 1 could not be repaired`、`the original failure was re-thrown, not swallowed`。
+- **状态变化**：P-0003 → **`verified`**（registry evidence 加这份 live、limits 第 4 条改为
+  「只证了预算拒绝路径，真机出现 `withdrawn` 仍未测」）；`audit/patch_ledger.json` P-0003 加
+  `verified_at: 2026-11-10T16:30:00.000Z`；`BS-12` note 补上「同一天用真机验过：写出
+  fused:1 refused:1 unrepaired:1 且 verdict degraded、turn_end=error，它拒绝修复并说出来了」；
+  快照重录为 `data/results/patch-registry-2026-11-10T16-45-00.000Z.json`（三个补丁全 `verified`）。
+- **补丁文档**：P-0003 的 Status 改 `verified`，Counter-evidence 里「没有非零 refused 的
+  live journal」换成「live 证的是预算拒绝这一支；`withdrawn` 仍只有单元测试」，Evidence 补
+  `live-2026-11-10T16-30-00.000Z.json`。
+- **对外文字**：事实包 P-0003 Status → `verified`、Live verification 段补三条拒绝 live 事实、
+  Tests 保持 126；7 个 prompt 的 Status 全部改成「三个补丁都 `verified`」，
+  `contributing.md` 改成「P-0002 与 P-0003 是两个走到 `verified` 的范例」，
+  `changelog.md` 的 0.3.0 Notes 改成「P-0003 同一天从 `tested` 升到 `verified`」；8 个文件重跑 copy 通道。
+- **仍然的事实**：`dist/*.js` 52 247 B / 硬上限 53 000 B；npm 上 0.3.0 还没发；桌面 App 仍需重启。
+
 **R8（2026-11-10）· 真机把 P-0002 升到 `verified`：合成调用真的被执行了。**
 
 - **做了什么**：在 `remedy-live`（headless）里装 0.3.0 tarball，用 `.tmp/live030/drive.sh`
@@ -77,8 +104,8 @@ git -C .. log --oneline -3
   「只证了 finish 路径被下游接受，自管 block 的适配器仍未测」）；`BS-11` note 重写为同一口径；
   `audit/patch_ledger.json` P-0002 加 `verified_at`；快照重录为
   `data/results/patch-registry-2026-11-10T15-10-00.000Z.json`（sha256 `762832d6…`）。
-- **P-0003 仍 `tested`**：真机只走到「干净修复」这一支，`refused`/`withdrawn` 只被写成 0。
-  要升 `verified` 必须真机出现非零的拒绝或撤回——这是 R9 的第一件事。
+- **P-0003 当时仍 `tested`**：真机只走到「干净修复」这一支，`refused`/`withdrawn` 只被写成 0。
+  要升 `verified` 必须真机出现非零的拒绝或撤回——**R9 已完成这一条**。
 - **踩坑两次**：第一次录 snapshot 是在 build 之前跑的（`dist/` 里还是旧注册表），
   `data/results/patch-registry-2026-11-10T15-00-00.000Z.json` 记成了 `P-0002:tested`；
   发现后删掉该产物、重新 `pnpm run build`、用新 stamp `15-10-00` 重录。
@@ -108,7 +135,7 @@ git -C .. log --oneline -3
   **84 个 group 后来成功、9 个以 SERVER 终局（合计 45 次失败 attempt）**。
   也就是说上游重试已经吃掉了 5xx 家族的大部分，插件再做 retry 只是噪声；
   粘连是唯一"100% 终局"的失败类。
-- **P-0003 `tested`**（`docs/patches/P-0003-refusal-observability.md`）：
+- **P-0003**（`docs/patches/P-0003-refusal-observability.md`，当时 `tested`，R9 升 `verified`）：
   `RemedyCounters` 从 6 字段长到 8（新增 `refused` / `withdrawn`），
   `judgeRemedy` 与四个 verdict 词**逐字未改**，只有计数行从 6 个名字变成 8 个。
   纯拒绝只记 `refused` 不再记 `fused` → **BS-12 关闭**；`unrepaired` 收窄为
@@ -117,7 +144,7 @@ git -C .. log --oneline -3
   截断只记 `withdrawn`。两处偏离口径的决定写在 P-0003 的 booking table 里。
 - **测试**：新增 6 条（`tests/unit/verdict.test.ts` 2 + `tests/unit/repair-stream.test.ts` 4）
   → 115 → **121**；发布脚本那轮又 +5（`tests/unit/publish.test.ts`）→ **126**。`--mutate` 5/5。
-- **台账**：registry 加 P-0003（`tested` / `minor` / `llm/stream`）、
+- **台账**：registry 加 P-0003（当时 `tested`，R9 改 `verified` / `minor` / `llm/stream`）、
   `audit/patch_ledger.json` 加条目、`audit/step_reviews.json` 加 **S10**、
   `audit/blind_spots.json` **BS-12 → closed**。快照
   `data/results/patch-registry-2026-11-10T11-00-00.000Z.json`。
@@ -210,14 +237,15 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 
 ## 下一位 agent 的第一件事
 
-**A. 主线：发布 0.3.0，然后把 P-0003 也推到 `verified`。** 0.3.0 的代码已全绿（126 tests /
-5 gates / `--mutate` 5-5），只差发布。发布之后两条路：
-1. 给 P-0003 补非零的 live 证据：P-0002 已在 R8 真机升 `verified`；P-0003 缺的只是一次
-   真机出现**非零** `refused` 或 `withdrawn` 的运行（干净修复只把它们写成 0）。
-   最省事的造法：让 `maxCalls` 配置成小值（如 1）再发一个要两个调用的任务，就会走
-   `too-many-calls` → `fused+refused+unrepaired`。注意这会改 profile 配置，需要先备份；
-2. 开 P-0004：把 `scan` 的输出去重成"每次会话一行"并加 `--since`，让用户能自己量
+**A. 主线：发布 0.3.0（npm `--otp` → push → `gh release`）。** 三个补丁都已 `verified`
+（P-0001 headless+桌面、P-0002 修好真实两调用粘连、P-0003 journal 写出非零 `refused`），
+0.3.0 的代码已全绿（126 tests / 5 gates / `--mutate` 5-5），**只差发布与推送**。
+发布之后两条路：
+1. 开 P-0004：把 `scan` 的输出去重成"每次会话一行"并加 `--since`，让用户能自己量
    （这是本机故障地图那套数字的对外版本，接缝是 `cli` + `session-scan`，不是 `llm/stream`）。
+   注意 `dist/*.js` 已 52 247 B，硬上限 53 000 B，跨线必须先把 `repair-stream.ts` 拆出接缝；
+2. 补 P-0003 的最后一个空洞：真机出现一次 `withdrawn`（中途撤回或截断）。现在只证了
+   预算拒绝这一支；要造它就在同一条流里前一个 block 可修、后一个 block 必拒。
 
 **B. 清账：桌面 profile 已换 0.3.0（R8 已完成），只差重启 App。**
 
@@ -243,8 +271,10 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | `live-desktop-2026-11-09T19-10-00.000Z.json` | 绿 | 桌面真机：39 流 / 2 修复 / `aborted`（人工停止） |
 | `patch-registry-2026-11-09T19-15-00.000Z.json` | 绿 | 历史快照（P-0001 单独） |
 | `patch-registry-2026-11-10T11-00-00.000Z.json` | 绿 | 历史快照（P-0002 仍是 `tested`） |
-| `patch-registry-2026-11-10T15-10-00.000Z.json` | 绿 | **当前**注册表快照（P-0001 + P-0002 `verified` + P-0003 `tested`） |
+| `patch-registry-2026-11-10T15-10-00.000Z.json` | 绿 | 历史快照（P-0001 + P-0002 `verified` + P-0003 仍 `tested`） |
 | `live-2026-11-10T14-45-00.000Z.json` | 绿 | 0.3.0 headless 真机：17 流 / 1 修复 / 8 计数器齐 / 合成 id 被派发（`cross_check.match`） |
+| `patch-registry-2026-11-10T16-45-00.000Z.json` | 绿 | **当前**注册表快照（P-0001 + P-0002 + P-0003 **全部 `verified`**） |
+| `live-2026-11-10T16-30-00.000Z.json` | 绿 | 0.3.0 headless 真机拒绝：5 流 / `too-many-calls` / `fused:1 refused:1 unrepaired:1` / verdict `degraded` / 会话 `turn_end=error` / 无合成 id |
 | `publish-2026-11-09T20-00-00.000Z.json` | 绿 | 0.1.0 发布（core + plugin） |
 | `publish-2026-11-10T00-10-00.000Z.json` | **红（保留）** | 0.1.1 副本延迟，记录时还看不到 |
 | `publish-2026-11-10T06-40-00.000Z.json` | 绿 | 0.1.1 settled：core 0.1.0 / plugin 0.1.1 |
@@ -311,7 +341,8 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 - 容器 `main` 未推 `dsh-triage` 远端。
 - npm 上的 `0.0.0-stage` 是发布流程的占位版本，不是 `latest`。
 - 对话里出现过的两个 npm token 应作废；仓库与 artifact 里没有它们。
-- P-0003 停在 `tested`：真机 journal 确实写出八个计数器（`live-2026-11-10T14-45-00.000Z.json`
-  的 `repaired` 事件里 `refused:0` / `withdrawn:0`），但那次是干净修复，两个新桶只被写成 0；
-  要升 `verified` 需要一次真机出现非零的拒绝或撤回。
+- P-0003 已 `verified`，但只证了**预算拒绝**那一支：`live-2026-11-10T16-30-00.000Z.json` 的
+  journal 写了 `too-many-calls` + `fused:1 refused:1 unrepaired:1 withdrawn:0`，会话 `turn_end=error`
+  且 `tool_calls:0`、无合成 id（拒绝时没有假装修好）。真机出现 `withdrawn`（中途撤回或截断）
+  仍未被测，这条写在 P-0003 的 limits 里。
 - `agent/request-error` 的 retry 仍默认关闭。

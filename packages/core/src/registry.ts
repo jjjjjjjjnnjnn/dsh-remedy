@@ -86,10 +86,11 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'RemedyMonitor.recordRejected incremented fused and unrepaired for every rejection, whatever its code (packages/plugin/src/repair-stream.ts:122-126 in 0.2.0). A refusal that never proved a fusion therefore inflated fused, which both hid quiet streams behind degraded and erased the difference between "we declined" and "we could not". Left open as BS-12 because fixing it touches the verdict counters.',
     surface: 'llm/stream',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
     evidence: [
       'docs/patches/P-0003-refusal-observability.md',
+      'data/results/live-2026-11-10T16-30-00.000Z.json',
       'tests/unit/verdict.test.ts',
       'tests/unit/repair-stream.test.ts',
     ],
@@ -103,7 +104,7 @@ export const PATCHES: readonly PatchRecord[] = [
       'does not change the four verdict states or their order: refused and withdrawn are reported, never judged',
       'cannot express "observed, refused, and correctly not repaired" in a state name; only the counter row carries it',
       'does not migrate old journal lines, which keep the six-field counter shape',
-      'cannot be verified live: this is a counters change, so the reachable evidence is unit-level',
+      'proves refused and fused on the budget-refusal path only; a live stream that moves withdrawn is still unmeasured',
     ],
   },
 ]

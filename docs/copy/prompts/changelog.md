@@ -40,8 +40,10 @@ Rules:
   repaired. Its Fixed entry is: a budget refusal also raises `unrepaired` so a
   refused-but-unrepaired stream never reads `repaired`; an abandoned stream keeps
   `fused` and `unrepaired` and also raises `withdrawn`; a truncation raises
-  `withdrawn` and never `fused`. Its Notes entry is that P-0003 is `tested`, not
-  `verified`; that P-0002 moved from `tested` to `verified` on 2026-11-10, when a
+  `withdrawn` and never `fused`. Its Notes entry is that P-0003 moved from
+  `tested` to `verified` on 2026-11-10, when a headless run with a small `maxCalls`
+  refused a real fusion and the journal wrote `refused=1`; that P-0002 moved from
+  `tested` to `verified` the same day, when a
   headless run repaired a real two-call fusion and the synthesized call was
   dispatched and answered; that `dsh-remedy-core` moves to 0.3.0 with the same
   engine, and that the package size moved from the 0.2.0 tarball to the 0.3.0

@@ -21,6 +21,8 @@ human reviewer.
 
 | `deepseek-v4.1-flash-eco-2026-11-10-dsh-remedy` | DeepSeek V4.1 Flash Eco (DSH) | 2026-11-10 | `packages/core/src/{reseal,toolcall-repair,verdict,index,registry}.ts`, `packages/plugin/src/{repair-stream,stream-types,failure-text,cli}.ts`, `tests/unit/{reseal,verdict,toolcall-repair,repair-stream,publish}.test.ts`, `tests/e2e/cli.test.ts`, `data/fixtures/toolcall-fusion/bare-code-value.json`, `docs/patches/P-0005-bare-value-reseal.md`, `audit/{patch_ledger,step_reviews}.json`, `data/results/patch-registry-2026-11-10T18-55-00.000Z.json` | P-0005 bare-value reseal, the ninth counter, the seam split, and the 0.3.2 batch record | The reseal accepts only when exactly one segment reproduces the whole text as one plain object with a byte-identical payload, refuses at zero or two-or-more candidates, and keeps the call id; `P-0005` is recorded `tested`, never `verified`, because no live host has produced the shape; the moved doc comments are byte-identical, so the split is a pure move |
 
+| `deepseek-v4.1-flash-eco-2026-11-10-dsh-remedy` | DeepSeek V4.1 Flash Eco (DSH) | 2026-11-10 | `docs/research/bare-value-reseal-2026-11-10.md` | The evidence note for P-0005: why one shape is resealed and five are refused | Every number is copied from `.tmp/probe-args-shapes2.mjs`, `.tmp/probe-salvage.mjs` and `.tmp/probe-quote-literal.mjs`; the failed escape-repair attempt is recorded as a dead end rather than quietly dropped; the document states that P-0005 stays `tested` because it rests on one sample |
+
 ## Rules
 
 1. A file that was not typed by a human is listed here before it is committed.

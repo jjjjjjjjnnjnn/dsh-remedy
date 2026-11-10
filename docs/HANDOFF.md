@@ -108,7 +108,10 @@ git -C .. log --oneline -3
   段 10 条；7 个 prompt 同步（readme 与 readme.zh 的安装与 Status 都改成 0.3.2，
   changelog 加 `## [0.3.2]`，metadata release_blurb 改 0.3.2 并写明 P-0005 是 tested，
   templates 版本占位改 0.3.2，contributing 指名 P-0005 是 tested 范例）。
-- **仍未做**：0.3.2 未打包实测、未上 npm、未 push；P-0005 仍 `tested`（无 live）。
+- **证据笔记**：`docs/research/bare-value-reseal-2026-11-10.md`（写清「唯一候选才修、0 与 ≥2 都拒」的
+  逐条来源，并把「转义修复 0/5」这条死路留在纸上，免得后人重试）。
+- **仍未做**：0.3.2 已打包实测、已提交并推送到公开仓库（CI 绿）、两个本地 profile 已装成 0.3.2，
+  **只差 npm 发布**；P-0005 仍 `tested`（无 live）。
 
 **R10（2026-11-10）· 0.3.0 被 npm 写坏，用 0.3.1 修**
 

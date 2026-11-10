@@ -11,7 +11,7 @@
 - Version: 0.3.2 (plugin), 0.3.2 (core)
 - License: MIT
 - Repository: https://github.com/jjjjjjjjnnjnn/dsh-remedy (public, created 2026-11-09)
-- npm: `dsh-remedy-core@0.3.0` is published. `dsh-remedy@0.3.0` reached the registry with a literal `workspace:*` dependency because npm published the raw workspace manifest, so installing it fails with `EUNSUPPORTEDPROTOCOL`; 0.3.1 republishes the same code from a pnpm-packed tarball and is the version to install. The npm badge shows the current latest.
+- npm: `dsh-remedy-core@0.3.0` is published. `dsh-remedy@0.3.0` reached the registry with a literal `workspace:*` dependency because npm published the raw workspace manifest, so installing it fails with `EUNSUPPORTEDPROTOCOL`; 0.3.2 republishes the same code from a pnpm-packed tarball and is the version to install. 0.3.1 was built with the same manifest fix but never reached the registry. The npm badge shows the current latest.
 - Independent project; not affiliated with DeepSeek.
 - Language of code and CLI: English. Chinese README is a translation.
 

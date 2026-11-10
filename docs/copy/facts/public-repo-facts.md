@@ -8,10 +8,10 @@
 - Name: dsh-remedy
 - Tagline (internal, not final copy): a resident repair layer for DeepSeek Harness.
 - Package names: `dsh-remedy` (plugin), `dsh-remedy-core` (engine).
-- Version: 0.1.0
+- Version: 0.1.1 (plugin), 0.1.0 (core)
 - License: MIT
 - Repository: https://github.com/jjjjjjjjnnjnn/dsh-remedy (public, created 2026-11-09)
-- npm: `dsh-remedy` and `dsh-remedy-core` are published at 0.1.0 (2026-11-09); `latest` is 0.1.0.
+- npm: 0.1.x is published (`dsh-remedy` and `dsh-remedy-core`); the npm badge shows the current latest.
 - Independent project; not affiliated with DeepSeek.
 - Language of code and CLI: English. Chinese README is a translation.
 
@@ -67,10 +67,11 @@
 
 ## Tests and gates
 
-- Tests: 95 pass, 0 fail.
+- Tests: 97 pass, 0 fail.
 - Gates: 5 (`ssot`, `registry`, `namespace`, `step-review`, `copy`).
 - Negative controls (`--mutate`): 5 of 5 caught.
 - Fixtures: 5, including one real fused call and one counter-evidence call.
+- The plugin tarball ships `fixtures/`; `dsh-remedy verify` works from an installed copy (0.1.1).
 - Test command: `pnpm run verify` (build, typecheck, test, gate).
 - Negative-control command: `node scripts/gate.mjs --mutate`.
 - Copy gate: every externally visible file must match the recorded manifest hash and the current fact pack.
@@ -117,4 +118,4 @@
 
 ## Numbers allowed in copy
 
-0 1 2 3 4 5 6 7 8 9 10 11 19 22 27 37 39 47 79 86 95 4427 0.1.0 0.2.0 0.3.0
+0 1 2 3 4 5 6 7 8 9 10 11 19 22 27 37 39 47 79 86 95 97 4427 0.1.0 0.1.1 0.2.0 0.3.0

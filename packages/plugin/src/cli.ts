@@ -16,7 +16,7 @@ import { createHash } from 'node:crypto'
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { basename, resolve } from 'node:path'
 import process from 'node:process'
-import { pathToFileURL } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import {
   formatRemedyVerdict,
   judgeRemedy,
@@ -106,8 +106,16 @@ function readInput(file: string | undefined): { text: string; name?: string; id?
   return { text }
 }
 
-function fixtureDir(): URL {
-  return new URL('../../../data/fixtures/toolcall-fusion/', import.meta.url)
+function fixtureDir(): URL | null {
+  // Installed tarball: dist/../fixtures; source checkout: dist/../../../data.
+  const candidates = [
+    new URL('../fixtures/toolcall-fusion/', import.meta.url),
+    new URL('../../../data/fixtures/toolcall-fusion/', import.meta.url),
+  ]
+  for (const candidate of candidates) {
+    if (existsSync(fileURLToPath(candidate))) return candidate
+  }
+  return null
 }
 
 interface Fixture {
@@ -257,6 +265,10 @@ interface VerifyCase {
 
 function cmdVerify(args: Args): number {
   const dir = fixtureDir()
+  if (dir === null) {
+    process.stderr.write('verify: fixtures unavailable; run from a source checkout or reinstall the package\n')
+    return EXIT_UNAVAILABLE
+  }
   let names: string[]
   try {
     names = readdirSync(dir).filter((name) => name.endsWith('.json')).sort()

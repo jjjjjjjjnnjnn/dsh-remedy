@@ -12,15 +12,16 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
-## [0.1.0] - 2026-11-09
-### Added
+## [0.1.1] - 2026-11-10
 ### Fixed
-### Verified
 ### Notes
 ```
 
 Rules:
 
+- Add a `0.1.1` section above `0.1.0`. Its Fixed entry is: the published 0.1.0
+  tarball omitted the fixtures, so `dsh-remedy verify` failed from an installed
+  copy; 0.1.1 ships `fixtures/` and the CLI resolves them from the package.
 - `0.1.0` is the first release and is published to npm for both packages; say so
   under Notes, not under Added.
 - Added: the `llm/stream` wrapper, the splitter, the CLI commands, the session

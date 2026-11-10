@@ -80,7 +80,7 @@ All-or-nothing rule: if any buffer cannot be proven, nothing is emitted and the 
 
 ## Safety guarantees
 
-- All-or-nothing: if any buffer cannot be proven, nothing is emitted and the original failure is re-thrown.
+- If any buffer cannot be proven, nothing is emitted and the original failure is re-thrown.
 - A single object that fails to parse is rejected, not split.
 - `}{` inside a JSON string is not a boundary.
 - A `max-tokens` truncation is never repaired.
@@ -99,7 +99,7 @@ All-or-nothing rule: if any buffer cannot be proven, nothing is emitted and the 
 | Host message localization | The message fallback parses the English `Received arguments:` text; a localized host message disables that fallback, but the delta buffer path still works. |
 | Synthetic identities | Synthetic ids are traceability aids, not durable identities. |
 | Desktop turn status | The desktop turn was stopped by the operator after the task answer; the artifact records `turn_end=aborted` instead of claiming completion. |
-| Desktop app cache | Verification applies to the recorded tarball `sha256`, not to whatever a running desktop app has cached. |
+| Desktop app cache | Verification applies to the recorded tarball sha256, not to whatever a running desktop app has cached. |
 
 ## Verify it yourself
 
@@ -126,7 +126,7 @@ data/results/live-desktop-2026-11-09T19-10-00.000Z.json
 
 ## Status
 
-Version 0.1.0 is published to npm (`dsh-remedy` and `dsh-remedy-core`). Verified on a headless profile (`remedy-live`) and the desktop app.
+0.1.x is published to npm (`dsh-remedy` and `dsh-remedy-core`). Verified on a headless profile (`remedy-live`) and the desktop app.
 
 Headless verification (`remedy-live` profile, Windows):
 - Runs: 2
@@ -149,7 +149,7 @@ Desktop app verification (`desktop` profile, app restarted):
 - Turn outcome: `turn_end=aborted` (stopped by operator after the answer)
 
 Test suite and gates:
-- Tests: 95 pass, 0 fail
+- Tests: 97 pass, 0 fail
 - Gates: 5 pass, 5 of 5 negative controls caught
 
 ## Development
@@ -168,7 +168,7 @@ Repository layout:
 - `scripts/`: gates and recorders, Node built-ins only.
 - `tests/`: unit, governance, e2e (5 fixtures).
 - `data/fixtures`: real fused text, counter-evidence, negative controls.
-- `data/results`: script-produced evidence with `sha256` sidecars.
+- `data/results`: script-produced evidence with sha256 sidecars.
 - `audit/`: gate ledger, patch ledger, step reviews, blind spots, AI disclosure.
 - `docs/`: handoff, patch record, ADR, copy channel.
 
@@ -189,6 +189,6 @@ Security reports should use GitHub private vulnerability reporting on the public
 
 ## License
 
-MIT.
+MIT
 
 Independent project; not affiliated with DeepSeek.

@@ -46,8 +46,9 @@ Rules:
   in FACTS.
 - "What it does not do": a Markdown table with a row per limit from FACTS.
 - "Verify it yourself": copy-pasteable commands and the real artifact path.
-- "Status": 0.1.0 is published to npm (`dsh-remedy` and `dsh-remedy-core`),
-  verified on a headless profile and the desktop app.
+- "Status": 0.1.x is published to npm (`dsh-remedy` and `dsh-remedy-core`),
+  verified on a headless profile and the desktop app. Do not hardcode a patch
+  version; the npm badge is the version.
 - "Development": the exact commands from FACTS.
 - Link to `README.zh-CN.md` near the top for Chinese readers.
 - End with MIT and "not affiliated with DeepSeek".

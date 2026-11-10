@@ -1,6 +1,6 @@
 {
   "name": "dsh-remedy",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DeepSeek Harness plugin that intercepts stream errors caused by fused tool calls, splits glued top-level JSON objects, and re-throws unprovable buffers.",
   "type": "module",
   "bin": {
@@ -25,6 +25,7 @@
   },
   "files": [
     "dist",
+    "fixtures",
     "cordis.patch.yml",
     "README.md"
   ],
@@ -59,7 +60,8 @@
     "dsh-remedy-core": "workspace:*"
   },
   "scripts": {
-    "build": "tsc -b"
+    "build": "tsc -b",
+    "prepack": "node ../../scripts/sync_fixtures.mjs"
   },
   "homepage": "https://github.com/jjjjjjjjnnjnn/dsh-remedy#readme",
   "bugs": {

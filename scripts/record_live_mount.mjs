@@ -72,7 +72,19 @@ const attemptsDoc =
     : JSON.parse(readFileSync(abs(attemptsPath), 'utf8'))
 const attempts = Array.isArray(attemptsDoc.attempts) ? attemptsDoc.attempts : []
 
-const counterKeys = ['streams', 'fused', 'repaired', 'unrepaired', 'truncated', 'errors']
+// P-0003 added `refused` and `withdrawn`. A journal written by an older build
+// simply reports undefined for them, which `?? 0` folds to zero, so this list
+// can carry the full vocabulary without making old artifacts unreadable.
+const counterKeys = [
+  'streams',
+  'fused',
+  'repaired',
+  'unrepaired',
+  'truncated',
+  'errors',
+  'refused',
+  'withdrawn',
+]
 const emptyCounters = () => Object.fromEntries(counterKeys.map((key) => [key, 0]))
 
 // Per-attempt counters are the final cumulative snapshot of one process, so
@@ -95,12 +107,9 @@ for (const event of journalEvents) {
     group = emptyCounters()
     journalGroups.push(group)
   }
-  group.streams = Math.max(group.streams, event.counters?.streams ?? 0)
-  group.fused = Math.max(group.fused, event.counters?.fused ?? 0)
-  group.repaired = Math.max(group.repaired, event.counters?.repaired ?? 0)
-  group.unrepaired = Math.max(group.unrepaired, event.counters?.unrepaired ?? 0)
-  group.truncated = Math.max(group.truncated, event.counters?.truncated ?? 0)
-  group.errors = Math.max(group.errors, event.counters?.errors ?? 0)
+  for (const key of counterKeys) {
+    group[key] = Math.max(group[key], event.counters?.[key] ?? 0)
+  }
 }
 for (const groupCounters of journalGroups) {
   for (const key of counterKeys) journalTotals[key] += groupCounters[key]

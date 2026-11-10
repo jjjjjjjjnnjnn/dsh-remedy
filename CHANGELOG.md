@@ -18,6 +18,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ### Notes
 - P-0003 is `tested`, not `verified`.
+- P-0002 moved from `tested` to `verified` on 2026-11-10, when a headless run repaired a real two-call fusion and the synthesized call was dispatched and answered.
 - `dsh-remedy-core` moves to 0.3.0 with the same engine.
 - The package size moved from the 0.2.0 tarball (19569 bytes compressed, 64933 bytes unpacked) to the 0.3.0 tarball (22418 bytes compressed, 74014 bytes unpacked).
 

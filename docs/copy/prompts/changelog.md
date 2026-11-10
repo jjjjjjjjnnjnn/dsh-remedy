@@ -41,8 +41,11 @@ Rules:
   refused-but-unrepaired stream never reads `repaired`; an abandoned stream keeps
   `fused` and `unrepaired` and also raises `withdrawn`; a truncation raises
   `withdrawn` and never `fused`. Its Notes entry is that P-0003 is `tested`, not
-  `verified`, that `dsh-remedy-core` moves to 0.3.0 with the same engine, and that
-  the package size moved from the 0.2.0 tarball to the 0.3.0 tarball.
+  `verified`; that P-0002 moved from `tested` to `verified` on 2026-11-10, when a
+  headless run repaired a real two-call fusion and the synthesized call was
+  dispatched and answered; that `dsh-remedy-core` moves to 0.3.0 with the same
+  engine, and that the package size moved from the 0.2.0 tarball to the 0.3.0
+  tarball.
 - Add a `0.2.0` section above `0.1.1`. Its Added entry is P-0002: an empty tool
   name is rejected (`missing-name`), a tool name that changes inside one index
   aborts the rescue (`name-changed`), a repaired `finish` keeps the adapter

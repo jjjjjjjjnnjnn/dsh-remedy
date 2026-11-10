@@ -56,11 +56,12 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'Repair-stream used to commit each block-end repair as it arrived, kept only the last tool name seen on an index, and emitted {kind:"stop"} without the adapter replayState. None of these break the JSON proof, so P-0001 called them repaired while the runtime could still dispatch the wrong call.',
     surface: 'llm/stream',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
     evidence: [
       'docs/patches/P-0002-rescue-integrity.md',
       'data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json',
+      'data/results/live-2026-11-10T14-45-00.000Z.json',
       'tests/unit/toolcall-repair.test.ts',
       'tests/unit/repair-stream.test.ts',
     ],
@@ -72,7 +73,7 @@ export const PATCHES: readonly PatchRecord[] = [
     ],
     limits: [
       'cannot prove the atomic-commit path live on this host: the measured adapter never emits block-end for a tool call',
-      'cannot prove downstream acceptance of a synthesized block-start; the measured adapter does not rely on opened blocks (BS-11)',
+      'proves downstream acceptance of a synthesized block-start only on the finish path; an adapter that closes blocks itself is still unmeasured (BS-11)',
       'treats a tool name that arrives twice with different values as unrepairable, so a legitimate adapter bug stays a failure',
       'leaves the verdict vocabulary untouched: until P-0003 every rejection was counted as fused, so a non-fusion syntax error read as degraded (BS-12, closed by P-0003)',
     ],

@@ -54,7 +54,7 @@
     {
       "id": "BS-11",
       "status": "open",
-      "note": "A split-out call is emitted as a block-end on a fresh index with no companion block-start. The measured adapter never closes tool-call blocks at all, so this shape has not been live-tested; an adapter that relies on opened blocks could reject it. P-0002 cannot close this from the stream seam alone."
+      "note": "A split-out call is emitted as a block-start plus a block-end on a fresh index. The live run of 2026-11-10 (data/results/live-2026-11-10T14-45-00.000Z.json) proves the finish-path sequence is accepted: the synthetic id call_00_6zgcmtvebmpnr8613wbr7wk9#remedy-1 was dispatched as a read call and answered. What stays open is narrower: the measured adapter never closes tool-call blocks itself, so an adapter with its own index bookkeeping that relies on opened blocks is still unmeasured."
     },
     {
       "id": "BS-12",

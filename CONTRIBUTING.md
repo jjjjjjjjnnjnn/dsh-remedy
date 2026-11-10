@@ -47,7 +47,7 @@ Follow the five steps in order:
 4. Live-verify before moving status to `verified`.
 5. Record the registry snapshot and update the ledger.
 
-P-0002 and P-0003 are the worked examples of a `tested` patch: each has negative controls, a registry entry and an audited blind-spot list, and each stays `tested` because no live artifact exists for it.
+P-0002 is the worked example of a patch that went all the way to `verified` (it has a live artifact). P-0003 is the worked example of a `tested` patch: negative controls, a registry entry and an audited blind-spot list, but no live artifact that shows the new counters moving off zero.
 
 ## Pull requests
 

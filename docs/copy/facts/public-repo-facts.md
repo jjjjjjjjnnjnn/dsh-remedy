@@ -55,7 +55,7 @@
 
 ## The hardening (P-0002)
 
-- Status: `tested` — unit tests and negative controls only. No live artifact exists for this patch, so it is not `verified`.
+- Status: `verified` — the live run of 2026-11-10 repaired a real two-call fusion end to end (see Live verification).
 - What it refuses: an empty tool name (`missing-name`), a tool name that changes inside one index (`name-changed`), and a `max-tokens` tail.
 - What it preserves: the adapter `replayState` on a repaired `finish`.
 - What it makes atomic: a `block-end` repair is held until the tool-call phase ends; if a later block in the same stream is rejected, the repair is withdrawn (`rolled-back`) and the original chunks go out.
@@ -68,7 +68,7 @@
 
 ## The observability (P-0003)
 
-- Status: `tested` — unit tests and negative controls only. No live artifact exists for this patch, so it is not `verified`.
+- Status: `tested` — unit tests and negative controls. The live run of 2026-11-10 does write all eight counters on a real host, but on a clean repair, so `refused` and `withdrawn` were only ever written as zero.
 - What it separates: a refusal that was never repairable, a repair that was withdrawn, and a repair that failed. Before 0.3.0 every refusal also incremented the fusion counter, so a stream whose only defect was bad JSON read as `degraded`.
 - New counters: `refused` (seen and correctly rejected, never repairable) and `withdrawn` (repairable but given up: a later block was rejected, the consumer stopped, or the stream was truncated).
 - A pure refusal raises `refused` only; it never raises `fused`.
@@ -98,6 +98,9 @@
 - First mount failed with `stream is not async iterable`: `llm/stream` is a synchronous waterfall and an `async` listener returns a Promise. Fixed; pinned by a unit test.
 - Desktop profile: the same tarball was installed with `dsh plugin --profile desktop add`, the app was restarted, and the desktop process repaired 2 fused calls across 39 streams with 0 unrepaired.
 - Desktop evidence: `data/results/live-desktop-2026-11-09T19-10-00.000Z.json`. The attached session shows `call_00_eurpysgrncrqocrhr4ao3uvi#remedy-1`; the turn was stopped by the operator after the answer and the artifact records `turn_end=aborted`.
+- 0.3.0 live run (2026-11-10): a headless `remedy-live` host running the shipped 0.3.0 tarball was asked four times to issue two tool calls in one message; the fourth task produced a real fusion. The journal holds 18 events (17 `stream` plus 1 `repaired`), the `repaired` event carrying `fused=1, repaired=1, unrepaired=0, truncated=0, errors=0, refused=0, withdrawn=0`.
+- That session shows seq 18 `call_00_6zgcmtvebmpnr8613wbr7wk9` (README.md), seq 19 `call_00_6zgcmtvebmpnr8613wbr7wk9#remedy-1` (CHANGELOG.md), the two matching tool results, and `turn/end` `kind=completed` — the synthesized call was dispatched and answered.
+- 0.3.0 live evidence: `data/results/live-2026-11-10T14-45-00.000Z.json`; tarball sha256 `5f73032548c761174aea697167c14b0ef25e1d881ddf2c6e2c0182fe73e99aeb`; DSH 0.2.2-rc.1; journal and session cross-check agree.
 
 ## Tests and gates
 
@@ -147,7 +150,7 @@
 - Verification applies to the recorded tarball sha256, not to whatever a running desktop app has cached.
 - The verdict word cannot express `observed and correctly refused`; only the counter line can. A stream whose only defect was bad JSON now reads `quiet`.
 - Existing journal lines are not migrated; in a mixed journal `status --json` reports the shape of the last line.
-- A synthesized tool call now opens its own `block-start`, but whether the downstream accepts that synthetic block is not proven live (blind spot `BS-11`).
+- A synthesized tool call now opens its own `block-start`, and the live run of 2026-11-10 proves the finish path is accepted downstream; an adapter that closes blocks itself and keeps its own index bookkeeping is still unmeasured (blind spot `BS-11`).
 - The retry fallback on `agent/request-error` defaults to 0 and is a stop-gap, not the fix; the 0.3.0 sample shows the host already retries the server-error family (84 of 93 failing groups were followed by a successful attempt in the same turn).
 - The sample behind the 0.3.0 numbers is one machine and one account over a fixed cutoff; a different cutoff yields a different total.
 

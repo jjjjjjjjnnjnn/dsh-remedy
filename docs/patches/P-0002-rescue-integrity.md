@@ -1,6 +1,6 @@
 # P-0002 — A rescue must be provable, attributable and atomic
 
-**Status**: `tested` (unit tests + negative controls; no live host run yet)
+**Status**: `verified` (unit tests, negative controls, plus a live host run on 2026-11-10 that replayed a two-call fusion end to end)
 **Severity**: major — a "repaired" turn can be dispatched to the wrong tool or replay with different state
 **Surface**: `llm/stream`
 **Depends on**: P-0001 (this patch hardens the same seam; it does not widen it)
@@ -30,7 +30,8 @@ and `maxCalls` is a per-block ceiling, so one stream can still synthesize `block
 
 - The measured adapter for this host never emits `block-end` for a tool call (session
   9045e2ec, seq 524: `block-start` → `tool-call-delta`* → `usage` → `finish{error}`).
-  The atomic-commit change therefore cannot be proven live on this host; it is a guard
+  The atomic-commit change therefore cannot be proven live *on that path*; the live run
+  below exercises the `finish{error}` rescue path instead. Atomic commit remains a guard
   for adapters that do close blocks (`BS-11`).
 - In the 50-session sample no index ever carried two different tool names
   (`.tmp/probe-names.mjs`: `multiNameCount=0`). The name guard is a refusal for a shape
@@ -80,10 +81,29 @@ and `maxCalls` is a per-block ceiling, so one stream can still synthesize `block
   split point is rejected by the splitter, a complete-looking tail is still indistinguishable,
   so the copy says "a stream marked `max-tokens` is never repaired".
 - Attribution of the stage that glued the objects (unchanged).
-- Whether a new `block-start` on a fresh index is accepted downstream: the measured adapter
-  does not rely on opened blocks at all, so the shape has not been live-tested. The output is
-  now a well-formed block sequence instead of a bare `block-end`, but an adapter with its own
-  index bookkeeping could still object (`BS-11`).
+- Whether a new `block-start` on a fresh index is accepted downstream: the live run
+  below proves the finish path emits a well-formed block sequence and the runtime
+  dispatched both calls, but an adapter with its own index bookkeeping that closes
+  blocks itself is still unmeasured (`BS-11`).
+
+## Live evidence (2026-11-10)
+
+A headless `remedy-live` host running `dsh-remedy@0.3.0` was asked, four times, to issue
+two independent tool calls in one message. The fourth task produced a real fusion
+(`fused=1`) and the seam repaired it:
+
+- journal `.tmp/live030/journal.jsonl`: 18 events = 17 `stream` + 1 `repaired`, the
+  `repaired` event carrying `{"tool":"read","callId":"call_00_6zgcmtvebmpnr8613wbr7wk9","fragments":2,"counters":{"streams":2,"fused":1,"repaired":1,"unrepaired":0,"truncated":0,"errors":0,"refused":0,"withdrawn":0}}`
+- the session then shows seq 18 `tool/call` `call_00_6zgcmtvebmpnr8613wbr7wk9` (README.md),
+  seq 19 `tool/call` `call_00_6zgcmtvebmpnr8613wbr7wk9#remedy-1` (CHANGELOG.md),
+  seq 20/21 the two matching `tool/result`s, seq 26 `turn/end {kind:'completed'}`
+- recorded as `data/results/live-2026-11-10T14-45-00.000Z.json` (tarball sha256
+  `5f73032548c761174aea697167c14b0ef25e1d881ddf2c6e2c0182fe73e99aeb`, `dsh 0.2.2-rc.1`,
+  `cross_check.match true`, session sha256 `8c1319885d53424d82b7ffe66767f1e78d23af34ec8a783dc44d8800abe3185f`)
+
+That run proves the synthesized id is dispatched and answered — the property P-0002 exists
+to guarantee. It does not prove the atomic-commit path, because this adapter never closes
+a tool-call block (`BS-11`).
 
 ## Reproduction
 
@@ -95,6 +115,7 @@ node packages/plugin/dist/cli.js verify
 ## Evidence
 
 - `docs/patches/P-0002-rescue-integrity.md` — this file
+- `data/results/live-2026-11-10T14-45-00.000Z.json` — the live repair (journal + session cross-check)
 - `data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json` — the real fused text whose
   two objects belong to two different tools
 - `tests/unit/toolcall-repair.test.ts` — `missing-name` negative control

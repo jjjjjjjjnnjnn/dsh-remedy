@@ -2,7 +2,7 @@
 
 ## Our Pledge
 
-We as members, contributors, and leaders pledge to make participation in the dsh-remedy contributors a harassment-free experience for everyone, regardless of age, body size, visible or invisible disability, ethnicity, sex characteristics, gender identity and expression, level of experience, education, socio-economic status, nationality, personal appearance, race, caste, color, religion, or sexual identity and orientation.
+We as the dsh-remedy contributors pledge to make participation in our community a harassment-free experience for everyone, regardless of age, body size, visible or invisible disability, ethnicity, sex characteristics, gender identity and expression, level of experience, education, socio-economic status, nationality, personal appearance, race, caste, color, religion, or sexual identity and orientation.
 
 We pledge to act and interact in ways that contribute to an open, welcoming, diverse, inclusive, and healthy community.
 
@@ -26,29 +26,29 @@ Examples of unacceptable behavior include:
 
 ## Enforcement Responsibilities
 
-Maintainers are responsible for clarifying and enforcing our standards of acceptable behavior and will take appropriate and fair corrective action in response to any behavior that they deem inappropriate, threatening, offensive, or harmful.
+The repository maintainers are responsible for clarifying and enforcing our standards of acceptable behavior and will take appropriate and fair corrective action in response to any behavior that they deem inappropriate, threatening, offensive, or harmful.
 
-Maintainers may remove, edit, or reject contributions that do not follow this Code of Conduct, including issues, pull requests, discussions, comments, commits, and code, and will communicate reasons for moderation decisions when appropriate.
+The repository maintainers may remove, edit, or reject comments, commits, code, issues, pull requests, discussions, and other contributions that do not follow this Code of Conduct, and will communicate reasons for moderation decisions when appropriate.
 
 ## Scope
 
-This Code of Conduct applies within all community spaces, including issues, pull requests, and discussions, and also applies in any space where someone represents the project.
+This Code of Conduct applies within all community spaces, including issues, pull requests, discussions, and any space where someone represents the project. Examples of representing the project include using an official project account, posting via an official account, or acting as an appointed representative at an online or offline event.
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the repository maintainers through GitHub. All complaints will be reviewed and investigated fairly.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the repository maintainers through GitHub. All complaints will be reviewed and investigated promptly and fairly.
 
-Maintainers are obligated to respect the privacy and security of the reporter of any incident.
+The repository maintainers are obligated to respect the privacy and security of the reporter of any incident.
 
 ## Enforcement Guidelines
 
-Maintainers will follow these Enforcement Guidelines in determining the consequences for any action they deem in violation of this Code of Conduct:
+The repository maintainers will follow these Community Impact Guidelines in determining the consequences for any action they deem in violation of this Code of Conduct:
 
 ### 1. Correction
 
 **Community Impact**: Use of inappropriate language or other behavior deemed unprofessional or unwelcome in the community.
 
-**Consequence**: A private, written warning from maintainers, providing clarity around the nature of the violation and an explanation of why the behavior was inappropriate. A public apology may be requested.
+**Consequence**: A private, written warning from repository maintainers, providing clarity around the nature of the violation and an explanation of why the behavior was inappropriate. A public apology may be requested.
 
 ### 2. Warning
 
@@ -66,8 +66,8 @@ Maintainers will follow these Enforcement Guidelines in determining the conseque
 
 **Community Impact**: Demonstrating a pattern of violation of community standards, including sustained inappropriate behavior, harassment of an individual, or aggression toward or disparagement of classes of individuals.
 
-**Consequence**: A permanent ban from any sort of public interaction with the community.
+**Consequence**: A permanent ban from any sort of public interaction within the community.
 
 ## Attribution
 
-This Code of Conduct is adapted from the Contributor Covenant, version 2.1, available at https://www.contributor-covenant.org/version/2/1/code_of_conduct.html.
+This Code of Conduct is adapted from the Contributor Covenant, version 2.1, available at https://www.contributor-covenant.org/version/2/1/code_of_conduct.html

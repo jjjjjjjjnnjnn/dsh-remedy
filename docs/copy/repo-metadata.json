@@ -13,6 +13,6 @@
     "plugin",
     "typescript"
   ],
-  "release_blurb": "### 0.3.0\n\nRelease 0.3.0 of dsh-remedy. Patch P-0001 is verified on a real host across 2 runs and 10 observed streams. Patches P-0002 and P-0003 are `tested` with negative controls and have no live artifact yet. The counter line now carries eight names while the four verdict words are unchanged.\n\nLive evidence: [data/results/live-2026-11-09T17-00-00.000Z.json](data/results/live-2026-11-09T17-00-00.000Z.json)",
+  "release_blurb": "### 0.3.0\n\nRelease 0.3.0 of dsh-remedy. Patches P-0001 and P-0002 are verified on a real host. Patch P-0003 is `tested` with negative controls (a live host writes the eight counters but only as zeros on a clean repair). The counter line now carries eight names while the four verdict words are unchanged.\n\nLive evidence: [data/results/live-2026-11-10T14-45-00.000Z.json](data/results/live-2026-11-10T14-45-00.000Z.json)",
   "social_preview": "Diagram showing dsh-remedy intercepting fused tool calls in DeepSeek Harness and splitting glued JSON objects into discrete invocations."
 }

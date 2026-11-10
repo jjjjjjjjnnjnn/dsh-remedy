@@ -8,7 +8,7 @@
 
 [English](README.md) | [中文说明](README.zh-CN.md)
 
-DeepSeek Harness 的常驻处置层。当上游模型中继将两个工具调用推入同一个 delta 索引时，DeepSeek Harness 会以 `MALFORMED_RESPONSE` 中断当前轮次。dsh-remedy 拦截该流，证明各个顶层 JSON 对象的边界，分发拆分后的干净工具调用，使轮次正常完成。若任意载荷无法被证明，dsh-remedy 拒绝猜测并原样重新抛出原始失败。
+DeepSeek Harness 的常驻处置层。当上游模型中继将两个工具调用推入同一个 delta 索引时，DeepSeek Harness 会以 `MALFORMED_RESPONSE` 中断当前轮次。dsh-remedy 拦截该流，证明各个顶层 JSON 对象的边界，发出干净的工具调用，使轮次正常完成。若任意载荷无法被证明，dsh-remedy 拒绝猜测并原样重新抛出原始失败。
 
 ## 它修什么
 
@@ -74,25 +74,25 @@ Repaired stream:
 - 若任意缓冲区无法被证明，不分发任何内容并原样重新抛出原始失败。
 - 单个无法解析的对象直接拒绝，绝不切分。
 - JSON 字符串内部的 `}{` 不会被视作边界。
-- 工具名从未到达的调用直接拒绝，绝不分发给空名称（`missing-name`）。
+- 首个调用保留原始 id；合成 id 使用 `<id>#remedy-N`。
+- 插件仅挂载 1 行（`remedy-stream`），不增加任何路由、工具或 UI。
+- 除非配置了 `journalPath`，插件不向磁盘写入任何内容。
+- `retryOnMalformed` 默认为 0：重试只是权宜之计，不是修复。
+- 工具名从未到达的调用直接拒绝（`missing-name`），绝不分发给空名称。
 - 同一个索引内发生变更的工具名会中止救援，原样重新抛出原始失败（`name-changed`）。
 - 修复后的 `finish` 保留适配器的 `replayState`。
 - `block-end` 修复会暂扣至工具调用阶段结束；同流后续若出现拒绝则整体撤回（`rolled-back`）并吐出原始 chunk。
 - `maxCalls` 限制整条流合成调用的总预算，而非单个 block 的上限。
 - 消费者提前停止的流记录为消费者中止（`consumer-abort`），而非记为 quiet。
 - 合成 call 一定带 `block-start` 与 `block-end`，绝不分发裸 `block-end`。
-- 撤回的修复将调用额度返还给整条流的 `maxCalls` 预算。
+- 撤回的修复把预算还给整条流的 `maxCalls` 预算。
 - `max-tokens` 截断绝不修复，且只记为 truncated，不算未修复的粘连。
 - 透传的 provider 错误计入 `errors`。
-- 除非配置了 `journalPath`，插件不向磁盘写入任何内容。
-- 插件仅挂载 1 行（`remedy-stream`），不增加任何路由、工具或 UI。
-- 首个调用保留原始 id；合成 id 使用 `<id>#remedy-N`。
-- `retryOnMalformed` 默认为 0：重试只是权宜之计，不是修复。
-- 纯拒绝只增加 `refused`，绝不增加 `fused`。
-- 预算拒绝（`too-many-calls`）同时增加 `fused`、`refused` 与 `unrepaired`，因此拒了也没修的流绝不会读成 `repaired`。
+- 纯拒绝只加 `refused`，绝不加 `fused`。
+- 预算拒绝（`too-many-calls`）同时加 `fused`、`refused` 与 `unrepaired`，所以拒了也没修的流绝不会读成 `repaired`。
 - 消费者提前停止的流（`consumer-abort`）保留 `fused` 与 `unrepaired`，并另加 `withdrawn`。
-- 截断流只增加 `withdrawn`，绝不增加 `fused`。
-- 四个 verdict 词保持不变（`unmeasured`、`quiet`、`degraded`、`repaired`），仅计数行从六个名字长到八个（`streams=`、`fused=`、`repaired=`、`unrepaired=`、`truncated=`、`errors=`、`refused=`、`withdrawn=`）。
+- 截断流只加 `withdrawn`，绝不加 `fused`。
+- 四个 verdict 词一个没变（`unmeasured`、`quiet`、`degraded`、`repaired`），只有计数行从六个名字长到八个（`streams=`、`fused=`、`repaired=`、`unrepaired=`、`truncated=`、`errors=`、`refused=`、`withdrawn=`）。
 - `unrepaired` 现在仅代表 1 件事：证实了粘连且未被修复。
 
 ## 它不做什么
@@ -100,15 +100,15 @@ Repaired stream:
 | 限制 | 说明 |
 | --- | --- |
 | 根因归因 | 归因止步于组装后的文本：插件无法证明是中继还是适配器粘连了对象。 |
-| 截断流 | `max-tokens` 截断不予修复。 |
 | Headless 会话持久化 | Headless profile 不持久化 `assistant/attempt` 流，因此实机产物中的 `session.fused_calls` 为 0；证明由 journal 计数器与合成 id 承载。 |
-| 宿主消息本地化 | 错误消息回退逻辑解析英文 `Received arguments:` 文本；若宿主消息被本地化，该回退失效，但 delta 缓冲区路径仍正常工作。 |
 | 合成身份 | 合成 id 仅作为追溯辅助，不是持久身份。 |
+| 宿主消息本地化 | 错误消息回退逻辑解析英文 `Received arguments:` 文本；若宿主消息被本地化，该回退失效，但 delta 缓冲区路径仍正常工作。 |
+| 截断流 | `max-tokens` 截断不予修复。 |
 | 桌面轮次状态 | 桌面轮次在产出答案后由操作员停止；产物记录 `turn_end=aborted`，而非宣称完成。 |
 | 桌面 App 缓存 | 验证仅针对已记录的 tarball sha256，而非正在运行的桌面 App 所缓存的内容。 |
 | 拒绝判定 | verdict 词无法表达“观测到并正确拒绝”；只有计数行可以。唯一缺陷为非法 JSON 的流现在读为 `quiet`。 |
 | 日志迁移 | 已有的 journal 记录行不予迁移；在混合日志中，`status --json` 汇报末行的结构。 |
-| 下游 block 接受度 | 合成工具调用现在会开启独立的 `block-start`，但下游是否接受该合成 block 尚未在实机上得到证实（盲区 `BS-11`）。 |
+| 下游 block 接受度 | 合成工具调用现在会开启独立的 `block-start`，且 2026-11-10 的实机运行证实了下游接受该 finish 路径；自行关闭 block 并维护自身索引记账的适配器仍未实测（盲区 `BS-11`）。 |
 | 错误重试 | `agent/request-error` 上的重试回退默认为 0，仅是权宜之计而非修复；`0.3.0` 样本显示宿主已对服务端错误家族进行了重试（93 组失败中有 84 组在同轮次内随后尝试成功）。 |
 | 样本范围 | `0.3.0` 数字背后的样本来自单一机器和单一账户在固定截止时间前的数据；不同的截止时间会得出不同的总量。 |
 
@@ -133,43 +133,27 @@ dsh-remedy verify
 ```text
 data/results/live-2026-11-09T17-00-00.000Z.json
 data/results/live-desktop-2026-11-09T19-10-00.000Z.json
+data/results/live-2026-11-10T14-45-00.000Z.json
 ```
 
 ## 状态
 
-`0.3.x` 已发布至 npm（`dsh-remedy` 与 `dsh-remedy-core`）。补丁 `P-0001` 已在真机上通过验证（`verified`），覆盖 headless profile 与桌面 App。补丁 `P-0002` 与 `P-0003` 处于测试状态（`tested`），仅有单元测试与负对照，尚无实机 live 证据产物。
+`0.3.x` 已发布到 npm（`dsh-remedy` 与 `dsh-remedy-core`）。`P-0001` 与 `P-0002` 为 `verified`（`P-0001` 在 headless profile 与桌面 App 上完成验证；`P-0002` 在 2026-11-10 的 headless 真机运行里修好了一次真实的两调用粘连，并看到合成 id 被真的派发执行）。`P-0003` 为 `tested`（只有单元测试与负对照；真机确实写出全部八个计数器，但那次是干净修复，`refused` 与 `withdrawn` 只被写成 0）。
 
-Headless 验证（`remedy-live` profile，Windows）：
-- 运行次数: 2
-- 观测流数: 10
-- 粘连调用: 1
-- 已修复: 1
-- 拒绝或未修复: 0
-- 截断: 0
-- 其他流错误: 0
-- 轮次结果: `completed`
-- 工具调用: 5，工具结果: 5
-- 合成 id: `call_00_82805lrla1dhndlzpv1cakrx#remedy-1`
-
-桌面 App 验证（`desktop` profile，App 重启后）：
-- 观测流数: 39
-- 粘连调用: 2
-- 已修复: 2
-- 拒绝或未修复: 0
-- 合成 id: `call_00_eurpysgrncrqocrhr4ao3uvi#remedy-1`
-- 轮次结果: `turn_end=aborted`（产出答案后由操作员停止）
+实机验证记录：
+- Headless 运行（`remedy-live` profile，Windows）：2 次运行，观测 10 条流，1 次粘连调用，1 次修复，0 次拒绝或未修复，0 次截断，0 次其他流错误，轮次结果 `completed`，5 次工具调用，5 次工具结果，合成 id `call_00_82805lrla1dhndlzpv1cakrx#remedy-1`。
+- 桌面 App 运行（`desktop` profile，App 重启后）：观测 39 条流，2 次粘连调用，2 次修复，0 次未修复，合成 id `call_00_eurpysgrncrqocrhr4ao3uvi#remedy-1`，轮次结果 `turn_end=aborted`（产出答案后由操作员停止）。
+- 2026-11-10 的 Headless 运行（`remedy-live` profile，DSH 0.2.2-rc.1，tarball sha256 `5f73032548c761174aea697167c14b0ef25e1d881ddf2c6e2c0182fe73e99aeb`）：18 个 journal 事件（17 个 `stream` 与 1 个 `repaired`），事件携带 `fused=1, repaired=1, unrepaired=0, truncated=0, errors=0, refused=0, withdrawn=0`。合成调用 `call_00_6zgcmtvebmpnr8613wbr7wk9#remedy-1` 被派发并获得响应，轮次结果 `completed`。
 
 测试套件与门禁：
-- 测试: 126 通过，0 失败
-- 门禁: 5 通过（`ssot`、`registry`、`namespace`、`step-review`、`copy`），负对照捕获 5/5
-- 夹具: 5（包含 1 次真实粘连调用与 1 次反证调用）
+- 测试：126 通过，0 失败。
+- 门禁：5 个（`ssot`、`registry`、`namespace`、`step-review`、`copy`），5/5 负对照捕获。
+- 夹具：5 个（包括 1 次真实粘连调用与 1 次反证调用）。
 
 包体积与字节预算：
-发行的 `0.3.0` tarball：压缩体积 22418 字节，20 个条目，解包体积 74014 字节（在 `0.1.1` 上进行瘦身前：压缩体积 26345 字节，解包体积 98424 字节，包含 30 个文件，含 10 个 sourcemap 文件）。解包细分：`dist/*.js` 占 52247 字节，`dist/*.d.ts` 占 13797 字节，`fixtures/` 占 2694 字节，包根目录文件占 5276 字节。移除 sourcemap 减去了 41926 字节的解包载荷（测量记录于 `docs/research/stability-audit-2026-11-10.md`）。发行包包含 `dist/*.js`、`dist/*.d.ts`、`fixtures/`、`cordis.patch.yml`、`README.md`、`LICENSE`，且不含 sourcemap。在 `P-0003` 之后，`dist/*.js` 占 52247 字节，处于 53000 字节的工作上限之内。
+发行的 `0.3.0` tarball 为 22418 字节压缩体积、20 个条目与 74014 字节解包体积（在 `0.1.1` 瘦身前：26345 字节压缩体积，30 个文件共 98424 字节解包体积，含 10 个 sourcemap 文件；发行的 `0.2.0` tarball 为 19569 字节压缩体积、20 个条目与 64933 字节解包体积）。`0.3.0` 的解包细分为：`dist/*.js` 占 52247 字节，`dist/*.d.ts` 占 13797 字节，`fixtures/` 占 2694 字节，包根目录文件占 5276 字节。不再进包的 sourcemap 移除了 41926 字节的解包载荷（测量记录于 `docs/research/stability-audit-2026-11-10.md`）。发行包包含 `dist/*.js`、`dist/*.d.ts`、`fixtures/`、`cordis.patch.yml`、`README.md`、`LICENSE`，不再包含 sourcemap。在 `P-0003` 之后，`dist/*.js` 为 52247 字节，处于 53000 字节的工作上限之内。
 
 ## 开发
-
-要求 Node `>= 22.19` 与 pnpm。
 
 ```bash
 pnpm install

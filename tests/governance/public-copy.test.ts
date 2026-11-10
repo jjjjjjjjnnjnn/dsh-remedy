@@ -97,7 +97,13 @@ test('the repository metadata is bounded and matches the packages', () => {
   assert.ok(metadata.description.length <= 160)
   assert.ok(metadata.topics.length >= 8 && metadata.topics.length <= 12)
   for (const topic of metadata.topics) assert.match(topic, /^[a-z0-9-]+$/)
-  assert.ok(metadata.release_blurb.includes('data/results/live-2026-11-09T17-00-00.000Z.json'))
+  // The blurb must point at a live artifact, and the artifact must actually exist.
+  // It deliberately does not pin a stamp: every verification adds a newer one.
+  const liveLinks = [
+    ...metadata.release_blurb.matchAll(/data\/results\/live-[^\s()[\]]+\.json/g),
+  ].map((match) => match[0])
+  assert.ok(liveLinks.length > 0, 'the release blurb must cite a live artifact')
+  for (const target of liveLinks) assert.ok(exists(target), `release blurb cites a missing path: ${target}`)
   assert.ok(metadata.social_preview.length > 20)
 
   const plugin = readJson<{ description: string }>('packages/plugin/package.json')

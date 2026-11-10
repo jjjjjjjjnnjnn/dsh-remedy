@@ -33,9 +33,11 @@ rescue-integrity work. This patch is that separate seam.
 - The measured adapter for this host emits no `block-end` for a tool call (session
   9045e2ec, seq 524), so the counters for the `block-end` path are proven by unit
   tests only. The `planRescue` path (the one that was measured live) is covered.
-- No live journal exists yet that contains a `refused` or `withdrawn` count for a
-  real desktop stream. The new fields are therefore `tested`, not `verified`, and
-  the desktop re-mount is still HANDOFF's "first thing".
+- No live journal exists yet in which `refused` or `withdrawn` is **non-zero**. The live
+  run of 2026-11-10 (`data/results/live-2026-11-10T14-45-00.000Z.json`) does prove the
+  eight-field row is written by a real host — the `repaired` event carries
+  `refused:0, withdrawn:0` — but that stream was a clean repair, so the new buckets were
+  only ever written as zero. They stay `tested`, not `verified`.
 - The four verdict states are frozen. `fused` is now honest (it means a fusion was
   actually seen), but `repaired`/`degraded` still cannot express "observed, refused,
   and correctly not repaired" — only the counters can.
@@ -113,3 +115,5 @@ node packages/plugin/dist/cli.js status --json
   truncation-withdrawal, and the updated all-or-nothing expectation
 - `audit/blind_spots.json` — `BS-12`, closed by this patch with the remaining caveat
   (a mixed-shape journal is not migrated)
+- `data/results/live-2026-11-10T14-45-00.000Z.json` — the first real-host journal that
+  writes all eight counters (`refused:0, withdrawn:0` on a clean repair)

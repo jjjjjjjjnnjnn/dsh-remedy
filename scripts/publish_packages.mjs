@@ -184,7 +184,11 @@ function main() {
     rmSync(staging, { force: true, recursive: true })
   }
 
-  console.log('\nboth packages published. Next: node scripts/record_publish.mjs --stamp <ISO> --retries 3')
+  if (dryRun) {
+    console.log('\ndry run finished. Nothing was sent to the registry.')
+  } else {
+    console.log('\nboth packages published. Next: node scripts/record_publish.mjs --stamp <ISO> --retries 3')
+  }
   return 0
 }
 

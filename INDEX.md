@@ -2,6 +2,9 @@
 
 按“想改什么”找文件。
 
+> **位置**：本目录是公开仓库根，但**不是 git 根**（容器是 `..`）。提交用 `git -C ..`；
+> 公开仓库由 `git subtree split --prefix=dsh-remedy` 切出。
+
 ## 入口
 
 | 文件 | 作用 |
@@ -23,6 +26,7 @@
 | `packages/plugin/src/repair-stream.ts` | `llm/stream` 包装器 + 计数 |
 | `packages/plugin/src/index.ts` | DSH loader 入口（默认导出 `{name, apply}`） |
 | `packages/plugin/src/session-scan.ts` | 离线 `.jsonl` 扫描 |
+| `packages/plugin/src/session-log.ts` | 多帧 zstd 会话日志读取 |
 | `packages/plugin/src/cli.ts` | `status` / `repair` / `scan` / `verify` |
 | `packages/plugin/cordis.patch.yml` | profile 补丁层（只有 `insert:` 与 `remedy-*`） |
 
@@ -36,6 +40,10 @@
 | `data/fixtures/toolcall-fusion/truncated.json` | 截断不修 |
 | `data/fixtures/toolcall-fusion/single-broken.json` | 单个坏对象不拆 |
 | `data/results/patch-registry-*.json` | 注册表快照（SSOT） |
+| `data/results/live-2026-11-09T17-00-00.000Z.json` | headless 真机：10 流 / 1 修复 / `completed` |
+| `data/results/live-desktop-2026-11-09T19-10-00.000Z.json` | 桌面真机：39 流 / 2 修复 / `aborted`（人工停止） |
+| `data/results/publish-2026-11-10T06-40-00.000Z.json` | 0.1.1 registry 状态（`ok`） |
+| `data/results/publish-2026-11-10T00-10-00.000Z.json` | 0.1.1 副本延迟的**红**产物（保留） |
 | `docs/patches/P-0001-toolcall-fusion.md` | 事故/修复的完整记录 |
 | `docs/adr/0001-stream-repair-over-asar-patch.md` | 为什么在 `llm/stream` 修 |
 
@@ -63,6 +71,9 @@
 | `scripts/gate_step_review.mjs` | 每步五轴 review |
 | `scripts/gate_copy.mjs` | 对外文件字节 / 事实包 / 数字一致性 |
 | `scripts/copy_with_agy.mjs` | copy 通道：调用 agy 并记录 provenance |
+| `scripts/record_live_mount.mjs` | 真机 journal/session → `live-*` 产物 |
+| `scripts/record_publish.mjs` | 发布后 registry 状态 → `publish-*` 产物 |
+| `scripts/sync_fixtures.mjs` | `prepack`：夹具进包 |
 | `audit/gate_ledger.json` | 门的清单与负对照 |
 | `audit/patch_ledger.json` | 补丁账本 |
 | `audit/step_reviews.json` | 每步五轴 |
@@ -79,5 +90,9 @@
 | `tests/unit/verdict.test.ts` | 四态 |
 | `tests/unit/redact.test.ts` | 密钥 / token / 邮箱 / 家目录 |
 | `tests/unit/session-scan.test.ts` | 计数与脱敏 |
+| `tests/unit/session-log.test.ts` | 多帧 zstd 读取 |
+| `tests/unit/plugin-mount.test.ts` | `llm/stream` 监听器必须同步返回 |
+| `tests/unit/fixtures-sync.test.ts` | 包内夹具与 canonical 字节一致 |
 | `tests/governance/ledgers.test.ts` | 台账与快照一致性 |
+| `tests/governance/public-copy.test.ts` | 对外文件 / 事实包 / 模板 / 元数据 |
 | `tests/e2e/cli.test.ts` | 四条命令的退出码与产物 |

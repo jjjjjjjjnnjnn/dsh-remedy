@@ -12,8 +12,8 @@
 | 基线 | **131 tests / 5 gates / `--mutate` 5-5** |
 | 包体 | **0.3.1 = 22 418 B 压缩 / 20 条目 / 74 014 B 解包**（与 0.3.0 逐字节同一份代码，只换 manifest；core 11 585 / 38 582）（`dist/*.js` 52 247 / `dist/*.d.ts` 13 797 / fixtures 2 694 / 包根 5 276；0.2.0 是 19 569 / 64 933，0.1.1 是 26 345 / 98 424 / 30 文件） |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1`（`v0.3.1` 待推；0.2.0 与 0.3.0 从不单独发 release） |
-| 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 与 0.3.0 用本地双 tgz 验过 5/5；0.3.0 已在 `desktop` 与 `remedy-live` 两个 profile 里装成 tgz 并跑出真机证据；**0.3.1 尚未上 npm** |
-| 下一件事 | `node scripts/publish_packages.mjs --otp <code>` 发布 **0.3.1** → `record_publish.mjs` → 陌生人安装验收 → 提交 → push → `gh release create v0.3.1` |
+| 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 / 0.3.0 / **0.3.1** 都用本地双 tgz 验过 5/5（0.3.1 在 `.tmp/install-check11` 全新目录里 `npm install` 后 `npx dsh-remedy verify` → `OK 5 fixture(s)`）；`desktop` 与 `remedy-live` 两个 profile **已升到 0.3.1**（各自 `dsh-remedy 0.3.0 → 0.3.1`，profile 内 `cli verify` 5/5）；**0.3.1 尚未上 npm** |
+| 下一件事 | `node scripts/publish_packages.mjs --otp <code>` 发布 **0.3.1**（脚本先 `pnpm pack` 再读回 packed manifest，见 R10）→ `record_publish.mjs` → 空目录 `npm install dsh-remedy@0.3.1` 验收 → 提交 → push → `gh release create v0.3.1 --notes-file .tmp/release-notes-v0.3.1.md` |
 
 ## 五分钟检查
 
@@ -87,6 +87,11 @@ git -C .. log --oneline -3
   README.md:29/:35 是 `add dsh-remedy@0.3.1`，:38 是 0.3.0 装不上的注，
   :131 是"0.3.1 是唯一可安装发布"，:138 是 22418/20/74014/11585/17/38582 的包体积段，
   :148 是 131 tests / 5 gates。
+- **两个本地 profile 已升到 0.3.1**：`desktop` 与 `remedy-live` 的 `package.json` 与
+  `pnpm-workspace.yaml` overrides 都改指 `.tmp/pack11/` 的两个 tgz（改前备份在同目录
+  `*.before-031`），`pnpm install --no-frozen-lockfile` 输出 `- dsh-remedy 0.3.0 / +
+  dsh-remedy 0.3.1`，profile 内 `node node_modules/dsh-remedy/dist/cli.js verify` 5/5。
+  桌面 App 需要重启才加载新版本。
 - **待办**：`node scripts/publish_packages.mjs --otp <code>` 发布 0.3.1（用户手动输码）
   → `record_publish.mjs` → 陌生人空目录安装 → 提交 → 刷新 public-remedy → push →
   `gh release create v0.3.1 --notes-file .tmp/release-notes-v0.3.1.md`。

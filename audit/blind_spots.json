@@ -45,6 +45,11 @@
       "id": "BS-09",
       "status": "open",
       "note": "The desktop journal covers the whole app process, so its 2 repaired calls span two sessions while the attached session file shows 1. The artifact records journal_scope explicitly; a per-session journal would make the two agree."
+    },
+    {
+      "id": "BS-10",
+      "status": "accepted",
+      "note": "Registry copies lag the publish call by seconds. publish-2026-11-10T00-10-00.000Z.json is red because it was recorded at 06:35:37Z and the 0.1.1 copy appeared at 06:35:35Z in the packument but not in the view used by the check. Red publish artifacts are kept and a new stamp records the settled state."
     }
   ]
 }

@@ -65,16 +65,18 @@ After `ok: true`:
 2. Commit, push `main`, then `git subtree split` and push again.
 3. Tag `v0.1.0` on the public repository.
 
-## Published 0.1.0 (2026-11-09)
+## Published 0.1.0 / 0.1.1 (2026-11-09 → 2026-11-10)
 
-- `dsh-remedy-core@0.1.0` and `dsh-remedy@0.1.0` are on the public registry;
-  `latest` is `0.1.0` for both.
-- Evidence: `data/results/publish-2026-11-09T20-00-00.000Z.json` (`ok: true`,
-  `git_dirty: false`).
+- `dsh-remedy@0.1.1` and `dsh-remedy-core@0.1.0` are on the public registry;
+  `latest` is `0.1.1` for the plugin and `0.1.0` for the core.
+- 0.1.1 fixes a real published-artifact defect: the 0.1.0 tarball omitted the
+  fixtures, so `dsh-remedy verify` exited 3 from an installed copy. The prepack
+  step now copies them into `fixtures/`, and a stranger install passes 5/5.
+- Evidence: `data/results/publish-2026-11-10T06-40-00.000Z.json` (`ok: true`).
+  The earlier `publish-2026-11-10T00-10-00.000Z.json` is red on purpose: the
+  registry copy landed seconds after the record. Do not edit it.
 - The `@dsh-remedy` scope does not exist on npm, so the core package is unscoped
   (`dsh-remedy-core`).
-- The 0.1.0 tarball README predates the publish update; the GitHub README is
-  current. A 0.1.1 bump is the way to refresh the npm page.
 
 ## After the first release
 

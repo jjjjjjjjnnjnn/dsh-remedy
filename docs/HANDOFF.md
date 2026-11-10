@@ -16,6 +16,18 @@ node packages/plugin/dist/cli.js verify   # OK 5 fixture(s)
 
 ## 当前批次
 
+**R5（2026-11-10）· 0.1.1 已发布，陌生人安装验收通过。**
+
+- 0.1.0 的 tarball 没有带 `data/fixtures`，空目录装包后 `dsh-remedy verify` 退出 3；
+  这是已发布产物的真实缺陷。0.1.1 用 `prepack`（`scripts/sync_fixtures.mjs`）把夹具打进
+  `fixtures/`，CLI 同时支持“安装副本”和“源码检出”两种路径。
+- 发布 `dsh-remedy@0.1.1`（core 仍 `0.1.0`）。空目录 `npm install dsh-remedy@0.1.1`
+  后 `npx dsh-remedy verify` **5/5 夹具通过**。
+- 第一份 0.1.1 取证 `publish-2026-11-10T00-10-00.000Z.json` 是红的：registry 副本在
+  记录后几秒才出现（发布 06:35:35Z，记录 06:35:37Z 还是 null）。红产物保留，不编辑；
+  新 stamp `publish-2026-11-10T06-40-00.000Z.json` 为 `ok: true`（core 0.1.0 / plugin 0.1.1）。
+- Release：`v0.1.0`、`v0.1.1` 都在 GitHub 上。
+
 **R4（2026-11-09）· npm 0.1.0 已发布。**
 
 - npm 账号没有 `@dsh-remedy` organization，发布 `@dsh-remedy/core` 返回
@@ -39,14 +51,14 @@ headless `remedy-live` 第 2 次运行命中，10 条流 / 1 次修复 / 整轮 
 
 ## 第一件事
 
-**0.1.1（只刷新 npm 页面文案）：0.1.0 的 tarball 是在「npm 待发布」文案下打的，
-npm 页面上的 README 仍写着未发布；GitHub README 已经正确。若要 npm 页面同步，
-把两个包 bump 到 0.1.1、重新发布、再跑 `record_publish`；不追求同步就进入 P-0002。**
+**进入 P-0002，或者把桌面 profile 从 0.1.0 tarball 换到 0.1.1（运行时代码相同，换是为了
+“装的就是发的那一份”）。** 发布链已经闭环：`pnpm --filter dsh-remedy publish` →
+`record_publish` → 空目录 `npm install` + `verify` → release。
 
 验收：
 
-1. `npm view dsh-remedy version` 与 `npm view dsh-remedy-core version` 一致；
-2. `data/results/publish-*.json` 由脚本产出，`ok: true`，`git_dirty=false`；
+1. 新补丁按 `docs/patches/` → registry `drafted` → 负对照测试 → 真机 live 的顺序落地；
+2. 每次发布都有一份 `data/results/publish-*.json`，红产物保留、用新 stamp 重记；
 3. 事实包改动后所有 copy 文件重新生成，`node scripts/gate_copy.mjs` 绿。
 
 ## 已知坑

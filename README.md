@@ -12,14 +12,14 @@ A resident repair layer for DeepSeek Harness that fixes one measured defect and 
 
 ## What it fixes
 
-The relay can stream two tool calls into one index. `@earendil-works/pi-ai` receives glued JSON objects and throws an error, which `dsh-llm-pi-ai` converts to `MALFORMED_RESPONSE`. Because `MALFORMED_RESPONSE` is not in default `retryableCodes`, `dsh-agent-loop` re-throws and the turn ends.
+The defect is tool-call fusion (P-0001). The relay streams two tool calls into a single delta buffer or index. `@earendil-works/pi-ai` receives glued JSON objects and throws an error, which `dsh-llm-pi-ai` converts to `MALFORMED_RESPONSE`. Because `MALFORMED_RESPONSE` is not in default `retryableCodes`, `dsh-agent-loop` re-throws and the turn ends.
 
 ```
 Tool call "<name>": Unexpected non-whitespace character after JSON at position N
 Received arguments: {"path":"README.md"}{"path":"CHANGELOG.md"}
 ```
 
-In a measured sample of 48 session files and 120 `turn/end` events, 40 `MALFORMED_RESPONSE` failures occurred. 37 are provable fusions of two JSON objects glued at the top level, 2 are cut inside an object, and 1 is another split failure. Upstream discussion deepseek-ai/deepseek-harness discussion #4427 describes the same fusion family.
+In a measured sample of 48 session files and 120 `turn/end` events, 40 `MALFORMED_RESPONSE` failures occurred, of which 37 are provable fusions of two JSON objects glued at the top level (2 are cut inside an object and 1 is another split failure). Upstream discussion deepseek-ai/deepseek-harness discussion #4427 describes the same fusion family.
 
 ## Install
 
@@ -44,7 +44,7 @@ pnpm run verify
 
 ## How it works
 
-The plugin buffers tool-call deltas on the `llm/stream` Cordis waterfall. On a terminal `finish` with `MALFORMED_RESPONSE`, it splits every open buffer at top-level object boundaries.
+The plugin buffers tool-call deltas on the `llm/stream` Cordis waterfall. On a terminal `finish` with `MALFORMED_RESPONSE`, it splits open buffers at top-level object boundaries.
 
 ```
 Input stream:
@@ -65,9 +65,7 @@ The repair follows an all-or-nothing rule: if any buffer cannot be proven, nothi
 - A single object that fails to parse is rejected, not split.
 - `}{` inside a JSON string is not a boundary.
 - The first call keeps the original id; synthetic ids are `<id>#remedy-N`.
-- A `max-tokens` truncation is never repaired.
-- The plugin writes nothing unless `journalPath` is configured.
-- `retryOnMalformed` defaults to 0.
+- If any buffer cannot be proven, nothing is emitted and the original failure is re-thrown.
 - An empty tool name is rejected (`missing-name`).
 - A tool name that changes inside one index aborts the rescue (`name-changed`).
 - A repaired `finish` preserves the adapter `replayState`.
@@ -106,7 +104,6 @@ The repair follows an all-or-nothing rule: if any buffer cannot be proven, nothi
 | Custom adapter bookkeeping | Adapter closing blocks itself with independent bookkeeping is unmeasured (`BS-11`). |
 | Request error retries | Retry fallback on `agent/request-error` defaults to 0 and is a stop-gap; host already retries server-error family (84 of 93 failing groups were followed by a successful attempt in the same turn). |
 | Sample scope | Sample behind the 0.3.0 numbers reflects one machine and one account over a fixed cutoff. |
-| Out of scope | Does not modify `app.asar`, add a plugin market, provide a launcher, or pick packages for the user. |
 
 ## Verify it yourself
 

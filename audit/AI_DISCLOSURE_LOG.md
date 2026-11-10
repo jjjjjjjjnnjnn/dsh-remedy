@@ -23,6 +23,8 @@ human reviewer.
 
 | `deepseek-v4.1-flash-eco-2026-11-10-dsh-remedy` | DeepSeek V4.1 Flash Eco (DSH) | 2026-11-10 | `docs/research/bare-value-reseal-2026-11-10.md` | The evidence note for P-0005: why one shape is resealed and five are refused | Every number is copied from `.tmp/probe-args-shapes2.mjs`, `.tmp/probe-salvage.mjs` and `.tmp/probe-quote-literal.mjs`; the failed escape-repair attempt is recorded as a dead end rather than quietly dropped; the document states that P-0005 stays `tested` because it rests on one sample |
 
+| `deepseek-v4.1-flash-eco-2026-11-10-dsh-remedy` | DeepSeek V4.1 Flash Eco (DSH) | 2026-11-10 | `data/results/publish-2026-11-10T20-00-00.000Z.json`, `docs/{PUBLISH,HANDOFF}.md`, `docs/copy/facts/public-repo-facts.md`, `audit/AI_DISCLOSURE_LOG.md` | The 0.3.2 publish record, the stranger-install acceptance, and the outward copy that finally states the truth about the registry | The publish artifact is produced by `scripts/record_publish.mjs` from the registry's own answers (`ok: true`, `exact_ok` and `latest_ok` true for both packages); the acceptance ran in an empty directory against the registry tarball, not a local file; the copy pass only rewrote files whose facts hash matched the packed facts |
+
 ## Rules
 
 1. A file that was not typed by a human is listed here before it is committed.

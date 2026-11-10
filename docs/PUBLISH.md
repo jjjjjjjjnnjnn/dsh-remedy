@@ -139,6 +139,17 @@ unpacked), only the manifest differs; `.tmp/pack11/` holds both. It was supersed
 by 0.3.2 while `publish_packages.mjs` was still being hardened, so no 0.3.1 tag
 exists on npm and nothing needs to be withdrawn.
 
+**Published 2026-11-10.** `dsh-remedy@0.3.2` and `dsh-remedy-core@0.3.2` are the
+registry's `latest`; the published plugin manifest pins `"dsh-remedy-core": "0.3.2"`,
+so a stranger install of the plugin alone resolves the core (verified in an empty
+directory: `npm install dsh-remedy@0.3.2` → `npx dsh-remedy verify` → `OK 6 fixture(s)`,
+exit 0). Registry shasums match the packed tarballs byte for byte:
+plugin `be75bb501bc894eb7a0822dd01ff2e1e295e528b` (24689 B compressed, 81904 B
+unpacked), core `f5b773559be49363238d9665bf2f477e8b918f40` (15864 B compressed,
+52828 B unpacked). Evidence: `data/results/publish-2026-11-10T20-00-00.000Z.json`
+(`ok: true`, `exact_ok` and `latest_ok` true for both packages). Release:
+<https://github.com/jjjjjjjjnnjnn/dsh-remedy/releases/tag/v0.3.2>.
+
 **0.3.2 is the release that ships.** It carries 0.3.1's manifest fix plus P-0005
 (the bare-value reseal) and the seam split that P-0005 forced:
 

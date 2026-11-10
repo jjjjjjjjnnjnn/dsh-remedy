@@ -3,25 +3,24 @@
 ## Supported versions
 
 | Version | Supported |
-|---|---|
-| 0.3.x | Yes |
-| Older or unlisted | No |
+| ------- | --------- |
+| 0.3.x   | Yes       |
+| Older   | No        |
 
 Older or unlisted versions are not supported.
 
 ## Reporting a vulnerability
 
-GitHub private vulnerability reporting is enabled on the public repository:
-https://github.com/jjjjjjjjnnjnn/dsh-remedy
+Report vulnerabilities through GitHub private vulnerability reporting on the public repository: https://github.com/jjjjjjjjnnjnn/dsh-remedy
 
-Please submit security vulnerability reports through GitHub private vulnerability reporting. Do not open public issues or public discussions for security reports.
+Do not open a public issue for a security vulnerability.
 
 ## What is in scope
 
 - The `llm/stream` repair path
 - The CLI
 - The session-log reader
-- The redaction used before evidence leaves the machine
+- Redaction used before evidence leaves the machine
 
 ## What is out of scope
 
@@ -31,8 +30,6 @@ Please submit security vulnerability reports through GitHub private vulnerabilit
 - A `max-tokens` truncation (which the plugin deliberately does not repair)
 
 ## What to include
-
-When reporting a vulnerability, include:
 
 - Plugin version
 - DSH version
@@ -45,4 +42,4 @@ Never paste a real API key or an unredacted session log.
 
 ## Disclosure
 
-This project follows coordinated disclosure. There is no bounty program and no SLA.
+This project follows coordinated disclosure. Reports are handled privately until a fix is released. There is no bounty and no SLA.

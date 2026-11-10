@@ -11,9 +11,9 @@
 | 补丁 | **P-0001 `verified`**（headless + 桌面两次真机）· **P-0002 `verified`**（2026-11-10 headless 真机修好一次真实两调用粘连、合成 id 被派发执行）· **P-0003 `verified`**（2026-11-10 headless 真机 journal 第一次写出非零 `refused`：`too-many-calls` 拒绝而不是假装修好）· **P-0005 `tested`**（裸值 reseal；单测 + 负对照 + 一条实测夹具，无 live 产物） |
 | 基线 | **147 tests / 5 gates / `--mutate` 5-5** |
 | 包体 | **0.3.2 = 24 689 B 压缩 / 25 条目 / 81 904 B 解包**（\`dist/*.js\` 56 344 / \`dist/*.d.ts\` 16 701 / fixtures 3 583 / 包根 5 276）；core **0.3.2 = 15 864 B / 19 条目 / 52 828 B 解包**。接缝拆分把 \`repair-stream.js\` 从 28 955 降到 27 925（−1 030），但插件总量反涨 529（脚手架不是免费的）；0.3.1 是 22 418 / 20 条目 / 74 014，0.2.0 是 19 569 / 64 933，0.1.1 是 26 345 / 98 424 / 30 文件 |
-| 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1`（`v0.3.2` 待推；0.2.0 / 0.3.0 / 0.3.1 从不单独发 release） |
-| 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 / 0.3.0 / 0.3.1 都用本地双 tgz 验过 5/5；**0.3.2 已用 `.tmp/pack12/` 的两个 tgz 在 desktop 与 remedy-live 两个 profile 里装成 0.3.2 并跑出 `OK 6 fixture(s)`，但尚未上 npm** |
-| 下一件事 | `node scripts/publish_packages.mjs --otp <code>` 发布 **0.3.2**（脚本先 `pnpm pack` 再读回 packed manifest，见 R10）→ `record_publish.mjs` → 空目录 `npm install dsh-remedy@0.3.2` 验收 → 提交 → push → `gh release create v0.3.2 --notes-file .tmp/release-notes-v0.3.2.md` |
+| 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1` / **`v0.3.2`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release） |
+| 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 / 0.3.0 / 0.3.1 都用本地双 tgz 验过 5/5；**0.3.2 已从 registry 单装 plugin 验过 `OK 6 fixture(s)`（`.tmp/install-check-final/`），两个本地 profile 也已是 0.3.2** |
+| 下一件事 | **0.3.2 已发布（2026-11-10）**：registry `latest` 与 shasum 都已核对，空目录 `npm install dsh-remedy@0.3.2` → `dsh-remedy verify` 得到 `OK 6 fixture(s)`，`record_publish` 产物 `publish-2026-11-10T20-00-00.000Z.json`（`ok: true`），release `v0.3.2` 已建。下一件事是重启桌面 App 加载已装的 0.3.2，然后按 A 段选 P-0004 或补 `withdrawn` 空洞 |
 
 ## 五分钟检查
 
@@ -24,7 +24,7 @@ pnpm install
 pnpm run verify                  # build → typecheck → test → gate
 node scripts/gate.mjs --mutate   # 5 门都必须红
 node packages/plugin/dist/cli.js verify   # OK 6 fixture(s)
-npm view dsh-remedy version      # 0.3.2（发布后）
+npm view dsh-remedy version      # 0.3.2
 ```
 
 `git` 要注意：本目录不是 git 根。

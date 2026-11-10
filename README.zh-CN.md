@@ -12,14 +12,14 @@ DeepSeek Harness 的常驻处置层，只修复一项已度量的缺陷并拒绝
 
 ## 它修什么
 
-中继可能将两个工具调用流式传输到同一个索引中。`@earendil-works/pi-ai` 接收到粘连的 JSON 对象并抛出错误，`dsh-llm-pi-ai` 将其转换为 `MALFORMED_RESPONSE`。由于默认的 `retryableCodes` 中不包含 `MALFORMED_RESPONSE`，`dsh-agent-loop` 会重新抛出该错误，当前轮次随即终止。
+该缺陷为工具调用粘连（P-0001）。中继可能将两个工具调用流式传输到同一个 delta 缓冲区或索引中。`@earendil-works/pi-ai` 接收到粘连的 JSON 对象并抛出错误，`dsh-llm-pi-ai` 将其转换为 `MALFORMED_RESPONSE`。由于默认的 `retryableCodes` 中不包含 `MALFORMED_RESPONSE`，`dsh-agent-loop` 会重新抛出该错误，当前轮次随即终止。
 
 ```
 Tool call "<name>": Unexpected non-whitespace character after JSON at position N
 Received arguments: {"path":"README.md"}{"path":"CHANGELOG.md"}
 ```
 
-在 48 个会话文件与 120 次 `turn/end` 事件的实测样本中，共发生 40 次 `MALFORMED_RESPONSE` 失败。其中 37 次是顶层可证且可修复的两个 JSON 对象粘连，2 次在对象内部被截断，1 次为其他切分失败。上游讨论 deepseek-ai/deepseek-harness discussion #4427 记录了同类粘连问题。
+在 48 个会话文件与 120 次 `turn/end` 事件的实测样本中，共发生 40 次 `MALFORMED_RESPONSE` 失败。其中 37 次是顶层可证且可修复的两个 JSON 对象粘连（2 次在对象内部被截断，1 次为其他切分失败）。上游讨论 deepseek-ai/deepseek-harness discussion #4427 记录了同类粘连问题。
 
 ## 安装
 
@@ -65,9 +65,7 @@ Repaired stream:
 - 单个解析失败的对象直接拒绝，绝不切分。
 - JSON 字符串内部的 `}{` 不被视为边界。
 - 首个调用保留原始 id；合成 id 格式为 `<id>#remedy-N`。
-- `max-tokens` 截断绝不修复。
-- 除非显式配置 `journalPath`，否则插件不向磁盘写入任何内容。
-- `retryOnMalformed` 默认值为 0。
+- 若任意缓冲区无法完成证明，则不发出任何内容，并将原始失败重新抛出。
 - 空工具名直接拒绝（`missing-name`）。
 - 同一索引内变更的工具名会中止救援（`name-changed`）。
 - 修复后的 `finish` 保留适配器的 `replayState`。
@@ -106,7 +104,6 @@ Repaired stream:
 | 自定义适配器记账 | 适配器自行闭合 block 并维护独立记账尚未经过实测（`BS-11`）。 |
 | 请求错误重试 | 针对 `agent/request-error` 的重试回退默认为 0 且仅为权宜之计；宿主已自行重试服务端错误族（93 组失败中有 84 组在同轮次内随后重试成功）。 |
 | 样本范围 | 0.3.0 数字背后的样本反映单一机器和单一账户在固定截止时间前的数据。 |
-| 职责边界 | 不修改 `app.asar`，不提供插件市场，不提供启动器，不替用户决定安装哪个包。 |
 
 ## 自己验证
 

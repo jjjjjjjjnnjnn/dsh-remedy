@@ -1,22 +1,22 @@
 # Contributing
 
+Contributions to `dsh-remedy` are welcome. This document covers development workflow, verification requirements, patch lifecycle rules, and pull request guidelines.
+
 ## Before you start
 
-Issues and pull requests are welcome.
+`dsh-remedy` is an independent project and is not affiliated with DeepSeek.
 
-For bug reports and questions, open a GitHub issue.
-
-For security reports, use GitHub private vulnerability reporting on the public repository (security advisories):
+There is no chat server or private contact email. For bug reports and questions, use GitHub issues on the repository:
 https://github.com/jjjjjjjjnnjnn/dsh-remedy
 
-Do not use chat servers or email addresses; no external channels exist.
+For security reports, use GitHub private vulnerability reporting on the public repository.
 
 ## Development setup
 
-Clone the repository and prepare the workspace:
+Clone the repository and set up dependencies:
 
 ```bash
-git clone https://github.com/jjjjjjjjnnjnn/dsh-remedy.git
+git clone https://github.com/jjjjjjjjnnjnn/dsh-remedy
 cd dsh-remedy
 pnpm install
 pnpm run build
@@ -26,43 +26,47 @@ node packages/plugin/dist/cli.js verify
 
 ## Verification
 
-Run the verification suite and negative controls:
+Run verification and negative control checks:
 
 ```bash
 pnpm run verify
 node scripts/gate.mjs --mutate
 ```
 
-`pnpm run verify` runs the build, typecheck, tests, and the 5 gates.
+`pnpm run verify` runs the build, typecheck, 147 tests, and 5 gates (`ssot`, `registry`, `namespace`, `step-review`, `copy`).
 
-In mutate mode, every gate must fail, because a gate that stays green under its injected violation is vacuous.
+`node scripts/gate.mjs --mutate` verifies gate sensitivity. In mutate mode every gate must fail, because a gate that stays green under its injected violation is vacuous.
 
 ## Adding a patch
 
-Follow the five steps in order:
+Adding a patch follows five sequential steps:
 
-1. Write the record in `docs/patches/`.
-2. Add the registry entry in `packages/core/src/registry.ts` as `drafted`.
-3. Write the failing test first.
-4. Live-verify before moving status to `verified`.
-5. Record the registry snapshot and update the ledger.
+1. Write the defect record in `docs/patches/`: document symptoms, failure mechanism, counter-evidence, and boundaries.
+2. Add the registry entry to `packages/core/src/registry.ts` with status `drafted`.
+3. Write the failing test first: define negative controls and fixtures before implementing repairs.
+4. Live-verify on a real host before marking status `verified`: execute against DeepSeek Harness and save evidence to `data/results/live-*`.
+5. Record the registry snapshot by running `node scripts/record_patch_registry.mjs` and update `audit/patch_ledger.json`.
 
-P-0002 and P-0003 are the two worked examples of a patch that went all the way to `verified` with a live artifact: P-0002 has a run that repaired a real two-call fusion, and P-0003 has a run whose journal wrote a non-zero `refused`. P-0005 is the worked example of a `tested` patch: eleven negative controls and one measured fixture, no host run yet. Contrast all three: a `drafted` entry is only a written symptom, and a `tested` entry is negative controls without a host run.
+P-0002 and P-0003 are the two worked examples of a patch that went all the way to `verified` with a live artifact: P-0002 has a run that repaired a real two-call fusion, and P-0003 has a run whose journal wrote a non-zero `refused`.
+
+P-0005 is the worked example of a `tested` patch: eleven negative controls and one measured fixture, no host run yet.
+
+Contrast all three: a `drafted` entry is only a written symptom, and a `tested` entry is negative controls without a host run. A `verified` entry requires a live host run with an artifact in `data/results/live-*`.
 
 ## Pull requests
 
 - One project per commit.
 - Describe what changed, why, the failing test, and the evidence path.
 - Do not mix a behavior change with a docs-only change.
-- A behavior change requires a failing test first.
+- Ensure all tests pass and `node scripts/gate.mjs --mutate` catches every gate before submitting.
 
 ## Code style
 
-- TypeScript ESM.
+- TypeScript ESM throughout.
 - Relative imports end in `.js`.
 - `erasableSyntaxOnly` is on.
 - Gates use Node built-ins only.
-- Core (`dsh-remedy-core`) has no runtime dependency.
+- `dsh-remedy-core` has no runtime dependency.
 
 ## Evidence rules
 
@@ -72,6 +76,6 @@ P-0002 and P-0003 are the two worked examples of a patch that went all the way t
 
 ## Scope
 
-- One seam per patch.
-- No `app.asar` patching.
-- No retry-as-fix: retry is a stop-gap, not the fix (`retryOnMalformed` defaults to 0).
+- One seam per patch: interventions attach strictly to declared interface boundaries such as `llm/stream`.
+- No `app.asar` patching: host packages are not modified on disk.
+- No retry-as-fix: retry is a stop-gap, not the fix (`retryOnMalformed` defaults to 0). Unprovable argument shapes are re-thrown rather than swallowed.

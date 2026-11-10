@@ -12,7 +12,7 @@
 | 基线 | **147 tests / 5 gates / `--mutate` 5-5** |
 | 包体 | **0.3.2 = 24 689 B 压缩 / 25 条目 / 81 904 B 解包**（\`dist/*.js\` 56 344 / \`dist/*.d.ts\` 16 701 / fixtures 3 583 / 包根 5 276）；core **0.3.2 = 15 864 B / 19 条目 / 52 828 B 解包**。接缝拆分把 \`repair-stream.js\` 从 28 955 降到 27 925（−1 030），但插件总量反涨 529（脚手架不是免费的）；0.3.1 是 22 418 / 20 条目 / 74 014，0.2.0 是 19 569 / 64 933，0.1.1 是 26 345 / 98 424 / 30 文件 |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1`（`v0.3.2` 待推；0.2.0 / 0.3.0 / 0.3.1 从不单独发 release） |
-| 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 / 0.3.0 / 0.3.1 都用本地双 tgz 验过 5/5；**0.3.2 尚未打包实测、尚未上 npm** |
+| 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 / 0.3.0 / 0.3.1 都用本地双 tgz 验过 5/5；**0.3.2 已用 `.tmp/pack12/` 的两个 tgz 在 desktop 与 remedy-live 两个 profile 里装成 0.3.2 并跑出 `OK 6 fixture(s)`，但尚未上 npm** |
 | 下一件事 | `node scripts/publish_packages.mjs --otp <code>` 发布 **0.3.2**（脚本先 `pnpm pack` 再读回 packed manifest，见 R10）→ `record_publish.mjs` → 空目录 `npm install dsh-remedy@0.3.2` 验收 → 提交 → push → `gh release create v0.3.2 --notes-file .tmp/release-notes-v0.3.2.md` |
 
 ## 五分钟检查
@@ -327,20 +327,22 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 
 ## 下一位 agent 的第一件事
 
-**A. 主线：发布 0.3.0（npm `--otp` → push → `gh release`）。** 三个补丁都已 `verified`
-（P-0001 headless+桌面、P-0002 修好真实两调用粘连、P-0003 journal 写出非零 `refused`），
-0.3.0 的代码已全绿（126 tests / 5 gates / `--mutate` 5-5），**只差发布与推送**。
+**A. 主线：发布 0.3.2（npm `--otp` → push → `gh release`）。** 四补丁已落地
+（P-0001 / P-0002 / P-0003 `verified`，P-0005 `tested`），0.3.2 的代码已全绿
+（147 tests / 5 gates / `--mutate` 5-5），两个 profile 已装成 0.3.2 并跑出
+`OK 6 fixture(s)`，`--dry-run` 也证明 packed manifest 里 pin 的是 `"dsh-remedy-core": "0.3.2"`
+而不是 `workspace:*`。**只差发布与推送。**
 发布之后两条路：
 1. 开 P-0004：把 `scan` 的输出去重成"每次会话一行"并加 `--since`，让用户能自己量
    （这是本机故障地图那套数字的对外版本，接缝是 `cli` + `session-scan`，不是 `llm/stream`）。
-   注意 `dist/*.js` 已 52 247 B，硬上限 53 000 B，跨线必须先把 `repair-stream.ts` 拆出接缝；
+   注意 `dist/*.js` 已 56 344 B，新上限 58 000 B，跨线必须继续先拆接缝；
 2. 补 P-0003 的最后一个空洞：真机出现一次 `withdrawn`（中途撤回或截断）。现在只证了
    预算拒绝这一支；要造它就在同一条流里前一个 block 可修、后一个 block 必拒。
 
-**B. 清账：桌面 profile 已换 0.3.0（R8 已完成），只差重启 App。**
+**B. 清账：两个本地 profile 都已换 0.3.2（R11 已完成），只差重启 App。**
 
 ```powershell
-# 配置文件已指向 .tmp/pack9/dsh-remedy-0.3.0.tgz，pnpm install 已跑过
+# 配置文件已指向 .tmp/pack12/dsh-remedy-0.3.2.tgz，pnpm install 已跑过（改前备份 *.before-032）
 # 直接重启 DeepSeek Harness 即可加载；注意 dsh plugin --profile desktop add 会 ETARGET，
 # 必须连 core tgz 一起 add，或像本轮一样直接改 profile 的 package.json + pnpm-workspace.yaml overrides
 ```

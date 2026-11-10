@@ -147,9 +147,18 @@ node scripts/publish_packages.mjs --dry-run          # packs both, checks the ma
 node scripts/publish_packages.mjs --otp <code>       # publishes core, then plugin
 ```
 
-The exact 0.3.2 tarball bytes go in this file after the packed manifests are
-inspected; do not copy 0.3.0's numbers, because 0.3.2 ships 6 fixtures instead of 5
-and `dist/*.js` grew by the reseal module.
+The exact 0.3.2 tarballs were packed twice into `.tmp/pack12/` and read back with
+`packedManifest` before anything was sent to the registry:
+
+| package | bytes (gzip) | entries | unpacked | sha256 |
+|---|---|---|---|---|
+| `dsh-remedy-core@0.3.2` | 15864 | 19 | 52828 | `852c77abe32bd7c0fffb19eac269dd68a25bebcc3ca3e5cbff38184711eeb9de` |
+| `dsh-remedy@0.3.2` | 24689 | 25 | 81904 | `0c7b26a7689ba5d175c8722924bec23ad2dab2059d20378d2c705a01560b524f` |
+
+The packed plugin manifest names `"dsh-remedy-core": "0.3.2"`, not `workspace:*`;
+`--dry-run` reported the same 25 files / 81.9 kB unpacked / sha1
+`be75bb501bc894eb7a0822dd01ff2e1e295e528b`. Do not copy 0.3.0's numbers: 0.3.2
+ships 6 fixtures instead of 5 and `dist/*.js` grew by the reseal module.
 
 **0.3.0 of the plugin cannot be withdrawn.** npm only allows unpublishing within
 24 hours of publication, and only with the same OTP path; the usable answer is a

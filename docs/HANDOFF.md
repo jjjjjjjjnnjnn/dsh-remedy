@@ -9,7 +9,7 @@
 |---|---|
 | 版本 | `dsh-remedy@0.3.0`；`dsh-remedy-core@0.3.0` |
 | 补丁 | **P-0001 `verified`**（headless + 桌面两次真机）· **P-0002 `tested`** · **P-0003 `tested`**（均负对照齐、无 live 产物） |
-| 基线 | **121 tests / 5 gates / `--mutate` 5-5** |
+| 基线 | **126 tests / 5 gates / `--mutate` 5-5** |
 | 包体 | **0.3.0 = 22 418 B 压缩 / 20 条目 / 74 014 B 解包**（`dist/*.js` 52 247 / `dist/*.d.ts` 13 797 / fixtures 2 694 / 包根 5 276；0.2.0 是 19 569 / 64 933，0.1.1 是 26 345 / 98 424 / 30 文件） |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1`（`v0.2.0` / `v0.3.0` 待推） |
 | 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 用本地双 tgz 验过 5/5；0.3.0 待发布后复验 |
@@ -77,7 +77,7 @@ git -C .. log --oneline -3
   `repaired`）；`consumer-abort` 保留 P-0002 的 `fused`+`unrepaired` 再加 `withdrawn`；
   截断只记 `withdrawn`。两处偏离口径的决定写在 P-0003 的 booking table 里。
 - **测试**：新增 6 条（`tests/unit/verdict.test.ts` 2 + `tests/unit/repair-stream.test.ts` 4）
-  → 115 → **121**。`--mutate` 5/5。
+  → 115 → **121**；发布脚本那轮又 +5（`tests/unit/publish.test.ts`）→ **126**。`--mutate` 5/5。
 - **台账**：registry 加 P-0003（`tested` / `minor` / `llm/stream`）、
   `audit/patch_ledger.json` 加条目、`audit/step_reviews.json` 加 **S10**、
   `audit/blind_spots.json` **BS-12 → closed**。快照
@@ -151,6 +151,23 @@ headless `remedy-live` 第 2 次运行命中：10 条流 / 1 次修复 / 整轮 
 
 **R1（2026-11-09）· 首个补丁 P-0001 落地。**
 `llm/stream` 包装器、切分器、CLI、4 门；当时状态 `tested`。
+
+### 发布工具的一次修复（2026-11-10，用户手动跑 publish 时暴露）
+
+用户按 HANDOFF 的老指令在容器根跑 `pnpm -r publish`，得到
+`ERR_PNPM_FAILED_TO_PUBLISH ... status 404 Not Found`；在根跑 `npm publish` 得到
+`EPRIVATE`（根包 `dsh-remedy-workspace` 是 private 的工作区壳）；只有在
+`packages/core` 目录里跑 `npm publish` 才露出真正的答案 `EOTP`。
+三条结论已经写进 `docs/PUBLISH.md` 与新增的 `scripts/publish_packages.mjs`：
+
+- 在根发布永远不行：pnpm 把「缺 OTP」报成 404，npm 把根包报成 EPRIVATE；
+- 必须 `cd` 进包目录（`prepack` 与 tarball 内容都相对它解析）；
+- Windows 上 `npm` 是 `npm.cmd`，`spawnSync` 不带 shell 会 EINVAL，脚本里已按平台分支。
+
+`node scripts/publish_packages.mjs --dry-run` 已实测两个包都能打出 tarball：
+core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
+`node scripts/publish_packages.mjs --otp <code>`，它会先自检（根必须 private、
+两包版本必须一致、`dist/` 必须存在、必须 public），然后 core → plugin 顺序发。
 
 ## 下一位 agent 的第一件事
 

@@ -93,7 +93,7 @@ Repaired stream:
 - 消费者提前停止的流（`consumer-abort`）保留 `fused` 与 `unrepaired`，并另加 `withdrawn`。
 - 截断流只增加 `withdrawn`，绝不增加 `fused`。
 - 四个 verdict 词保持不变（`unmeasured`、`quiet`、`degraded`、`repaired`），仅计数行从六个名字长到八个（`streams=`、`fused=`、`repaired=`、`unrepaired=`、`truncated=`、`errors=`、`refused=`、`withdrawn=`）。
-- `unrepaired` 现在仅代表一件事：证实了粘连且未被修复。
+- `unrepaired` 现在仅代表 1 件事：证实了粘连且未被修复。
 
 ## 它不做什么
 
@@ -160,7 +160,7 @@ Headless 验证（`remedy-live` profile，Windows）：
 - 轮次结果: `turn_end=aborted`（产出答案后由操作员停止）
 
 测试套件与门禁：
-- 测试: 121 通过，0 失败
+- 测试: 126 通过，0 失败
 - 门禁: 5 通过（`ssot`、`registry`、`namespace`、`step-review`、`copy`），负对照捕获 5/5
 - 夹具: 5（包含 1 次真实粘连调用与 1 次反证调用）
 

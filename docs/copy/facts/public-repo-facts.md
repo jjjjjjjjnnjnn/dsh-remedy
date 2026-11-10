@@ -101,9 +101,14 @@
 
 ## Tests and gates
 
-- Tests: 121 pass, 0 fail.
+- Tests: 126 pass, 0 fail.
 - Gates: 5 (`ssot`, `registry`, `namespace`, `step-review`, `copy`).
 - Negative controls (`--mutate`): 5 of 5 caught.
+- Publishing: `scripts/publish_packages.mjs` publishes the two package
+  directories in order and refuses to start when the workspace root is not
+  private, when the versions disagree, when `dist/` is missing, or when a
+  package is not `public`. A bare `pnpm -r publish` reports the missing
+  one-time password as `404 Not Found`; the real answer is `EOTP`.
 - Fixtures: 5, including one real fused call and one counter-evidence call.
 - The plugin tarball ships `fixtures/`; `dsh-remedy verify` works from an installed copy (0.2.0), and 0.3.0 keeps that property.
 - Test command: `pnpm run verify` (build, typecheck, test, gate).
@@ -169,5 +174,5 @@
 
 ## Numbers allowed in copy
 
-0 1 2 3 4 5 6 7 8 9 10 11 13 17 20 22 27 30 37 40 45 48 60 84 93 121 147 2694 5276 9118 9401 13797 17423 17484 19114 19569 22418 26345 41926 52247 53000 63170 64933 74014 98424 0.1.0 0.1.1 0.2.0 0.3.0 4427
+0 1 2 3 4 5 6 7 8 9 10 11 13 17 20 22 27 30 37 40 45 48 60 84 93 121 126 147 2694 5276 9118 9401 13797 17423 17484 19114 19569 22418 26345 41926 52247 53000 63170 64933 74014 98424 0.1.0 0.1.1 0.2.0 0.3.0 4427
 

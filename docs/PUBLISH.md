@@ -67,6 +67,32 @@ After `ok: true`:
 
 ## Prepared 0.2.0 / 0.3.0 (2026-11-10)
 
+### Use the script, not `pnpm -r publish`
+
+`pnpm -r publish` and `npm publish` from the workspace root are both wrong here,
+and both failed on 2026-11-10 with a misleading error:
+
+| Attempt | Error | What it actually meant |
+|---|---|---|
+| `pnpm -r publish` at the root | `ERR_PNPM_FAILED_TO_PUBLISH ... status 404 Not Found` | pnpm without a one-time password surfaces the registry's authorization answer as 404, not as an OTP prompt |
+| `npm publish` at the root | `EPRIVATE ... This package has been marked as private` | the root is `dsh-remedy-workspace`, deliberately private; it is not a publishable package |
+| `npm publish` inside `packages/core` | `EOTP: This operation requires a one-time password` | this is the truth; pass `--otp <code>` |
+
+`scripts/publish_packages.mjs` publishes the two package directories in order
+(core, then plugin), refuses to start when the workspace root lost its
+`private: true` flag, when the two versions disagree, when `dist/` is missing,
+or when a package is not `publishConfig.access: public`:
+
+```bash
+node scripts/publish_packages.mjs --dry-run          # print the two commands
+node scripts/publish_packages.mjs --otp <code>       # publish for real
+```
+
+`--dry-run` runs `npm publish --dry-run` in each package directory, which is the
+only check that proves the tarball contents without touching the registry.
+
+
+
 Both versions are bumped, built, gated and packed, but **not yet on npm**:
 
 - `dsh-remedy@0.3.0` + `dsh-remedy-core@0.3.0` — `.tmp/pack9/` holds the

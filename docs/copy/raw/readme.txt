@@ -91,7 +91,7 @@ All-or-nothing rule: if any buffer cannot be proven, nothing is emitted and the 
 - An abandoned stream (`consumer-abort`) keeps `fused` and `unrepaired` and also raises `withdrawn`.
 - A truncation raises `withdrawn` and never `fused`.
 - The four verdict words are unchanged (`unmeasured`, `quiet`, `degraded`, `repaired`) and only the counter line grew to eight names (`streams=`, `fused=`, `repaired=`, `unrepaired=`, `truncated=`, `errors=`, `refused=`, `withdrawn=`).
-- `unrepaired` means exactly one thing: a fusion was proven and was not repaired.
+- `unrepaired` means exactly 1 thing: a fusion was proven and was not repaired.
 
 ## What it does not do
 
@@ -158,7 +158,7 @@ Desktop app verification (`desktop` profile, app restarted):
 - Turn outcome: `turn_end=aborted` (stopped by operator after the answer)
 
 Test suite and gates:
-- Tests: 121 pass, 0 fail
+- Tests: 126 pass, 0 fail
 - Gates: 5 (`ssot`, `registry`, `namespace`, `step-review`, `copy`), 5 of 5 negative controls caught
 - Fixtures: 5 (including 1 real fused call and 1 counter-evidence call)
 

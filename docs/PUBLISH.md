@@ -65,7 +65,7 @@ After `ok: true`:
 2. Commit, push `main`, then `git subtree split` and push again.
 3. Tag `v0.1.0` on the public repository.
 
-## Prepared 0.2.0 / 0.3.0 (2026-11-10)
+## Published 0.3.0 (broken) and 0.3.1 (2026-11-10)
 
 ### Use the script, not `pnpm -r publish`
 
@@ -93,18 +93,66 @@ only check that proves the tarball contents without touching the registry.
 
 
 
-Both versions are bumped, built, gated and packed, but **not yet on npm**:
+### 0.3.0 shipped a manifest npm should never have accepted
 
-- `dsh-remedy@0.3.0` + `dsh-remedy-core@0.3.0` — `.tmp/pack9/` holds the
-  exact tarballs (`dsh-remedy-0.3.0.tgz` = 22418 bytes / 20 entries / 74014
-  unpacked; `dsh-remedy-core-0.3.0.tgz` = 11554 bytes / 17 entries).
-- The registry state is still `dsh-remedy@0.1.1` / `dsh-remedy-core@0.1.0`.
-  0.2.0 was never published; 0.3.0 supersedes it, and the changelog keeps both
-  entries so the skipped release is visible instead of silently absent.
-- Publish order matters: core first, then the plugin, because the plugin pins
-  the exact core version.
+The user ran the publish by hand on 2026-11-10 and both packages reached the
+registry:
+
+- `dsh-remedy-core@0.3.0` — `modified 2026-11-10T15:28:47.933Z`, `dependencies: {}`, installs fine.
+- `dsh-remedy@0.3.0` — `modified 2026-11-10T15:27:18.425Z`, but its published
+  `dependencies` read `{"dsh-remedy-core": "workspace:*"}`.
+
+That is not a valid registry spec. A plain install reproduces it:
+
+```bash
+npm install dsh-remedy@0.3.0 --dry-run
+# npm error code EUNSUPPORTEDPROTOCOL
+# npm error Unsupported URL Type "workspace:": workspace:*
+```
+
+**Root cause.** `npm publish` publishes the manifest it finds on disk. `pnpm pack`
+rewrites `workspace:*` to the exact version; `npm publish` does not. The 0.3.0
+plugin tarball in `.tmp/pack9/` has `{"dsh-remedy-core": "0.3.0"}` (that is what
+pnpm wrote) — the registry copy came from npm reading the source manifest
+directly.
+
+**Fix.** `scripts/publish_packages.mjs` no longer calls `npm publish` in a package
+directory. It now:
+
+1. runs `pnpm pack --pack-destination <temp>` for each package,
+2. reads `package/package.json` back out of the produced tarball with a
+   dependency-free tar-header parser (`packedManifest`),
+3. refuses to publish when any of `dependencies` / `peerDependencies` /
+   `optionalDependencies` still names `workspace:`, `file:`, `link:` or
+   `portal:` (`unpublishableDependencies`),
+4. asserts the plugin pins the exact `dsh-remedy-core` version,
+5. only then runs `npm publish <tarball> --access public [--otp <code>]`.
+
+Five negative controls in `tests/unit/publish.test.ts` cover the failure, and a
+sixth reads the packed tarball itself when it exists, so the packed manifest is
+what the test asserts, not the tracked one.
+
+**0.3.1.** Both packages are bumped to 0.3.1 and packed; the code is byte-for-byte
+the 0.3.0 code (the plugin tarball is still 22418 bytes / 20 entries / 74014
+unpacked, the core tarball is 11585 bytes / 17 entries / 38582 unpacked), only the
+manifest differs. `.tmp/pack11/` holds both. Publishing 0.3.1 is a single command:
+
+```bash
+node scripts/publish_packages.mjs --otp <code>
+```
+
+**0.3.0 of the plugin cannot be withdrawn.** npm only allows unpublishing within
+24 hours of publication, and only with the same OTP path; the usable answer is a
+working 0.3.1 plus an explicit "do not install 0.3.0" line in the README and the
+changelog. `dsh-remedy-core@0.3.0` is fine and identical to 0.3.1, so it can stay.
+
+- 0.2.0 was never published; 0.3.0 superseded it, and the changelog keeps every
+  entry so a skipped release stays visible instead of silently absent.
+- Publish order matters: core first, then the plugin, because the plugin pins the
+  exact core version.
 - After publishing, `record_publish.mjs` records the settled state, then the
-  container commit, the subtree split, the push and `gh release create` follow.
+  container commit, the public-branch refresh, the push and `gh release create`
+  follow.
 
 ## Published 0.1.0 / 0.1.1 (2026-11-09 → 2026-11-10)
 

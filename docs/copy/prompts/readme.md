@@ -38,10 +38,14 @@ Rules:
   `turn/end` events, 40 `MALFORMED_RESPONSE`, of which 37 are provable fusions),
   and name the upstream discussion from FACTS. The old 27-session sample must
   not appear.
-- "Install": the npm package is published. Show
-  `dsh plugin --profile <name> add dsh-remedy` first and
-  `pnpm add dsh-remedy dsh-remedy-core` second. Keep the source workflow
-  (clone, pnpm install, pnpm run verify) for contributors, clearly marked.
+- "Install": 0.3.1 is the version to install. Show
+  `dsh plugin --profile <name> add dsh-remedy@0.3.1` first and
+  `pnpm add dsh-remedy@0.3.1 dsh-remedy-core@0.3.1` second. State plainly, in
+  one short note, that 0.3.0 of the plugin cannot be installed from the registry
+  because npm published its raw workspace manifest with a literal `workspace:*`
+  dependency, and that 0.3.1 ships the same code from a pnpm-packed tarball. Keep
+  the source workflow (clone, pnpm install, pnpm run verify) for contributors,
+  clearly marked.
 - "How it works": one short fenced sequence showing the measured chunk order and
   the repaired output. Explain the all-or-nothing rule.
 - "Safety guarantees": a bullet list, one guarantee per line, each one already
@@ -57,17 +61,19 @@ Rules:
   and only the counter line grew to eight names.
 - "What it does not do": a Markdown table with a row per limit from FACTS.
 - "Verify it yourself": copy-pasteable commands and the real artifact path.
-- "Status": 0.3.x is published to npm (`dsh-remedy` and `dsh-remedy-core`);
+- "Status": 0.3.1 is the installable release of both packages (`dsh-remedy`
+  and `dsh-remedy-core`), and 0.3.0 of the plugin is a broken release that the
+  registry cannot install;
   P-0001, P-0002 and P-0003 are all `verified` on a real host (P-0001 on the
   headless profile and the desktop app, P-0002 on a 2026-11-10 headless run that
   repaired a real two-call fusion and saw the synthesized call dispatched, and
   P-0003 on a 2026-11-10 headless run whose journal wrote a non-zero `refused`
   after the code declined to repair a budget refusal). Do not hardcode a patch
   version; the npm badge is the version.
-- Include one short paragraph or table listing the package size: the shipped
-  0.3.0 tarball size, entries, unpacked size, the unpacked breakdown, the
-  sourcemaps that are no longer shipped, and the `dist/*.js` byte budget.
-  Use only FACTS numbers.
+- Include one short paragraph or table listing the package size: the 0.3.1
+  plugin tarball size, entries, unpacked size, the unpacked breakdown, the
+  0.3.1 core tarball size, the sourcemaps that are no longer shipped, and the
+  `dist/*.js` byte budget. Use only FACTS numbers.
 - "Development": the exact commands from FACTS.
 - Link to `README.zh-CN.md` near the top for Chinese readers.
 - End with MIT and "not affiliated with DeepSeek".

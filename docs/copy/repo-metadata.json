@@ -13,6 +13,6 @@
     "plugin",
     "typescript"
   ],
-  "release_blurb": "### 0.3.0\n\nRelease 0.3.0 of dsh-remedy. Patches P-0001, P-0002 and P-0003 are all verified on a real host (P-0003's live run is the one whose journal wrote a non-zero `refused`). The counter line now carries eight names while the four verdict words are unchanged.\n\nLive evidence: [data/results/live-2026-11-10T14-45-00.000Z.json](data/results/live-2026-11-10T14-45-00.000Z.json) and [data/results/live-2026-11-10T16-30-00.000Z.json](data/results/live-2026-11-10T16-30-00.000Z.json).",
+  "release_blurb": "### 0.3.1\n\n0.3.1 is the installable release of dsh-remedy. Plugin 0.3.0 carries a literal `workspace:*` dependency and cannot be installed from the registry.\n\nPatches P-0001, P-0002 and P-0003 are all verified on a real host (P-0003's live run is the one whose journal wrote a non-zero `refused`). The counter line carries eight names while the four verdict words are unchanged.\n\nLive evidence: [data/results/live-2026-11-09T17-00-00.000Z.json](data/results/live-2026-11-09T17-00-00.000Z.json), [data/results/live-desktop-2026-11-09T19-10-00.000Z.json](data/results/live-desktop-2026-11-09T19-10-00.000Z.json), [data/results/live-2026-11-10T14-45-00.000Z.json](data/results/live-2026-11-10T14-45-00.000Z.json), and [data/results/live-2026-11-10T16-30-00.000Z.json](data/results/live-2026-11-10T16-30-00.000Z.json).",
   "social_preview": "Diagram showing dsh-remedy intercepting fused tool calls in DeepSeek Harness and splitting glued JSON objects into discrete invocations."
 }

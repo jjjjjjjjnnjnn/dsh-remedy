@@ -8,10 +8,10 @@
 - Name: dsh-remedy
 - Tagline (internal, not final copy): a resident repair layer for DeepSeek Harness.
 - Package names: `dsh-remedy` (plugin), `dsh-remedy-core` (engine).
-- Version: 0.3.0 (plugin), 0.3.0 (core)
+- Version: 0.3.1 (plugin), 0.3.1 (core)
 - License: MIT
 - Repository: https://github.com/jjjjjjjjnnjnn/dsh-remedy (public, created 2026-11-09)
-- npm: 0.3.x is published (`dsh-remedy` and `dsh-remedy-core`); the npm badge shows the current latest.
+- npm: `dsh-remedy-core@0.3.0` is published. `dsh-remedy@0.3.0` reached the registry with a literal `workspace:*` dependency because npm published the raw workspace manifest, so installing it fails with `EUNSUPPORTEDPROTOCOL`; 0.3.1 republishes the same code from a pnpm-packed tarball and is the version to install. The npm badge shows the current latest.
 - Independent project; not affiliated with DeepSeek.
 - Language of code and CLI: English. Chinese README is a translation.
 
@@ -108,14 +108,18 @@
 
 ## Tests and gates
 
-- Tests: 126 pass, 0 fail.
+- Tests: 131 pass, 0 fail.
 - Gates: 5 (`ssot`, `registry`, `namespace`, `step-review`, `copy`).
 - Negative controls (`--mutate`): 5 of 5 caught.
 - Publishing: `scripts/publish_packages.mjs` publishes the two package
   directories in order and refuses to start when the workspace root is not
   private, when the versions disagree, when `dist/` is missing, or when a
   package is not `public`. A bare `pnpm -r publish` reports the missing
-  one-time password as `404 Not Found`; the real answer is `EOTP`.
+  one-time password as `404 Not Found`; the real answer is `EOTP`. A package
+  that depends on a sibling by `workspace:*` must be published from a
+  `pnpm pack` tarball: pnpm rewrites the protocol to the exact version, npm
+  does not, and the registry then answers a plain install with
+  `EUNSUPPORTEDPROTOCOL`.
 - Fixtures: 5, including one real fused call and one counter-evidence call.
 - The plugin tarball ships `fixtures/`; `dsh-remedy verify` works from an installed copy (0.2.0), and 0.3.0 keeps that property.
 - Test command: `pnpm run verify` (build, typecheck, test, gate).
@@ -127,12 +131,12 @@
 - Published tarball before the slimming pass (0.1.1): 26345 bytes compressed, 98424 bytes unpacked, 30 files, including 10 sourcemap files.
 - The slimming pass was measured on the 0.1.1 code: 19114 bytes compressed, 20 entries, 63170 bytes unpacked.
 - The shipped 0.2.0 tarball, which carries the P-0002 hardening, is 19569 bytes compressed, 20 entries, 64933 bytes unpacked.
-- The shipped 0.3.0 tarball, which also carries the P-0003 observability, is 22418 bytes compressed, 20 entries, 74014 bytes unpacked.
+- The shipped 0.3.0 tarball, which also carries the P-0003 observability, is 22418 bytes compressed, 20 entries, 74014 bytes unpacked. 0.3.1 ships the same bytes; only the published manifest differs.
 - Unpacked breakdown of the shipped 0.3.0 tarball: 52247 bytes of `dist/*.js`, 13797 bytes of `dist/*.d.ts`, 2694 bytes of `fixtures/`, 5276 bytes of package-root files.
 - The package still ships `dist/*.js`, `dist/*.d.ts`, `fixtures/`, `cordis.patch.yml`, `README.md`, `LICENSE`; no sourcemaps.
 - Dropping sourcemaps removes 41926 bytes of the unpacked payload (measured in `docs/research/stability-audit-2026-11-10.md`).
 - Byte budget: `dist/*.js` is 52247 bytes after P-0003. The working ceiling is 53000 bytes; a patch that crosses it must split a seam instead of growing `repair-stream.ts`.
-- The plugin entry is 20 tar entries; the core entry is 17 tar entries.
+- The plugin entry is 20 tar entries; the core entry is 17 tar entries. The 0.3.1 core tarball is 11585 bytes compressed, 17 entries, 38582 bytes unpacked.
 
 ## Install and use
 
@@ -181,5 +185,4 @@
 
 ## Numbers allowed in copy
 
-0 1 2 3 4 5 6 7 8 9 10 11 13 17 20 22 27 30 37 40 45 48 60 84 93 121 126 147 2694 5276 9118 9401 13797 17423 17484 19114 19569 22418 26345 41926 52247 53000 63170 64933 74014 98424 0.1.0 0.1.1 0.2.0 0.3.0 4427
-
+0 1 2 3 4 5 6 7 8 9 10 11 13 17 19 20 22 27 30 37 40 45 48 60 84 93 121 126 131 147 2694 4427 5276 9118 9401 11585 13797 17423 17484 19114 19569 22418 26345 38582 41926 52247 53000 63170 64933 74014 98424 0.1.0 0.1.1 0.2.0 0.3.0 0.3.1

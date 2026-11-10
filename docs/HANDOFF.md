@@ -3,17 +3,17 @@
 > **下一会话从 `dsh-remedy/` 开始。** 读本文件 → `PROJECT_RULES.md` → `AGENTS.md` 即可开工。
 > 本目录是**公开仓库根**；`dsh-triage/` 在父目录，是另一个项目，不属于本仓库。
 
-## 三十秒状态（2026-11-10 · R7）
+## 三十秒状态（2026-11-10 · R10）
 
 | 项 | 值 |
 |---|---|
-| 版本 | `dsh-remedy@0.3.0`；`dsh-remedy-core@0.3.0` |
+| 版本 | `dsh-remedy@0.3.1`；`dsh-remedy-core@0.3.1`（0.3.0 的 plugin 在 registry 上不可安装：manifest 里是字面 `workspace:*`） |
 | 补丁 | **P-0001 `verified`**（headless + 桌面两次真机）· **P-0002 `verified`**（2026-11-10 headless 真机修好一次真实两调用粘连、合成 id 被派发执行）· **P-0003 `verified`**（2026-11-10 headless 真机 journal 第一次写出非零 `refused`：`too-many-calls` 拒绝而不是假装修好） |
-| 基线 | **126 tests / 5 gates / `--mutate` 5-5** |
-| 包体 | **0.3.0 = 22 418 B 压缩 / 20 条目 / 74 014 B 解包**（`dist/*.js` 52 247 / `dist/*.d.ts` 13 797 / fixtures 2 694 / 包根 5 276；0.2.0 是 19 569 / 64 933，0.1.1 是 26 345 / 98 424 / 30 文件） |
-| 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1`（`v0.2.0` / `v0.3.0` 待推） |
-| 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 用本地双 tgz 验过 5/5；0.3.0 已在 `desktop` 与 `remedy-live` 两个 profile 里装成 tgz 并跑出真机证据（npm 本身待发布） |
-| 下一件事 | npm 发布 0.3.0 → 推送 → 重启 App 加载新 profile |
+| 基线 | **131 tests / 5 gates / `--mutate` 5-5** |
+| 包体 | **0.3.1 = 22 418 B 压缩 / 20 条目 / 74 014 B 解包**（与 0.3.0 逐字节同一份代码，只换 manifest；core 11 585 / 38 582）（`dist/*.js` 52 247 / `dist/*.d.ts` 13 797 / fixtures 2 694 / 包根 5 276；0.2.0 是 19 569 / 64 933，0.1.1 是 26 345 / 98 424 / 30 文件） |
+| 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1`（`v0.3.1` 待推；0.2.0 与 0.3.0 从不单独发 release） |
+| 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 与 0.3.0 用本地双 tgz 验过 5/5；0.3.0 已在 `desktop` 与 `remedy-live` 两个 profile 里装成 tgz 并跑出真机证据；**0.3.1 尚未上 npm** |
+| 下一件事 | `node scripts/publish_packages.mjs --otp <code>` 发布 **0.3.1** → `record_publish.mjs` → 陌生人安装验收 → 提交 → push → `gh release create v0.3.1` |
 
 ## 五分钟检查
 
@@ -57,6 +57,39 @@ git -C .. log --oneline -3
 - `dsh-triage/` 只是同级项目，规则以它自己的 `AGENTS.md` 为准。
 
 ## 当前批次（R8 → R1）
+
+**R10（2026-11-10）· 0.3.0 被 npm 写坏，用 0.3.1 修**
+
+- **起因**：用户在终端手动发布 0.3.0 成功（core 与 plugin 都上了 registry），但随后
+  `npm install dsh-remedy@0.3.0` 报 `EUNSUPPORTEDPROTOCOL`。
+- **根因**：`npm publish` 发布的是磁盘上的 manifest 原文；`pnpm pack` 才会把
+  `workspace:*` 改写成精确版本。registry 上 `dsh-remedy@0.3.0` 的
+  `dependencies` 是 `{"dsh-remedy-core": "workspace:*"}`，这是不可安装的 spec。
+  同一份代码让 pnpm 打包则得到 `{"dsh-remedy-core": "0.3.0"}`。
+- **修法**：`scripts/publish_packages.mjs` 不再在包目录直接 `npm publish`，改为
+  `pnpm pack --pack-destination <temp>` → 用零依赖 tar 解析器读回
+  `package/package.json`（`packedManifest`）→ 拒绝任何
+  `workspace:`/`file:`/`link:`/`portal:` 依赖（`unpublishableDependencies`）→
+  断言 plugin 精确 pin 住 core 版本 → 才 `npm publish <tgz>`。
+- **测试**：`tests/unit/publish.test.ts` 5 → **10** 条（新增打包依赖拒绝、四协议、
+  pin 版本接受、读回真实 tarball、仓库内仍应保留 `workspace:*`）。全套
+  **131 tests / 5 gates** 全绿，`--mutate` 5/5。
+- **版本**：两个包 bump 到 **0.3.1**。代码逐字节等于 0.3.0：plugin tarball 仍
+  **22418 B / 20 条目 / 74014 B 解包**，core tarball **11585 B / 17 条目 / 38582 B
+  解包**（0.3.0 的 core 是 11554 B）。只有 manifest 不同。产物在 `.tmp/pack11/`。
+- **0.3.0 收不回来**：npm 只允许发布后 24 小时内 unpublish，实务答案是"发一个能装的
+  0.3.1 + 在 README/CHANGELOG/PUBLISH 里明写 0.3.0 装不上"。core 0.3.0 本身没问题。
+- **对外文字**：事实包改成 0.3.1 口径（含 `EUNSUPPORTEDPROTOCOL` 事故三条），
+  7 个 prompt 同步，copy 通道重生成 8 个文件：
+  `README.md` 9743 B、`README.zh-CN.md` 6021 B、`CONTRIBUTING.md` 2360 B、
+  `SECURITY.md` 1133 B、`CODE_OF_CONDUCT.md` 4796 B、`CHANGELOG.md` 3943 B、
+  `docs/copy/repo-metadata.json` 1731 B、4 个模板 2083/944/205/513 B。
+  README.md:29/:35 是 `add dsh-remedy@0.3.1`，:38 是 0.3.0 装不上的注，
+  :131 是"0.3.1 是唯一可安装发布"，:138 是 22418/20/74014/11585/17/38582 的包体积段，
+  :148 是 131 tests / 5 gates。
+- **待办**：`node scripts/publish_packages.mjs --otp <code>` 发布 0.3.1（用户手动输码）
+  → `record_publish.mjs` → 陌生人空目录安装 → 提交 → 刷新 public-remedy → push →
+  `gh release create v0.3.1 --notes-file .tmp/release-notes-v0.3.1.md`。
 
 **R9（2026-11-10）· 真机把 P-0003 也升到 `verified`：拒绝被记成拒绝。**
 

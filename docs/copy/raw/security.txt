@@ -3,16 +3,13 @@
 ## Supported versions
 
 | Version | Supported |
-| --- | --- |
-| 0.1.x | Yes |
+|---|---|
+| 0.3.x | Yes |
 | Older or unlisted | No |
 
 ## Reporting a vulnerability
 
-Report vulnerabilities through GitHub private vulnerability reporting on the public repository:
-https://github.com/jjjjjjjjnnjnn/dsh-remedy
-
-Do not open a public issue.
+Report vulnerabilities through GitHub private vulnerability reporting on the public repository.
 
 ## What is in scope
 
@@ -26,11 +23,11 @@ Do not open a public issue.
 - Upstream DSH
 - The model relay
 - Provider credentials
-- A `max-tokens` truncation, which the plugin deliberately does not repair
+- A `max-tokens` truncation (which the plugin deliberately does not repair)
 
 ## What to include
 
-When reporting an issue, provide:
+Include the following in the report:
 
 - Plugin version
 - DSH version
@@ -43,4 +40,4 @@ Never paste a real API key or an unredacted session log.
 
 ## Disclosure
 
-This project follows coordinated disclosure. There is no bounty program and no service level agreement.
+This project follows coordinated disclosure. There is no bounty and no SLA.

@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_patch_registry.mjs",
+  "generated_at": "2026-11-10T08:40:00.000Z",
+  "source": {
+    "git_head": "148dd1d2a290e9f50906214678fae62225a49df3",
+    "git_dirty": true
+  },
+  "patches": [
+    {
+      "id": "P-0001",
+      "title": "Split fused tool-call arguments into separate calls",
+      "symptom": "Tool call \"<name>\": Unexpected non-whitespace character after JSON at position N — Received arguments:\\n{...}{...}",
+      "rootCause": "The relay can stream two tool calls into one index. @earendil-works/pi-ai parseToolCallArguments (dist/utils/json-parse.js) receives the concatenation, throws LlmError(MALFORMED_RESPONSE), and @deepseek-ai/dsh-agent-loop re-throws because MALFORMED_RESPONSE is not in the default retryableCodes. Measured at dsh-llm-pi-ai/lib/index.js:1656 and confirmed upstream in deepseek-harness discussion #4427.",
+      "surface": "llm/stream",
+      "status": "verified",
+      "severity": "critical",
+      "evidence": [
+        "data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json",
+        "data/fixtures/toolcall-fusion/valid-two-calls.json",
+        "data/results/live-2026-11-09T17-00-00.000Z.json",
+        "data/results/live-desktop-2026-11-09T19-10-00.000Z.json",
+        "data/results/patch-registry-2026-11-09T16-40-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/json-split.test.ts",
+        "tests/unit/toolcall-repair.test.ts",
+        "tests/unit/repair-stream.test.ts",
+        "tests/unit/plugin-mount.test.ts",
+        "tests/unit/session-log.test.ts",
+        "scripts/gate_registry.mjs",
+        "scripts/record_live_mount.mjs"
+      ],
+      "limits": [
+        "cannot recover a call whose tail was cut by max-tokens (finish.reason.kind === length)",
+        "does not fix the relay or adapter that assigned one index to two calls",
+        "does not reorder or rename calls; the first call keeps the original id",
+        "cannot attribute which upstream stage glued the objects; it only sees the assembled text"
+      ]
+    },
+    {
+      "id": "P-0002",
+      "title": "A rescue must be provable, attributable and atomic",
+      "symptom": "A call split out of fused arguments runs with an empty or wrong tool name, a repaired finish replays without replayState, or a block-end repair is committed before a later block of the same stream is rejected",
+      "rootCause": "Repair-stream used to commit each block-end repair as it arrived, kept only the last tool name seen on an index, and emitted {kind:\"stop\"} without the adapter replayState. None of these break the JSON proof, so P-0001 called them repaired while the runtime could still dispatch the wrong call.",
+      "surface": "llm/stream",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0002-rescue-integrity.md",
+        "data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json",
+        "tests/unit/toolcall-repair.test.ts",
+        "tests/unit/repair-stream.test.ts"
+      ],
+      "guards": [
+        "tests/unit/repair-stream.test.ts",
+        "tests/unit/toolcall-repair.test.ts",
+        "tests/unit/json-split.test.ts",
+        "scripts/gate_registry.mjs"
+      ],
+      "limits": [
+        "cannot prove the atomic-commit path live on this host: the measured adapter never emits block-end for a tool call",
+        "treats a tool name that arrives twice with different values as unrepairable, so a legitimate adapter bug stays a failure",
+        "does not change the verdict vocabulary: a non-fusion syntax error is still counted as fused (BS-12)"
+      ]
+    }
+  ]
+}

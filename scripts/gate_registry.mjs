@@ -39,11 +39,18 @@ await runGate('registry', async ({ checks, mutate }) => {
     checks.add(`ledger-status:${item.id}`, patch !== undefined && patch.status === item.status, `${item.status} vs ${patch?.status ?? 'missing'}`)
   }
 
+  // Pick by the stamp inside the file, not by filename: `2026-11-10T08-40-00.000Z`
+  // and `2026-11-10T08:40:00.000Z` sort differently as strings but are the same
+  // instant, and a stale-but-last-by-name snapshot would silently pass.
   const snapshots = listDir('data/results')
     .filter((entry) => entry.isFile && /^patch-registry-.*\.json$/.test(entry.name))
-    .map((entry) => `data/results/${entry.name}`)
-    .sort()
-  const latest = snapshots.at(-1)
+    .map((entry) => ({
+      path: `data/results/${entry.name}`,
+      at: stampOf(readJson(`data/results/${entry.name}`)),
+    }))
+    .filter((entry) => entry.at !== '')
+    .sort((a, b) => a.at.localeCompare(b.at) || a.path.localeCompare(b.path))
+  const latest = snapshots.at(-1)?.path
   checks.require('snapshot-present', latest !== undefined, 'no data/results/patch-registry-*.json')
 
   if (latest !== undefined) {
@@ -73,4 +80,8 @@ function safeRead(path) {
   } catch {
     return null
   }
+}
+
+function stampOf(payload) {
+  return typeof payload?.generated_at === 'string' ? payload.generated_at : ''
 }

@@ -135,6 +135,45 @@
         "docs/copy/manifest.json",
         "tests/governance/public-copy.test.ts"
       ]
+    },
+    {
+      "id": "S9",
+      "gate": "registry",
+      "title": "A repair the runtime cannot execute is not a repair",
+      "axes": {
+        "correctness": "A split call keeps a dispatchable tool name or is rejected (missing-name); a repaired finish carries the adapter replayState; a block-end repair is buffered until the tool-call phase ends.",
+        "reproducibility": "Each invariant has a negative control in tests/unit/repair-stream.test.ts and tests/unit/toolcall-repair.test.ts, and the whole suite runs from one command.",
+        "compliance": "The patch is recorded as `tested`, not `verified`: no live artifact proves the atomic-commit path, and data/results has no new live file.",
+        "ssot": "packages/core/src/registry.ts, audit/patch_ledger.json and data/results/patch-registry-*.json are kept byte-identical by the registry gate.",
+        "adversarial": "The measured adapter never emits block-end for a tool call, so the atomic path cannot be proven live; BS-11 and BS-12 record what stays open instead of widening the claim."
+      },
+      "evidence": [
+        "docs/patches/P-0002-rescue-integrity.md",
+        "packages/plugin/src/repair-stream.ts",
+        "packages/core/src/toolcall-repair.ts",
+        "tests/unit/repair-stream.test.ts",
+        "tests/unit/toolcall-repair.test.ts"
+      ]
+    },
+    {
+      "id": "S10",
+      "gate": "registry",
+      "title": "A refusal is a measurement, not a repair",
+      "axes": {
+        "correctness": "Pure refusals raise refused only; too-many-calls raises fused+refused+unrepaired because no repair happened and the verdict must not read repaired; consumer-abort keeps the P-0002 fused+unrepaired and also raises withdrawn; a truncation raises withdrawn and never fused.",
+        "reproducibility": "Six negative controls: tests/unit/verdict.test.ts (the formatted line carries all eight counter names on one line; refused and withdrawn do not move the four states) and tests/unit/repair-stream.test.ts (a plain refusal raises refused and never fused; too-many-calls counts as a fusion we refused to take, not a failed repair; a withdrawn repair raises withdrawn and keeps unrepaired meaning one thing; a truncation withdrawal raises withdrawn and stays louder than quiet). The suite runs from one command.",
+        "compliance": "The patch is recorded as tested, not verified: it changes counters and the CLI line, not the repair itself, and it has no live artifact. judgeRemedy, its order and the four state words are byte-identical to 0.2.0.",
+        "ssot": "packages/core/src/registry.ts, audit/patch_ledger.json and data/results/patch-registry-2026-11-10T11-00-00.000Z.json are kept byte-identical by the registry gate; BS-12 is closed in audit/blind_spots.json with the remaining narrower limits spelled out.",
+        "adversarial": "The two bookings that differ from the literal instruction are written into the patch document rather than hidden: too-many-calls also raises unrepaired, and consumer-abort also raises withdrawn. What is frozen is the vocabulary, not the truth."
+      },
+      "evidence": [
+        "docs/patches/P-0003-refusal-observability.md",
+        "packages/core/src/verdict.ts",
+        "packages/plugin/src/repair-stream.ts",
+        "tests/unit/verdict.test.ts",
+        "tests/unit/repair-stream.test.ts",
+        "audit/blind_spots.json"
+      ]
     }
   ]
 }

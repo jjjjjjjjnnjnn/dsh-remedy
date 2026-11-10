@@ -50,6 +50,16 @@
       "id": "BS-10",
       "status": "accepted",
       "note": "Registry copies lag the publish call by seconds. publish-2026-11-10T00-10-00.000Z.json is red because it was recorded at 06:35:37Z and the 0.1.1 copy appeared at 06:35:35Z in the packument but not in the view used by the check. Red publish artifacts are kept and a new stamp records the settled state."
+    },
+    {
+      "id": "BS-11",
+      "status": "open",
+      "note": "A split-out call is emitted as a block-end on a fresh index with no companion block-start. The measured adapter never closes tool-call blocks at all, so this shape has not been live-tested; an adapter that relies on opened blocks could reject it. P-0002 cannot close this from the stream seam alone."
+    },
+    {
+      "id": "BS-12",
+      "status": "closed",
+      "note": "Closed 2026-11-10 by P-0003: recordRejected no longer increments fused for every rejection. A refusal that never proved a fusion moves refused only (so a stream whose only defect is bad JSON reads quiet), a withdrawal moves withdrawn, and unrepaired now means exactly one thing: a proven fusion that was not repaired. What stays open is narrower and recorded in the patch doc: the four verdict states are unchanged, so a state name still cannot say 'observed, refused, and correctly not repaired' (only the counter row can), and old journal lines keep the six-field counter shape because no migration rewrites them."
     }
   ]
 }

@@ -6,112 +6,112 @@
       "name": "readme",
       "target": "README.md",
       "model": "gemini-3.8-flash-high",
-      "generated_at": "2026-11-09T21:39:29.243Z",
-      "facts_sha256": "58862d5574e4d9f9c6220e429937acfd14838940166f68dbe94298cc5a08d7e7",
-      "prompt_sha256": "6f04095f8c8cf81228ce7eb010688740b26217ff512d26b91841e58dfe5e8de2",
-      "request_sha256": "b7032ed843ac6a0151233d68e9eb4fc1bdbeb2fc481c96a8ac70c8632cc54513",
-      "output_sha256": "e6acf7b3e2da74a18366fa40e47e8d6f80ff6d8c9641cfee922e9805c750458d"
+      "generated_at": "2026-11-10T11:05:11.745Z",
+      "facts_sha256": "abc33328594afe94fa16a8f4ef64030f83d1faaa5b0c593cb1e96829bd4efe34",
+      "prompt_sha256": "db523f6476f37ead8ef47eeaa82d3bde4f094092294d764e35dc848a1b114501",
+      "request_sha256": "a516841a772ecdcb0be64c4b9998544ef5526c5558caec7ce59635fe975a250e",
+      "output_sha256": "a2017583255ed5e4dcd505b6f616b21f8aa152bcae493e9fe437d2a5a8ad2e55"
     },
     {
       "name": "readme-zh",
       "target": "README.zh-CN.md",
       "model": "gemini-3.8-flash-high",
-      "generated_at": "2026-11-09T21:42:29.513Z",
-      "facts_sha256": "58862d5574e4d9f9c6220e429937acfd14838940166f68dbe94298cc5a08d7e7",
-      "prompt_sha256": "25aa30a6471f0b97491761b846f87c733ad917c5ae87b9a25cb626f7dafd6968",
-      "request_sha256": "bb6c4e85e9b87243e3d2fa9244849ab216d2e2e72cda6e2ee26b67e1c090b922",
-      "output_sha256": "d17106168dece4b5b491e6329becef6b23e147a5ccaa9b06f8b273f6aa90673a"
+      "generated_at": "2026-11-10T11:09:57.085Z",
+      "facts_sha256": "abc33328594afe94fa16a8f4ef64030f83d1faaa5b0c593cb1e96829bd4efe34",
+      "prompt_sha256": "dddb27e8c51935358fdf51f580749b15ff8c7e9777ee60e901b4440d5dd00a70",
+      "request_sha256": "edaba72a3e61ed2088a71405f395d8f8805f9bdffdb613ce878bb8732c257349",
+      "output_sha256": "5aba59a88ff2031ad33a8ff65c4b61eb2e20c52453c701e174a568052af6c985"
     },
     {
       "name": "contributing",
       "target": "CONTRIBUTING.md",
       "model": "gemini-3.8-flash-high",
-      "generated_at": "2026-11-09T21:46:43.327Z",
-      "facts_sha256": "58862d5574e4d9f9c6220e429937acfd14838940166f68dbe94298cc5a08d7e7",
-      "prompt_sha256": "161703c426991a09b111a7510f0a5ca4f26ccdf4fdf985b6ee61afd4ffb1b2be",
-      "request_sha256": "5944161627ce9883273be3b91e3b1ee37e0be665527789a1058e7679942d8979",
-      "output_sha256": "c49d441b67d0ab65135deffc5e7353f732eb55528d90991ef14fe969dc63a765"
+      "generated_at": "2026-11-10T11:15:03.548Z",
+      "facts_sha256": "abc33328594afe94fa16a8f4ef64030f83d1faaa5b0c593cb1e96829bd4efe34",
+      "prompt_sha256": "97f4e546e326e62f1a3cc82a85ba9d72d3c7d715a7ba6baf9a11bf5e2d7d48b3",
+      "request_sha256": "c02ecf6b428c29d82f6497ea0667ad923a183e52a0fd03c2576f56cebbfc089c",
+      "output_sha256": "5dd96614e2ed132beb94bf18a80012c45e924c5ee76708ab48808c67b95f2958"
     },
     {
       "name": "security",
       "target": "SECURITY.md",
       "model": "gemini-3.8-flash-high",
-      "generated_at": "2026-11-09T21:50:10.477Z",
-      "facts_sha256": "58862d5574e4d9f9c6220e429937acfd14838940166f68dbe94298cc5a08d7e7",
-      "prompt_sha256": "a895f56674797bae7e1a2ab464ec357853008b844398333a9f91277111f407d9",
-      "request_sha256": "67fb43cd12eb4dd755c35d63f37fadb6934aded91f63864694e9bbe9ab2bae74",
-      "output_sha256": "30bd864e6a2510bb06b6ecb29f3180df317adc8fc2f83cf35be16452f2622695"
+      "generated_at": "2026-11-10T11:16:47.466Z",
+      "facts_sha256": "abc33328594afe94fa16a8f4ef64030f83d1faaa5b0c593cb1e96829bd4efe34",
+      "prompt_sha256": "0ff05b8825e8934b5f53c007d06a5c24a03789daca990a289079939a09ce3e63",
+      "request_sha256": "920082d0499dd2d3b5fbb2f7ea5bd100d07cee3a7ade667cafbf519d4730a7f3",
+      "output_sha256": "cc111ca7c89751272a98a4c6e8786ba7ac428b2867cd5d368665191513dc1060"
     },
     {
       "name": "code-of-conduct",
       "target": "CODE_OF_CONDUCT.md",
       "model": "gemini-3.8-flash-high",
-      "generated_at": "2026-11-10T06:17:31.304Z",
-      "facts_sha256": "58862d5574e4d9f9c6220e429937acfd14838940166f68dbe94298cc5a08d7e7",
+      "generated_at": "2026-11-10T11:17:55.353Z",
+      "facts_sha256": "abc33328594afe94fa16a8f4ef64030f83d1faaa5b0c593cb1e96829bd4efe34",
       "prompt_sha256": "011d1ef6a1a6b248d0721e4925925c8268d91c6dd14a593e27ccc41d917a5315",
-      "request_sha256": "0e80f9a5c20b680082397cb7236ee9936a6d6834cdad316894dd770e2eca3406",
+      "request_sha256": "81b93cb2b0f169a13d192dab1ecb3d06d8634f4ea8798e7a1c4933ef6a380d37",
       "output_sha256": "56ea71dc2824e28f8a857c1dda78a58872ea03d8147184f6e6c5cb925473c10c"
     },
     {
       "name": "changelog",
       "target": "CHANGELOG.md",
       "model": "gemini-3.8-flash-high",
-      "generated_at": "2026-11-10T06:19:57.021Z",
-      "facts_sha256": "58862d5574e4d9f9c6220e429937acfd14838940166f68dbe94298cc5a08d7e7",
-      "prompt_sha256": "b2c004d76bc0437f6d7c54176e5817ceca9cf252b6ddca48c7a94b5a0954b7ae",
-      "request_sha256": "51105f65e7c52871c37bfb0f4e39f09a457df3bd0606df440a3daeca21bfd4e3",
-      "output_sha256": "0bcfb3d64eefa88f41add53aea32f69906b26353d823b3297a023b0bac0aa34d"
+      "generated_at": "2026-11-10T11:21:13.359Z",
+      "facts_sha256": "abc33328594afe94fa16a8f4ef64030f83d1faaa5b0c593cb1e96829bd4efe34",
+      "prompt_sha256": "2f206c979322b998cf229f38fe7df4d8afd67ec8b30181ea670ad2aeb8439b78",
+      "request_sha256": "2505767a64245abc52b766f6c51e9ee3bda032e5daedfc343c82bc6ca26b8d6a",
+      "output_sha256": "4b9a1af5dfc007a3b34973e25800b0f62c2db32438caad43d942d24e155e45b4"
     },
     {
       "name": "metadata",
       "target": "docs/copy/repo-metadata.json",
       "model": "gemini-3.8-flash-high",
-      "generated_at": "2026-11-10T06:24:11.583Z",
-      "facts_sha256": "58862d5574e4d9f9c6220e429937acfd14838940166f68dbe94298cc5a08d7e7",
-      "prompt_sha256": "dfb8fff9bce2762077700125575e1b21d71fc7d0a57e0fd0438265570a12b019",
-      "request_sha256": "43a0426fa4bebeabf72ac76c0518aa2f3d07e8d387cce8459ee2b7c55dba0237",
-      "output_sha256": "c3285c99e22a71345b2283a4205b638954b75caba92e4cfaec2e79a1451eae3b"
+      "generated_at": "2026-11-10T11:25:09.368Z",
+      "facts_sha256": "abc33328594afe94fa16a8f4ef64030f83d1faaa5b0c593cb1e96829bd4efe34",
+      "prompt_sha256": "8e06caafdbd626a7388d858d4f613b6785882a6dba4360cdbed8b14461d3d336",
+      "request_sha256": "105d665ba1e3ba42755d8c018167206521279f00d654ac9138b969bdc5952911",
+      "output_sha256": "af7c339066c5bd988b841c60e3600bec763f185c804c757fa596411b0aa82bd9"
     },
     {
       "name": "templates:.github/ISSUE_TEMPLATE/bug_report.yml",
       "target": ".github/ISSUE_TEMPLATE/bug_report.yml",
       "model": "gemini-3.8-flash-high",
-      "generated_at": "2026-11-10T06:26:32.795Z",
-      "facts_sha256": "58862d5574e4d9f9c6220e429937acfd14838940166f68dbe94298cc5a08d7e7",
-      "prompt_sha256": "f39a4f916631c9f124373943f728c0a7e58494ff36676ab6fec214fc2a8ca359",
-      "request_sha256": "11df8f72091a17cb8cccc4e886be3c66221c7fe383fd9f1019eb514063cb8172",
-      "output_sha256": "fc127fb77f1ac52359138185adc151fce10f66826c4019edd0ce81f34be01463"
+      "generated_at": "2026-11-10T11:27:15.474Z",
+      "facts_sha256": "abc33328594afe94fa16a8f4ef64030f83d1faaa5b0c593cb1e96829bd4efe34",
+      "prompt_sha256": "eac7a7e5ea63e7418d250bd2e0d264487edd2ac04a4221196e1f45367cef329a",
+      "request_sha256": "66845d051a08c6faa621be7e664eda176111947c8693ecd11a2f0e2f586c9c0d",
+      "output_sha256": "0b5a97ec66d8752a7fd110ccaf9b79c8151d28b17b8a9d609819516ad1a8100b"
     },
     {
       "name": "templates:.github/ISSUE_TEMPLATE/feature_request.yml",
       "target": ".github/ISSUE_TEMPLATE/feature_request.yml",
       "model": "gemini-3.8-flash-high",
-      "generated_at": "2026-11-10T06:26:32.795Z",
-      "facts_sha256": "58862d5574e4d9f9c6220e429937acfd14838940166f68dbe94298cc5a08d7e7",
-      "prompt_sha256": "f39a4f916631c9f124373943f728c0a7e58494ff36676ab6fec214fc2a8ca359",
-      "request_sha256": "11df8f72091a17cb8cccc4e886be3c66221c7fe383fd9f1019eb514063cb8172",
+      "generated_at": "2026-11-10T11:27:15.474Z",
+      "facts_sha256": "abc33328594afe94fa16a8f4ef64030f83d1faaa5b0c593cb1e96829bd4efe34",
+      "prompt_sha256": "eac7a7e5ea63e7418d250bd2e0d264487edd2ac04a4221196e1f45367cef329a",
+      "request_sha256": "66845d051a08c6faa621be7e664eda176111947c8693ecd11a2f0e2f586c9c0d",
       "output_sha256": "a4b0d063c79f10fe61958f7faab46687341ceab5ba3e16d4e80a1c665cf12bbf"
     },
     {
       "name": "templates:.github/ISSUE_TEMPLATE/config.yml",
       "target": ".github/ISSUE_TEMPLATE/config.yml",
       "model": "gemini-3.8-flash-high",
-      "generated_at": "2026-11-10T06:26:32.795Z",
-      "facts_sha256": "58862d5574e4d9f9c6220e429937acfd14838940166f68dbe94298cc5a08d7e7",
-      "prompt_sha256": "f39a4f916631c9f124373943f728c0a7e58494ff36676ab6fec214fc2a8ca359",
-      "request_sha256": "11df8f72091a17cb8cccc4e886be3c66221c7fe383fd9f1019eb514063cb8172",
+      "generated_at": "2026-11-10T11:27:15.474Z",
+      "facts_sha256": "abc33328594afe94fa16a8f4ef64030f83d1faaa5b0c593cb1e96829bd4efe34",
+      "prompt_sha256": "eac7a7e5ea63e7418d250bd2e0d264487edd2ac04a4221196e1f45367cef329a",
+      "request_sha256": "66845d051a08c6faa621be7e664eda176111947c8693ecd11a2f0e2f586c9c0d",
       "output_sha256": "e050916033f2ca64f0c8dc72eee35dcf41e30937dc4dfd5732590b14d59b2302"
     },
     {
       "name": "templates:.github/PULL_REQUEST_TEMPLATE.md",
       "target": ".github/PULL_REQUEST_TEMPLATE.md",
       "model": "gemini-3.8-flash-high",
-      "generated_at": "2026-11-10T06:26:32.795Z",
-      "facts_sha256": "58862d5574e4d9f9c6220e429937acfd14838940166f68dbe94298cc5a08d7e7",
-      "prompt_sha256": "f39a4f916631c9f124373943f728c0a7e58494ff36676ab6fec214fc2a8ca359",
-      "request_sha256": "11df8f72091a17cb8cccc4e886be3c66221c7fe383fd9f1019eb514063cb8172",
+      "generated_at": "2026-11-10T11:27:15.474Z",
+      "facts_sha256": "abc33328594afe94fa16a8f4ef64030f83d1faaa5b0c593cb1e96829bd4efe34",
+      "prompt_sha256": "eac7a7e5ea63e7418d250bd2e0d264487edd2ac04a4221196e1f45367cef329a",
+      "request_sha256": "66845d051a08c6faa621be7e664eda176111947c8693ecd11a2f0e2f586c9c0d",
       "output_sha256": "f13337b2a8382cc0d5aa2837bbba36207894d01ee6add87166f552d0af01def1"
     }
   ],
-  "updated_at": "2026-11-10T06:29:25.403Z"
+  "updated_at": "2026-11-10T11:28:58.977Z"
 }

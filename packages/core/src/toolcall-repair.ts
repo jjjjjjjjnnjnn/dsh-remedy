@@ -11,6 +11,8 @@
  *    something else and splitting would fabricate a second call);
  *  - a `max-tokens` truncation is never repaired (the tail is missing, not fused);
  *  - every fragment must parse to a plain object before any call is returned;
+ *  - a call without an id or without a tool name is rejected: a synthetic call
+ *    that cannot be traced or dispatched is worse than the original failure;
  *  - the first call keeps the original id, so the transcript stays traceable;
  *  - synthetic ids are suffixed and collision-checked.
  */
@@ -21,6 +23,7 @@ import type { ToolCallInput } from './types.js'
 export type RepairRejectionCode =
   | 'truncated'
   | 'missing-id'
+  | 'missing-name'
   | 'not-an-object-sequence'
   | 'single-object'
   | 'unparsable-fragment'
@@ -60,6 +63,9 @@ export type RepairResult = RepairUnchanged | RepairRepaired | RepairRejected
 
 const DEFAULT_MAX_CALLS = 8
 
+/** Public so the wrapper and the CLI share one ceiling instead of two literals. */
+export { DEFAULT_MAX_CALLS }
+
 function reject(code: RepairRejectionCode, detail: string): RepairRejected {
   return { status: 'rejected', code, detail }
 }
@@ -91,6 +97,9 @@ export function repairToolCallArguments(
   }
   if (call.id.trim() === '') {
     return reject('missing-id', 'a synthetic call cannot be traced without an id')
+  }
+  if (call.name.trim() === '') {
+    return reject('missing-name', 'a synthetic call cannot be dispatched without a tool name')
   }
 
   const text = call.arguments

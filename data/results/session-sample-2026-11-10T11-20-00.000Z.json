@@ -1,0 +1,305 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_session_sample.mjs",
+  "generated_at": "2026-11-10T11:20:00.000Z",
+  "source": {
+    "path": "~/.dsh/sessions",
+    "root_relative": "..\\..\\..\\..\\..\\.dsh\\sessions",
+    "files": 48,
+    "unreadable": 0,
+    "window": {
+      "oldest": "2026-11-08T08:35:56.956Z",
+      "newest": "2026-11-10T10:27:17.272Z"
+    },
+    "fingerprint_sha256": "7689d019e88c1e642acf80c995baa41fce8975d7ab8a979ea3d138c37e01a6b4"
+  },
+  "read_with": "dsh-remedy decompressSessionLog (packages/plugin/dist)",
+  "retry_unit": "session file + turn + step",
+  "totals": {
+    "attempt_records": 9401,
+    "attempt_records_without_finish": 6,
+    "turn_end": 120,
+    "turns_without_attempt": 1,
+    "tool_call_delta_chunks": 0,
+    "block_starts": 17484,
+    "block_ends": 17423,
+    "block_ends_without_a_start_in_the_same_turn": 10
+  },
+  "turn_end_reasons": [
+    [
+      "completed",
+      49
+    ],
+    [
+      "error:MALFORMED_RESPONSE",
+      40
+    ],
+    [
+      "max-tokens",
+      14
+    ],
+    [
+      "error:SERVER",
+      8
+    ],
+    [
+      "aborted",
+      7
+    ],
+    [
+      "error:MISSING_CREDENTIAL",
+      1
+    ],
+    [
+      "error:UNKNOWN",
+      1
+    ]
+  ],
+  "finish_outcomes": [
+    [
+      "tool-calls",
+      9118
+    ],
+    [
+      "error:SERVER",
+      147
+    ],
+    [
+      "stop",
+      60
+    ],
+    [
+      "error:MALFORMED_RESPONSE",
+      40
+    ],
+    [
+      "max-tokens",
+      14
+    ],
+    [
+      "error:TRANSPORT",
+      10
+    ],
+    [
+      "error:EMPTY_RESPONSE",
+      2
+    ],
+    [
+      "error:IMAGE_OFFLOAD_REQUIRED",
+      2
+    ],
+    [
+      "error:MISSING_CREDENTIAL",
+      1
+    ],
+    [
+      "error:TIMEOUT",
+      1
+    ]
+  ],
+  "failed_attempts_per_code": [
+    {
+      "code": "error:SERVER",
+      "failed_attempts": 147,
+      "failing_groups": 93,
+      "groups_ending_in_success": 84,
+      "groups_ending_in_this_code": 9,
+      "groups_ending_in_another_failure": 0,
+      "attempts_in_groups_ending_in_this_code": 45,
+      "attempts_per_failing_group": [
+        {
+          "attempts": 1,
+          "groups": 75
+        },
+        {
+          "attempts": 3,
+          "groups": 6
+        },
+        {
+          "attempts": 5,
+          "groups": 4
+        },
+        {
+          "attempts": 6,
+          "groups": 4
+        },
+        {
+          "attempts": 2,
+          "groups": 3
+        },
+        {
+          "attempts": 4,
+          "groups": 1
+        }
+      ]
+    },
+    {
+      "code": "error:MALFORMED_RESPONSE",
+      "failed_attempts": 40,
+      "failing_groups": 40,
+      "groups_ending_in_success": 0,
+      "groups_ending_in_this_code": 40,
+      "groups_ending_in_another_failure": 0,
+      "attempts_in_groups_ending_in_this_code": 40,
+      "attempts_per_failing_group": [
+        {
+          "attempts": 1,
+          "groups": 40
+        }
+      ]
+    },
+    {
+      "code": "max-tokens",
+      "failed_attempts": 14,
+      "failing_groups": 14,
+      "groups_ending_in_success": 0,
+      "groups_ending_in_this_code": 14,
+      "groups_ending_in_another_failure": 0,
+      "attempts_in_groups_ending_in_this_code": 14,
+      "attempts_per_failing_group": [
+        {
+          "attempts": 1,
+          "groups": 14
+        }
+      ]
+    },
+    {
+      "code": "error:TRANSPORT",
+      "failed_attempts": 10,
+      "failing_groups": 10,
+      "groups_ending_in_success": 6,
+      "groups_ending_in_this_code": 0,
+      "groups_ending_in_another_failure": 4,
+      "attempts_in_groups_ending_in_this_code": 0,
+      "attempts_per_failing_group": [
+        {
+          "attempts": 1,
+          "groups": 10
+        }
+      ]
+    },
+    {
+      "code": "error:EMPTY_RESPONSE",
+      "failed_attempts": 2,
+      "failing_groups": 2,
+      "groups_ending_in_success": 2,
+      "groups_ending_in_this_code": 0,
+      "groups_ending_in_another_failure": 0,
+      "attempts_in_groups_ending_in_this_code": 0,
+      "attempts_per_failing_group": [
+        {
+          "attempts": 1,
+          "groups": 2
+        }
+      ]
+    },
+    {
+      "code": "error:IMAGE_OFFLOAD_REQUIRED",
+      "failed_attempts": 2,
+      "failing_groups": 2,
+      "groups_ending_in_success": 2,
+      "groups_ending_in_this_code": 0,
+      "groups_ending_in_another_failure": 0,
+      "attempts_in_groups_ending_in_this_code": 0,
+      "attempts_per_failing_group": [
+        {
+          "attempts": 1,
+          "groups": 2
+        }
+      ]
+    },
+    {
+      "code": "error:MISSING_CREDENTIAL",
+      "failed_attempts": 1,
+      "failing_groups": 1,
+      "groups_ending_in_success": 0,
+      "groups_ending_in_this_code": 1,
+      "groups_ending_in_another_failure": 0,
+      "attempts_in_groups_ending_in_this_code": 1,
+      "attempts_per_failing_group": [
+        {
+          "attempts": 1,
+          "groups": 1
+        }
+      ]
+    },
+    {
+      "code": "error:TIMEOUT",
+      "failed_attempts": 1,
+      "failing_groups": 1,
+      "groups_ending_in_success": 1,
+      "groups_ending_in_this_code": 0,
+      "groups_ending_in_another_failure": 0,
+      "attempts_in_groups_ending_in_this_code": 0,
+      "attempts_per_failing_group": [
+        {
+          "attempts": 1,
+          "groups": 1
+        }
+      ]
+    }
+  ],
+  "fused_call_tool_names": [
+    {
+      "name": "ops_bash",
+      "calls": 13
+    },
+    {
+      "name": "read_page",
+      "calls": 8
+    },
+    {
+      "name": "ops_inspect_local_file",
+      "calls": 4
+    },
+    {
+      "name": "list_agents",
+      "calls": 3
+    },
+    {
+      "name": "ops_read_files",
+      "calls": 3
+    },
+    {
+      "name": "send_message",
+      "calls": 3
+    },
+    {
+      "name": "ops_grep",
+      "calls": 2
+    },
+    {
+      "name": "web_search",
+      "calls": 2
+    },
+    {
+      "name": "edit",
+      "calls": 1
+    },
+    {
+      "name": "spawn_teammate",
+      "calls": 1
+    }
+  ],
+  "malformed_response_shapes": [
+    {
+      "kind": "trailing-objects(fusion)",
+      "verdict": "proven-2-objects",
+      "failures": 37,
+      "repairable": true
+    },
+    {
+      "kind": "cut-inside-object",
+      "verdict": "split-failed",
+      "failures": 2,
+      "repairable": false
+    },
+    {
+      "kind": "other",
+      "verdict": "split-failed",
+      "failures": 1,
+      "repairable": false
+    }
+  ],
+  "unreadable": []
+}

@@ -88,6 +88,20 @@ test('a call without an id cannot be traced and is rejected', () => {
   assert.equal(result.code, 'missing-id')
 })
 
+test('a call without a tool name is rejected, never dispatched to an empty name', () => {
+  const result = repairToolCallArguments(call('{"a":1}{"b":2}', 'call_named', ''))
+  assert.equal(result.status, 'rejected')
+  if (result.status !== 'rejected') return
+  assert.equal(result.code, 'missing-name')
+})
+
+test('a tool name that is only whitespace is also missing', () => {
+  const result = repairToolCallArguments(call('{"a":1}{"b":2}', 'call_blank', '   '))
+  assert.equal(result.status, 'rejected')
+  if (result.status !== 'rejected') return
+  assert.equal(result.code, 'missing-name')
+})
+
 test('real fused fixture: ops_bash command + read path', () => {
   const item = fixture('session-9045e2ec-seq-526.json')
   const result = repairToolCallArguments({

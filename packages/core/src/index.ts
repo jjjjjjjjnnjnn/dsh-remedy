@@ -26,7 +26,7 @@ export type {
   RepairResult,
   RepairUnchanged,
 } from './toolcall-repair.js'
-export { repairToolCallArguments, wouldRepair } from './toolcall-repair.js'
+export { DEFAULT_MAX_CALLS, repairToolCallArguments, wouldRepair } from './toolcall-repair.js'
 
 export type { RegistryProblem } from './registry.js'
 export { findPatch, PATCHES, patchRegistrySnapshot, registryProblems } from './registry.js'

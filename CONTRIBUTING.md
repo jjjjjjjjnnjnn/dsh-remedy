@@ -2,17 +2,20 @@
 
 ## Before you start
 
-dsh-remedy is an independent project and is not affiliated with DeepSeek. The software is released under the MIT license.
+Issues and pull requests are welcome.
 
-- Report defects or propose changes by opening a GitHub issue at https://github.com/jjjjjjjjnnjnn/dsh-remedy.
-- Report security vulnerabilities through GitHub private vulnerability reporting under security advisories. Do not open public issues for security vulnerabilities. No public contact email or chat server is provided.
-- Environment requirements: Node >= 22.19, pnpm, and DeepSeek Harness >= 0.2.0-rc.1 < 0.3.0-0.
+For bug reports and questions, open a GitHub issue.
+
+For security reports, use GitHub private vulnerability reporting on the public repository (security advisories):
+https://github.com/jjjjjjjjnnjnn/dsh-remedy
+
+Do not use unlisted chat servers or email addresses.
 
 ## Development setup
 
 Clone the repository and prepare the workspace:
 
-```sh
+```bash
 git clone https://github.com/jjjjjjjjnnjnn/dsh-remedy.git
 cd dsh-remedy
 pnpm install
@@ -23,53 +26,52 @@ node packages/plugin/dist/cli.js verify
 
 ## Verification
 
-Run the full verification suite:
+Run the verification suite and negative controls:
 
-```sh
+```bash
 pnpm run verify
-```
-
-Run the negative-control mutation check:
-
-```sh
 node scripts/gate.mjs --mutate
 ```
 
-In mutate mode every gate must fail, because a gate that stays green under its injected violation is vacuous. All 5 gates must fail under mutation.
+`pnpm run verify` runs the build, typecheck, tests, and the 5 gates.
+
+In mutate mode, every gate must fail, because a gate that stays green under its injected violation is vacuous. All 5 gates must catch their injected defect.
 
 ## Adding a patch
 
-Follow these 5 steps when introducing a patch:
+Follow the five steps in order:
 
-1. Write the patch record in `docs/patches/` with the symptom, mechanism (identifying file and line), counter-evidence, and limits.
-2. Add the registry entry in `packages/core/src/registry.ts` with status `drafted`.
-3. Write the failing test first, establishing negative controls and fixtures before implementation.
-4. Live-verify on a real DeepSeek Harness profile before setting status to `verified`, placing the resulting artifact in `data/results/live-*`.
-5. Record the registry snapshot with `node scripts/record_patch_registry.mjs` and update `audit/patch_ledger.json`.
+1. Write the record in `docs/patches/`.
+2. Add the registry entry in `packages/core/src/registry.ts` as `drafted`.
+3. Write the failing test first.
+4. Live-verify before moving status to `verified`.
+5. Record the registry snapshot and update the ledger.
+
+P-0002 and P-0003 are the worked examples of a `tested` patch: each has negative controls, a registry entry and an audited blind-spot list, and each stays `tested` because no live artifact exists for it.
 
 ## Pull requests
 
 - One project per commit.
 - Describe what changed, why, the failing test, and the evidence path.
 - Do not mix a behavior change with a docs-only change.
-- Verify that `pnpm run verify` and `node scripts/gate.mjs --mutate` pass before submitting.
+- A behavior change requires a failing test first.
 
 ## Code style
 
-- TypeScript ESM across all packages.
+- TypeScript ESM.
 - Relative imports end in `.js`.
 - `erasableSyntaxOnly` is on.
-- Gates in `scripts/` use Node built-ins only.
+- Gates use Node built-ins only.
 - `dsh-remedy-core` has no runtime dependency.
 
 ## Evidence rules
 
 - `data/results` is written by scripts, not by hand.
-- Every artifact has `produced_by`, `generated_at`, `schema_version`, and a `.sha256` checksum file.
-- Setting status to `verified` requires a `data/results/live-*` file.
+- Every artifact has `produced_by`, `generated_at`, `schema_version` and a `.sha256`.
+- A patch cannot claim `verified` without a `data/results/live-*` file.
 
 ## Scope
 
-- One seam per patch (for example, `llm/stream`).
+- One seam per patch.
 - No `app.asar` patching.
-- No retry-as-fix: retry is a stop-gap, not the fix. The default for `retryOnMalformed` is 0.
+- No retry-as-fix: retry is a stop-gap, not the fix (`retryOnMalformed` defaults to 0).

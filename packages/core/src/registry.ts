@@ -48,6 +48,63 @@ export const PATCHES: readonly PatchRecord[] = [
       'cannot attribute which upstream stage glued the objects; it only sees the assembled text',
     ],
   },
+  {
+    id: 'P-0002',
+    title: 'A rescue must be provable, attributable and atomic',
+    symptom:
+      'A call split out of fused arguments runs with an empty or wrong tool name, a repaired finish replays without replayState, or a block-end repair is committed before a later block of the same stream is rejected',
+    rootCause:
+      'Repair-stream used to commit each block-end repair as it arrived, kept only the last tool name seen on an index, and emitted {kind:"stop"} without the adapter replayState. None of these break the JSON proof, so P-0001 called them repaired while the runtime could still dispatch the wrong call.',
+    surface: 'llm/stream',
+    status: 'tested',
+    severity: 'major',
+    evidence: [
+      'docs/patches/P-0002-rescue-integrity.md',
+      'data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json',
+      'tests/unit/toolcall-repair.test.ts',
+      'tests/unit/repair-stream.test.ts',
+    ],
+    guards: [
+      'tests/unit/repair-stream.test.ts',
+      'tests/unit/toolcall-repair.test.ts',
+      'tests/unit/json-split.test.ts',
+      'scripts/gate_registry.mjs',
+    ],
+    limits: [
+      'cannot prove the atomic-commit path live on this host: the measured adapter never emits block-end for a tool call',
+      'cannot prove downstream acceptance of a synthesized block-start; the measured adapter does not rely on opened blocks (BS-11)',
+      'treats a tool name that arrives twice with different values as unrepairable, so a legitimate adapter bug stays a failure',
+      'leaves the verdict vocabulary untouched: until P-0003 every rejection was counted as fused, so a non-fusion syntax error read as degraded (BS-12, closed by P-0003)',
+    ],
+  },
+  {
+    id: 'P-0003',
+    title: 'A refusal must be observable, and a withdrawal must not read as a repair',
+    symptom:
+      'A stream whose only defect is plain bad JSON reports "repair incomplete" (degraded), and a proven repair that was withdrawn is indistinguishable from a fusion that could never be split',
+    rootCause:
+      'RemedyMonitor.recordRejected incremented fused and unrepaired for every rejection, whatever its code (packages/plugin/src/repair-stream.ts:122-126 in 0.2.0). A refusal that never proved a fusion therefore inflated fused, which both hid quiet streams behind degraded and erased the difference between "we declined" and "we could not". Left open as BS-12 because fixing it touches the verdict counters.',
+    surface: 'llm/stream',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'docs/patches/P-0003-refusal-observability.md',
+      'tests/unit/verdict.test.ts',
+      'tests/unit/repair-stream.test.ts',
+    ],
+    guards: [
+      'tests/unit/verdict.test.ts',
+      'tests/unit/repair-stream.test.ts',
+      'tests/governance/ledgers.test.ts',
+      'scripts/gate_registry.mjs',
+    ],
+    limits: [
+      'does not change the four verdict states or their order: refused and withdrawn are reported, never judged',
+      'cannot express "observed, refused, and correctly not repaired" in a state name; only the counter row carries it',
+      'does not migrate old journal lines, which keep the six-field counter shape',
+      'cannot be verified live: this is a counters change, so the reachable evidence is unit-level',
+    ],
+  },
 ]
 
 /** Look up one patch by id. */

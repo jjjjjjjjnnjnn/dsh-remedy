@@ -1,0 +1,4 @@
+# Defence in depth: npm 11 ignores .npmignore for paths inside the "files"
+# whitelist, so the effective filter is the negation in package.json#files.
+# Keep this here so removing the files array cannot silently re-ship maps.
+dist/**/*.map

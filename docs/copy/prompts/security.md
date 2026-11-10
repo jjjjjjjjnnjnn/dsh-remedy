@@ -14,7 +14,7 @@ Required sections:
 
 Rules:
 
-- Supported versions: a small table; `0.1.x` is supported, older or unlisted
+- Supported versions: a small table; `0.3.x` is supported, older or unlisted
   versions are not. Do not invent a support window in years.
 - Reporting: GitHub private vulnerability reporting is enabled on the public
   repository; do not invent an email address.

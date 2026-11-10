@@ -8,10 +8,10 @@
 - Name: dsh-remedy
 - Tagline (internal, not final copy): a resident repair layer for DeepSeek Harness.
 - Package names: `dsh-remedy` (plugin), `dsh-remedy-core` (engine).
-- Version: 0.1.1 (plugin), 0.1.0 (core)
+- Version: 0.3.0 (plugin), 0.3.0 (core)
 - License: MIT
 - Repository: https://github.com/jjjjjjjjnnjnn/dsh-remedy (public, created 2026-11-09)
-- npm: 0.1.x is published (`dsh-remedy` and `dsh-remedy-core`); the npm badge shows the current latest.
+- npm: 0.3.x is published (`dsh-remedy` and `dsh-remedy-core`); the npm badge shows the current latest.
 - Independent project; not affiliated with DeepSeek.
 - Language of code and CLI: English. Chinese README is a translation.
 
@@ -26,9 +26,10 @@
 
 - Symptom text: `Tool call "<name>": Unexpected non-whitespace character after JSON at position N` followed by `Received arguments:` and two JSON objects glued together.
 - Mechanism: the relay can stream two tool calls into one index; `@earendil-works/pi-ai` `parseToolCallArguments` receives `{...}{...}`, throws; `dsh-llm-pi-ai` converts it to `LlmError(..., 'MALFORMED_RESPONSE')`; `dsh-agent-loop` re-throws because `MALFORMED_RESPONSE` is not in the default `retryableCodes`; the turn ends.
-- Measured sample: 27 sessions, 79 `turn/end` events, 37 fusion failures (about 47 percent).
-- Sample window: 2026-11-08T10:47Z to 2026-11-09T15:58Z.
-- Tools in the sample: `ops_bash` 11, `read_page` 8, `ops_inspect_local_file` 4, `ops_read_files` 3, `list_agents` 3, `send_message` 3, `web_search` 2, `edit` 1, `ops_grep` 1, `spawn_teammate` 1.
+- Measured sample (0.3.0): 48 session files, 120 `turn/end` events, 40 `MALFORMED_RESPONSE` failures.
+- Shape of those 40 failures: 37 are two JSON objects glued at the top level (provable and repairable); 2 are cut inside an object; 1 is another split failure.
+- Sample window: 2026-11-08T08:35:56.956Z to 2026-11-10T10:27:17.272Z.
+- Tools in the fused sample: `ops_bash` 13, `read_page` 8, `ops_inspect_local_file` 4, `list_agents` 3, `ops_read_files` 3, `send_message` 3, `ops_grep` 2, `web_search` 2, `edit` 1, `spawn_teammate` 1.
 - Counter-evidence: one successful attempt carried two distinct ids, so the defect is intermittent, not universal.
 - Upstream: deepseek-ai/deepseek-harness discussion #4427 describes the same fusion family.
 
@@ -45,6 +46,39 @@
 - A single object that fails to parse is rejected, not split.
 - `}{` inside a JSON string is not a boundary.
 - The first call keeps the original id; synthetic ids are `<id>#remedy-N`.
+- A call whose tool name never arrived is rejected, never dispatched to an empty name.
+- A tool name that changes inside one index aborts the rescue and the original failure is re-thrown.
+- A repaired `finish` keeps the adapter `replayState`.
+- A `block-end` repair is held until the tool-call phase ends; a later rejection in the same stream withdraws it and the originals go out.
+- `maxCalls` bounds the calls synthesized for the whole stream, not per block.
+- A stream whose consumer stops early is recorded as abandoned, not as quiet.
+
+## The hardening (P-0002)
+
+- Status: `tested` — unit tests and negative controls only. No live artifact exists for this patch, so it is not `verified`.
+- What it refuses: an empty tool name (`missing-name`), a tool name that changes inside one index (`name-changed`), and a `max-tokens` tail.
+- What it preserves: the adapter `replayState` on a repaired `finish`.
+- What it makes atomic: a `block-end` repair is held until the tool-call phase ends; if a later block in the same stream is rejected, the repair is withdrawn (`rolled-back`) and the original chunks go out.
+- `maxCalls` bounds calls synthesized for the whole stream, not per block.
+- A stream whose consumer stops early is recorded as `consumer-abort`, not as quiet.
+- A synthesized call is emitted as a `block-start` plus a `block-end`, never a bare `block-end`.
+- A withdrawn repair returns its calls to the stream `maxCalls` budget.
+- A `max-tokens` stream is counted as truncated, never as an unrepaired fusion.
+- A provider error that passes through is counted in `errors`.
+
+## The observability (P-0003)
+
+- Status: `tested` — unit tests and negative controls only. No live artifact exists for this patch, so it is not `verified`.
+- What it separates: a refusal that was never repairable, a repair that was withdrawn, and a repair that failed. Before 0.3.0 every refusal also incremented the fusion counter, so a stream whose only defect was bad JSON read as `degraded`.
+- New counters: `refused` (seen and correctly rejected, never repairable) and `withdrawn` (repairable but given up: a later block was rejected, the consumer stopped, or the stream was truncated).
+- A pure refusal raises `refused` only; it never raises `fused`.
+- A budget refusal (`too-many-calls`) raises `fused` and `refused` and `unrepaired`, because no repair happened and the verdict must not read `repaired`.
+- An abandoned stream (`consumer-abort`) keeps the 0.2.0 `fused` and `unrepaired` and also raises `withdrawn`.
+- A truncation raises `withdrawn` and never `fused`.
+- The verdict vocabulary is unchanged: `unmeasured`, `quiet`, `degraded`, `repaired`, in that order of evaluation. Only the counter line grew from six to eight names.
+- The CLI prints one line with all eight counters: `streams=`, `fused=`, `repaired=`, `unrepaired=`, `truncated=`, `errors=`, `refused=`, `withdrawn=`.
+- `unrepaired` now means exactly one thing: a fusion was proven and was not repaired.
+- Blind spot `BS-12` is closed by this patch.
 
 ## Live verification
 
@@ -67,14 +101,26 @@
 
 ## Tests and gates
 
-- Tests: 97 pass, 0 fail.
+- Tests: 121 pass, 0 fail.
 - Gates: 5 (`ssot`, `registry`, `namespace`, `step-review`, `copy`).
 - Negative controls (`--mutate`): 5 of 5 caught.
 - Fixtures: 5, including one real fused call and one counter-evidence call.
-- The plugin tarball ships `fixtures/`; `dsh-remedy verify` works from an installed copy (0.1.1).
+- The plugin tarball ships `fixtures/`; `dsh-remedy verify` works from an installed copy (0.2.0), and 0.3.0 keeps that property.
 - Test command: `pnpm run verify` (build, typecheck, test, gate).
 - Negative-control command: `node scripts/gate.mjs --mutate`.
 - Copy gate: every externally visible file must match the recorded manifest hash and the current fact pack.
+
+## Package size (0.3.0)
+
+- Published tarball before the slimming pass (0.1.1): 26345 bytes compressed, 98424 bytes unpacked, 30 files, including 10 sourcemap files.
+- The slimming pass was measured on the 0.1.1 code: 19114 bytes compressed, 20 entries, 63170 bytes unpacked.
+- The shipped 0.2.0 tarball, which carries the P-0002 hardening, is 19569 bytes compressed, 20 entries, 64933 bytes unpacked.
+- The shipped 0.3.0 tarball, which also carries the P-0003 observability, is 22418 bytes compressed, 20 entries, 74014 bytes unpacked.
+- Unpacked breakdown of the shipped 0.3.0 tarball: 52247 bytes of `dist/*.js`, 13797 bytes of `dist/*.d.ts`, 2694 bytes of `fixtures/`, 5276 bytes of package-root files.
+- The package still ships `dist/*.js`, `dist/*.d.ts`, `fixtures/`, `cordis.patch.yml`, `README.md`, `LICENSE`; no sourcemaps.
+- Dropping sourcemaps removes 41926 bytes of the unpacked payload (measured in `docs/research/stability-audit-2026-11-10.md`).
+- Byte budget: `dist/*.js` is 52247 bytes after P-0003. The working ceiling is 53000 bytes; a patch that crosses it must split a seam instead of growing `repair-stream.ts`.
+- The plugin entry is 20 tar entries; the core entry is 17 tar entries.
 
 ## Install and use
 
@@ -94,6 +140,11 @@
 - A `max-tokens` truncation is not repaired.
 - The desktop turn was stopped by the operator after the task answer; the artifact records `turn_end=aborted` instead of claiming completion.
 - Verification applies to the recorded tarball sha256, not to whatever a running desktop app has cached.
+- The verdict word cannot express `observed and correctly refused`; only the counter line can. A stream whose only defect was bad JSON now reads `quiet`.
+- Existing journal lines are not migrated; in a mixed journal `status --json` reports the shape of the last line.
+- A synthesized tool call now opens its own `block-start`, but whether the downstream accepts that synthetic block is not proven live (blind spot `BS-11`).
+- The retry fallback on `agent/request-error` defaults to 0 and is a stop-gap, not the fix; the 0.3.0 sample shows the host already retries the server-error family (84 of 93 failing groups were followed by a successful attempt in the same turn).
+- The sample behind the 0.3.0 numbers is one machine and one account over a fixed cutoff; a different cutoff yields a different total.
 
 ## Repository layout
 
@@ -118,4 +169,5 @@
 
 ## Numbers allowed in copy
 
-0 1 2 3 4 5 6 7 8 9 10 11 19 22 27 37 39 47 79 86 95 97 4427 0.1.0 0.1.1 0.2.0 0.3.0
+0 1 2 3 4 5 6 7 8 9 10 11 13 17 20 22 27 30 37 40 45 48 60 84 93 121 147 2694 5276 9118 9401 13797 17423 17484 19114 19569 22418 26345 41926 52247 53000 63170 64933 74014 98424 0.1.0 0.1.1 0.2.0 0.3.0 4427
+

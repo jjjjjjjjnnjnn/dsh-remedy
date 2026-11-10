@@ -34,8 +34,10 @@ Rules:
   "status: verified" badge. Use the intended repository URL from FACTS.
 - First screen must answer: what is it, what does it fix, how do I get it.
 - "What it fixes": name the defect, show the failure signature in one fenced
-  block, give the measured sample numbers exactly once, and name the upstream
-  discussion from FACTS.
+  block, give the measured sample numbers exactly once (48 session files, 120
+  `turn/end` events, 40 `MALFORMED_RESPONSE`, of which 37 are provable fusions),
+  and name the upstream discussion from FACTS. The old 27-session sample must
+  not appear.
 - "Install": the npm package is published. Show
   `dsh plugin --profile <name> add dsh-remedy` first and
   `pnpm add dsh-remedy dsh-remedy-core` second. Keep the source workflow
@@ -43,12 +45,26 @@ Rules:
 - "How it works": one short fenced sequence showing the measured chunk order and
   the repaired output. Explain the all-or-nothing rule.
 - "Safety guarantees": a bullet list, one guarantee per line, each one already
-  in FACTS.
+  in FACTS. Cover the P-0001 guarantees, the P-0002 hardening ones (empty tool
+  name rejected, name change aborts the rescue, `replayState` preserved, atomic
+  `block-end` commit, per-stream `maxCalls`, consumer abort, a synthesized call
+  opens its own `block-start`, a withdrawn repair returns its budget, `max-tokens`
+  counted as truncated, a passed-through provider error counted in `errors`), and
+  the P-0003 observability ones: a pure refusal raises `refused` and never
+  `fused`; a budget refusal also raises `unrepaired` so a refused-but-unrepaired
+  stream never reads `repaired`; an abandoned stream keeps `fused` and
+  `unrepaired` and also raises `withdrawn`; the four verdict words are unchanged
+  and only the counter line grew to eight names.
 - "What it does not do": a Markdown table with a row per limit from FACTS.
 - "Verify it yourself": copy-pasteable commands and the real artifact path.
-- "Status": 0.1.x is published to npm (`dsh-remedy` and `dsh-remedy-core`),
-  verified on a headless profile and the desktop app. Do not hardcode a patch
-  version; the npm badge is the version.
+- "Status": 0.3.x is published to npm (`dsh-remedy` and `dsh-remedy-core`);
+  P-0001 is `verified` on a real host (headless profile and the desktop app),
+  P-0002 and P-0003 are `tested` with negative controls and have no live artifact
+  yet. Do not hardcode a patch version; the npm badge is the version.
+- Include one short paragraph or table listing the package size: the shipped
+  0.3.0 tarball size, entries, unpacked size, the unpacked breakdown, the
+  sourcemaps that are no longer shipped, and the `dist/*.js` byte budget.
+  Use only FACTS numbers.
 - "Development": the exact commands from FACTS.
 - Link to `README.zh-CN.md` near the top for Chinese readers.
 - End with MIT and "not affiliated with DeepSeek".

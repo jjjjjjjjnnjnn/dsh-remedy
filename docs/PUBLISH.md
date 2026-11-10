@@ -65,6 +65,21 @@ After `ok: true`:
 2. Commit, push `main`, then `git subtree split` and push again.
 3. Tag `v0.1.0` on the public repository.
 
+## Prepared 0.2.0 / 0.3.0 (2026-11-10)
+
+Both versions are bumped, built, gated and packed, but **not yet on npm**:
+
+- `dsh-remedy@0.3.0` + `dsh-remedy-core@0.3.0` — `.tmp/pack9/` holds the
+  exact tarballs (`dsh-remedy-0.3.0.tgz` = 22418 bytes / 20 entries / 74014
+  unpacked; `dsh-remedy-core-0.3.0.tgz` = 11554 bytes / 17 entries).
+- The registry state is still `dsh-remedy@0.1.1` / `dsh-remedy-core@0.1.0`.
+  0.2.0 was never published; 0.3.0 supersedes it, and the changelog keeps both
+  entries so the skipped release is visible instead of silently absent.
+- Publish order matters: core first, then the plugin, because the plugin pins
+  the exact core version.
+- After publishing, `record_publish.mjs` records the settled state, then the
+  container commit, the subtree split, the push and `gh release create` follow.
+
 ## Published 0.1.0 / 0.1.1 (2026-11-09 → 2026-11-10)
 
 - `dsh-remedy@0.1.1` and `dsh-remedy-core@0.1.0` are on the public registry;

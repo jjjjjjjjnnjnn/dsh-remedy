@@ -13,9 +13,11 @@ Keys:
   ecosystem, the defect family, the category, and `typescript`. Do not use
   language names other than `typescript`, and do not repeat `deepseek` when
   `deepseek-harness` is already present.
-- `release_blurb`: a short Markdown section for the first release (0.1.0). It
-  must mention that the patch is verified on a real host and link to the live
-  evidence path.
+- `release_blurb`: a short Markdown section for the current release (0.3.0). It
+  must mention that P-0001 is verified on a real host, that P-0002 and P-0003 are
+  `tested` with negative controls and have no live artifact yet, that the counter
+  line now carries eight names while the four verdict words are unchanged, and
+  link to the live evidence path.
 - `social_preview`: one sentence of alt text for a social preview image. No
   invented image URL.
 
@@ -23,6 +25,7 @@ Rules:
 
 - Output only the JSON object. No code fence, no commentary, valid JSON.
 - Use only numbers from FACTS.
-- npm publication is a fact now (0.1.0); do not claim a user count.
-- The description must be honest that npm is not published yet only if it fits
-  in 160 characters; otherwise leave that to the README status section.
+- npm publication is a fact now; do not claim a user count.
+- The description must be honest about what is verified and what is only tested;
+  if that does not fit in 160 characters, leave the distinction to the README
+  status section.

@@ -5,6 +5,13 @@
  * this project exists to avoid. `unmeasured` and `quiet` are different words on
  * purpose: one means the seam never ran, the other means it ran and the defect
  * did not appear.
+ *
+ * P-0003 adds two counters without touching the judgement. `fused` keeps its old
+ * meaning — fusions actually seen — so a plain bad JSON argument can no longer
+ * masquerade as a fusion (BS-12). The new counts are reported, not judged: the
+ * four states and their order are unchanged on purpose, because a verdict
+ * vocabulary change is a different seam and would invalidate every recorded
+ * artifact.
  */
 
 export interface RemedyCounters {
@@ -20,6 +27,19 @@ export interface RemedyCounters {
   readonly truncated: number
   /** Streams that failed for a reason other than fusion. */
   readonly errors: number
+  /**
+   * Calls we refused to repair because the text was never proven to be a
+   * fusion (P-0003): a plain bad JSON argument, a single object, a fragment
+   * that does not parse, or a call with no id / no tool name. A refusal is not
+   * evidence of fusion, so it must not move `fused`.
+   */
+  readonly refused: number
+  /**
+   * Repairs that were proven and then given back because a later block of the
+   * same stream was rejected, or because the consumer stopped early (P-0003).
+   * The original chunks went out instead, so nothing was silently kept.
+   */
+  readonly withdrawn: number
 }
 
 export type RemedyState = 'unmeasured' | 'quiet' | 'repaired' | 'degraded'
@@ -62,6 +82,8 @@ export function formatRemedyVerdict(verdict: RemedyVerdict, counters: RemedyCoun
     `unrepaired=${counters.unrepaired}`,
     `truncated=${counters.truncated}`,
     `errors=${counters.errors}`,
+    `refused=${counters.refused}`,
+    `withdrawn=${counters.withdrawn}`,
   ].join(' ')
   return `remedy: ${verdict.state} — ${verdict.headline} (${counts})`
 }

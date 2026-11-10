@@ -25,7 +25,7 @@ if (stamp === null) {
   process.stderr.write('record_publish: --stamp must be ISO-8601\n')
   process.exit(2)
 }
-const retries = Math.max(1, Number.parseInt(flag('retries', '1'), 10) || 1)
+const retries = Math.max(1, Number.parseInt(flag('retries', '3'), 10) || 3)
 
 const packages = ['dsh-remedy-core', 'dsh-remedy'].map((name) => {
   const dir = name === 'dsh-remedy' ? 'packages/plugin' : 'packages/core'

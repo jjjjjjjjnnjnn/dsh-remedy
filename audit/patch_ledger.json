@@ -23,6 +23,41 @@
         "scripts/gate_registry.mjs",
         "scripts/record_live_mount.mjs"
       ]
+    },
+    {
+      "id": "P-0002",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.2.0",
+      "evidence": [
+        "docs/patches/P-0002-rescue-integrity.md",
+        "data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json",
+        "tests/unit/toolcall-repair.test.ts",
+        "tests/unit/repair-stream.test.ts"
+      ],
+      "guards": [
+        "tests/unit/repair-stream.test.ts",
+        "tests/unit/toolcall-repair.test.ts",
+        "tests/unit/json-split.test.ts",
+        "scripts/gate_registry.mjs"
+      ]
+    },
+    {
+      "id": "P-0003",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.2.0",
+      "evidence": [
+        "docs/patches/P-0003-refusal-observability.md",
+        "tests/unit/verdict.test.ts",
+        "tests/unit/repair-stream.test.ts"
+      ],
+      "guards": [
+        "tests/unit/verdict.test.ts",
+        "tests/unit/repair-stream.test.ts",
+        "tests/governance/ledgers.test.ts",
+        "scripts/gate_registry.mjs"
+      ]
     }
   ]
 }

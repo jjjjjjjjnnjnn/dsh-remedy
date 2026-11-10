@@ -14,25 +14,14 @@ A resident repair layer for DeepSeek Harness. When an upstream model relay strea
 
 Defect `P-0001`: tool-call fusion.
 
-An upstream relay streams two tool calls into one index. The underlying parser receives `{...}{...}` and throws a syntax error. The adapter maps this to `LlmError(..., 'MALFORMED_RESPONSE')`. Because `MALFORMED_RESPONSE` is not in default retryable codes, the turn ends.
+An upstream relay streams two tool calls into one index. `@earendil-works/pi-ai` `parseToolCallArguments` receives `{...}{...}` and throws. `dsh-llm-pi-ai` converts it to `LlmError(..., 'MALFORMED_RESPONSE')`. Because `MALFORMED_RESPONSE` is not in default `retryableCodes`, `dsh-agent-loop` re-throws and the turn ends.
 
 ```text
 Tool call "<name>": Unexpected non-whitespace character after JSON at position N
 Received arguments: {"param":"val"}{"param2":"val2"}
 ```
 
-In a measured sample of 27 sessions with 79 `turn/end` events, tool-call fusion caused 37 failures (about 47 percent). The failure distribution across tools was:
-
-- `ops_bash`: 11
-- `read_page`: 8
-- `ops_inspect_local_file`: 4
-- `ops_read_files`: 3
-- `list_agents`: 3
-- `send_message`: 3
-- `web_search`: 2
-- `edit`: 1
-- `ops_grep`: 1
-- `spawn_teammate`: 1
+Across a measured sample of 48 session files with 120 `turn/end` events, there were 40 `MALFORMED_RESPONSE` failures, of which 37 are provable fusions (two JSON objects glued at the top level). 2 failures were cut inside an object and 1 was another split failure.
 
 Counter-evidence shows 1 successful attempt carried 2 distinct ids, confirming that the defect is intermittent. Upstream discussion deepseek-ai/deepseek-harness #4427 describes the same fusion family.
 
@@ -44,7 +33,7 @@ Install the plugin into a DeepSeek Harness profile:
 dsh plugin --profile <name> add dsh-remedy
 ```
 
-Or install as a library dependency:
+Install as a library dependency:
 
 ```bash
 pnpm add dsh-remedy dsh-remedy-core
@@ -61,7 +50,7 @@ pnpm run verify
 
 ## How it works
 
-dsh-remedy wraps the `llm/stream` Cordis waterfall. It buffers incoming tool-call deltas. On a terminal `finish{kind:'error'}` with `MALFORMED_RESPONSE` (or a thrown error with the same signature), the engine splits open buffers at top-level JSON object boundaries.
+dsh-remedy wraps the `llm/stream` Cordis waterfall. It buffers incoming tool-call deltas. On a terminal `finish{kind:'error'}` with `MALFORMED_RESPONSE` (or a thrown error with the same signature), the engine splits open buffers at top-level JSON object boundaries. A `block-end` that already carries fused arguments is repaired the same way.
 
 ```text
 Incoming stream:
@@ -74,7 +63,7 @@ Repaired stream:
   finish: { kind: 'stop' }
 ```
 
-The first call keeps its original id. Subsequent calls receive synthetic ids formatted as `<id>#remedy-N`. The error finish is replaced with `{kind:'stop'}`.
+The first call keeps its original id. Synthetic ids are formatted as `<id>#remedy-N`. The error finish is replaced with `{kind:'stop'}`.
 
 All-or-nothing rule: if any buffer cannot be proven, nothing is emitted and the original failure is re-thrown. A single object that fails to parse is rejected, not split.
 
@@ -83,11 +72,26 @@ All-or-nothing rule: if any buffer cannot be proven, nothing is emitted and the 
 - If any buffer cannot be proven, nothing is emitted and the original failure is re-thrown.
 - A single object that fails to parse is rejected, not split.
 - `}{` inside a JSON string is not a boundary.
-- A `max-tokens` truncation is never repaired.
+- A call whose tool name never arrived is rejected, never dispatched to an empty name (`missing-name`).
+- A tool name that changes inside one index aborts the rescue and the original failure is re-thrown (`name-changed`).
+- A repaired `finish` keeps the adapter `replayState`.
+- A `block-end` repair is held until the tool-call phase ends; a later rejection in the same stream withdraws it (`rolled-back`) and the original chunks go out.
+- `maxCalls` bounds the calls synthesized for the whole stream, not per block.
+- A stream whose consumer stops early is recorded as consumer abort (`consumer-abort`), not as quiet.
+- A synthesized call is emitted as a `block-start` plus a `block-end`, never a bare `block-end`.
+- A withdrawn repair returns its budget to the stream `maxCalls` budget.
+- A `max-tokens` truncation is never repaired and is counted as truncated, never as an unrepaired fusion.
+- A provider error that passes through is counted in `errors`.
 - The plugin writes nothing unless `journalPath` is configured.
 - The plugin mounts 1 row (`remedy-stream`), adding no route, no tool, and no UI.
 - The first call keeps the original id; synthetic ids are `<id>#remedy-N`.
 - `retryOnMalformed` defaults to 0: retry is a stop-gap, not the fix.
+- A pure refusal raises `refused` only and never raises `fused`.
+- A budget refusal (`too-many-calls`) raises `fused`, `refused`, and `unrepaired`, so a refused-but-unrepaired stream never reads `repaired`.
+- An abandoned stream (`consumer-abort`) keeps `fused` and `unrepaired` and also raises `withdrawn`.
+- A truncation raises `withdrawn` and never `fused`.
+- The four verdict words are unchanged (`unmeasured`, `quiet`, `degraded`, `repaired`) and only the counter line grew to eight names (`streams=`, `fused=`, `repaired=`, `unrepaired=`, `truncated=`, `errors=`, `refused=`, `withdrawn=`).
+- `unrepaired` means exactly one thing: a fusion was proven and was not repaired.
 
 ## What it does not do
 
@@ -100,6 +104,11 @@ All-or-nothing rule: if any buffer cannot be proven, nothing is emitted and the 
 | Synthetic identities | Synthetic ids are traceability aids, not durable identities. |
 | Desktop turn status | The desktop turn was stopped by the operator after the task answer; the artifact records `turn_end=aborted` instead of claiming completion. |
 | Desktop app cache | Verification applies to the recorded tarball sha256, not to whatever a running desktop app has cached. |
+| Refusal verdict | The verdict word cannot express `observed and correctly refused`; only the counter line can. A stream whose only defect was bad JSON now reads `quiet`. |
+| Journal migration | Existing journal lines are not migrated; in a mixed journal `status --json` reports the shape of the last line. |
+| Downstream block acceptance | A synthesized tool call now opens its own `block-start`, but whether the downstream accepts that synthetic block is not proven live (blind spot `BS-11`). |
+| Error retry | The retry fallback on `agent/request-error` defaults to 0 and is a stop-gap, not the fix; the 0.3.0 sample shows the host already retries the server-error family (84 of 93 failing groups were followed by a successful attempt in the same turn). |
+| Sample scope | The sample behind the 0.3.0 numbers is one machine and one account over a fixed cutoff; a different cutoff yields a different total. |
 
 ## Verify it yourself
 
@@ -126,7 +135,7 @@ data/results/live-desktop-2026-11-09T19-10-00.000Z.json
 
 ## Status
 
-0.1.x is published to npm (`dsh-remedy` and `dsh-remedy-core`). Verified on a headless profile (`remedy-live`) and the desktop app.
+`0.3.x` is published to npm (`dsh-remedy` and `dsh-remedy-core`). Patch `P-0001` is `verified` on a real host across the headless profile and the desktop app. Patches `P-0002` and `P-0003` are `tested` with negative controls and have no live artifact yet.
 
 Headless verification (`remedy-live` profile, Windows):
 - Runs: 2
@@ -149,8 +158,12 @@ Desktop app verification (`desktop` profile, app restarted):
 - Turn outcome: `turn_end=aborted` (stopped by operator after the answer)
 
 Test suite and gates:
-- Tests: 97 pass, 0 fail
-- Gates: 5 pass, 5 of 5 negative controls caught
+- Tests: 121 pass, 0 fail
+- Gates: 5 (`ssot`, `registry`, `namespace`, `step-review`, `copy`), 5 of 5 negative controls caught
+- Fixtures: 5 (including 1 real fused call and 1 counter-evidence call)
+
+Package size and byte budget:
+The shipped `0.3.0` tarball is 22418 bytes compressed with 20 entries and 74014 bytes unpacked (before the slimming pass on `0.1.1`: 26345 bytes compressed, 98424 bytes unpacked across 30 files, including 10 sourcemap files). The unpacked breakdown is 52247 bytes of `dist/*.js`, 13797 bytes of `dist/*.d.ts`, 2694 bytes of `fixtures/`, and 5276 bytes of package-root files. Dropping sourcemaps removes 41926 bytes of the unpacked payload (measured in `docs/research/stability-audit-2026-11-10.md`). The package ships `dist/*.js`, `dist/*.d.ts`, `fixtures/`, `cordis.patch.yml`, `README.md`, `LICENSE`, and no sourcemaps. `dist/*.js` is 52247 bytes after `P-0003`, within the working ceiling of 53000 bytes.
 
 ## Development
 
@@ -166,7 +179,7 @@ Repository layout:
 - `packages/core`: pure engine: splitter, repair decision, registry, redaction, verdict.
 - `packages/plugin`: DSH loader, `llm/stream` wrapper, CLI, session scanner, zstd log reader.
 - `scripts/`: gates and recorders, Node built-ins only.
-- `tests/`: unit, governance, e2e (5 fixtures).
+- `tests/`: unit, governance, e2e.
 - `data/fixtures`: real fused text, counter-evidence, negative controls.
 - `data/results`: script-produced evidence with sha256 sidecars.
 - `audit/`: gate ledger, patch ledger, step reviews, blind spots, AI disclosure.
@@ -185,7 +198,7 @@ Issues and pull requests are welcome.
 
 ## Security
 
-Security reports should use GitHub private vulnerability reporting on the public repository.
+Security reports should use GitHub private vulnerability reporting on the public repository (enabled 2026-11-09).
 
 ## License
 

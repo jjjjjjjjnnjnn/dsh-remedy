@@ -13,6 +13,6 @@
     "plugin",
     "typescript"
   ],
-  "release_blurb": "### 0.1.0\n\nFirst release of dsh-remedy. Patch P-0001 is verified on a real host using the remedy-live headless profile on DeepSeek Harness. Across 2 runs and 10 observed streams, 1 fused tool call was repaired with 0 rejections, yielding 5 completed tool calls and 5 tool results with outcome completed.\n\nLive evidence: [data/results/live-2026-11-09T17-00-00.000Z.json](data/results/live-2026-11-09T17-00-00.000Z.json)",
+  "release_blurb": "### 0.3.0\n\nRelease 0.3.0 of dsh-remedy. Patch P-0001 is verified on a real host across 2 runs and 10 observed streams. Patches P-0002 and P-0003 are `tested` with negative controls and have no live artifact yet. The counter line now carries eight names while the four verdict words are unchanged.\n\nLive evidence: [data/results/live-2026-11-09T17-00-00.000Z.json](data/results/live-2026-11-09T17-00-00.000Z.json)",
   "social_preview": "Diagram showing dsh-remedy intercepting fused tool calls in DeepSeek Harness and splitting glued JSON objects into discrete invocations."
 }

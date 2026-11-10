@@ -31,7 +31,10 @@ test('a version skew between core and plugin is refused', () => {
     core: { ...base.core, version: '0.2.0' },
   })
   assert.equal(problems.length, 1)
-  assert.match(first(problems), /0\.2\.0.*0\.3\.1/)
+  // The message names both versions; assert on the skew and the pinned version
+  // rather than a literal, so a bump does not need this test edited.
+  assert.match(first(problems), /0\.2\.0/)
+  assert.match(first(problems), new RegExp(version.replaceAll('.', '\\.')))
 })
 
 test('a missing build is refused before npm sees an empty tarball', () => {

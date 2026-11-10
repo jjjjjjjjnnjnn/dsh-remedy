@@ -3,17 +3,17 @@
 > **下一会话从 `dsh-remedy/` 开始。** 读本文件 → `PROJECT_RULES.md` → `AGENTS.md` 即可开工。
 > 本目录是**公开仓库根**；`dsh-triage/` 在父目录，是另一个项目，不属于本仓库。
 
-## 三十秒状态（2026-11-10 · R10）
+## 三十秒状态（2026-11-10 · R11）
 
 | 项 | 值 |
 |---|---|
-| 版本 | `dsh-remedy@0.3.1`；`dsh-remedy-core@0.3.1`（0.3.0 的 plugin 在 registry 上不可安装：manifest 里是字面 `workspace:*`） |
-| 补丁 | **P-0001 `verified`**（headless + 桌面两次真机）· **P-0002 `verified`**（2026-11-10 headless 真机修好一次真实两调用粘连、合成 id 被派发执行）· **P-0003 `verified`**（2026-11-10 headless 真机 journal 第一次写出非零 `refused`：`too-many-calls` 拒绝而不是假装修好） |
-| 基线 | **131 tests / 5 gates / `--mutate` 5-5** |
-| 包体 | **0.3.1 = 22 418 B 压缩 / 20 条目 / 74 014 B 解包**（与 0.3.0 逐字节同一份代码，只换 manifest；core 11 585 / 38 582）（`dist/*.js` 52 247 / `dist/*.d.ts` 13 797 / fixtures 2 694 / 包根 5 276；0.2.0 是 19 569 / 64 933，0.1.1 是 26 345 / 98 424 / 30 文件） |
-| 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1`（`v0.3.1` 待推；0.2.0 与 0.3.0 从不单独发 release） |
-| 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 / 0.3.0 / **0.3.1** 都用本地双 tgz 验过 5/5（0.3.1 在 `.tmp/install-check11` 全新目录里 `npm install` 后 `npx dsh-remedy verify` → `OK 5 fixture(s)`）；`desktop` 与 `remedy-live` 两个 profile **已升到 0.3.1**（各自 `dsh-remedy 0.3.0 → 0.3.1`，profile 内 `cli verify` 5/5）；**0.3.1 尚未上 npm** |
-| 下一件事 | `node scripts/publish_packages.mjs --otp <code>` 发布 **0.3.1**（脚本先 `pnpm pack` 再读回 packed manifest，见 R10）→ `record_publish.mjs` → 空目录 `npm install dsh-remedy@0.3.1` 验收 → 提交 → push → `gh release create v0.3.1 --notes-file .tmp/release-notes-v0.3.1.md` |
+| 版本 | `dsh-remedy@0.3.2`；`dsh-remedy-core@0.3.2`（0.3.0 的 plugin 在 registry 上不可安装：manifest 里是字面 `workspace:*`；0.3.1 在上市前就被 0.3.2 取代，从未到过 registry） |
+| 补丁 | **P-0001 `verified`**（headless + 桌面两次真机）· **P-0002 `verified`**（2026-11-10 headless 真机修好一次真实两调用粘连、合成 id 被派发执行）· **P-0003 `verified`**（2026-11-10 headless 真机 journal 第一次写出非零 `refused`：`too-many-calls` 拒绝而不是假装修好）· **P-0005 `tested`**（裸值 reseal；单测 + 负对照 + 一条实测夹具，无 live 产物） |
+| 基线 | **147 tests / 5 gates / `--mutate` 5-5** |
+| 包体 | **0.3.2 = 24 689 B 压缩 / 25 条目 / 81 904 B 解包**（\`dist/*.js\` 56 344 / \`dist/*.d.ts\` 16 701 / fixtures 3 583 / 包根 5 276）；core **0.3.2 = 15 864 B / 19 条目 / 52 828 B 解包**。接缝拆分把 \`repair-stream.js\` 从 28 955 降到 27 925（−1 030），但插件总量反涨 529（脚手架不是免费的）；0.3.1 是 22 418 / 20 条目 / 74 014，0.2.0 是 19 569 / 64 933，0.1.1 是 26 345 / 98 424 / 30 文件 |
+| 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1`（`v0.3.2` 待推；0.2.0 / 0.3.0 / 0.3.1 从不单独发 release） |
+| 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 / 0.3.0 / 0.3.1 都用本地双 tgz 验过 5/5；**0.3.2 尚未打包实测、尚未上 npm** |
+| 下一件事 | `node scripts/publish_packages.mjs --otp <code>` 发布 **0.3.2**（脚本先 `pnpm pack` 再读回 packed manifest，见 R10）→ `record_publish.mjs` → 空目录 `npm install dsh-remedy@0.3.2` 验收 → 提交 → push → `gh release create v0.3.2 --notes-file .tmp/release-notes-v0.3.2.md` |
 
 ## 五分钟检查
 
@@ -23,8 +23,8 @@
 pnpm install
 pnpm run verify                  # build → typecheck → test → gate
 node scripts/gate.mjs --mutate   # 5 门都必须红
-node packages/plugin/dist/cli.js verify   # OK 5 fixture(s)
-npm view dsh-remedy version      # 0.3.0（发布后）
+node packages/plugin/dist/cli.js verify   # OK 6 fixture(s)
+npm view dsh-remedy version      # 0.3.2（发布后）
 ```
 
 `git` 要注意：本目录不是 git 根。
@@ -57,6 +57,58 @@ git -C .. log --oneline -3
 - `dsh-triage/` 只是同级项目，规则以它自己的 `AGENTS.md` 为准。
 
 ## 当前批次（R8 → R1）
+
+**R11（2026-11-10）· P-0005：给裸值加引号，或者拒绝——从不猜。**
+
+- **起因**：用户报了两类新失败，都不是 P-0001 能修的：模型思考过多后把工具参数里的
+  成员值**裸写**（例：`{"code": ` 后面直接跟一段 JS 源码），整段文本因此不可 parse，
+  首行是 `Unexpected token 'c'`；另一条是 `{"code": "false", "code": `（重复 key +
+  字符串中途断，`Unexpected end of JSON input`）。
+- **证据**（三个只读探针，`.tmp/probe-salvage.mjs` / `probe-nonfusion.mjs` /
+  `probe-quote-literal.mjs`，69 个会话文件）：43 条 `MALFORMED_RESPONSE`，
+  fusion 38 / unexpected-token 2 / other 2 / truncated 1。救援分类：38 条两对象可 parse、
+  4 条 `unbalanced`、1 条单对象不可 parse。**转义修复是死路**：把 `\|` 改成 `\\|`
+  对 5 条非融合回显 **一条都救不回来**（oh_my_3dlab 那两条真正缺的是右花括号）。
+  暴力枚举 member-head × comma：run_code 裸程序回显得**恰好 1 个候选**
+  （`key=code`、280 B、payload 字节一致），其余 5 类**全 0 候选**。
+- **新模块** `packages/core/src/reseal.ts`（164 行）：`MAX_BYTES 65536` /
+  `MAX_HEADS 8` / `MAX_COMMAS 256`；拒绝码 `bare-value-unproven`（0 候选）与
+  `ambiguous-bare-value`（≥2 候选）；唯一候选要做二次证明（parse + plain object +
+  round-trip）才返回 `{status:'resealed', key, value, text}`。
+- **接线**：`toolcall-repair.ts` 的 `slices.length === 1` 分支先问 reseal，
+  `code: 'split' | 'resealed'`、reseal 时 `fragments: 1`、`key` 带回；
+  `repair-stream.ts` 新增 `RepairEvent { kind:'resealed' }` 与
+  `recordResealed()`（**只加 `resealed`，绝不动 `fused`/`repaired`**），
+  `PendingBlock.resealed` 走 flus 提交、撤回时只记 `rolled-back`（`withdrawn`）不记
+  fused、不记 unrepaired；reseal **不占流级 `maxCalls` 预算**（`spent: 0`）。
+- **verdict**：第九计数器 `resealed` **故意可选**——0.3.x 录的计数对象没有这个字段，
+  渲染必须逐字节不变；`judgeRemedy` 的 quiet 守卫放宽成
+  `fused === 0 && resealed === 0`，四个 verdict 词一个没动。
+- **测试**：147 tests / 0 fail（新增 `tests/unit/reseal.test.ts` 11 条、
+  `verdict.test.ts` 5 条、`toolcall-repair` 与 `repair-stream` 若干）；
+  `tests/e2e/cli.test.ts` 的夹具数改成数据驱动，不再写死 `OK 5 fixture(s)`。
+- **台账**：`registry.ts` 加 P-0005（`tested` / major / llm-stream / evidence 4 /
+  guards 5 / limits 5）、`docs/patches/P-0005-bare-value-reseal.md`、
+  `audit/patch_ledger.json`、`audit/step_reviews.json` 新增 **S11**（现共 11 步）；
+  快照 `data/results/patch-registry-2026-11-10T18-55-00.000Z.json`
+  （sha256 `fa4cc018…`），门禁 5 门 `ALL GREEN`，`--mutate` 5/5。
+- **字节越限**：P-0005 让 `packages/plugin/dist/*.js` 到 **55 815 B**
+  （`repair-stream.js` 28 955 单个文件），超出 53 000 硬上限 2 815 B。
+  → 0.3.2 拆了接缝（`stream-types.ts` 搬类型、`failure-text.ts` 搬失败消息助手）：
+  `repair-stream.js` **28 955 → 27 925（−1 030）**，但插件 `dist/*.js` 总量
+  **反涨到 56 344（+529）**——逐字搬运留下 import/export 脚手架，而 `stream-types.js`
+  只有 211 B（类型编译期擦除，只留头注释 + `export {};`），`dist/*.d.ts` 涨到 16 701
+  （新增两份声明）。**所以这是结构性修复，不是省字节**：目标文件确实不再吸收每个补丁，
+  但总量没降。新的上限写成 `dist/*.js` ≤ 58 000 B、`repair-stream.js` ≤ 28 000 B，
+  再跨线就继续拆。
+- 0.3.2 打包实测（`.tmp/pack12/`）：plugin **24 689 B 压缩 / 25 条目 / 81 904 B 解包**
+  （js 56 344 / d.ts 16 701 / fixtures 3 583 / 包根 5 276）；core **15 864 B / 19 条目 /
+  52 828 B 解包**；packed manifest 为 `{"dsh-remedy-core":"0.3.2"}`（无本地协议）。
+- **对外文字**：事实包升 0.3.2 / 147 tests / 6 fixtures / 新增 `## The reseal (P-0005)`
+  段 10 条；7 个 prompt 同步（readme 与 readme.zh 的安装与 Status 都改成 0.3.2，
+  changelog 加 `## [0.3.2]`，metadata release_blurb 改 0.3.2 并写明 P-0005 是 tested，
+  templates 版本占位改 0.3.2，contributing 指名 P-0005 是 tested 范例）。
+- **仍未做**：0.3.2 未打包实测、未上 npm、未 push；P-0005 仍 `tested`（无 live）。
 
 **R10（2026-11-10）· 0.3.0 被 npm 写坏，用 0.3.1 修**
 

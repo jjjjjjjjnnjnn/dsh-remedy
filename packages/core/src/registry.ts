@@ -107,6 +107,37 @@ export const PATCHES: readonly PatchRecord[] = [
       'proves refused and fused on the budget-refusal path only; a live stream that moves withdrawn is still unmeasured',
     ],
   },
+  {
+    id: 'P-0005',
+    title: 'A bare value after a member key must be resealed, or refused — never guessed',
+    symptom:
+      'A tool call fails with `Unexpected token \'c\'` or `Unexpected end of JSON input` because the model wrote a program, not a JSON string, after `"code":`; the turn is killed with MALFORMED_RESPONSE and nothing is repaired',
+    rootCause:
+      'The adapter assembles the argument text from deltas and hands it to JSON.parse. When the model emits a bare, unquoted multi-line blob as one member value, the text is neither a fusion (one object was intended) nor recoverable by splitting, so P-0001 refuses it as `single-object` and the call is never dispatched (packages/core/src/toolcall-repair.ts:124-141 in 0.3.1).',
+    surface: 'llm/stream',
+    status: 'tested',
+    severity: 'major',
+    evidence: [
+      'docs/patches/P-0005-bare-value-reseal.md',
+      'data/fixtures/toolcall-fusion/bare-code-value.json',
+      'tests/unit/reseal.test.ts',
+      'tests/unit/toolcall-repair.test.ts',
+    ],
+    guards: [
+      'tests/unit/reseal.test.ts',
+      'tests/unit/toolcall-repair.test.ts',
+      'tests/unit/repair-stream.test.ts',
+      'tests/unit/verdict.test.ts',
+      'scripts/gate_registry.mjs',
+    ],
+    limits: [
+      'reseals only when exactly one member value proves: two possible resealings is refused as ambiguous, never chosen',
+      'never touches a truncated call: a cut tail is missing bytes, not a missing quote',
+      'does not repair a duplicate key, a doubled colon, a missing closing brace, or an illegal escape: those are refusals by design',
+      'keeps the call id, so no synthetic identity is created and the stream budget is untouched',
+      'the ninth counter is optional in the type on purpose: a 0.3.x artifact has no `resealed` field and must render exactly as it did',
+    ],
+  },
 ]
 
 /** Look up one patch by id. */

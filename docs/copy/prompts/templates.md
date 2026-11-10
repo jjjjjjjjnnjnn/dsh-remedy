@@ -42,6 +42,6 @@ Files and requirements:
 
 Rules:
 
-- Use only facts from FACTS. The version is `0.3.1`.
+- Use only facts from FACTS. The version is `0.3.2`.
 - No emoji, no exclamation marks.
 - Each file must be directly usable by GitHub without edits.

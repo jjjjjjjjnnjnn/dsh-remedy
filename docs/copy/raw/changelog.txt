@@ -5,13 +5,27 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-11-10
+
+### Added
+- P-0005: a tool call whose single member value was written without a quote is resealed instead of being thrown away, but only when exactly one segment reproduces the whole text as one plain object whose payload round-trips byte for byte; the call keeps its own id and name, nothing is synthesized, and the stream-wide `maxCalls` budget is not consumed. A ninth counter `resealed` is added and is optional in the type on purpose, so a counter object recorded by an older build still prints its original line, and a stream whose only defect was a reseal reads `repaired` and never `quiet`.
+
+### Changed
+- The seam split: the stream types and the failure helpers move into their own modules, because `dist/*.js` crossed the byte ceiling after P-0005.
+
+### Fixed
+- The installable manifest, carried over from 0.3.1, so 0.3.2 is the first release that both installs and reseals.
+
+### Notes
+- P-0005 is `tested`, not `verified`, because no live host has produced the bare-value shape yet, and that 0.3.1 never reached the registry, because `publish_packages.mjs` was still being hardened when 0.3.2 took its place.
+
 ## [0.3.1] - 2026-11-10
 
 ### Fixed
-- `dsh-remedy@0.3.0` reached the registry with a literal `workspace:*` dependency because npm published the raw workspace manifest, so every install failed with `EUNSUPPORTEDPROTOCOL`; 0.3.1 republishes the same code from a tarball that `pnpm pack` produced, where the protocol is rewritten to the exact `dsh-remedy-core` version.
+- `dsh-remedy@0.3.0` reached the registry with a literal `workspace:*` dependency because npm published the raw workspace manifest, so every install failed with `EUNSUPPORTEDPROTOCOL`; the same code was repacked from a tarball that `pnpm pack` produced, where the protocol is rewritten to the exact `dsh-remedy-core` version.
 
 ### Notes
-- No code changed between 0.3.0 and 0.3.1, the tarball is the same size, the defect was in the published manifest only, and `scripts/publish_packages.mjs` now packs and checks the manifest before it publishes, so this cannot ship again.
+- No code changed, the tarball is the same size, the defect was in the published manifest only, and `scripts/publish_packages.mjs` now packs and checks the manifest before it publishes, so this cannot ship again. 0.3.1 was superseded by 0.3.2 before it reached the registry.
 
 ## [0.3.0] - 2026-11-10
 
@@ -25,10 +39,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - A budget refusal also raises `unrepaired` so a refused-but-unrepaired stream never reads `repaired`; an abandoned stream keeps `fused` and `unrepaired` and also raises `withdrawn`; a truncation raises `withdrawn` and never `fused`.
 
 ### Notes
-- P-0003 moved from `tested` to `verified` on 2026-11-10, when a headless run with a small `maxCalls` refused a real fusion and the journal wrote `refused=1`.
-- P-0002 moved from `tested` to `verified` the same day, when a headless run repaired a real two-call fusion and the synthesized call was dispatched and answered.
-- `dsh-remedy-core` moves to 0.3.0 with the same engine.
-- The package size moved from the 0.2.0 tarball (19569 bytes compressed, 64933 bytes unpacked) to the 0.3.0 tarball (22418 bytes compressed, 74014 bytes unpacked).
+- P-0003 moved from `tested` to `verified` on 2026-11-10, when a headless run with a small `maxCalls` refused a real fusion and the journal wrote `refused=1`; that P-0002 moved from `tested` to `verified` the same day, when a headless run repaired a real two-call fusion and the synthesized call was dispatched and answered; that `dsh-remedy-core` moves to 0.3.0 with the same engine, and that the package size moved from the 0.2.0 tarball (19569 bytes compressed, 64933 bytes unpacked) to the 0.3.0 tarball (22418 bytes compressed, 74014 bytes unpacked).
 
 ## [0.2.0] - 2026-11-10
 
@@ -42,8 +53,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - The per-stream `maxCalls` ceiling; a withdrawn repair returns its calls to the budget; a synthesized call now opens its own block instead of a bare `block-end`; a `max-tokens` stream is counted as truncated rather than as an unrepaired fusion; a passed-through provider error is counted instead of reporting zero errors; and a non-string `argumentsDelta` no longer concatenates text.
 
 ### Notes
-- P-0002 is `tested`, not `verified`.
-- `dsh-remedy-core` moves to 0.2.0 with the same engine.
+- P-0002 is `tested`, not `verified`, and that `dsh-remedy-core` moves to 0.2.0 with the same engine.
 
 ## [0.1.1] - 2026-11-10
 
@@ -62,11 +72,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - P-0001 tool-call fusion; the synchronous-waterfall regression found on the first real mount.
 
 ### Verified
-- Headless verification on profile `remedy-live`: 2 runs, 10 streams observed, 1 fused call, 1 repaired, 0 unrepaired, 5 tool calls, 5 tool results, and `completed` turn outcome.
-- Evidence recorded in `data/results/live-2026-11-09T17-00-00.000Z.json`.
+- Headless verification on profile `remedy-live`: 2 runs, 10 streams observed, 1 fused call, 1 repaired, 0 unrepaired, 5 tool calls, 5 tool results, and `completed` turn outcome; evidence recorded in `data/results/live-2026-11-09T17-00-00.000Z.json`.
 
 ### Notes
 - First release, published to npm for both packages (`dsh-remedy` and `dsh-remedy-core`).
-- Limits are documented in `audit/blind_spots.json`.
-- No retry-as-fix: `retryOnMalformed` defaults to 0.
-- No asar patching.
+- Limits are documented in `audit/blind_spots.json`; no retry-as-fix (`retryOnMalformed` defaults to 0); no asar patching.

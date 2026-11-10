@@ -12,6 +12,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-11-10
 ## [0.3.1] - 2026-11-10
 ### Fixed
 ### Notes
@@ -35,15 +36,31 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 Rules:
 
+- Add a `0.3.2` section above `0.3.1`. Its Added entry is P-0005: a tool call whose
+  single member value was written without a quote is resealed instead of being
+  thrown away, but only when exactly one segment reproduces the whole text as one
+  plain object whose payload round-trips byte for byte; the call keeps its own id
+  and name, nothing is synthesized, and the stream-wide `maxCalls` budget is not
+  consumed. A ninth counter `resealed` is added and is optional in the type on
+  purpose, so a counter object recorded by an older build still prints its original
+  line, and a stream whose only defect was a reseal reads `repaired` and never
+  `quiet`. Its Changed entry is the seam split: the stream types and the failure
+  helpers move into their own modules, because `dist/*.js` crossed the byte ceiling
+  after P-0005. Its Fixed entry is: the installable manifest, carried over from
+  0.3.1, so 0.3.2 is the first release that both installs and reseals. Its Notes
+  entry is that P-0005 is `tested`, not `verified`, because no live host has
+  produced the bare-value shape yet, and that 0.3.1 never reached the registry,
+  because `publish_packages.mjs` was still being hardened when 0.3.2 took its place.
 - Add a `0.3.1` section above `0.3.0`. Its Fixed entry is: `dsh-remedy@0.3.0`
   reached the registry with a literal `workspace:*` dependency because npm
   published the raw workspace manifest, so every install failed with
-  `EUNSUPPORTEDPROTOCOL`; 0.3.1 republishes the same code from a tarball that
+  `EUNSUPPORTEDPROTOCOL`; the same code was repacked from a tarball that
   `pnpm pack` produced, where the protocol is rewritten to the exact
-  `dsh-remedy-core` version. Its Notes entry is: no code changed between 0.3.0
-  and 0.3.1, the tarball is the same size, the defect was in the published
-  manifest only, and `scripts/publish_packages.mjs` now packs and checks the
-  manifest before it publishes, so this cannot ship again.
+  `dsh-remedy-core` version. Its Notes entry is: no code changed, the tarball is
+  the same size, the defect was in the published manifest only, and
+  `scripts/publish_packages.mjs` now packs and checks the manifest before it
+  publishes, so this cannot ship again. Say plainly that 0.3.1 was superseded by
+  0.3.2 before it reached the registry.
 - Add a `0.3.0` section above `0.2.0`. Its Added entry is P-0003: two new counters,
   `refused` (seen and correctly rejected, never repairable) and `withdrawn`
   (repairable but given up), so the counter line carries eight names while the

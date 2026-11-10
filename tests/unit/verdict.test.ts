@@ -82,3 +82,47 @@ test('refused and withdrawn do not move the four states', () => {
   assert.equal(unmeasured.state, 'unmeasured')
   assert.equal(unmeasured.headline, 'no measurement')
 })
+
+// --- P-0005 negative controls -------------------------------------------------
+
+test('a stream that only resealed is repaired, never quiet', () => {
+  // This is the defect P-0003 already removed in another form: a count that a
+  // defect was seen and fixed may not be reported as "defect not seen".
+  const verdict = judgeRemedy(counters({ streams: 2, resealed: 2 }))
+  assert.equal(verdict.state, 'repaired')
+  assert.equal(verdict.headline, 'defect seen and repaired')
+  assert.deepEqual(verdict.reasons, ['2 bare value(s) resealed into a JSON string'])
+})
+
+test('a resealed count does not invent a fusion', () => {
+  const verdict = judgeRemedy(counters({ streams: 3, resealed: 1 }))
+  assert.equal(verdict.state, 'repaired')
+  assert.doesNotMatch(verdict.reasons.join(' '), /fused|split/)
+})
+
+test('a reseal next to a real split reports both, in the stated order', () => {
+  const verdict = judgeRemedy(counters({ fused: 2, repaired: 2, resealed: 1 }))
+  assert.equal(verdict.state, 'repaired')
+  assert.deepEqual(verdict.reasons, [
+    '2/2 fused call(s) split into valid calls',
+    '1 bare value(s) resealed into a JSON string',
+  ])
+})
+
+test('an old counter object prints the eight-name row, byte for byte', () => {
+  // 0.3.x journals and artifacts have no `resealed` key. Their rendered line
+  // must stay exactly what it was, or every stored verdict becomes a lie.
+  const legacy = counters({ fused: 1, repaired: 1, truncated: 1 })
+  const line = formatRemedyVerdict(judgeRemedy(legacy), legacy)
+  assert.equal(
+    line,
+    'remedy: repaired — defect seen and repaired (streams=1 fused=1 repaired=1 unrepaired=0 truncated=1 errors=0 refused=0 withdrawn=0)',
+  )
+})
+
+test('the ninth name appears only when the counter exists', () => {
+  const value = counters({ streams: 1, resealed: 3 })
+  const line = formatRemedyVerdict(judgeRemedy(value), value)
+  assert.equal(line.split('\n').length, 1, 'the counter row must stay a single line')
+  assert.match(line, /resealed=3/)
+})

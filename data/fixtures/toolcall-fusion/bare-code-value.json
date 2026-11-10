@@ -1,0 +1,12 @@
+{
+  "name": "bare-code-value",
+  "source": "measured run_code failure (headless host, 2026-11-10)",
+  "note": "the model wrote the program after \"code\": without opening a quote; exactly one reseal proves, and the payload survives byte for byte",
+  "tool": "run_code",
+  "call_id": "call_00_barecode0000000000000000",
+  "arguments": "{\"code\": \nconst fs = await import(\"node:fs\");\nconst fork = \"C:\\\\Users\\\\rongj\\\\AppData\\\\Local\\\\Temp\\\\awesome-fork\";\nconst p = fork + \"\\\\data\\\\plugins\\\\jjjjjjjjnnjnn__ai-terminal-pet--packages-dsh-ai-terminal-pet.yml\";\nconsole.log(fs.existsSync(p));\nconsole.log(fs.readFileSync(p, \"utf8\"));\n \n, \"description\": \"Read the registry entry YAML in the fork\"}",
+  "expect": {
+    "status": "repaired",
+    "fragments": 1
+  }
+}

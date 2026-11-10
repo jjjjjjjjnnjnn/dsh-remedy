@@ -28,6 +28,9 @@ export type {
 } from './toolcall-repair.js'
 export { DEFAULT_MAX_CALLS, repairToolCallArguments, wouldRepair } from './toolcall-repair.js'
 
+export type { ResealAccepted, ResealRefused, ResealRejectionCode, ResealResult } from './reseal.js'
+export { resealToolCallArguments } from './reseal.js'
+
 export type { RegistryProblem } from './registry.js'
 export { findPatch, PATCHES, patchRegistrySnapshot, registryProblems } from './registry.js'
 

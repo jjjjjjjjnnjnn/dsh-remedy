@@ -303,8 +303,12 @@ function cmdVerify(args: Args): number {
       continue
     }
     if (fixture.expect.fragments !== undefined) {
+      // A split reports how many top-level objects it proved. A reseal (P-0005)
+      // reports 1 — one call, rewritten — which is not a slice count, so the
+      // engine's own number is the only honest source here.
       const split = splitTopLevelJsonObjects(fixture.arguments)
-      const fragments = split.ok ? split.slices.length : 0
+      const fragments =
+        result.status === 'repaired' ? result.fragments : split.ok ? split.slices.length : 0
       if (fragments !== fixture.expect.fragments) {
         cases.push({ fixture: name, ok: false, detail: `expected ${fixture.expect.fragments} fragments, got ${fragments}` })
         continue

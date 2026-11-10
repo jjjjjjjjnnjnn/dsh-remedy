@@ -65,7 +65,7 @@ After `ok: true`:
 2. Commit, push `main`, then `git subtree split` and push again.
 3. Tag `v0.1.0` on the public repository.
 
-## Published 0.3.0 (broken) and 0.3.1 (2026-11-10)
+## Published 0.3.0 (broken); 0.3.1 superseded by 0.3.2 (2026-11-10)
 
 ### Use the script, not `pnpm -r publish`
 
@@ -132,24 +132,37 @@ Five negative controls in `tests/unit/publish.test.ts` cover the failure, and a
 sixth reads the packed tarball itself when it exists, so the packed manifest is
 what the test asserts, not the tracked one.
 
-**0.3.1.** Both packages are bumped to 0.3.1 and packed; the code is byte-for-byte
-the 0.3.0 code (the plugin tarball is still 22418 bytes / 20 entries / 74014
-unpacked, the core tarball is 11585 bytes / 17 entries / 38582 unpacked), only the
-manifest differs. `.tmp/pack11/` holds both. Publishing 0.3.1 is a single command:
+**0.3.1 never reached the registry.** Both packages were bumped to 0.3.1 and
+packed — byte-for-byte the 0.3.0 code (the plugin tarball is still 22418 bytes /
+20 entries / 74014 unpacked, the core tarball is 11585 bytes / 17 entries / 38582
+unpacked), only the manifest differs; `.tmp/pack11/` holds both. It was superseded
+by 0.3.2 while `publish_packages.mjs` was still being hardened, so no 0.3.1 tag
+exists on npm and nothing needs to be withdrawn.
+
+**0.3.2 is the release that ships.** It carries 0.3.1's manifest fix plus P-0005
+(the bare-value reseal) and the seam split that P-0005 forced:
 
 ```bash
-node scripts/publish_packages.mjs --otp <code>
+node scripts/publish_packages.mjs --dry-run          # packs both, checks the manifests
+node scripts/publish_packages.mjs --otp <code>       # publishes core, then plugin
 ```
+
+The exact 0.3.2 tarball bytes go in this file after the packed manifests are
+inspected; do not copy 0.3.0's numbers, because 0.3.2 ships 6 fixtures instead of 5
+and `dist/*.js` grew by the reseal module.
 
 **0.3.0 of the plugin cannot be withdrawn.** npm only allows unpublishing within
 24 hours of publication, and only with the same OTP path; the usable answer is a
-working 0.3.1 plus an explicit "do not install 0.3.0" line in the README and the
-changelog. `dsh-remedy-core@0.3.0` is fine and identical to 0.3.1, so it can stay.
+working 0.3.2 plus an explicit "do not install 0.3.0" line in the README and the
+changelog. `dsh-remedy-core@0.3.0` is fine, so it can stay.
 
 - 0.2.0 was never published; 0.3.0 superseded it, and the changelog keeps every
   entry so a skipped release stays visible instead of silently absent.
 - Publish order matters: core first, then the plugin, because the plugin pins the
   exact core version.
+- `record_publish.mjs` refuses to overwrite a same-named artifact, so give it a new
+  `--stamp` and `--retries 3`. It records what the registry actually answers, not
+  what the script hoped it would.
 - After publishing, `record_publish.mjs` records the settled state, then the
   container commit, the public-branch refresh, the push and `gh release create`
   follow.

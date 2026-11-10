@@ -8,7 +8,9 @@
  * SAFETY PROPERTIES (each one has a negative-control test):
  *  - a value that already parses is never rewritten;
  *  - a single object that fails to parse is never "repaired" (the defect is
- *    something else and splitting would fabricate a second call);
+ *    something else and splitting would fabricate a second call) — the one
+ *    exception is a proven bare-value reseal, which returns that same call with
+ *    its own bytes intact (P-0005);
  *  - a `max-tokens` truncation is never repaired (the tail is missing, not fused);
  *  - every fragment must parse to a plain object before any call is returned;
  *  - a call without an id or without a tool name is rejected: a synthetic call
@@ -18,6 +20,7 @@
  */
 
 import { splitTopLevelJsonObjects } from './json-split.js'
+import { resealToolCallArguments } from './reseal.js'
 import type { ToolCallInput } from './types.js'
 
 export type RepairRejectionCode =
@@ -47,10 +50,12 @@ export interface RepairUnchanged {
 
 export interface RepairRepaired {
   readonly status: 'repaired'
-  readonly code: 'split'
+  readonly code: 'split' | 'resealed'
   readonly calls: readonly ToolCallInput[]
-  /** Number of top-level objects found in the fused text (always >= 2). */
+  /** Number of top-level objects found in the fused text (1 when resealed). */
   readonly fragments: number
+  /** Set only when `code` is `resealed`: the member key whose value was bare. */
+  readonly key?: string
 }
 
 export interface RepairRejected {
@@ -119,7 +124,23 @@ export function repairToolCallArguments(
     return reject('not-an-object-sequence', `${split.code}: ${split.detail}`)
   }
   if (split.slices.length === 1) {
-    return reject('single-object', 'the text is one object; the parse failure is not fusion')
+    // One object that does not parse is not a fusion, but it can still be the
+    // bare-value defect (P-0005): the model wrote a program after `"code": `
+    // without quotes. Resealing is accepted only when exactly one segment
+    // proves, so this stays a refusal for every other single-object shape.
+    // Truncation is already refused above, so the reseal pass cannot be reached
+    // with a cut tail: no second truncation guard is needed here.
+    const reseal = resealToolCallArguments(text)
+    if (reseal.status !== 'resealed') {
+      return reject('single-object', `the text is one object; ${reseal.detail}`)
+    }
+    return {
+      status: 'repaired',
+      code: 'resealed',
+      calls: [{ id: call.id, name: call.name, arguments: reseal.text }],
+      fragments: 1,
+      key: reseal.key,
+    }
   }
 
   const maxCalls = options.maxCalls ?? DEFAULT_MAX_CALLS

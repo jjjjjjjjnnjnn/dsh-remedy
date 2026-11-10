@@ -21,7 +21,13 @@ const run = (...args: string[]) => spawnSync(process.execPath, [cli, ...args], {
 test('verify runs every bundled fixture through the engine', () => {
   const result = run('verify')
   assert.equal(result.status, 0, result.stderr)
-  assert.match(result.stdout, /OK\s+5 fixture\(s\)/)
+  // The fixture count is data, not a constant: adding a fixture must not need a
+  // test edit, yet every fixture still has to be a PASS line.
+  const lines = result.stdout.split('\n').filter((line) => line.includes('—'))
+  const passes = lines.filter((line) => line.startsWith('PASS'))
+  assert.ok(passes.length >= 5, `expected at least 5 fixtures, got ${String(passes.length)}`)
+  assert.equal(passes.length, lines.length, 'no fixture may be a FAIL line in a green run')
+  assert.match(result.stdout, /OK\s+\d+ fixture\(s\)/)
 })
 
 test('repair splits the real fused fixture', () => {

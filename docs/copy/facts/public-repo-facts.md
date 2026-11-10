@@ -8,7 +8,7 @@
 - Name: dsh-remedy
 - Tagline (internal, not final copy): a resident repair layer for DeepSeek Harness.
 - Package names: `dsh-remedy` (plugin), `dsh-remedy-core` (engine).
-- Version: 0.3.1 (plugin), 0.3.1 (core)
+- Version: 0.3.2 (plugin), 0.3.2 (core)
 - License: MIT
 - Repository: https://github.com/jjjjjjjjnnjnn/dsh-remedy (public, created 2026-11-09)
 - npm: `dsh-remedy-core@0.3.0` is published. `dsh-remedy@0.3.0` reached the registry with a literal `workspace:*` dependency because npm published the raw workspace manifest, so installing it fails with `EUNSUPPORTEDPROTOCOL`; 0.3.1 republishes the same code from a pnpm-packed tarball and is the version to install. The npm badge shows the current latest.
@@ -80,6 +80,17 @@
 - `unrepaired` now means exactly one thing: a fusion was proven and was not repaired.
 - Blind spot `BS-12` is closed by this patch.
 
+## The reseal (P-0005)
+
+- Status: `tested` — unit tests, negative controls and a measured fixture; no live host run exists for this patch.
+- What it fixes: a tool call whose single member value was written **without a quote**, so the whole argument text is one object that does not parse. Measured shapes are `Unexpected token 'c'` and `Unexpected end of JSON input` on `run_code`, where the model wrote a program after `"code": `.
+- What it does: exactly one segment must reproduce the whole text as one plain object whose payload round-trips byte for byte; then that value is quoted with `JSON.stringify` and the same call is dispatched with its own id and name.
+- Zero provable segments is refused as `bare-value-unproven`; two or more is refused as `ambiguous-bare-value`. Two possible resealings is treated as none.
+- A reseal keeps the call id, synthesizes nothing, and does not consume the stream-wide `maxCalls` budget.
+- The ninth counter is `resealed`. It is optional in the type on purpose: a counter object recorded by a 0.3.x build has no such field, and its rendered verdict line must stay byte for byte what it was.
+- A stream whose only defect was a reseal reads `repaired`, never `quiet`; the quiet guard was widened instead of the vocabulary.
+- Still refused, each with a negative control: a truncated tail, a duplicate key, a doubled colon, a missing closing brace, an illegal escape, and a bare single-line token.
+
 ## Live verification
 
 - Profile: `remedy-live`, a headless DSH profile; the desktop provider block was copied into it.
@@ -108,7 +119,7 @@
 
 ## Tests and gates
 
-- Tests: 131 pass, 0 fail.
+- Tests: 147 pass, 0 fail.
 - Gates: 5 (`ssot`, `registry`, `namespace`, `step-review`, `copy`).
 - Negative controls (`--mutate`): 5 of 5 caught.
 - Publishing: `scripts/publish_packages.mjs` publishes the two package
@@ -120,7 +131,7 @@
   `pnpm pack` tarball: pnpm rewrites the protocol to the exact version, npm
   does not, and the registry then answers a plain install with
   `EUNSUPPORTEDPROTOCOL`.
-- Fixtures: 5, including one real fused call and one counter-evidence call.
+- Fixtures: 6, including one real fused call, one counter-evidence call, and one measured bare-value program.
 - The plugin tarball ships `fixtures/`; `dsh-remedy verify` works from an installed copy (0.2.0), and 0.3.0 keeps that property.
 - Test command: `pnpm run verify` (build, typecheck, test, gate).
 - Negative-control command: `node scripts/gate.mjs --mutate`.
@@ -132,10 +143,14 @@
 - The slimming pass was measured on the 0.1.1 code: 19114 bytes compressed, 20 entries, 63170 bytes unpacked.
 - The shipped 0.2.0 tarball, which carries the P-0002 hardening, is 19569 bytes compressed, 20 entries, 64933 bytes unpacked.
 - The shipped 0.3.0 tarball, which also carries the P-0003 observability, is 22418 bytes compressed, 20 entries, 74014 bytes unpacked. 0.3.1 ships the same bytes; only the published manifest differs.
+- 0.3.2 adds the P-0005 reseal, ships 6 fixtures instead of 5, and splits the seam: 24689 bytes compressed, 25 entries, 81904 bytes unpacked.
 - Unpacked breakdown of the shipped 0.3.0 tarball: 52247 bytes of `dist/*.js`, 13797 bytes of `dist/*.d.ts`, 2694 bytes of `fixtures/`, 5276 bytes of package-root files.
 - The package still ships `dist/*.js`, `dist/*.d.ts`, `fixtures/`, `cordis.patch.yml`, `README.md`, `LICENSE`; no sourcemaps.
 - Dropping sourcemaps removes 41926 bytes of the unpacked payload (measured in `docs/research/stability-audit-2026-11-10.md`).
-- Byte budget: `dist/*.js` is 52247 bytes after P-0003. The working ceiling is 53000 bytes; a patch that crosses it must split a seam instead of growing `repair-stream.ts`.
+- Shipped 0.3.2 tarball: 24689 bytes compressed, 25 entries, 81904 bytes unpacked. Breakdown: 56344 bytes of `dist/*.js`, 16701 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/` (6 fixtures plus `checksums.json`), 5276 bytes of package-root files.
+- The 0.3.2 core tarball is 15864 bytes compressed, 19 entries, 52828 bytes unpacked (32537 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`).
+- Byte budget, restated honestly: `dist/*.js` reached 55815 bytes after P-0005, over the 53000 byte ceiling. 0.3.2 splits the seam into `stream-types.ts` and `failure-text.ts`, which cuts `repair-stream.js` from 28955 to 27925 bytes but grows the plugin total to 56344, because import and export scaffolding is not free. The split is therefore a structural fix, not a byte fix: the ceiling was set to stop one file from absorbing every patch, and the file that must stop growing now grows again. The working ceiling is restated as 58000 bytes for `dist/*.js` and 28000 bytes for the emitted `repair-stream.js`, and a patch that crosses either number must split again.
+- The package still ships `dist/*.js`, `dist/*.d.ts`, `fixtures/`, `cordis.patch.yml`, `README.md`, `LICENSE`; no sourcemaps.
 - The plugin entry is 20 tar entries; the core entry is 17 tar entries. The 0.3.1 core tarball is 11585 bytes compressed, 17 entries, 38582 bytes unpacked.
 
 ## Install and use
@@ -185,4 +200,4 @@
 
 ## Numbers allowed in copy
 
-0 1 2 3 4 5 6 7 8 9 10 11 13 17 19 20 22 27 30 37 40 45 48 60 84 93 121 126 131 147 2694 4427 5276 9118 9401 11585 13797 17423 17484 19114 19569 22418 26345 38582 41926 52247 53000 63170 64933 74014 98424 0.1.0 0.1.1 0.2.0 0.3.0 0.3.1
+0 1 2 3 4 5 6 7 8 9 10 11 13 17 19 20 22 25 27 30 37 40 45 48 60 84 93 121 126 131 147 2694 3583 4427 5276 9118 9401 11585 13797 15864 16701 16994 17423 17484 19114 19569 22418 24689 26345 27925 28000 32537 38582 41926 52247 52828 53000 56344 58000 63170 64933 74014 81904 98424 0.1.0 0.1.1 0.2.0 0.3.0 0.3.1 0.3.2

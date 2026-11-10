@@ -62,6 +62,26 @@
         "tests/governance/ledgers.test.ts",
         "scripts/gate_registry.mjs"
       ]
+    },
+    {
+      "id": "P-0005",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.3.2",
+      "evidence": [
+        "docs/patches/P-0005-bare-value-reseal.md",
+        "data/fixtures/toolcall-fusion/bare-code-value.json",
+        "tests/unit/reseal.test.ts",
+        "tests/unit/toolcall-repair.test.ts",
+        "tests/unit/verdict.test.ts"
+      ],
+      "guards": [
+        "tests/unit/reseal.test.ts",
+        "tests/unit/toolcall-repair.test.ts",
+        "tests/unit/repair-stream.test.ts",
+        "tests/unit/verdict.test.ts",
+        "scripts/gate_registry.mjs"
+      ]
     }
   ]
 }

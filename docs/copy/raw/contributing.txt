@@ -9,7 +9,7 @@ For bug reports and questions, open a GitHub issue.
 For security reports, use GitHub private vulnerability reporting on the public repository (security advisories):
 https://github.com/jjjjjjjjnnjnn/dsh-remedy
 
-Do not use unlisted chat servers or email addresses.
+Do not use chat servers or email addresses; no external channels exist.
 
 ## Development setup
 
@@ -35,7 +35,7 @@ node scripts/gate.mjs --mutate
 
 `pnpm run verify` runs the build, typecheck, tests, and the 5 gates.
 
-In mutate mode, every gate must fail, because a gate that stays green under its injected violation is vacuous. All 5 gates must catch their injected defect.
+In mutate mode, every gate must fail, because a gate that stays green under its injected violation is vacuous.
 
 ## Adding a patch
 
@@ -47,7 +47,7 @@ Follow the five steps in order:
 4. Live-verify before moving status to `verified`.
 5. Record the registry snapshot and update the ledger.
 
-P-0002 and P-0003 are the two worked examples of a patch that went all the way to `verified` with a live artifact: P-0002 has a run that repaired a real two-call fusion, and P-0003 has a run whose journal wrote a non-zero `refused`. Contrast them: a `drafted` entry is only a written symptom, and a `tested` entry is negative controls without a host run.
+P-0002 and P-0003 are the two worked examples of a patch that went all the way to `verified` with a live artifact: P-0002 has a run that repaired a real two-call fusion, and P-0003 has a run whose journal wrote a non-zero `refused`. Name P-0005 as the worked example of a `tested` patch: eleven negative controls and one measured fixture, no host run yet. Contrast all three: a `drafted` entry is only a written symptom, and a `tested` entry is negative controls without a host run.
 
 ## Pull requests
 
@@ -62,7 +62,7 @@ P-0002 and P-0003 are the two worked examples of a patch that went all the way t
 - Relative imports end in `.js`.
 - `erasableSyntaxOnly` is on.
 - Gates use Node built-ins only.
-- `dsh-remedy-core` has no runtime dependency.
+- Core (`dsh-remedy-core`) has no runtime dependency.
 
 ## Evidence rules
 

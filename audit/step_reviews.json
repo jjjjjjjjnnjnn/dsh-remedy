@@ -174,6 +174,30 @@
         "tests/unit/repair-stream.test.ts",
         "audit/blind_spots.json"
       ]
+    },
+    {
+      "id": "S11",
+      "gate": "registry",
+      "title": "A forgotten quote is a proof, not an invitation to guess",
+      "axes": {
+        "correctness": "One reseal decision: exactly one member value must reproduce the whole text as a single plain object whose payload round-trips byte for byte. Zero candidates is bare-value-unproven; two is ambiguous-bare-value; both are refusals. The call keeps its id and name, so no synthetic identity exists and the stream-wide call budget does not move.",
+        "reproducibility": "Every rule has a negative control in tests/unit/reseal.test.ts (already-parsing value untouched, truncation refused, dangling key, missing brace, single-line token, two provable blobs, legal literals, empty code, and the member-head search window) plus tests/unit/toolcall-repair.test.ts for the single-object branch. A measured run_code text is replayed through the shipped CLI by data/fixtures/toolcall-fusion/bare-code-value.json.",
+        "compliance": "Recorded as tested, not verified: no live host run exists and data/results has no new live file for this patch. Truncation, duplicate keys, doubled colons, missing braces and illegal escapes stay refusals, each with a named counter-evidence row in the patch document.",
+        "ssot": "packages/core/src/registry.ts, audit/patch_ledger.json and the recorded patch-registry snapshot are kept byte-identical by the registry gate. The ninth counter is optional in RemedyCounters on purpose, and a 0.3.x counter object must still render the eight-name row byte for byte.",
+        "adversarial": "The quiet guard is widened rather than the vocabulary: a stream whose only defect was a reseal must not read as quiet, which is the same lie P-0003 removed. The patch also states plainly what stays broken, so the claim cannot grow past the four shapes it refuses."
+      },
+      "evidence": [
+        "docs/patches/P-0005-bare-value-reseal.md",
+        "packages/core/src/reseal.ts",
+        "packages/core/src/toolcall-repair.ts",
+        "packages/core/src/verdict.ts",
+        "packages/plugin/src/repair-stream.ts",
+        "data/fixtures/toolcall-fusion/bare-code-value.json",
+        "tests/unit/reseal.test.ts",
+        "tests/unit/verdict.test.ts",
+        "tests/unit/toolcall-repair.test.ts",
+        "tests/unit/repair-stream.test.ts"
+      ]
     }
   ]
 }

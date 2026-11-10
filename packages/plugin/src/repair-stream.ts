@@ -26,77 +26,34 @@ import {
   type RemedyVerdict,
   type ToolCallInput,
 } from 'dsh-remedy-core'
+import { argumentsFromFailure, isFusionFailure, normalizeArguments } from './failure-text.js'
+import type {
+  BlockEndChunk,
+  FinishChunk,
+  LlmFailure,
+  OpenCall,
+  PendingBlock,
+  RepairEvent,
+  RepairStreamOptions,
+  StreamChunk,
+} from './stream-types.js'
 
-export interface LlmFailure {
-  readonly code?: string
-  readonly message?: string
-}
-
-export type FinishReason =
-  | { readonly kind: 'stop' }
-  | { readonly kind: 'max-tokens' }
-  | { readonly kind: 'error'; readonly failure: LlmFailure }
-  | { readonly kind: 'aborted'; readonly failure?: LlmFailure }
-
-export interface BlockStartChunk {
-  readonly type: 'block-start'
-  readonly index: number
-  readonly blockType: 'text' | 'reasoning' | 'tool-call'
-}
-
-export interface DeltaChunk {
-  readonly type: 'text-delta' | 'reasoning-delta'
-  readonly index: number
-  readonly text: string
-}
-
-export interface ToolCallDeltaChunk {
-  readonly type: 'tool-call-delta'
-  readonly index: number
-  readonly id: string
-  readonly name?: string
-  readonly argumentsDelta: string
-}
-
-export interface BlockEndChunk {
-  readonly type: 'block-end'
-  readonly index: number
-  readonly block:
-    | { readonly type: 'tool-call'; readonly id: string; readonly name: string; readonly arguments: string }
-    | { readonly type: 'text'; readonly text: string }
-    | { readonly type: 'reasoning'; readonly text: string }
-}
-
-export interface UsageChunk {
-  readonly type: 'usage'
-  readonly usage: unknown
-}
-
-export interface FinishChunk {
-  readonly type: 'finish'
-  readonly reason: FinishReason
-  readonly replayState?: unknown
-}
-
-export type StreamChunk =
-  | BlockStartChunk
-  | DeltaChunk
-  | ToolCallDeltaChunk
-  | BlockEndChunk
-  | UsageChunk
-  | FinishChunk
-
-export type RepairEvent =
-  | { readonly kind: 'repaired'; readonly tool: string; readonly callId: string; readonly fragments: number }
-  | {
-      readonly kind: 'rejected'
-      readonly tool: string
-      readonly callId: string
-      readonly code: string
-      readonly detail: string
-    }
-  | { readonly kind: 'retry'; readonly detail: string }
-  | { readonly kind: 'stream'; readonly counters: RemedyCounters }
+// The data vocabulary moved to `stream-types.ts` (P-0005 seam split); every name
+// still resolves through this module, so `index.ts` and the `./repair-stream`
+// export map keep their public surface unchanged.
+export type {
+  BlockEndChunk,
+  BlockStartChunk,
+  DeltaChunk,
+  FinishChunk,
+  FinishReason,
+  LlmFailure,
+  RepairEvent,
+  RepairStreamOptions,
+  StreamChunk,
+  ToolCallDeltaChunk,
+  UsageChunk,
+} from './stream-types.js'
 
 /** Live counters for one plugin instance. */
 export class RemedyMonitor {
@@ -108,6 +65,7 @@ export class RemedyMonitor {
   private errors = 0
   private refused = 0
   private withdrawn = 0
+  private resealed = 0
   private readonly listeners = new Set<(event: RepairEvent) => void>()
   private readonly recorded: RepairEvent[] = []
 
@@ -119,6 +77,20 @@ export class RemedyMonitor {
     this.fused += 1
     this.repaired += 1
     this.emit({ kind: 'repaired', tool, callId, fragments })
+  }
+
+  /**
+   * Book one bare-value reseal (P-0005).
+   *
+   * This is not a fusion: exactly one call was intended, it kept its id, and its
+   * bytes went out unchanged inside a JSON string. So it moves `resealed` only —
+   * never `fused` (which means "a fusion was observed") and never `repaired`
+   * (which means "a fused call was split"). The verdict reads it as a repair
+   * because a defect was seen and fixed, and `quiet` would be a lie.
+   */
+  recordResealed(tool: string, callId: string, key: string): void {
+    this.resealed += 1
+    this.emit({ kind: 'resealed', tool, callId, key })
   }
 
   /**
@@ -232,6 +204,7 @@ export class RemedyMonitor {
       errors: this.errors,
       refused: this.refused,
       withdrawn: this.withdrawn,
+      resealed: this.resealed,
     }
   }
 
@@ -252,57 +225,6 @@ export class RemedyMonitor {
     this.recorded.push(event)
     for (const listener of this.listeners) listener(event)
   }
-}
-
-export interface RepairStreamOptions {
-  /** Ceiling on calls synthesized across the whole stream. Default 8. */
-  readonly maxCalls?: number
-}
-
-interface OpenCall {
-  id: string
-  name: string
-  text: string
-}
-
-interface PendingBlock {
-  /** What is emitted when the stream is not repaired as a whole. */
-  readonly original: StreamChunk
-  /** What is emitted when it is; `null` means "the original, unchanged". */
-  readonly synthesized: readonly StreamChunk[] | null
-  readonly repaired: { readonly tool: string; readonly callId: string; readonly fragments: number } | null
-  /** Calls this entry took from the stream-wide budget, returned if it is withdrawn. */
-  readonly spent: number
-}
-
-const RECEIVED_MARKER = /Received arguments:\r?\n/
-
-function isFusionFailure(failure: LlmFailure | undefined): boolean {
-  if (!failure) return false
-  if (failure.code === 'MALFORMED_RESPONSE') return true
-  const message = failure.message ?? ''
-  return /Unexpected non-whitespace character after JSON|Unexpected token .+ in JSON at position/i.test(message)
-}
-
-/**
- * The exact argument text is echoed in the adapter's failure message.
- *
- * A message we cannot attribute to a tool is not a rescue candidate: synthesizing
- * `name: 'unknown'` would dispatch a call to a tool that does not exist.
- */
-function argumentsFromFailure(failure: LlmFailure | undefined): { name: string; text: string } | null {
-  const message = failure?.message ?? ''
-  const marker = RECEIVED_MARKER.exec(message)
-  if (!marker) return null
-  const text = message.slice(marker.index + marker[0].length)
-  if (text.trim() === '') return null
-  const name = /Tool call "([^"]+)"/.exec(message)?.[1]
-  if (name === undefined || name.trim() === '') return null
-  return { name, text }
-}
-
-function normalizeArguments(text: string): string {
-  return text.trim() === '' ? '{}' : text
 }
 
 function ceilingOf(options: RepairStreamOptions): number {
@@ -407,7 +329,13 @@ export async function* repairStream(
       candidates.push({ index: -1, call: { id: '', name: recovered.name, arguments: recovered.text } })
     }
 
-    const decisions: Array<{ index: number; calls: readonly ToolCallInput[]; fused: boolean }> = []
+    const decisions: Array<{
+      index: number
+      calls: readonly ToolCallInput[]
+      fused: boolean
+      /** Set when this decision is a bare-value reseal (P-0005), not a split. */
+      reseal: { tool: string; callId: string; key: string } | null
+    }> = []
     let planned = 0
     let proven: { name: string; id: string } | null = null
     for (const candidate of candidates) {
@@ -440,15 +368,27 @@ export async function* repairStream(
       }
       if (result.status === 'repaired') {
         fusedSeen = true
-        planned += result.calls.length
+        // A reseal (P-0005) rewrites one call in place: it synthesizes nothing,
+        // so it must not consume the stream-wide call budget.
+        if (result.code === 'split') planned += result.calls.length
         // Write the synthesized ids back so the next candidate cannot mint the same one.
         for (const call of result.calls) seenIds.add(call.id)
         if (proven === null) {
           const first = result.calls[0]
           if (first !== undefined) proven = { name: first.name, id: first.id }
         }
+        decisions.push({
+          index: candidate.index,
+          calls: result.calls,
+          fused: true,
+          reseal:
+            result.code === 'resealed'
+              ? { tool: candidate.call.name, callId: id, key: result.key ?? '' }
+              : null,
+        })
+        continue
       }
-      decisions.push({ index: candidate.index, calls: result.calls, fused: result.status === 'repaired' })
+      decisions.push({ index: candidate.index, calls: result.calls, fused: false, reseal: null })
     }
 
     if (!fusedSeen) return null
@@ -474,6 +414,10 @@ export async function* repairStream(
       if (!decision.fused) continue
       const first = decision.calls[0]
       if (!first) continue
+      if (decision.reseal !== null) {
+        monitor.recordResealed(decision.reseal.tool, decision.reseal.callId, decision.reseal.key)
+        continue
+      }
       monitor.recordRepaired(first.name, first.id, decision.calls.length)
     }
 
@@ -489,6 +433,26 @@ export async function* repairStream(
     if (pending.length === 0) return
     const blocks = pending.splice(0, pending.length)
     for (const entry of blocks) {
+      if (entry.resealed !== undefined) {
+        if (withdrawing !== null) {
+          // The rewrite was proven and then given back. Nothing was dispatched,
+          // so `withdrawn` alone carries it: booking `fused` would claim a second
+          // call existed, and booking `unrepaired` would claim bytes were lost.
+          if (withdrawing === 'rejected') {
+            monitor.recordRejected(
+              entry.resealed.tool,
+              entry.resealed.callId,
+              'rolled-back',
+              'a later block in the same stream was rejected, so this reseal was withdrawn',
+            )
+          }
+          yield entry.original
+          continue
+        }
+        monitor.recordResealed(entry.resealed.tool, entry.resealed.callId, entry.resealed.key)
+        if (entry.synthesized !== null) yield* entry.synthesized
+        continue
+      }
       if (entry.repaired !== null && withdrawing !== null) {
         // A withdrawn repair never ran, so its calls go back to the stream budget.
         synthesized -= entry.spent
@@ -606,6 +570,20 @@ export async function* repairStream(
                 const index = nextIndex()
                 chunks.push({ type: 'block-start', index, blockType: 'tool-call' })
                 chunks.push(closeCall(index, call))
+              }
+              // A reseal (P-0005) rewrites the one call in place: it keeps this
+              // block's index and id, synthesizes nothing, and must not consume
+              // the stream-wide call budget. It is booked as `resealed`, never as
+              // a fusion, because no second call existed.
+              if (result.code === 'resealed') {
+                hold({
+                  original: chunk,
+                  synthesized: chunks,
+                  repaired: null,
+                  resealed: { tool: chunk.block.name, callId: chunk.block.id, key: result.key ?? '' },
+                  spent: 0,
+                })
+                break
               }
               synthesized += result.calls.length
               hold({

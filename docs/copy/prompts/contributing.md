@@ -29,8 +29,10 @@ Rules:
 - Mention that P-0002 and P-0003 are the two worked examples of a patch that went
   all the way to `verified` with a live artifact: P-0002 has a run that repaired a
   real two-call fusion, and P-0003 has a run whose journal wrote a non-zero
-  `refused`. Contrast them: a `drafted` entry is only a written symptom, and a
-  `tested` entry is negative controls without a host run.
+  `refused`. Name P-0005 as the worked example of a `tested` patch: eleven
+  negative controls and one measured fixture, no host run yet. Contrast all three:
+  a `drafted` entry is only a written symptom, and a `tested` entry is negative
+  controls without a host run.
 - "Pull requests": one project per commit; describe what changed, why, the
   failing test, and the evidence path; do not mix a behavior change with a
   docs-only change.

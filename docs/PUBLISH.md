@@ -246,7 +246,7 @@ because two consecutive splits each grew the total while shrinking the file that
 growing.
 
 
-**0.3.6 is prepared (2026-11-11) and not published yet: P-0009, the windowed scan fix.**
+**Published 2026-11-11: 0.3.6, with P-0009.**
 
 P-0009 is a small, measured reader fix. A windowed scan over the real session
 directory reported `unreadable_lines=78` for 78 files: every session log opens with
@@ -275,13 +275,29 @@ record.
 
 Baseline after the change: **192 tests, 0 failing. 6 gates. `--mutate` catches 6 of 6.**
 
-To publish it:
+Published on 2026-11-11. How it went:
 
 ```bash
-npm whoami                                     # must answer jjjjjjjjnnjnn
-node scripts/publish_packages.mjs --otp <code> # core, then plugin
-node scripts/record_publish.mjs --stamp <ISO> --retries 3
+npm whoami                                     # answered jjjjjjjjnnjnn
+node scripts/publish_packages.mjs --otp <code> # stopped in packages/core, see below
+npm publish .tmp/pack18/dsh-remedy-core-0.3.6.tgz --access public   # exit 0
+npm publish .tmp/pack18/dsh-remedy-0.3.6.tgz --access public        # exit 0
+node scripts/record_publish.mjs --stamp 2026-11-11T17:35:00.000Z --retries 3
 ```
+
+Both packages answered `latest = 0.3.6` after this run. `npm publish <tarball>`
+had to be called twice by hand: the wrapper run exited with status 3221226505
+in `packages/core` — a Windows access violation with no HTTP request in the npm
+log at all — and the same two calls then printed `+ dsh-remedy-core@0.3.6` and
+`+ dsh-remedy@0.3.6` with exit 0. The direct metadata read moved from `0.3.5` to
+`0.3.6` about two minutes later, which is the replica lag this file already
+records; `record_publish.mjs --stamp 2026-11-11T17:35:00.000Z --retries 3`
+answered `ok: true` on the first attempt. A cold directory installed
+`dsh-remedy@0.3.6` from the registry and `npx dsh-remedy verify` printed
+`OK  6 fixture(s)`. The plugin tarball is 29445 bytes compressed, 29 files,
+97807 unpacked, shasum `fe85d15a…`; the core tarball is 19247 bytes compressed,
+19 files, 63408 unpacked, shasum `76777609…`. Release:
+<https://github.com/jjjjjjjjnnjnn/dsh-remedy/releases/tag/v0.3.6>.
 
 **Published 2026-11-11: 0.3.5, with P-0008.**
 

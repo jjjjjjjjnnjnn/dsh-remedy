@@ -75,18 +75,18 @@ Rules:
   three bytes under its ceiling and the next patch that adds code to `dist`
   must split a file instead of absorbing it. Its Notes entry is that P-0009 is
   `tested` and not `verified` because, like P-0004 and P-0006, it moves an
-  offline reader, and that `0.3.6` is prepared and not published yet, so no
-  entry may claim it has shipped; `0.3.5` remains the registry `latest` and
-  `0.3.4` is the release before it.
+  offline reader, and that this release `0.3.6` is published and is the registry
+  `latest` for both packages, so the 0.3.6 section is the shipped one; `0.3.5`
+  becomes the previous release and `0.3.4` the one before it.
 - Add a `0.3.4` section above `0.3.3`, with only `Added`, `Changed` and `Notes`
   subsections. Its Added entry is P-0006: `scan` now counts how every turn ended
   (`completed`, `max_tokens`, `aborted`, `error`) and names every
   `reason.error.code`, where before it counted only the `MALFORMED_RESPONSE`
   turns and dropped every other ending, so the largest failure classes were
   invisible in the report meant to map them. Give the measured census exactly
-  once, from FACTS: of 287 turns, 92 completed, 88 `max_tokens`, 99 error and
-  8 aborted, and the error codes `MALFORMED_RESPONSE` 44,
-  `UNSUPPORTED_REASONING_EFFORT` 36, `SERVER` 16, `UNKNOWN` 1,
+  once, from FACTS: of 293 turns, 94 completed, 88 `max_tokens`, 100 error and
+  11 aborted, and the error codes `MALFORMED_RESPONSE` 44,
+  `UNSUPPORTED_REASONING_EFFORT` 37, `SERVER` 16, `UNKNOWN` 1,
   `MISSING_CREDENTIAL` 1, `INVALID_REQUEST` 1. Its Changed entry is that the
   census was first written as a separate module, that the plugin `dist` then
   overshot the 68000 byte ceiling at 70389 bytes, and that the module was
@@ -98,7 +98,8 @@ Rules:
   reader, that truncated turns stay unfixed on purpose, and that this release
   `0.3.5` is published and is the registry `latest` for both packages, so the
   0.3.5 section is the shipped one; `0.3.4` becomes the previous release and
-  `0.3.3` the one before it, while `0.3.6` is prepared and not published yet.
+  `0.3.3` the one before it; `0.3.6` is now published and is the `latest`, so the
+  0.3.6 section is the shipped one and the 0.3.5 section is the release before it.
   Its Added entry is P-0007: the copy channel could not regenerate the
   two longest outward files at all and printed only `copy_with_agy: agy exited
   null`, because the whole request travelled on one Windows command line once

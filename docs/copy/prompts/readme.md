@@ -35,10 +35,10 @@ Rules:
 - First screen must answer: what is it, what does it fix, how do I get it.
 - "What it fixes": name the defect, show the failure signature in one fenced
   block, give the measured sample numbers exactly once, taken from FACTS: 78
-  session files, 375 attempts, 38 fused calls, 44 `MALFORMED_RESPONSE` failures
+  session files, 393 attempts, 38 fused calls, 44 `MALFORMED_RESPONSE` failures
   of which 39 are repairable, and 0 unreadable lines. Do not reuse the older
   77-file sample or the older 48-file sample anywhere. Also state the census
-  once: of 287 turns, 92 completed, 88 `max_tokens`, 99 error and 8 aborted,
+  once: of 293 turns, 94 completed, 88 `max_tokens`, 100 error and 11 aborted,
   and name the six error codes FACTS lists.
 - "Install": do not hardcode a version. Show
   `dsh plugin --profile <name> add dsh-remedy` first (npm resolves the latest
@@ -102,11 +102,11 @@ Rules:
   scan, but no live host run has produced the bare-value shape that P-0005
   repairs; P-0004, P-0006 and P-0009 change an offline reader rather than the
   resident seam; P-0007 changes the build-side copy channel; and P-0008 adds a
-  build-side gate. Name the release status from FACTS: FACTS names `0.3.5` as
-  published and as `latest` for both packages, with `0.3.4` as the previous
-  release, and `0.3.6` as prepared but not published. Write exactly that: do
-  not call a published version pending, do not describe `0.3.4` as the current
-  release, and do not claim `0.3.6` has shipped.
+  build-side gate. Name the release status from FACTS: FACTS names `0.3.6` as
+  published and as `latest` for both packages, with `0.3.5` as the previous
+  release. Write exactly that: do not call a published version pending, do not
+  describe `0.3.5` as the current release, and do not claim a version that
+  FACTS does not name has shipped.
   Do not hardcode a patch version in the install commands; the npm badge is the
   version.
 - Include one short paragraph or table listing the package size: the published

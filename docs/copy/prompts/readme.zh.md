@@ -40,9 +40,9 @@ Rules:
   0.3.1 用了同样的 manifest 修法，但在上市前就被取代，从未到达 registry。
   keep the source workflow for contributors.
 - "它修什么": the failure signature in a fenced block, the measured sample from
-  FACTS (78 个会话文件 / 375 次 attempt / 38 次粘连 / 44 次 `MALFORMED_RESPONSE`，
-  其中 39 条可修 / 0 行不可读)，并给出一次普查（287 个 turn 里 92 完成、88
-  `max_tokens`、99 error、8 aborted）与六个 error code。旧的 77 文件样本与
+  FACTS (78 个会话文件 / 393 次 attempt / 38 次粘连 / 44 次 `MALFORMED_RESPONSE`，
+  其中 39 条可修 / 0 行不可读)，并给出一次普查（293 个 turn 里 94 完成、88
+  `max_tokens`、100 error、11 aborted）与六个 error code。旧的 77 文件样本与
   48 文件样本都不要再用。
 - "工作方式": the chunk sequence and the all-or-nothing rule.
 - "安全保证": one guarantee per line, covering P-0001、P-0002 与 P-0003：
@@ -65,7 +65,7 @@ Rules:
   finding，退出码仍只看 `fused_calls` 与 `fusion_failures`。
 - "它不做什么": a table, one row per limit.
 - "自己验证": commands plus the real artifact path.
-- "状态": 从 FACTS 取发布状态：`0.3.5` 是两个包已发布的 `latest`，`0.3.4` 是上一个
+- "状态": 从 FACTS 取发布状态：`0.3.6` 是两个包已发布的 `latest`，`0.3.5` 是上一个
   版本，就照 FACTS 这么写，不要把任何已发布版本说成待发布或已准备未发布；plugin 的 0.3.0 是坏发布。
   P-0001、P-0002 与 P-0003 都为 `verified`（P-0001 在
   headless profile 与桌面 App；P-0002 在 2026-11-10 的 headless 真机运行里修好了一次

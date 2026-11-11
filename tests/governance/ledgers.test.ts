@@ -95,6 +95,35 @@ test('the AI disclosure log names a session and the first patch', () => {
   assert.match(text, /P-0001/)
 })
 
+test('every disclosure row has six cells and its own session id', () => {
+  // Two defects lived here at once: one row was written with five cells so the
+  // table rendered with the human-check column folded into the file list, and
+  // nineteen rows shared a session id, which made "which run wrote this file"
+  // unanswerable even though rule 2 forbids exactly that.
+  const rows = read('audit/AI_DISCLOSURE_LOG.md')
+    .split(/\r?\n/)
+    .filter((line) => line.trim().startsWith('|'))
+  const body = rows.filter((line) => !/^\|\s*(SessionID|---)/.test(line.trim()))
+  assert.ok(body.length > 0, 'the disclosure log has no rows')
+  const ids = new Map<string, string[]>()
+  for (const line of body) {
+    const cells = line.split('|')
+    assert.equal(cells.length, 8, `row has ${cells.length - 2} cells: ${line.slice(0, 40)}`)
+    const id = cells[1]?.trim().replaceAll('`', '') ?? ''
+    assert.match(id, /\S/, 'every row names a session')
+    assert.match(id, /run-\d+|^[^\s|]{1,120}$/, `session id shape: ${id}`)
+    ids.set(id, [...(ids.get(id) ?? []), id])
+    assert.ok((cells[2]?.trim() ?? '').length > 0, `${id} must name a model`)
+    assert.ok((cells[3]?.trim() ?? '').length > 0, `${id} must name a date`)
+    assert.ok((cells[4]?.trim() ?? '').length > 0, `${id} must name the files`)
+    assert.ok((cells[5]?.trim() ?? '').length > 0, `${id} must say what was generated`)
+    assert.ok((cells[6]?.trim() ?? '').length > 0, `${id} must record the human check`)
+  }
+  for (const [id, copies] of ids) {
+    assert.equal(copies.length, 1, `session id reused ${copies.length} times: ${id}`)
+  }
+})
+
 test('the handoff keeps the two sections a new agent needs', () => {
   const text = read('docs/HANDOFF.md')
   assert.match(text, /当前批次/)

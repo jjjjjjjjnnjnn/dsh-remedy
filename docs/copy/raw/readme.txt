@@ -4,7 +4,7 @@
 
 [简体中文](README.zh-CN.md)
 
-dsh-remedy is a resident repair layer for DeepSeek Harness (DSH). When a model or relay stream concatenates multiple tool calls into one index or omits quotes around program code, DSH aborts with a `MALFORMED_RESPONSE` error. dsh-remedy mounts at the `llm/stream` seam, repairs proven payloads in flight, and re-throws unproven failures unchanged.
+dsh-remedy is a resident repair layer for DeepSeek Harness (DSH). When an upstream relay stream concatenates multiple tool calls into one index or omits quotes around program code, DSH terminates the turn with a `MALFORMED_RESPONSE` error. dsh-remedy mounts at the `llm/stream` seam, repairs proven payloads in flight, and re-throws unproven failures unchanged.
 
 ## What it fixes
 
@@ -15,9 +15,9 @@ Tool call "<name>": Unexpected non-whitespace character after JSON at position N
 Received arguments: {"command":"..."}{"command":"..."}
 ```
 
-A measured sample across 78 session files found 375 attempts, 38 fused calls, 44 `MALFORMED_RESPONSE` failures of which 39 are repairable, and 0 unreadable lines. In the turn census of 287 turns, 92 completed, 88 `max_tokens`, 99 error and 8 aborted. The error turns name six error codes: `MALFORMED_RESPONSE` 44, `UNSUPPORTED_REASONING_EFFORT` 36, `SERVER` 16, `UNKNOWN` 1, `MISSING_CREDENTIAL` 1, and `INVALID_REQUEST` 1.
+A measured sample across 78 session files found 393 attempts, 38 fused calls, 44 `MALFORMED_RESPONSE` failures of which 39 are repairable, and 0 unreadable lines. Of 293 turns, 94 completed, 88 `max_tokens`, 100 error and 11 aborted. The error turns name six error codes: `MALFORMED_RESPONSE` 44, `UNSUPPORTED_REASONING_EFFORT` 37, `SERVER` 16, `UNKNOWN` 1, `MISSING_CREDENTIAL` 1, and `INVALID_REQUEST` 1.
 
-`dsh-remedy scan` reads a single session file or a whole session directory, understands both plain `.jsonl` and multi-frame `.jsonl.zstd`, reports one row per file with `--since` support, and prints the turn census with the error codes it counted.
+The `dsh-remedy scan` command reads a single session file or a whole session directory, understands both plain `.jsonl` and multi-frame `.jsonl.zstd`, reports one row per file with `--since` support, and prints the turn census with the error codes it counted.
 
 ## Install
 
@@ -72,10 +72,10 @@ The first call keeps its original id; subsequent synthesized calls receive `<id>
 - If any buffer cannot be proven, nothing is emitted and the original failure is re-thrown.
 - A single object that fails to parse is rejected, not split.
 - `}{` inside a JSON string is not a boundary.
-- A call whose tool name never arrived is rejected, never dispatched to an empty name.
+- An empty tool name is rejected, never dispatched to an empty name.
 - A tool name that changes inside one index aborts the rescue and the original failure is re-thrown.
 - A repaired `finish` preserves the adapter `replayState`.
-- Atomic `block-end` commit: a repair is held until the tool-call phase ends; if a later block in the same stream is rejected, the repair is withdrawn and the original chunks go out.
+- Atomic `block-end` commit: a `block-end` repair is held until the tool-call phase ends; if a later block in the same stream is rejected, the repair is withdrawn and the original chunks go out.
 - The `maxCalls` limit bounds synthesized calls across the whole stream, not per block.
 - A stream whose consumer stops early is recorded as `consumer-abort` and abandoned, not quiet.
 - A synthesized call opens its own `block-start` before `block-end`, never emitting a bare `block-end`.
@@ -142,11 +142,12 @@ P-0001, P-0002 and P-0003 are all `verified` on a real host:
 
 P-0005, P-0004, P-0006, P-0007, P-0008 and P-0009 are `tested`, not `verified`: each has unit tests, negative controls, and a measured fixture or a measured scan, but no live host run has produced the bare-value shape that P-0005 repairs; P-0004, P-0006 and P-0009 change an offline reader rather than the resident seam; P-0007 changes the build-side copy channel; and P-0008 adds a build-side gate.
 
-0.3.5 is published and is `latest` for both `dsh-remedy` and `dsh-remedy-core`. 0.3.4 is the previous release. 0.3.6 is prepared and not published yet.
+`0.3.6` is published and is `latest` for both `dsh-remedy` and `dsh-remedy-core`. `0.3.5` is the previous release and `0.3.4` the one before it.
 
 Package sizes and payloads:
-- Published 0.3.5 plugin tarball (same byte count as 0.3.4): 29448 bytes compressed, 29 files, 97944 bytes unpacked (67908 bytes of `dist/*.js`, 21177 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, 5276 bytes of package-root files), shasum `c1b1b43185ea49347c394c987dd878c717d8f4f5`.
-- Published 0.3.5 core tarball: 18723 bytes compressed, 19 files, 61553 bytes unpacked (41262 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`), shasum `cc9895f826b56e9e7a5a1af2ed0886cb43514531`.
+- Published 0.3.6 plugin tarball: 29445 bytes compressed, 29 files, 97807 bytes unpacked (67997 bytes of `dist/*.js`, 20951 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, 5276 bytes of package-root files), shasum `fe85d15a5e97e9956a8a899d993ec1122f0c8774`.
+- Published 0.3.6 core tarball: 19247 bytes compressed, 19 files, 63408 bytes unpacked (43117 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`), shasum `76777609f4e3928af5ed591c01edb7ee1c2323f0`.
+- Published 0.3.5 tarballs remain 29448 bytes compressed, 29 files, 97944 bytes unpacked (shasum `c1b1b43185ea49347c394c987dd878c717d8f4f5`) and 18723 bytes compressed, 19 files, 61553 bytes unpacked (shasum `cc9895f826b56e9e7a5a1af2ed0886cb43514531`); tarball sizes for 0.3.4 are unrecorded in FACTS.
 - Published 0.3.3 plugin tarball: 28378 bytes compressed, 29 files, 94769 bytes unpacked (65521 bytes of `dist/*.js`, 20389 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, 5276 bytes of package-root files), shasum `46ad57ea718be732133979c4b0449f7221ee69c7`.
 - Published 0.3.3 core tarball: 16776 bytes compressed, 19 files, 55684 bytes unpacked (35393 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`), shasum `6fbbeb060505cb80c7f454dbab5ea74acd463fdd`.
 - Sourcemaps are no longer shipped, removing 41926 bytes of unpacked payload.

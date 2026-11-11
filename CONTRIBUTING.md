@@ -2,19 +2,16 @@
 
 ## Before you start
 
-Issues and pull requests are welcome. This is an independent project and is not affiliated with DeepSeek.
-
-- For questions, feature requests, and defect reports, use GitHub issues: https://github.com/jjjjjjjjnnjnn/dsh-remedy
-- For security advisories, use GitHub private vulnerability reporting on the repository. Do not use public issues for vulnerabilities.
-- There is no contact email or chat server.
-- The language of code, CLI output, and commit messages is English.
+Issues and pull requests are welcome on GitHub at https://github.com/jjjjjjjjnnjnn/dsh-remedy.
+For security advisories and sensitive defects, use GitHub private vulnerability reporting on the repository. Do not open public issues for security vulnerabilities. There is no chat server and no contact email.
+dsh-remedy is an independent project and is not affiliated with DeepSeek.
 
 ## Development setup
 
-Clone the repository and run the setup commands:
+Clone the repository and run setup:
 
-```bash
-git clone https://github.com/jjjjjjjjnnjnn/dsh-remedy
+```sh
+git clone https://github.com/jjjjjjjjnnjnn/dsh-remedy.git
 cd dsh-remedy
 pnpm install
 pnpm run build
@@ -24,15 +21,10 @@ node packages/plugin/dist/cli.js verify
 
 ## Verification
 
-Run the verification suite:
+Run verification and gate mutation:
 
-```bash
+```sh
 pnpm run verify
-```
-
-Run the negative controls:
-
-```bash
 node scripts/gate.mjs --mutate
 ```
 
@@ -40,26 +32,24 @@ In mutate mode every gate must fail, because a gate that stays green under its i
 
 ## Adding a patch
 
-Follow the five steps:
-
-1. Write the record in `docs/patches/`.
+Follow the five steps from FACTS:
+1. Write the record in `docs/patches/` with symptom, mechanism, counter-evidence, and boundaries.
 2. Add the registry entry in `packages/core/src/registry.ts` as `drafted`.
 3. Write the failing test first.
 4. Live-verify before `verified`.
 5. Record the registry snapshot and update the ledger.
 
-P-0002 and P-0003 are the two worked examples of a patch that went all the way to `verified` with a live artifact: P-0002 has a run that repaired a real two-call fusion, and P-0003 has a run whose journal wrote a non-zero `refused`.
-
-P-0005 is the worked example of a `tested` patch on the resident seam: eleven negative controls and one measured fixture, no host run yet.
-
-P-0004, P-0006, P-0007, P-0008 and P-0009 are the worked examples of a `tested` patch that is honest about a different reason: P-0004 and P-0006 move the offline session reader, so no journal can ever attest them, and P-0007 moves the build-side copy channel that writes the outward files, so a broken channel cannot attest itself. Their evidence is end-to-end or unit tests plus a measured scan of one machine.
-
-Contrast all seven: a `drafted` entry is only a written symptom, and a `tested` entry is evidence without a host run.
+Status examples:
+- P-0002 and P-0003 are the two worked examples of a patch that went all the way to `verified` with a live artifact: P-0002 has a run that repaired a real two-call fusion, and P-0003 has a run whose journal wrote a non-zero `refused`.
+- P-0005 is the worked example of a `tested` patch on the resident seam: eleven negative controls and one measured fixture, no host run yet.
+- P-0004, P-0006, P-0007, P-0008 and P-0009 are the worked examples of a `tested` patch that is honest about a different reason: P-0004 and P-0006 move the offline session reader, so no journal can ever attest them, and P-0007 moves the build-side copy channel that writes the outward files, so a broken channel cannot attest itself. Their evidence is end-to-end or unit tests plus a measured scan of one machine.
+- Contrast all seven: a `drafted` entry is only a written symptom, and a `tested` entry is evidence without a host run.
 
 ## Pull requests
 
 - One project per commit.
 - Describe what changed, why, the failing test, and the evidence path.
+- A behavior change needs a failing test first.
 - Do not mix a behavior change with a docs-only change.
 
 ## Code style

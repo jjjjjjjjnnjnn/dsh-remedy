@@ -137,4 +137,3 @@ Document boundary conditions, refused inputs, or unmeasured cases.
 - [ ] `node scripts/gate.mjs --mutate`
 - [ ] A test for behavior changes
 - [ ] An evidence path when the patch claims `verified`
-

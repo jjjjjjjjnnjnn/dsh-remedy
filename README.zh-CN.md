@@ -4,7 +4,7 @@
 
 [English](README.md)
 
-dsh-remedy 是 DeepSeek Harness（DSH）的常驻处置层。当模型或中继流把多个工具调用粘连进同一个索引，或在程序代码周围漏写引号时，DSH 会因 `MALFORMED_RESPONSE` 错误而中断。dsh-remedy 挂载在 `llm/stream` 接缝处，在流传输过程中修复已被证明的载荷，并将无法证明的失败原样重新抛出。
+dsh-remedy 是 DeepSeek Harness（DSH）的常驻处置层。当上游中继流把多个工具调用粘连进同一个索引，或在程序代码周围漏写引号时，DSH 会因 `MALFORMED_RESPONSE` 错误而中断。dsh-remedy 挂载在 `llm/stream` 接缝处，在流传输过程中修复已被证明的载荷，并将无法证明的失败原样重新抛出。
 
 ## 它修什么
 
@@ -15,9 +15,9 @@ Tool call "<name>": Unexpected non-whitespace character after JSON at position N
 Received arguments: {"command":"..."}{"command":"..."}
 ```
 
-在 78 个会话文件的实测样本中，发现 375 次 attempt、38 次粘连调用、44 次 `MALFORMED_RESPONSE` 失败，其中 39 条可修复，0 行不可读。在 287 个 turn 的普查中，92 个 completed、88 个 `max_tokens`、99 个 error 与 8 个 aborted。error 轮次点名了六个错误码：`MALFORMED_RESPONSE` 44、`UNSUPPORTED_REASONING_EFFORT` 36、`SERVER` 16、`UNKNOWN` 1、`MISSING_CREDENTIAL` 1 与 `INVALID_REQUEST` 1。
+在 78 个会话文件的实测样本中，发现 393 次 attempt、38 次粘连调用、44 次 `MALFORMED_RESPONSE` 失败，其中 39 条可修复，0 行不可读。在 293 个 turn 的普查中，94 个 completed、88 个 `max_tokens`、100 个 error 与 11 个 aborted。error 轮次点名了六个错误码：`MALFORMED_RESPONSE` 44、`UNSUPPORTED_REASONING_EFFORT` 37、`SERVER` 16、`UNKNOWN` 1、`MISSING_CREDENTIAL` 1 与 `INVALID_REQUEST` 1。
 
-`dsh-remedy scan` 支持读取单个会话文件或整个会话目录，同时支持纯文本 `.jsonl` 与多帧 `.jsonl.zstd`，每个文件输出一行可审计记录，支持 `--since`，并打印包含所统计错误码的 turn 普查报告。
+`dsh-remedy scan` 命令支持读取单个会话文件或整个会话目录，同时支持纯文本 `.jsonl` 与多帧 `.jsonl.zstd`，每个文件输出一行可审计记录，支持 `--since`，并打印包含所统计错误码的 turn 普查报告。
 
 ## 安装
 
@@ -79,7 +79,7 @@ Repaired stream:
 - `maxCalls` 限制整条流合成调用的总预算，而非按单个 block 限制。
 - 消费者提前停止的流记录为 `consumer-abort` 与放弃，不记为 `quiet`。
 - 合成 call 一定带 `block-start` + `block-end` 而不是裸 `block-end`。
-- 撤回的修复把预算还给整条流。
+- 撤回的修复把预算还给整条流的 `maxCalls` 上限。
 - `max-tokens` 只记 truncated，不算未修复的粘连。
 - 透传的 provider 错误计入 `errors`。
 - 纯拒绝只加 `refused` 不加 `fused`。
@@ -140,17 +140,18 @@ P-0001、P-0002 与 P-0003 均已在真实宿主上完成验证（`verified`）�
 - P-0002 在 2026-11-10 的 headless 真机运行里修好了一次真实的两调用粘连，并看到合成 id 被真的派发执行。
 - P-0003 在 2026-11-10 的另一次 headless 运行里，代码拒绝修复一次预算超限的粘连，journal 里 `refused` 第一次非零。
 
-P-0005、P-0004、P-0006、P-0007、P-0008 与 P-0009 是 `tested` 而不是 `verified`：都有单测、负对照，以及一条实测夹具或一次实测扫描，但还没有真机产生过 P-0005 修的裸值形状，P-0004、P-0006 与 P-0009 改的是离线读取器，P-0007 改的是构建侧的 copy 通道，P-0008 增加了构建侧门禁，均不动常驻接缝。
+P-0005、P-0004、P-0006、P-0007、P-0008 与 P-0009 是 `tested` 而不是 `verified`：都有单测、负对照，以及一条实测夹具或一次实测扫描，但还没有真机产生过 P-0005 修的裸值形状；P-0004、P-0006 与 P-0009 改的是离线读取器，而非常驻接缝；P-0007 改的是构建侧的 copy 通道；P-0008 增加了构建侧门禁。
 
-0.3.5 是两个包已发布的 `latest`，0.3.4 是上一个版本，0.3.6 已完成准备但尚未发布；plugin 的 0.3.0 是坏发布。
+`0.3.6` 是两个包已发布的 `latest`。`0.3.5` 是上一个版本，`0.3.4` 是其前一个版本。plugin 的 0.3.0 是坏发布。
 
 包体积与载荷说明：
-- 已发布的 0.3.5 plugin tarball（字节数与 0.3.4 相同）：29448 字节压缩体积，29 个文件，解包 97944 字节（67908 字节 `dist/*.js`、21177 字节 `dist/*.d.ts`、3583 字节 `fixtures/`、5276 字节包根文件），shasum `c1b1b43185ea49347c394c987dd878c717d8f4f5`。
-- 已发布的 0.3.5 core tarball：18723 字节压缩体积，19 个文件，解包 61553 字节（41262 字节 `dist/*.js`、16994 字节 `dist/*.d.ts`），shasum `cc9895f826b56e9e7a5a1af2ed0886cb43514531`。
+- 已发布的 0.3.6 plugin tarball：29445 字节压缩体积，29 个文件，解包 97807 字节（67997 字节 `dist/*.js`、20951 字节 `dist/*.d.ts`、3583 字节 `fixtures/`、5276 字节包根文件），shasum `fe85d15a5e97e9956a8a899d993ec1122f0c8774`。
+- 已发布的 0.3.6 core tarball：19247 字节压缩体积，19 个文件，解包 63408 字节（43117 字节 `dist/*.js`、16994 字节 `dist/*.d.ts`），shasum `76777609f4e3928af5ed591c01edb7ee1c2323f0`。
+- 已发布的 0.3.5 tarball 保持为 29448 字节压缩体积，29 个文件，解包 97944 字节（shasum `c1b1b43185ea49347c394c987dd878c717d8f4f5`）以及 18723 字节压缩体积，19 个文件，解包 61553 字节（shasum `cc9895f826b56e9e7a5a1af2ed0886cb43514531`）；FACTS 中未记录 0.3.4 的 tarball 尺寸。
 - 已发布的 0.3.3 plugin tarball：28378 字节压缩体积，29 个文件，解包 94769 字节（65521 字节 `dist/*.js`、20389 字节 `dist/*.d.ts`、3583 字节 `fixtures/`、5276 字节包根文件），shasum `46ad57ea718be732133979c4b0449f7221ee69c7`。
 - 已发布的 0.3.3 core tarball：16776 字节压缩体积，19 个文件，解包 55684 字节（35393 字节 `dist/*.js`、16994 字节 `dist/*.d.ts`），shasum `6fbbeb060505cb80c7f454dbab5ea74acd463fdd`。
 - sourcemap 不再进包，移除了 41926 字节的解包载荷。
-- 字节预算历史：`dist/*.js` 在 P-0005 后达到 55815 字节，超出 53000 字节上限；0.3.2 将接缝拆分，将 `repair-stream.js` 削减至 27925 字节，插件总量增至 56344 字节；P-0004 随后使总量增至 64539 字节并对 CLI 进行相同拆分，`cli.ts` 降至 8503 字节，`cli-args.ts` 与 `scan-command.ts` 增加 9119 字节，总量增至 65521 字节；P-0006 先冲到 70389 字节超标，删除独立模块并将辅助函数内联后落回 67908 字节（比上限低 92 字节）。当前工作上限为：生成的 `repair-stream.js` 28000 字节，生成的 `session-scan.js` 14000 字节，生成的 `cli.js` 10000 字节，插件总量 68000 字节。P-0008 将该上限转化为针对总量、`repair-stream.js`、`session-scan.js` 与 `cli.js` 的门禁。P-0009 落地后为 68000 字节中的 67997 字节，因此生成的插件当前距离上限还剩 3 字节空间。
+- 字节预算：`dist/*.js` 在 P-0005 后达到 55815 字节，超出 53000 字节上限；0.3.2 将接缝拆分，将 `repair-stream.js` 削减至 27925 字节，插件总量增至 56344 字节；P-0004 随后使总量增至 64539 字节并对 CLI 进行相同拆分，`cli.ts` 降至 8503 字节，`cli-args.ts` 与 `scan-command.ts` 增加 9119 字节，总量增至 65521 字节；P-0006 先冲到 70389 字节超标，删除独立模块并将辅助函数内联后落回 67908 字节。当前工作上限为：生成的 `repair-stream.js` 28000 字节，生成的 `session-scan.js` 14000 字节，生成的 `cli.js` 10000 字节，插件总量 68000 字节。P-0008 将该上限转化为针对总量、`repair-stream.js`、`session-scan.js` 与 `cli.js` 的门禁。P-0009 落地后为 68000 字节中的 67997 字节，因此生成的插件当前距离上限还剩 3 字节空间。
 
 ## 开发
 

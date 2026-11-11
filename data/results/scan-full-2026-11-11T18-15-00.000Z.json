@@ -1,0 +1,1342 @@
+{
+  "schema_version": 1,
+  "produced_by": "dsh-remedy scan",
+  "generated_at": "2026-11-11T17:32:30.304Z",
+  "source": "<home>/.dsh/sessions",
+  "files": 78,
+  "attempts": 393,
+  "fused_calls": 38,
+  "fusion_failures": 44,
+  "repairable_failures": 39,
+  "unreadable_lines": 0,
+  "before_since": 0,
+  "window": {
+    "oldest": 1794126627986,
+    "newest": 1794415147940
+  },
+  "turns": {
+    "completed": 94,
+    "max_tokens": 88,
+    "aborted": 11,
+    "error": 100
+  },
+  "error_codes": {
+    "INVALID_REQUEST": 1,
+    "MALFORMED_RESPONSE": 44,
+    "MISSING_CREDENTIAL": 1,
+    "SERVER": 16,
+    "UNKNOWN": 1,
+    "UNSUPPORTED_REASONING_EFFORT": 37
+  },
+  "by_tool": {
+    "edit": 1,
+    "list_agents": 3,
+    "ops_bash": 11,
+    "ops_grep": 1,
+    "ops_inspect_local_file": 4,
+    "ops_read_files": 3,
+    "read": 1,
+    "read_page": 8,
+    "send_message": 3,
+    "spawn_teammate": 1,
+    "web_search": 2
+  },
+  "examples": [
+    {
+      "seq": 8855,
+      "tool": "run_code",
+      "callId": null,
+      "fragments": 1,
+      "repairable": true,
+      "excerpt": "{\"code\": \nconst fs = await import(\"node:fs\");\nconst fork = \"<home>\\\\AppData\\\\Local\\\\Temp\\\\awesome-fork\";\nconst p = fork + \"\\\\data\\\\plugins\\\\jjjjjjjjnnjnn__ai-terminal-pet--packages-dsh-ai-terminal-pet.yml\";\nconsole.log(fs.existsSy"
+    },
+    {
+      "seq": 9539,
+      "tool": "run_code",
+      "callId": null,
+      "fragments": 1,
+      "repairable": false,
+      "excerpt": "{\"code\": \"false\", \"code\": "
+    },
+    {
+      "seq": 16678,
+      "tool": "run_code",
+      "callId": null,
+      "fragments": 1,
+      "repairable": false,
+      "excerpt": "{\"code:\">\nconst\n</｜｜DSML｜｜: \"placeholder\"}"
+    },
+    {
+      "seq": 17,
+      "tool": "read",
+      "callId": "call_00_betg5p96i68k8c0m2tk0l4pc",
+      "fragments": 2,
+      "repairable": true,
+      "excerpt": "index=0 {\"file_path\": \"package.json\"}{\"file_path\": \"docs/HANDOFF.md\"}"
+    },
+    {
+      "seq": 19,
+      "tool": "read",
+      "callId": null,
+      "fragments": 2,
+      "repairable": true,
+      "excerpt": "{\"file_path\": \"package.json\"}{\"file_path\": \"docs/HANDOFF.md\"}"
+    }
+  ],
+  "redaction": {
+    "replacements": 24,
+    "kinds": [
+      "windows-home"
+    ]
+  },
+  "rows": [
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-82efd0b0-a87b-4df6-9480-7cec2b014d64\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 52,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 4,
+        "max_tokens": 0,
+        "aborted": 3,
+        "error": 3
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\4063a64c-cedb-4111-b0a9-6089b884eb94\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 11,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-ai-terminal-pet--\\session-bd63cc07-c2ac-4f36-8274-f5dde977d8eb\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 68,
+      "fused_calls": 0,
+      "fusion_failures": 3,
+      "repairable_failures": 1,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 4,
+        "max_tokens": 3,
+        "aborted": 1,
+        "error": 6
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-ai-terminal-pet--\\ddca5b93-39ae-462c-8cf9-0c8823acfe4e\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 10,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 4,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 5
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3Dcharacter--\\session-724a8f0a-ef7c-452e-aff4-5ccd9801c9ee\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 31,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 47,
+        "aborted": 0,
+        "error": 3
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\session-fdf83a06-bf70-4198-8ff6-4c7b1867d408\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 16,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 6,
+        "max_tokens": 3,
+        "aborted": 1,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-triage--\\session-a572e850-1fab-47fb-8c5b-d1f1360090c1\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 1,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 2,
+        "max_tokens": 1,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3Dcharacter--\\b14ae8b6-4ccf-4e88-8c73-4ce057e4cc03\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 11,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 15,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\42387d19-12aa-45a4-9e16-b9dea276a84f\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 6,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\5f1246cf-fe4b-47dc-9926-90027f7d1b45\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\e33c4884-2500-4398-b78d-97e4ac1c9a24\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 4,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\95bb6b66-5052-49eb-a96d-2c053d9cfcfe\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 2,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\2c2d4892-1252-4876-bd26-2d1b72db3dba\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\bcd6e411-8eb8-4d9c-9735-a4f8104772c1\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 1,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 6
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\a4033c59-e8d3-416c-8467-ea839461343c\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 4,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 9
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\97863821-eaa3-44ae-b2a9-8611fc775513\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 1,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 4
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\4a28545b-ad8d-4ada-a1d1-b6df6f963944\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 1,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\8b76b106-fbe5-4045-a64a-bda5f7fecbcf\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 4,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 3
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\8c9f9c56-6dcb-4995-b432-ebf2f78feeba\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 1,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\1604771b-059e-4597-9ae5-b1f07cf5cf16\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\93934074-264d-4fe0-970b-755a2430acf3\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 2,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 2
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\3154b63d-7d0e-4097-b2d9-4872ac68eadb\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 5,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 2
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\4f4bbd1c-1169-441e-a14e-636303fc83bb\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\33431dec-4616-4b7b-81a2-8b247254e82e\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 4,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-155e3d77-014a-42a7-b97a-667f168a83da\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 1,
+      "fused_calls": 1,
+      "fusion_failures": 1,
+      "repairable_failures": 1,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-ca5e5881-ee03-402b-9420-f807bd9119f0\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3Dcharacter--\\474425d3-f238-45f2-acc8-c378773f064b\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 4,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 15,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-triage--\\ac4e9acb-ed37-4500-9518-25eee923fa33\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-triage--\\7db70afd-70ba-47ea-8746-b1dd9f6f1100\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1--\\session-bca2c90a-1ab0-48f5-b4a2-0d72e7dc9459\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition--\\session-cbf178ac-ffb0-49b0-af5c-c9bc5b775a98\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-949e359c-7fa6-4809-aa2f-a6e1e451c2a6\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-c8cb6e7e-d7ec-4686-be97-03eb8f2a8f49\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-896abb64-2e1e-4601-8b93-beaba4eb73ab\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-ed86bdf3-1211-4a7d-8f1a-fa074648bbf8\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-258de828-22a6-49c0-99ff-4b6efd5818dc\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-triage--\\8abd89dc-bd1a-4765-a1e9-7eff39253150\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-ai-terminal-pet--\\1d4c9e8c-a04f-4673-aec7-9dee43fcb0bc\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 7,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 2,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\7c8b24a9-346d-489a-832b-98ff9362e1bf\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\5a040067-224c-49da-9a9f-28029b0fed7c\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-ai-terminal-pet--\\4e705937-e589-4af9-befb-b0a2af7d5b91\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 4,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\d79c94ed-d26c-45d6-a32f-d206e97c9d3b\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 5,
+      "fused_calls": 0,
+      "fusion_failures": 1,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\473a37f4-ff94-409e-930a-6b40aa7b9c0d\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 3,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-ai-terminal-pet--\\39cd1832-2a53-4cbe-aec1-d32001f7dc19\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 9,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-ai-terminal-pet--\\92fd18f6-853a-44a4-a8de-52162a39e31c\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-ai-terminal-pet--\\2ae7b538-8a45-4479-8a00-79ef4ff9e61c\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-ai-terminal-pet--\\59af3f33-30de-4075-8c64-d528df724ce5\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\session-63e121f4-f337-45dc-b14c-2a22a59a94f8\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 1,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition--\\session-9045e2ec-a274-4187-94fe-c8fe721104de\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 4,
+      "fused_calls": 3,
+      "fusion_failures": 3,
+      "repairable_failures": 3,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 2,
+        "error": 3
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition--\\c742514f-d93c-4e0e-9b7e-1b8b8d852fbe\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-4b587473-c332-4e4c-9944-c8b8f7fe0456\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-14601d8a-b0d3-45c3-ba39-b10aa8422f9c\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-03b2ac93-fd1c-4cef-b90e-358aa9d2e39d\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 1,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-92c1a417-7857-421e-9029-74fbfadaa487\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 1,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-d946cd85-624e-4841-9fb6-ca6461849a8e\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition--\\session-e88b8558-e737-4b02-9474-d489e6153fc8\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\session-1a54eab5-ec7e-437f-b103-5be665c6e159\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 28,
+      "fused_calls": 8,
+      "fusion_failures": 9,
+      "repairable_failures": 8,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 5,
+        "max_tokens": 3,
+        "aborted": 0,
+        "error": 11
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3Dcharacter--\\session-5062d244-046b-49ef-b0ad-dc7d1d02892e\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 29,
+      "fused_calls": 1,
+      "fusion_failures": 1,
+      "repairable_failures": 1,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 3,
+        "max_tokens": 0,
+        "aborted": 1,
+        "error": 3
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-ai-terminal-pet--\\session-a0713e12-98e9-436b-a9d1-cee36375bf62\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 9,
+      "fused_calls": 5,
+      "fusion_failures": 5,
+      "repairable_failures": 5,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 5
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-ai-terminal-pet--\\cef5cca4-cf8d-47d9-ad3e-a791b49e0bd2\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 2,
+      "fused_calls": 2,
+      "fusion_failures": 2,
+      "repairable_failures": 2,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 2
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\a54153cc-fbc2-4086-aee1-71b6dc38bc61\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 3,
+      "fused_calls": 3,
+      "fusion_failures": 3,
+      "repairable_failures": 3,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 2,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 3
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\13c66ffe-72d5-46eb-ae23-129a26d8cc46\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 6,
+      "fused_calls": 2,
+      "fusion_failures": 2,
+      "repairable_failures": 2,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 2,
+        "max_tokens": 0,
+        "aborted": 1,
+        "error": 2
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\f24f889c-86bf-473c-80c5-5653f6fa08cf\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 6,
+      "fused_calls": 3,
+      "fusion_failures": 3,
+      "repairable_failures": 3,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 2,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 3
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\f125e3b9-953a-473f-9c50-0b53395fc2ac\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 1,
+      "fused_calls": 1,
+      "fusion_failures": 1,
+      "repairable_failures": 1,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 2,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\a7be1843-121c-437f-ab59-760525394910\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 4,
+      "fused_calls": 1,
+      "fusion_failures": 1,
+      "repairable_failures": 1,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 2,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\8e75991d-a7c5-4d7a-bdcf-d80333e122b3\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 10,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 2,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\d4307dc0-1e89-44ee-9ab7-42fa4e99a2aa\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 4,
+      "fused_calls": 2,
+      "fusion_failures": 2,
+      "repairable_failures": 2,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 3,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 2
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3Dcharacter--\\93791f90-baca-4c47-9de3-be32ed46aee7\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3Dcharacter--\\d6178d90-4c3b-4bdf-a32a-3b95e25d6fe5\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3Dcharacter--\\7271bfb0-9a36-4eeb-b091-3911bb109313\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3Dcharacter--\\86bc2200-43b5-46dd-b3a7-1cbb48fca5bb\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 1,
+      "fused_calls": 1,
+      "fusion_failures": 1,
+      "repairable_failures": 1,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3Dcharacter--\\532cad75-db15-4e64-9d88-92581fe8cc56\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 1,
+      "fused_calls": 1,
+      "fusion_failures": 1,
+      "repairable_failures": 1,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3Dcharacter--\\b2e812e0-172d-4919-8dec-9afe03930d87\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 1,
+      "fused_calls": 1,
+      "fusion_failures": 1,
+      "repairable_failures": 1,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3Dcharacter--\\b38129b1-8b6f-4ed8-8571-d0042768a849\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 1,
+      "fused_calls": 1,
+      "fusion_failures": 1,
+      "repairable_failures": 1,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 1
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\session-3e4982b8-7c06-4988-9fac-bdccf78a3858\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 18,
+      "fused_calls": 0,
+      "fusion_failures": 1,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 1,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 3
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\718d9331-d239-407a-923f-680eb10b00d9\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 6,
+      "fused_calls": 2,
+      "fusion_failures": 2,
+      "repairable_failures": 2,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 1,
+        "error": 2
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Documents-deepseek-harness-default-workspace--\\session-102a6987-b06a-43e4-86a6-0bfa8525ccfc\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    },
+    {
+      "source": "<home>\\.dsh\\sessions\\--<home-encoded>-Documents-deepseek-harness-default-workspace--\\session-922f823f-2879-455d-88ae-4f8f6f6f13b0\\session.v4.jsonl.zstd",
+      "files": 1,
+      "attempts": 0,
+      "fused_calls": 0,
+      "fusion_failures": 0,
+      "repairable_failures": 0,
+      "unreadable_lines": 0,
+      "before_since": 0,
+      "turns": {
+        "completed": 0,
+        "max_tokens": 0,
+        "aborted": 0,
+        "error": 0
+      }
+    }
+  ]
+}

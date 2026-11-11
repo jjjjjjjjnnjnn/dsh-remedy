@@ -1,19 +1,23 @@
 # dsh-remedy AGENTS.md
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
-> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.1.0`
-> **Stand**：R5（2026-11-10，**0.1.1 已发布并完成陌生人安装验收**：空目录装
-> `dsh-remedy@0.1.1` 后 `verify` 5/5 夹具通过；0.1.0 的 tarball 缺 fixtures 的缺陷已修。
-> 第一份 0.1.1 取证是红的（registry 副本延迟），用新 stamp 重记为 `ok`。
-> **97 测试 / 5 门**)｜R4（2026-11-09，npm 0.1.0：`dsh-remedy` + `dsh-remedy-core`，
-> `latest=0.1.0`；core 因 scope 不存在改为无 scope）｜R3（2026-11-09，桌面 profile 挂载 +
-> App 重启：39 条流 / 2 次修复）｜R2（2026-11-09，P-0001 升 `verified`）｜
-> R1（2026-11-09，首个补丁 P-0001 落地；5 夹具 / 4 门 / `tested`）
+> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.3.6`
+> **Stand**：R17（2026-11-11，**0.3.6 已发布并完成陌生人安装验收**：空目录装
+> `dsh-remedy@0.3.6` 后 `verify` 6/6；本轮把该验收第一次落成产物
+> `data/results/install-acceptance-2026-11-11T19-30-00.000Z.json`。R17 还重测了 census
+> （293 turns / 393 attempts）并全量重生成 11 个对外文件，`copy` 门重新变绿。
+> **193 测试 / 6 门**)｜R16（2026-11-11，P-0009 窗口化扫描的 `createdAt` 回退）｜
+> R15（P-0008 字节预算门）｜R14（P-0007 copy 通道传输）｜R13（P-0006 turn census）｜
+> R12（P-0004 scan 保真 + 脱敏形状）｜R11（P-0005 裸值 reseal）｜R10（0.3.0 被 npm 写坏，
+> 0.3.1 修）｜R9（P-0003 升 `verified`）｜R8（P-0002 升 `verified`）｜R7（0.3.0 可观测性）｜
+> R6（0.2.0 加固）｜R5（0.1.1 发布 + 陌生人验收）｜R4（npm 0.1.0 双包）｜R3（桌面 profile +
+> App 重启）｜R2（P-0001 升 `verified`）｜R1（首个补丁落地）
 > **接手先读**：`docs/HANDOFF.md` → `PROJECT_RULES.md` → `INDEX.md`
 >
-> **基线（2026-11-10）**：`pnpm run verify` = **97 tests / 5 gates**；
-> `node scripts/gate.mjs --mutate` = **5-5**。npm：`dsh-remedy@0.1.1`（latest）+
-> `dsh-remedy-core@0.1.0`。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1`。
+> **基线（2026-11-11）**：`pnpm run verify` = **193 tests / 6 gates**；
+> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.3.6`（latest）+
+> `dsh-remedy-core@0.3.6`。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
+> `v0.3.6`。
 > **本目录不是 git 根**：提交在 `..`（容器），公开仓库由
 > `git subtree split --prefix=dsh-remedy` 切出。
 
@@ -44,6 +48,7 @@ dsh-remedy/
 ├── packages/core/src/
 │   ├── json-split.ts       # 顶层 JSON 对象切分（字符串/深度状态机）
 │   ├── toolcall-repair.ts  # 一个调用 → unchanged | repaired | rejected
+│   ├── reseal.ts           # 裸值成员值的唯一候选 reseal（P-0005）
 │   ├── registry.ts         # PATCHES：每个补丁的名字、证据、守卫、边界
 │   ├── redact.ts           # 证据离开机器前的脱敏
 │   ├── verdict.ts          # unmeasured / quiet / repaired / degraded
@@ -52,8 +57,12 @@ dsh-remedy/
 ├── packages/plugin/src/
 │   ├── index.ts            # DSH loader：llm/stream + 可选 agent/request-error
 │   ├── repair-stream.ts    # chunk 包装器；计数与事件
-│   ├── session-scan.ts     # 离线扫描 .jsonl
+│   ├── stream-types.ts     # P-0005 拆出的流类型（编译期擦除）
+│   ├── failure-text.ts     # P-0005 拆出的失败消息助手
+│   ├── session-scan.ts     # 离线扫描 .jsonl / zstd 目录 + turn census
 │   ├── session-log.ts      # 多帧 zstd 会话日志读取
+│   ├── cli-args.ts         # EXIT_* / USAGE / parseArgs（P-0004 拆出）
+│   ├── scan-command.ts     # scan 的目录遍历 / 读取 / 产物写入（P-0004 拆出）
 │   └── cli.ts              # status / repair / scan / verify
 ├── packages/plugin/fixtures/          # pack 时由 sync_fixtures 生成（gitignore）
 ├── packages/plugin/cordis.patch.yml   # 只有 insert: + remedy-* 行
@@ -64,9 +73,16 @@ dsh-remedy/
 │   ├── gate_namespace.mjs  # 补丁层不能挂错东西
 │   ├── gate_step_review.mjs# 每步五轴 review + 证据可解析
 │   ├── gate_copy.mjs       # 对外文件字节 / 事实包 / 数字一致性
+│   ├── gate_size.mjs       # 第六门：dist/*.js 字节预算（P-0008）
+│   ├── lib/kit.mjs         # 门禁共用：runGate / readJson / sha256 / isoStamp
+│   ├── lib/agy-channel.mjs # copy 通道传输规则（argv vs stdin，P-0007）
 │   ├── copy_with_agy.mjs   # copy 通道：agy + manifest
+│   ├── publish_packages.mjs    # pnpm pack → 校验 manifest → npm publish
+│   ├── redact_artifacts.mjs    # 已落盘产物的脱敏重写（P-0004）
 │   ├── record_live_mount.mjs   # 真机 journal/session → live 产物
 │   ├── record_publish.mjs      # 发布后 registry 状态 → publish 产物
+│   ├── record_session_sample.mjs      # 本机故障样本（必须带 --until）
+│   ├── record_install_acceptance.mjs  # 空目录从 registry 单装 → 落盘验收
 │   ├── sync_fixtures.mjs       # prepack：夹具进包
 │   └── record_patch_registry.mjs
 ├── tests/                  # unit / governance / e2e
@@ -117,7 +133,11 @@ node scripts/record_patch_registry.mjs --stamp <ISO>
 2. 每个补丁的证据与守卫路径必须存在；
 3. `data/results/patch-registry-*.json` 必须与构建后的注册表逐字节一致，并带 sha256；
 4. 每个门至少一步 review，五轴（正确性 / 可复现 / 合规 / SSOT / 对抗）不得为空；
-5. `audit/AI_DISCLOSURE_LOG.md` 必须有 `SessionID` 与 `P-0001`；
+5. `audit/AI_DISCLOSURE_LOG.md` 每行必须六格、必须有 `SessionID` 与 `P-0001`，
+   且同一个 `SessionID` 不得出现在两行（那会让“哪个运行写了这个文件”无法回答）；
 6. `docs/HANDOFF.md` 必须有「当前批次」与「第一件事」；
 7. 每个对外文件必须与 `docs/copy/manifest.json` 的 `output_sha256` 一致，且
-   `facts_sha256` 指向当前事实包（`gate_copy`）。
+   `facts_sha256` 指向当前事实包（`gate_copy`）；
+8. 装机验收必须是 `data/results/install-acceptance-*.json`
+   （`scripts/record_install_acceptance.mjs` 产出，`ok` 与 `steps` 都在里面），
+   不再只是 HANDOFF 里的一句话。

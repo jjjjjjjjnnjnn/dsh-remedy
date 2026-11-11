@@ -11,7 +11,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Changed
 - Documentation blocks in `session-scan.ts` were condensed to keep the emitted plugin within the 68000 byte ceiling without raising the cap.
 ### Notes
-- P-0009 is `tested` and not `verified` because, like P-0004 and P-0006, it moves an offline reader; `0.3.6` is prepared and not published yet, so no entry may claim it has shipped; `0.3.5` remains the registry `latest` and `0.3.4` is the release before it.
+- P-0009 is `tested` and not `verified` because, like P-0004 and P-0006, it moves an offline reader, and that this release `0.3.6` is published and is the registry `latest` for both packages, so the 0.3.6 section is the shipped one; `0.3.5` becomes the previous release and `0.3.4` the one before it.
 
 ## [0.3.5] - 2026-11-11
 ### Added
@@ -19,16 +19,16 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Changed
 - `node scripts/gate.mjs --mutate` now checks six gates and reports 6 of 6 gates caught their injected violation, with the negative control comparing the measured total against a cap one byte below it.
 ### Notes
-- Measured when the gate was written: 67908 bytes in total, `repair-stream.js` 27925, `session-scan.js` 13237, `cli.js` 8503; P-0008 is `tested`, not `verified`, because it is a build-side gate with no resident seam; this release `0.3.5` is published and is the registry `latest` for both packages, so the 0.3.5 section is the shipped one; `0.3.4` becomes the previous release and `0.3.3` the one before it, while `0.3.6` is prepared and not published yet.
+- Measured when the gate was written: 67908 bytes in total, `repair-stream.js` 27925, `session-scan.js` 13237, `cli.js` 8503; P-0008 is `tested`, not `verified`, because it is a build-side gate with no resident seam; this release `0.3.5` is published and is the registry `latest` for both packages, so the 0.3.5 section is the shipped one; `0.3.4` becomes the previous release and `0.3.3` the one before it; `0.3.6` is now published and is the `latest`, so the 0.3.6 section is the shipped one and the 0.3.5 section is the release before it.
 
 ## [0.3.4] - 2026-11-11
 ### Added
-- P-0006: `scan` now counts how every turn ended (`completed`, `max_tokens`, `aborted`, `error`) and names every `reason.error.code`, where before it counted only the `MALFORMED_RESPONSE` turns and dropped every other ending, so the largest failure classes were invisible in the report meant to map them. Of 287 turns, 92 completed, 88 `max_tokens`, 99 error and 8 aborted, and the error codes `MALFORMED_RESPONSE` 44, `UNSUPPORTED_REASONING_EFFORT` 36, `SERVER` 16, `UNKNOWN` 1, `MISSING_CREDENTIAL` 1, `INVALID_REQUEST` 1.
+- P-0006: `scan` now counts how every turn ended (`completed`, `max_tokens`, `aborted`, `error`) and names every `reason.error.code`, where before it counted only the `MALFORMED_RESPONSE` turns and dropped every other ending, so the largest failure classes were invisible in the report meant to map them. Of 293 turns, 94 completed, 88 `max_tokens`, 100 error and 11 aborted, and the error codes `MALFORMED_RESPONSE` 44, `UNSUPPORTED_REASONING_EFFORT` 37, `SERVER` 16, `UNKNOWN` 1, `MISSING_CREDENTIAL` 1, `INVALID_REQUEST` 1.
 - P-0007: the copy channel could not regenerate the two longest outward files at all and printed only `copy_with_agy: agy exited null`, because the whole request travelled on one Windows command line once the fact pack grew (35509 characters for the changelog and 33530 for the readme, against a 32767 character cap — the spawn failed with `ENAMETOOLONG` before agy started and reported a null status), and because a generation that outlived the 600000 ms spawn timeout was killed and reported the same null status. Above the cap the prompt now travels over stdin as one `stream-json` user event, the answer is read from the final `result` event, a failed spawn is reported by its own code instead of a null status, and the timeout is half an hour; this is the build-side channel and touches no seam.
 ### Changed
 - The census was first written as a separate module, the plugin `dist` then overshot the 68000 byte ceiling at 70389 bytes, and the module was deleted and its helpers inlined so the total settled at 67908 bytes — the scaffolding of a ninth file costs more than the code it holds.
 ### Notes
-- A census is reported and never promoted into a finding (the exit code still turns on `fused_calls` and `fusion_failures`); P-0006 is `tested` and not `verified` because it moves an offline reader; truncated turns stay unfixed on purpose; this release `0.3.5` is published and is the registry `latest` for both packages, so the 0.3.5 section is the shipped one; `0.3.4` becomes the previous release and `0.3.3` the one before it, while `0.3.6` is prepared and not published yet.
+- A census is reported and never promoted into a finding (the exit code still turns on `fused_calls` and `fusion_failures`); P-0006 is `tested` and not `verified` because it moves an offline reader; truncated turns stay unfixed on purpose; this release `0.3.5` is published and is the registry `latest` for both packages, so the 0.3.5 section is the shipped one; `0.3.4` becomes the previous release and `0.3.3` the one before it; `0.3.6` is now published and is the `latest`, so the 0.3.6 section is the shipped one and the 0.3.5 section is the release before it.
 
 ## [0.3.3] - 2026-11-10
 ### Added

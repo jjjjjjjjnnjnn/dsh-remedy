@@ -19,19 +19,19 @@ Tool call "<name>": Unexpected non-whitespace character after JSON at position N
 Received arguments: {"path":"README.md"}{"path":"CHANGELOG.md"}
 ```
 
-在 48 个会话文件与 120 次 `turn/end` 事件的实测样本中，共发生 40 次 `MALFORMED_RESPONSE` 失败。其中 37 次是顶层可证且可修复的两个 JSON 对象粘连（2 次在对象内部被截断，1 次为其他切分失败）。上游讨论 deepseek-ai/deepseek-harness discussion #4427 记录了同类粘连问题。
+在 48 个会话文件与 120 次 `turn/end` 事件的实测样本中，共发生 40 次 `MALFORMED_RESPONSE` 失败，其中 37 次是顶层可证且可修复的两个 JSON 对象粘连。上游讨论 deepseek-ai/deepseek-harness discussion #4427 记录了同类粘连问题。
 
 ## 安装
 
 ```bash
-dsh plugin --profile <name> add dsh-remedy@0.3.2
+dsh plugin --profile <name> add dsh-remedy
 ```
 
 ```bash
-pnpm add dsh-remedy@0.3.2 dsh-remedy-core@0.3.2
+pnpm add dsh-remedy dsh-remedy-core
 ```
 
-plugin 的 0.3.0 版本在 registry 里装不上，因为 npm 直接发布了原始 workspace manifest，依赖写成字面 `workspace:*`；0.3.2 用 pnpm 打出的 tarball 修掉了该 manifest，并同时带上 P-0005 的 reseal；0.3.1 采用了同样的 manifest 修法，但在上市前就被 0.3.2 取代，因此请安装 0.3.2。
+plugin 的 0.3.0 版本在 registry 里装不上，因为 npm 直接发布了原始 workspace manifest，依赖写成字面 `workspace:*`；其后的发布用 pnpm 打出的 tarball 修掉这个 manifest；0.3.1 用了同样的 manifest 修法，但在上市前就被取代，从未到达 registry。
 
 面向从源码构建的贡献者：
 
@@ -44,7 +44,7 @@ pnpm run verify
 
 ## 工作方式
 
-插件在 `llm/stream` Cordis 瀑布流上缓冲工具调用增量（delta）。当终止的 `finish` 携带 `MALFORMED_RESPONSE` 时，它会在顶层对象边界处切分每一个未闭合的缓冲区。
+插件在 `llm/stream` Cordis 瀑布流上缓冲工具调用增量（delta）。当终止的 `finish` 携带 `MALFORMED_RESPONSE`（或抛出相同签名的错误）时，它会在顶层对象边界处切分每一个未闭合的缓冲区。
 
 ```
 Input stream:
@@ -67,7 +67,7 @@ Repaired stream:
 - 首个调用保留原始 id；合成 id 格式为 `<id>#remedy-N`。
 - 若任意缓冲区无法完成证明，则不发出任何内容，并将原始失败重新抛出。
 - 空工具名直接拒绝（`missing-name`）。
-- 同一索引内变更的工具名会中止救援（`name-changed`）。
+- 同一索引内变更的工具名会中止救援，并将原始失败重新抛出（`name-changed`）。
 - 修复后的 `finish` 保留适配器的 `replayState`。
 - `block-end` 修复暂扣至工具调用阶段结束；同流后续若有拒绝则撤回修复（`rolled-back`）并发出原始 chunk。
 - 流级 `maxCalls` 限制整条流合成调用的总预算，而非按单个 block 限制。
@@ -87,6 +87,11 @@ Repaired stream:
 - 0 个候选（`bare-value-unproven`）或 2 个以上候选（`ambiguous-bare-value`）一律拒绝而不是猜。
 - 只因 reseal 而修好的流读 `repaired`，绝不读 `quiet`。
 - 第九个计数器 `resealed` 在类型里故意可选，旧版本录下的计数对象仍然渲染原来那一行。
+- `scan` 用插件自己发布的同一个读取器读多帧 zstd 日志。
+- 目录扫描每个文件留一行可审计记录。
+- `scan --since` 把丢弃的事件记成 `before_since` 而不是藏起来。
+- 一个解不开的文件是一条 failure 行与非零退出码，绝不是 0 报告。
+- 脱敏能匹配单反斜杠、双反斜杠与把 home 路径编码进目录名这三种形状。
 
 ## 它不做什么
 
@@ -107,27 +112,29 @@ Repaired stream:
 
 ## 自己验证
 
+`scan` 工具可读取单个会话文件或整个会话目录，支持纯文本 `.jsonl` 与多帧 `.jsonl.zstd`，每个文件输出一行，并支持 `--since`。
+
 ```bash
 pnpm run verify
 node scripts/gate.mjs --mutate
 dsh-remedy verify
+dsh-remedy scan <session.jsonl|directory>
 ```
 
 已记录的证据产物与校验文件：
 - 修复真机运行：`data/results/live-2026-11-10T14-45-00.000Z.json`
 - 拒绝真机运行：`data/results/live-2026-11-10T16-30-00.000Z.json`
 - 桌面 profile 运行：`data/results/live-desktop-2026-11-09T19-10-00.000Z.json`
+- 初始 headless 运行：`data/results/live-2026-11-09T17-00-00.000Z.json`
 
 ## 状态
 
-0.3.2 是两个包（`dsh-remedy` 与 `dsh-remedy-core`）唯一可安装的发布版本，plugin 的 0.3.0 是坏发布，registry 无法安装。
+两个包（`dsh-remedy` 与 `dsh-remedy-core`）最新发布的版本在 npm 上均标记为 `latest`，待发布的版本已准备就绪但尚未发布；plugin 的 0.3.0 是坏发布。
 
-- P-0001 在 headless profile 与桌面 App 上均为 `verified`。
-- P-0002 在 2026-11-10 的 headless 真机运行中为 `verified`，修好了一次真实的两调用粘连，并确认合成 id 被实际派发执行。
-- P-0003 在 2026-11-10 的另一次 headless 运行中为 `verified`，代码拒绝修复一次预算超限的粘连，journal 中 `refused` 首次非零。
-- P-0005 为 `tested` 而非 `verified`：包含单测、负对照与一条实测夹具，但尚无真机产生过这种裸值形状。
+- P-0001、P-0002 与 P-0003 在真实宿主上均为 `verified`：P-0001 在 headless profile 与桌面 App 上完成验证；P-0002 在 2026-11-10 的 headless 真机运行里修好了一次真实的两调用粘连，并确认合成 id 被实际派发执行；P-0003 在 2026-11-10 的另一次 headless 运行里，代码拒绝修复一次预算超限的粘连，journal 中 `refused` 首次非零。
+- P-0005 与 P-0004 是 `tested` 而不是 `verified`：均包含单测、负对照，以及一条实测夹具或一次实测扫描，但还没有真机产生过 P-0005 修复的裸值形状，P-0004 修改的是离线读取器而非常驻接缝。
 
-已发布的 0.3.2 plugin tarball 压缩体积为 24689 字节（25 个条目，解包体积 81904 字节：56344 字节 `dist/*.js`、16701 字节 `dist/*.d.ts`、3583 字节 `fixtures/`、5276 字节包根文件）。0.3.2 core tarball 压缩体积为 15864 字节（19 个条目，解包体积 52828 字节：32537 字节 `dist/*.js`、16994 字节 `dist/*.d.ts`）。sourcemap 不再进包，移除了 41926 字节的解包载荷。在 P-0005 之后，`dist/*.js` 达到 55815 字节，越过了 53000 字节的上限，这正是 0.3.2 将接缝拆入 `stream-types.ts` 与 `failure-text.ts` 的原因：此举将 `repair-stream.js` 从 28955 字节降至 27925 字节，但因导入导出脚手架开销使 `dist/*.js` 总量变为 56344 字节。工作上限重述为：`dist/*.js` 为 58000 字节，生成的 `repair-stream.js` 为 28000 字节。
+已发布的 plugin tarball 压缩体积为 24689 字节（25 个条目，解包体积 81904 字节：56344 字节 `dist/*.js`、16701 字节 `dist/*.d.ts`、3583 字节 `fixtures/`、5276 字节包根文件）。已发布的 core tarball 压缩体积为 15864 字节（19 个条目，解包体积 52828 字节：32537 字节 `dist/*.js`、16994 字节 `dist/*.d.ts`）。sourcemap 不再进包，移除了 41926 字节的解包载荷。在 P-0005 之后，`dist/*.js` 达到 55815 字节，越过了 53000 字节的上限，这正是将接缝拆入 `stream-types.ts` 与 `failure-text.ts` 的原因：此举将 `repair-stream.js` 从 28955 字节降至 27925 字节，但因导入导出脚手架开销使 `dist/*.js` 总量变为 56344 字节。工作上限为：生成的 `repair-stream.js` 为 28000 字节，生成的 `cli.js` 为 10000 字节，插件总量为 68000 字节。
 
 ## 开发
 

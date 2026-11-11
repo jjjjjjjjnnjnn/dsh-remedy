@@ -32,12 +32,12 @@ Rules:
 
 - Keep every number identical to FACTS. Do not add a percentage or a benchmark.
 - Badges are the same as the English README; link the intended repository URL.
-- "安装" must give `dsh plugin --profile <name> add dsh-remedy@0.3.2` first,
-  then `pnpm add dsh-remedy@0.3.2 dsh-remedy-core@0.3.2`；并用一句短注说明
+- "安装" must give `dsh plugin --profile <name> add dsh-remedy` first,
+  then `pnpm add dsh-remedy dsh-remedy-core`（不要写死版本号，npm 会解析已发布的
+  latest）；并用一句短注说明
   plugin 的 0.3.0 在 registry 里装不上（npm 直接发布了原始 workspace manifest，
-  依赖写成字面 `workspace:*`），0.3.2 用 pnpm 打出的 tarball 修掉这个 manifest
-  并同时带上 P-0005 的 reseal；0.3.1 用了同样的 manifest 修法，但在上市前就被
-  0.3.2 取代，所以请装 0.3.2。
+  依赖写成字面 `workspace:*`），其后的发布用 pnpm 打出的 tarball 修掉这个 manifest；
+  0.3.1 用了同样的 manifest 修法，但在上市前就被取代，从未到达 registry。
   keep the source workflow for contributors.
 - "它修什么": the failure signature in a fenced block, the measured sample
   (48 session files / 120 `turn/end` / 40 `MALFORMED_RESPONSE`, 其中 37 条是可证的
@@ -54,18 +54,24 @@ Rules:
   reseal 不合成新 call、不占流级的 `maxCalls` 预算；0 个候选或 2 个以上候选一律拒绝
   而不是猜；只因 reseal 而修好的流读 `repaired` 绝不读 `quiet`；第九个计数器
   `resealed` 在类型里故意可选，旧版本录下的计数对象仍然渲染原来那一行。
+  再补 P-0004 的保证：`scan` 用插件自己发布的同一个读取器读多帧 zstd 日志；目录扫描
+  每个文件留一行可审计记录；`--since` 把丢弃的事件记成 `before_since` 而不是藏起来；
+  一个解不开的文件是一条 failure 行与非零退出码，绝不是 0 报告；脱敏能匹配单反斜杠、
+  双反斜杠与把 home 路径编码进目录名这三种形状。
 - "它不做什么": a table, one row per limit.
 - "自己验证": commands plus the real artifact path.
-- "状态": 0.3.2 是两个包唯一可安装的发布（plugin 的 0.3.0 是坏发布）；P-0001、P-0002 与 P-0003 都为 `verified`（P-0001 在
+- "状态": 从 FACTS 取发布状态：两个包已发布的最新版本就是 FACTS 里标为 `latest` 的那个，
+  还有一个已准备好但未发布的版本；plugin 的 0.3.0 是坏发布。P-0001、P-0002 与 P-0003 都为 `verified`（P-0001 在
   headless profile 与桌面 App；P-0002 在 2026-11-10 的 headless 真机运行里修好了一次
   真实的两调用粘连，并看到合成 id 被真的派发执行；P-0003 在 2026-11-10 的另一次
   headless 运行里，代码拒绝修复一次预算超限的粘连，journal 里 `refused` 第一次非零）。
-  P-0005 是 `tested` 而不是 `verified`：有单测、负对照与一条实测夹具，但还没有真机
-  产生过这种裸值形状。
+  P-0005 与 P-0004 是 `tested` 而不是 `verified`：都有单测、负对照，以及一条实测夹具或
+  一次实测扫描，但还没有真机产生过 P-0005 修的裸值形状，P-0004 改的是离线读取器而不是
+  常驻接缝。
   加一小段
-  包体积说明（0.3.2 plugin 与 core 两个 tarball 的压缩/条目/解包/分量、不再进包的
-  sourcemap、`dist/*.js` 的字节预算——P-0005 越过了它，这正是 0.3.2 拆接缝的原因），
-  数字只能来自 FACTS。
+  包体积说明（已发布 plugin 与 core 两个 tarball 的压缩/条目/解包/分量、不再进包的
+  sourcemap、`dist/*.js` 的字节预算——P-0005 越过了它，这正是拆接缝的原因），
+  数字只能来自 FACTS，不要给未发布的版本编尺寸。
 - Link back to `README.md` for English.
 - End with MIT and "与 DeepSeek 无隶属关系".
 - Keep the whole file under 220 lines.

@@ -198,6 +198,28 @@
         "tests/unit/toolcall-repair.test.ts",
         "tests/unit/repair-stream.test.ts"
       ]
+    },
+    {
+      "id": "S12",
+      "gate": "registry",
+      "title": "A scan that cannot read its input is a zero that lies",
+      "axes": {
+        "correctness": "A scan reads the file it was given: plain JSONL stays line-per-event, and a multi-frame zstd session goes through the same decompressSessionLog the plugin ships, so a compressed log reports its own attempts instead of one unreadable line per byte. A windowed scan counts what it dropped in before_since and treats an unstamped event as unreadable rather than as inside the window. A redaction sees a home path escaped with either slash count, and a session directory that encodes the same path.",
+        "reproducibility": "Every rule has a negative control: tests/e2e/cli.test.ts (two concatenated zstd frames, a directory of sessions merged into one report with one row per file, --since dropping old events and reporting the count, a --since that is not an instant) and tests/unit/session-scan.test.ts (window boundaries, an unstamped event, multi-file sums, an empty batch) plus tests/unit/redact.test.ts (five path shapes and a re-escaped path whose following members must survive byte for byte).",
+        "compliance": "Recorded as tested, not verified: this patch moves an offline reader and a redaction rule, not the resident llm/stream seam, so no journal can attest it. scripts/redact_artifacts.mjs rewrites three historical artifacts in place and deliberately leaves produced_by and generated_at alone, because a redaction fix must not restate provenance.",
+        "ssot": "packages/core/src/registry.ts, audit/patch_ledger.json and the recorded patch-registry snapshot are kept byte-identical by the registry gate, and scripts/gate_ssot.mjs still verifies every data/results file and its sidecar after the rewrite.",
+        "adversarial": "The honest failure mode is made the loud one: an undecompressable file is a failures line and exit 3, never a zero report. The patch also says what it still cannot do -- it does not deduplicate a repair seen by both the journal and the session file, and it matches only home paths that start with a drive letter."
+      },
+      "evidence": [
+        "docs/patches/P-0004-scan-fidelity.md",
+        "packages/plugin/src/cli.ts",
+        "packages/plugin/src/session-scan.ts",
+        "packages/core/src/redact.ts",
+        "scripts/redact_artifacts.mjs",
+        "tests/e2e/cli.test.ts",
+        "tests/unit/session-scan.test.ts",
+        "tests/unit/redact.test.ts"
+      ]
     }
   ]
 }

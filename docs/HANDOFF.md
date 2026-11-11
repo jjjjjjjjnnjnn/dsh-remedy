@@ -3,17 +3,17 @@
 > **下一会话从 `dsh-remedy/` 开始。** 读本文件 → `PROJECT_RULES.md` → `AGENTS.md` 即可开工。
 > 本目录是**公开仓库根**；`dsh-triage/` 在父目录，是另一个项目，不属于本仓库。
 
-## 三十秒状态（2026-11-10 · R11）
+## 三十秒状态（2026-11-11 · R12）
 
 | 项 | 值 |
 |---|---|
-| 版本 | `dsh-remedy@0.3.2`；`dsh-remedy-core@0.3.2`（0.3.0 的 plugin 在 registry 上不可安装：manifest 里是字面 `workspace:*`；0.3.1 在上市前就被 0.3.2 取代，从未到过 registry） |
-| 补丁 | **P-0001 `verified`**（headless + 桌面两次真机）· **P-0002 `verified`**（2026-11-10 headless 真机修好一次真实两调用粘连、合成 id 被派发执行）· **P-0003 `verified`**（2026-11-10 headless 真机 journal 第一次写出非零 `refused`：`too-many-calls` 拒绝而不是假装修好）· **P-0005 `tested`**（裸值 reseal；单测 + 负对照 + 一条实测夹具，无 live 产物） |
-| 基线 | **147 tests / 5 gates / `--mutate` 5-5** |
-| 包体 | **0.3.2 = 24 689 B 压缩 / 25 条目 / 81 904 B 解包**（\`dist/*.js\` 56 344 / \`dist/*.d.ts\` 16 701 / fixtures 3 583 / 包根 5 276）；core **0.3.2 = 15 864 B / 19 条目 / 52 828 B 解包**。接缝拆分把 \`repair-stream.js\` 从 28 955 降到 27 925（−1 030），但插件总量反涨 529（脚手架不是免费的）；0.3.1 是 22 418 / 20 条目 / 74 014，0.2.0 是 19 569 / 64 933，0.1.1 是 26 345 / 98 424 / 30 文件 |
+| 版本 | **工作树 `0.3.3`，registry 仍是 `0.3.2`**（0.3.3 已打包、已全绿，未发布）。0.3.0 的 plugin 在 registry 上不可安装：manifest 里是字面 `workspace:*`；0.3.1 在上市前就被 0.3.2 取代，从未到过 registry |
+| 补丁 | **P-0001 `verified`**（headless + 桌面两次真机）· **P-0002 `verified`**（2026-11-10 headless 真机修好一次真实两调用粘连、合成 id 被派发执行）· **P-0003 `verified`**（2026-11-10 headless 真机 journal 第一次写出非零 `refused`：`too-many-calls` 拒绝而不是假装修好）· **P-0005 `tested`**（裸值 reseal；单测 + 负对照 + 一条实测夹具，无 live 产物）· **P-0004 `tested`**（scan 认 zstd + 目录 + `--since`，redaction 补三种路径形状；改的是离线读取器，live journal 永远证不了它） |
+| 基线 | **159 tests / 5 gates / `--mutate` 5-5** |
+| 包体 | **已发布 0.3.2 = 24 689 B 压缩 / 25 文件 / 81 904 B 解包**（`dist/*.js` 56 344 / `dist/*.d.ts` 16 701 / fixtures 3 583 / 包根 5 276）；core **0.3.2 = 15 864 B / 19 文件 / 52 828 B 解包**。**待发布 0.3.3 = 28 378 B 压缩 / 29 文件 / 94 769 B 解包**（`dist/*.js` 65 521 / `dist/*.d.ts` 20 389 / fixtures 3 583 / 包根 5 276），core **0.3.3 = 16 776 B / 19 文件 / 55 684 B 解包**。两次拆接缝都是结构性修复不是省字节：0.3.2 把 `repair-stream.js` 28 955 → 27 925 而总量 +529；0.3.3 把 `cli.js` 16 640 → 8 503 而总量 64 539 → 65 521（+982） |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1` / **`v0.3.2`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release） |
-| 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 / 0.3.0 / 0.3.1 都用本地双 tgz 验过 5/5；**0.3.2 已从 registry 单装 plugin 验过 `OK 6 fixture(s)`（`.tmp/install-check-final/`），两个本地 profile 也已是 0.3.2** |
-| 下一件事 | **0.3.2 已发布（2026-11-10）**：registry `latest` 与 shasum 都已核对，空目录 `npm install dsh-remedy@0.3.2` → `dsh-remedy verify` 得到 `OK 6 fixture(s)`，`record_publish` 产物 `publish-2026-11-10T20-00-00.000Z.json`（`ok: true`），release `v0.3.2` 已建。下一件事是重启桌面 App 加载已装的 0.3.2，然后按 A 段选 P-0004 或补 `withdrawn` 空洞 |
+| 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 / 0.3.0 / 0.3.1 都用本地双 tgz 验过 5/5；**0.3.2 已从 registry 单装 plugin 验过 `OK 6 fixture(s)`（`.tmp/install-check-final/`）**；0.3.3 目前只在 `.tmp/pack14/` 有 tarball，**尚未在空目录验收、也还没装进两个 profile** |
+| 下一件事 | **发布 0.3.3**：`node scripts/publish_packages.mjs --dry-run` 已应通过 → 用户手动 `node scripts/publish_packages.mjs --otp <code>` → `record_publish.mjs --stamp <ISO> --retries 3` → 空目录 `npm install dsh-remedy@0.3.3` 验收 → `gh release create v0.3.3` → 两个 profile 换 `.tmp/pack14/` 的 tgz → 重启桌面 App。发布前先看 A 段：0.3.3 里 P-0004 仍 `tested`，这是有意的 |
 
 ## 五分钟检查
 
@@ -24,7 +24,7 @@ pnpm install
 pnpm run verify                  # build → typecheck → test → gate
 node scripts/gate.mjs --mutate   # 5 门都必须红
 node packages/plugin/dist/cli.js verify   # OK 6 fixture(s)
-npm view dsh-remedy version      # 0.3.2
+npm view dsh-remedy version      # 0.3.2（0.3.3 发布后才是 0.3.3）
 ```
 
 `git` 要注意：本目录不是 git 根。
@@ -56,7 +56,63 @@ git -C .. log --oneline -3
 - 容器 `main` **没有**推到 `dsh-triage` 远端（推上去会破坏那个仓库的根布局）。不要顺手推。
 - `dsh-triage/` 只是同级项目，规则以它自己的 `AGENTS.md` 为准。
 
-## 当前批次（R8 → R1）
+## 当前批次（R12 → R1）
+
+**R12（2026-11-11）· P-0004：scan 必须读它指向的那份日志，脱敏必须看见每种路径形状。**
+
+- **起因**：`node packages/plugin/dist/cli.js scan "<...>/session.v4.jsonl.zstd"` 输出
+  `unreadable_lines=236`、其余全 0。根因不是日志坏了，是 `cmdScan` 用 `readFileSync(file, "utf8")`
+  把 zstd 字节当文本按行切；`decompressSessionLog` 早就在 `session-log.ts` 里且正确。
+  **一个读不懂输入的扫描器报 0，这个 0 是谎报**，所以先复现再修。
+- **同一轮发现的第二个缺陷**：`core/redact.ts` 的 `windows-home` 只匹配单反斜杠，
+  JSON 转义（`C:\\Users\\rongj`）与双转义、以及会话目录把 home 编码成
+  `--C-Users-rongj-Desktop-~9879~76EE~5F00~53D1-...--` 这三种形状全部漏过。
+  实测 `data/results/` 里 3 个产物带着未脱敏的 home 路径（`live-2026-11-09T17-00-00.000Z.json`、
+  `live-2026-11-10T14-45-00.000Z.json`、`live-2026-11-10T16-30-00.000Z.json`）——
+  `record_live_mount.mjs` 调了 redact，是**规则漏了形状**，不是脚本跳过了。
+- **修法**：`cli.ts` 的 `cmdScan` 支持文件或目录（递归只收 `session.v4.jsonl(.zstd|.jsonl)`，
+  按 mtime 降序，`--max-files` 默认 200），每个文件走 `decompressSessionLog`，
+  解不开的文件进 `failures` 并以 exit 3 退出；`session-scan.ts` 加 `files` / `before_since` /
+  `window` / `ScanRow` / `scanSessions` / `addReport`，`--since` 只保留 `time >= since`
+  并**记账被丢掉多少**（`before_since`），无时间戳的事件算 unreadable 而不是静默保留；
+  `redact.ts` 的 `windows-home` 正则覆盖 `\\` 与 `/`，新增 `encoded-home`
+  产出 `<home-encoded>`（replacement 不带尾部 `-`，否则会吃掉目录分隔符）。
+- **修数据**：新增 `scripts/redact_artifacts.mjs`（默认 dry run，`--write` 才落盘），
+  对 `data/results/*.json` 重跑 `redactValue` 并重写同名 `.sha256`，
+  **不动 `produced_by` / `generated_at`**（这是脱敏修复不是重新生产，否则 ssot 门的溯源被破坏）。
+  实测只改了 3 个产物，之后 dry run 报 `0 artifact(s) would change`。
+- **实测**：全量 `scan "C:/Users/rongj/.dsh/sessions"` → `files=77 attempts=276 fused_calls=38
+  fusion_failures=43 repairable_failures=39 unreadable_lines=0`，窗口
+  `2026-11-09T16:50:40.119Z..2026-11-10T21:07:40.642Z`，`by_tool` 合计 38。
+  **77 文件 / 276 attempts 与 R7 的 48 文件 / 120 turn/end 是两个口径**（scan 数 attempt，
+  探针数 turn/end），不能混用。
+- **测试**：151 → **159 tests / 0 fail**。`tests/e2e/cli.test.ts` 8 → 12 条（多帧 zstd、
+  目录合并、`--since` 记账、非法 `--since` exit 2）；`tests/unit/session-scan.test.ts` 4 → 9 条；
+  `tests/unit/redact.test.ts` 5 → 8 条（五种路径形状 + 编码目录 + 「脱敏不吃后续成员」）。
+- **台账**：`docs/patches/P-0004-scan-fidelity.md`（Status `tested`、What changed 12 行、
+  Invariants 9 条）；`registry.ts` 追加 P-0004（`tested` / major / `cli` / evidence 4 / guards 5 /
+  limits 4）；`audit/patch_ledger.json` 加条目；`audit/step_reviews.json` 加 **S12**（现共 12 步）；
+  快照 `data/results/patch-registry-2026-11-10T22-30-00.000Z.json`（sha256 `2835f7a4…`）。
+- **字节越限（第二次）**：P-0004 让 `packages/plugin/dist/*.js` 从 56 344 涨到 **64 539**
+  （`cli.js` 12 959 → 16 640、`session-scan.js` 6 927 → 11 441），越过写死的 58 000。
+  → 0.3.3 再拆一次：`cli-args.ts`（`Args`/`parseArgs`/`flagString`/`readInput`/`EXIT_*`/`USAGE`）
+  与 `scan-command.ts`（`writeArtifact`/`collectSessions`/`cmdScan`）从 `cli.ts` 逐字搬出，
+  `cli.ts` 436 → 246 行、产物 16 640 → **8 503**，但总量 64 539 → **65 521（+982）**。
+  **上限改成按文件量**：`repair-stream.js` ≤ 28 000（实际 27 925）、`cli.js` ≤ 10 000（实际 8 503）、
+ 插件总量 ≤ 68 000（实际 65 521）；**跨了哪个文件就拆哪个文件**，不再用总量当唯一闸门。
+- **0.3.3 打包实测**（`.tmp/pack14/`）：plugin **28 378 B 压缩 / 29 文件 / 94 769 B 解包**、
+  core **16 776 B / 19 文件 / 55 684 B 解包**；packed manifest 仍是
+  `{"dsh-remedy-core":"0.3.3"}`（无本地协议）。
+- **对外文字**：事实包升 0.3.3 / 159 tests / 新增 `## The scan and the redaction (P-0004)` 段 9 条、
+  包体积与字节预算段按实测重写、允许数字行重排；7 个 prompt 同步（readme 与 readme.zh
+  **不再硬编码版本**，安装段改成「从 registry 拿最新」，安全保证加 P-0004 五条；
+  changelog 加 `## [0.3.3]`；metadata release_blurb 改成不硬编码版本；templates 也不写版本；
+  contributing 写明 P-0004 是「改离线读取器所以永远无 journal 可证」的 tested 范例）。
+- **仍未做**：0.3.3 未发布、未在空目录验收、两个 profile 仍指向 0.3.2；P-0004 永远停在
+  `tested`（除非将来有 journal 能证明离线读取）；P-0003 的 `withdrawn` live 空洞仍未填。
+
+**R11（2026-11-10）· P-0005：给裸值加引号，或者拒绝——从不猜。**
+
 
 **R11（2026-11-10）· P-0005：给裸值加引号，或者拒绝——从不猜。**
 
@@ -330,24 +386,27 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 
 ## 下一位 agent 的第一件事
 
-**A. 主线：发布 0.3.2（npm `--otp` → push → `gh release`）。** 四补丁已落地
-（P-0001 / P-0002 / P-0003 `verified`，P-0005 `tested`），0.3.2 的代码已全绿
-（147 tests / 5 gates / `--mutate` 5-5），两个 profile 已装成 0.3.2 并跑出
-`OK 6 fixture(s)`，`--dry-run` 也证明 packed manifest 里 pin 的是 `"dsh-remedy-core": "0.3.2"`
-而不是 `workspace:*`。**只差发布与推送。**
-发布之后两条路：
-1. 开 P-0004：把 `scan` 的输出去重成"每次会话一行"并加 `--since`，让用户能自己量
-   （这是本机故障地图那套数字的对外版本，接缝是 `cli` + `session-scan`，不是 `llm/stream`）。
-   注意 `dist/*.js` 已 56 344 B，新上限 58 000 B，跨线必须继续先拆接缝；
-2. 补 P-0003 的最后一个空洞：真机出现一次 `withdrawn`（中途撤回或截断）。现在只证了
+**A. 主线：发布 0.3.3（npm `--otp` → push → `gh release`）。** 五补丁已落地
+（P-0001 / P-0002 / P-0003 `verified`，P-0005 与 P-0004 `tested`），0.3.3 的代码已全绿
+（159 tests / 5 gates / `--mutate` 5-5），`--dry-run` 会证明 packed manifest 里 pin 的是
+`"dsh-remedy-core": "0.3.3"` 而不是 `workspace:*`。**只差发布、验收与推送。**
+发布之后三条路，按价值排序：
+1. 补 P-0003 的最后一个空洞：真机出现一次 `withdrawn`（中途撤回或截断）。现在只证了
    预算拒绝这一支；要造它就在同一条流里前一个 block 可修、后一个 block 必拒。
+2. `scan` 的下一层：把输出按会话去重成"每次会话一行"（现在目录扫描已经每文件一行，
+   但 `--json` 仍是 per-event 的 attempt 计数），接缝是 `cli` + `session-scan`；
+   注意 0.3.3 之后 `cli.js` 上限是 10 000（现状 8 503），`scan-command.js` 还没上限，
+   再加功能就先给它定一个。
+3. 把 `record_live_mount.mjs` 的 journal 形状演进做成数据迁移（旧六字段与新九字段共存）。
 
-**B. 清账：两个本地 profile 都已换 0.3.2（R11 已完成），只差重启 App。**
+**B. 清账：两个本地 profile 现在指向 0.3.2，发布 0.3.3 后要换到 `.tmp/pack14/`。**
 
 ```powershell
-# 配置文件已指向 .tmp/pack12/dsh-remedy-0.3.2.tgz，pnpm install 已跑过（改前备份 *.before-032）
-# 直接重启 DeepSeek Harness 即可加载；注意 dsh plugin --profile desktop add 会 ETARGET，
-# 必须连 core tgz 一起 add，或像本轮一样直接改 profile 的 package.json + pnpm-workspace.yaml overrides
+# 0.3.2 → 0.3.3 的换法照 .tmp/switch-profiles-032.mjs（改 two keys + pnpm-workspace.yaml 的 overrides）
+#    desktop 与 remedy-live 的 package.json: dsh-remedy -> file:.tmp/pack14/dsh-remedy-0.3.3.tgz
+#    pnpm-workspace.yaml overrides: dsh-remedy-core -> file:.tmp/pack14/dsh-remedy-core-0.3.3.tgz
+# 然后 pnpm install --no-frozen-lockfile，再重启 DeepSeek Harness 才加载新版本。
+# 直接 dsh plugin --profile desktop add 会 ETARGET（core 必须一起 add，或改文件）
 ```
 
 **C. 可选：把 `agent/request-error` 的 retry 兜底做成可观测**（现在默认 0，只在配置里存在）。
@@ -368,13 +427,16 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | `patch-registry-2026-11-10T11-00-00.000Z.json` | 绿 | 历史快照（P-0002 仍是 `tested`） |
 | `patch-registry-2026-11-10T15-10-00.000Z.json` | 绿 | 历史快照（P-0001 + P-0002 `verified` + P-0003 仍 `tested`） |
 | `live-2026-11-10T14-45-00.000Z.json` | 绿 | 0.3.0 headless 真机：17 流 / 1 修复 / 8 计数器齐 / 合成 id 被派发（`cross_check.match`） |
-| `patch-registry-2026-11-10T16-45-00.000Z.json` | 绿 | **当前**注册表快照（P-0001 + P-0002 + P-0003 **全部 `verified`**） |
+| `patch-registry-2026-11-10T16-45-00.000Z.json` | 绿 | 历史快照（P-0001 + P-0002 + P-0003 全 `verified`，P-0004 / P-0005 尚未登记） |
 | `live-2026-11-10T16-30-00.000Z.json` | 绿 | 0.3.0 headless 真机拒绝：5 流 / `too-many-calls` / `fused:1 refused:1 unrepaired:1` / verdict `degraded` / 会话 `turn_end=error` / 无合成 id |
+| `patch-registry-2026-11-10T22-30-00.000Z.json` | 绿 | **当前**注册表快照（五个补丁：P-0001/2/3 `verified`，P-0004/5 `tested`） |
+| `gates-2026-11-10T22-25-00.000Z.json` / `gates-mutate-2026-11-10T22-20-00.000Z.json` | 绿 | P-0004 批次的门禁证据（`ALL GREEN · 5 gates` 与 `5/5 CAUGHT`） |
 | `publish-2026-11-09T20-00-00.000Z.json` | 绿 | 0.1.0 发布（core + plugin） |
 | `publish-2026-11-10T00-10-00.000Z.json` | **红（保留）** | 0.1.1 副本延迟，记录时还看不到 |
 | `publish-2026-11-10T06-40-00.000Z.json` | 绿 | 0.1.1 settled：core 0.1.0 / plugin 0.1.1 |
 | `session-sample-2026-11-10T11-20-00.000Z.json` | 绿 | 本机故障样本（`--until` 截断，可复现） |
-| `publish-2026-11-10T*` | 待产 | 0.3.0 发布产物（发布后由 `record_publish.mjs` 生成） |
+| `publish-2026-11-10T20-00-00.000Z.json` | 绿 | 0.3.2 发布：两包 `exact_ok` 与 `latest_ok` 均为 true |
+| `publish-2026-11-*` | 待产 | 0.3.3 发布产物（发布后由 `record_publish.mjs` 生成，新 stamp） |
 
 每个 `.json` 都有同名 `.sha256`。红产物不编辑，用新 stamp 重记。
 
@@ -397,13 +459,15 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | 本目录不是 git 根 | 提交/推送在 `..`（容器）；公开仓库靠 `subtree split` |
 | `llm/stream` 是同步 waterfall | 监听器不能写成 `async`，否则流被包成 Promise，报 `stream is not async iterable`。`agent/request-error` 相反，是 await 的 |
 | headless profile 的 `credentials` 默认 disabled | profile 的 `cordis.patch.yml` 要写 `- id: credentials` + `disabled: false`，否则 `MISSING_CREDENTIAL` |
-| 会话日志是多帧 zstd | `zstdDecompressSync` 只解第一帧；用 `decompressSessionLog` |
+| 会话日志是多帧 zstd | `zstdDecompressSync` 只解第一帧；用 `decompressSessionLog`。**`scan` 曾经直接按 utf8 读 zstd，于是把 236 行压缩字节全记成 unreadable**（P-0004 已修） |
 | headless 不写 `assistant/attempt` | live 产物的 `session.fused_calls` 会是 0；修复靠 journal 计数 + 合成 id 证明（`BS-07`） |
 | 桌面 journal 覆盖整个进程 | 2 次修复可能跨 2 个会话；artifact 的 `journal_scope` 写明（`BS-09`） |
 | registry 副本会延迟 | 发布后 `record_publish` 可能先红；等约 5 分钟用新 stamp 重记（`BS-10`） |
 | 适配器不发 `block-end` | 实测序列 `block-start → tool-call-delta* → usage → finish{error}`；修复点必须在 `finish`。这也让 P-0002 的原子提交路径无法 live 证（`BS-11`）；能 live 证的是 `finish` 救援路径（`live-2026-11-10T14-45-00.000Z.json`） |
 | `retryPolicy` 不是修复 | 加 `MALFORMED_RESPONSE` 只是再撞一次；默认 `retryOnMalformed: 0` |
 | 消息回退是英文 | `Received arguments:` 本地化后失效；delta 缓存路径仍有效 |
+| 脱敏要覆盖形状 | 同一台机器的 home 会以 `C:\\Users\\...`、`C:/Users/...`、以及
+  `--C-Users-...-~9879~76EE~5F00~53D1-...--` 三种形态出现；只写一种正则就会漏（P-0004） |
 | 合成 id 不是稳定身份 | `<id>#remedy-N` 只用于本轮追踪 |
 | 截断与粘连不同 | `finish{kind:'max-tokens'}` 一律不修 |
 | 桌面 UI 自动化 | App 用 `--remote-debugging-port=9222` 重启；`Input.insertText` + Enter 发任务，“新建会话”按钮不一定存在 |
@@ -429,10 +493,11 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 
 ## 明确边界
 
-- 桌面 profile 与 `remedy-live` profile 都已装成 **0.3.0 tgz**（直改 `package.json` + `pnpm-workspace.yaml`
-  的 `overrides`）；桌面 App 需要重启才加载。`dsh plugin --profile desktop add` 单独加 plugin 会
-  `ERR_PNPM_NO_MATCHING_VERSION`，因为 npm 上 `dsh-remedy-core` 还是 0.1.0。
-- 0.2.0 与 0.3.0 都**没有**发布到 npm；npm latest 仍是 `dsh-remedy@0.1.1` / `dsh-remedy-core@0.1.0`。
+- 桌面 profile 与 `remedy-live` profile 现在都指向 **`.tmp/pack12/dsh-remedy-0.3.2.tgz`**（直改
+  `package.json` + `pnpm-workspace.yaml` 的 `overrides`）；0.3.3 还没装进去，桌面 App 需要重启才加载。
+  `dsh plugin --profile desktop add` 单独加 plugin 会 `ERR_PNPM_NO_MATCHING_VERSION`（未发布的 core 拉不到）。
+- **npm 上 `latest` 是 0.3.2**；0.2.0 与 0.3.1 从未进入 registry；0.3.0 的 plugin 到 registry 时
+  带着 `workspace:*`，装不上，也不能撤回（超过 24 小时）。
 - 容器 `main` 未推 `dsh-triage` 远端。
 - npm 上的 `0.0.0-stage` 是发布流程的占位版本，不是 `latest`。
 - 对话里出现过的两个 npm token 应作废；仓库与 artifact 里没有它们。
@@ -441,3 +506,5 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
   且 `tool_calls:0`、无合成 id（拒绝时没有假装修好）。真机出现 `withdrawn`（中途撤回或截断）
   仍未被测，这条写在 P-0003 的 limits 里。
 - `agent/request-error` 的 retry 仍默认关闭。
+- P-0004 永远停在 `tested`：它改的是离线读取器（`scan`）与脱敏规则，没有常驻接缝，live journal
+  无法见证它；能见证的是那 77 文件 / 276 attempts 的一次性实测与 12+9+8 条单测。

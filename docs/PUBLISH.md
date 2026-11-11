@@ -150,6 +150,40 @@ unpacked), core `f5b773559be49363238d9665bf2f477e8b918f40` (15864 B compressed,
 (`ok: true`, `exact_ok` and `latest_ok` true for both packages). Release:
 <https://github.com/jjjjjjjjnnjnn/dsh-remedy/releases/tag/v0.3.2>.
 
+**0.3.3 is prepared (2026-11-11) and not published yet.** It carries P-0004: the `scan` command
+now reads the log it is pointed at (a `session.v4.jsonl.zstd` file used to come back as 236
+unreadable lines and zeros), takes a directory, and supports `--since` with a `before_since`
+count; the redaction rule now covers the JSON-escaped and encoded-home shapes a session actually
+writes. It also splits the CLI so `cli.ts` stops absorbing every patch.
+
+Three recorded artifacts were rewritten in place by `scripts/redact_artifacts.mjs` to strip home
+paths the old rule missed (`live-2026-11-09T17-00-00.000Z.json`,
+`live-2026-11-10T14-45-00.000Z.json`, `live-2026-11-10T16-30-00.000Z.json`). Their `produced_by`
+and `generated_at` are untouched: this is a redaction repair, not a re-production. A dry run now
+reports `0 artifact(s) would change`.
+
+The exact 0.3.3 tarballs were packed into `.tmp/pack14/` *after* the CLI split and read back with
+`packedManifest`:
+
+| package | bytes (gzip) | files | unpacked | `dist/*.js` | `dist/*.d.ts` |
+|---|---|---|---|---|---|
+| `dsh-remedy-core@0.3.3` | 16776 | 19 | 55684 | 35393 | 16994 |
+| `dsh-remedy@0.3.3` | 28378 | 29 | 94769 | 65521 | 20389 |
+
+The packed plugin manifest names `"dsh-remedy-core": "0.3.3"`, not `workspace:*`. Publish in the
+usual order (core first, then plugin) with a one-time password:
+
+```bash
+node scripts/publish_packages.mjs --dry-run      # packs both, checks the manifests
+node scripts/publish_packages.mjs --otp <code>   # publishes core, then plugin
+```
+
+Byte budget after the second split: `repair-stream.js` 27925 (cap 28000), `cli.js` 8503 (cap
+10000), plugin total 65521 (cap 68000). The ceiling moved from one total to per-file shapes,
+because two consecutive splits each grew the total while shrinking the file that had to stop
+growing.
+
+
 **0.3.2 is the release that ships.** It carries 0.3.1's manifest fix plus P-0005
 (the bare-value reseal) and the seam split that P-0005 forced:
 

@@ -84,7 +84,7 @@
     }
   ],
   "session": {
-    "file": "<home>\\.dsh\\sessions\\--C-Users-rongj-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-14601d8a-b0d3-45c3-ba39-b10aa8422f9c\\session.v4.jsonl.zstd",
+    "file": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-14601d8a-b0d3-45c3-ba39-b10aa8422f9c\\session.v4.jsonl.zstd",
     "sha256": "a2ee7e962b186c861bda77568a6d4119aca10b1f142fe1003cd2e17e50ad47ec",
     "events": 40,
     "turn_end": "completed",

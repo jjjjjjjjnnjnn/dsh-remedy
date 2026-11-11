@@ -54,7 +54,7 @@
   },
   "attempts": [],
   "session": {
-    "file": "C:/Users/rongj/.dsh/sessions/--C-Users-rongj-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--/session-949e359c-7fa6-4809-aa2f-a6e1e451c2a6/session.v4.jsonl.zstd",
+    "file": "<home>/.dsh/sessions/--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--/session-949e359c-7fa6-4809-aa2f-a6e1e451c2a6/session.v4.jsonl.zstd",
     "sha256": "8c1319885d53424d82b7ffe66767f1e78d23af34ec8a783dc44d8800abe3185f",
     "events": 28,
     "turn_end": "completed",

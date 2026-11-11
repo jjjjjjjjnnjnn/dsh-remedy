@@ -8,10 +8,10 @@
 - Name: dsh-remedy
 - Tagline (internal, not final copy): a resident repair layer for DeepSeek Harness.
 - Package names: `dsh-remedy` (plugin), `dsh-remedy-core` (engine).
-- Version: 0.3.2 (plugin), 0.3.2 (core)
+- Version: 0.3.3 (plugin), 0.3.3 (core)
 - License: MIT
 - Repository: https://github.com/jjjjjjjjnnjnn/dsh-remedy (public, created 2026-11-09)
-- npm: `0.3.2` is published and is `latest` for both `dsh-remedy` and `dsh-remedy-core`. `dsh-remedy@0.3.0` reached the registry with a literal `workspace:*` dependency because npm published the raw workspace manifest, so installing that version fails with `EUNSUPPORTEDPROTOCOL`; 0.3.2 republishes the same code from a pnpm-packed tarball, whose manifest pins `"dsh-remedy-core": "0.3.2"`. 0.3.1 was built with the same manifest fix but never reached the registry.
+- npm: `0.3.2` is published and is `latest` for both `dsh-remedy` and `dsh-remedy-core`. `0.3.3` is prepared and not published yet. `dsh-remedy@0.3.0` reached the registry with a literal `workspace:*` dependency because npm published the raw workspace manifest, so installing that version fails with `EUNSUPPORTEDPROTOCOL`; 0.3.2 republishes the same code from a pnpm-packed tarball, whose manifest pins `"dsh-remedy-core": "0.3.2"`. 0.3.1 was built with the same manifest fix but never reached the registry.
 - Independent project; not affiliated with DeepSeek.
 - Language of code and CLI: English. Chinese README is a translation.
 
@@ -91,6 +91,18 @@
 - A stream whose only defect was a reseal reads `repaired`, never `quiet`; the quiet guard was widened instead of the vocabulary.
 - Still refused, each with a negative control: a truncated tail, a duplicate key, a doubled colon, a missing closing brace, an illegal escape, and a bare single-line token.
 
+## The scan and the redaction (P-0004)
+
+- Status: `tested` — an offline reader and a redaction rule, so no resident journal can attest it; the evidence is unit and end-to-end tests plus a measured scan of this machine.
+- What it fixes: `scan` used to read a `session.v4.jsonl.zstd` log with a plain text read, so every compressed line became an unreadable line and a 28-event session reported zero attempts. It now uses the same `decompressSessionLog` reader the plugin ships.
+- `scan` accepts one file or a directory, merges every session file, and keeps one auditable row per file.
+- `scan --since <ISO>` drops older events and reports them as `before_since`; an event without a timestamp is unreadable inside a window, never assumed to be inside it.
+- One undecompressable file is a `failures` line and exit 3, never a silent zero.
+- A measured run over this machine's session directory: 77 files, 276 attempts, 38 fused calls, 43 fusion failures, 39 repairable, 0 unreadable lines.
+- What it fixes in redaction: a home path escaped with one or two backslashes and a DSH session directory that encodes the same path are now matched; before this, three recorded artifacts still carried the account name.
+- A measured redaction pass rewrote 3 of 17 recorded artifacts and left every other one clean; `produced_by` and `generated_at` are never restated by a redaction fix.
+- Still unmeasured: the same repair seen by both a journal and a session file is not deduplicated, and a home path without a drive letter is not matched.
+
 ## Live verification
 
 - Profile: `remedy-live`, a headless DSH profile; the desktop provider block was copied into it.
@@ -119,7 +131,7 @@
 
 ## Tests and gates
 
-- Tests: 147 pass, 0 fail.
+- Tests: 159 pass, 0 fail.
 - Gates: 5 (`ssot`, `registry`, `namespace`, `step-review`, `copy`).
 - Negative controls (`--mutate`): 5 of 5 caught.
 - Publishing: `scripts/publish_packages.mjs` publishes the two package
@@ -148,18 +160,19 @@
 - The package still ships `dist/*.js`, `dist/*.d.ts`, `fixtures/`, `cordis.patch.yml`, `README.md`, `LICENSE`; no sourcemaps.
 - Dropping sourcemaps removes 41926 bytes of the unpacked payload (measured in `docs/research/stability-audit-2026-11-10.md`).
 - Shipped 0.3.2 tarball: 24689 bytes compressed, 25 entries, 81904 bytes unpacked. Breakdown: 56344 bytes of `dist/*.js`, 16701 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/` (6 fixtures plus `checksums.json`), 5276 bytes of package-root files.
+- The 0.3.3 tarball, which is prepared and not published, is 28378 bytes compressed, 29 files, 94769 bytes unpacked (65521 bytes of `dist/*.js`, 20389 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, 5276 bytes of package-root files). The 0.3.3 core tarball is 16776 bytes compressed, 19 files, 55684 bytes unpacked (35393 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`).
 - The 0.3.2 core tarball is 15864 bytes compressed, 19 entries, 52828 bytes unpacked (32537 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`).
-- Byte budget, restated honestly: `dist/*.js` reached 55815 bytes after P-0005, over the 53000 byte ceiling. 0.3.2 splits the seam into `stream-types.ts` and `failure-text.ts`, which cuts `repair-stream.js` from 28955 to 27925 bytes but grows the plugin total to 56344, because import and export scaffolding is not free. The split is therefore a structural fix, not a byte fix: the ceiling was set to stop one file from absorbing every patch, and the file that must stop growing now grows again. The working ceiling is restated as 58000 bytes for `dist/*.js` and 28000 bytes for the emitted `repair-stream.js`, and a patch that crosses either number must split again.
+- Byte budget, restated honestly: `dist/*.js` reached 55815 bytes after P-0005, over the 53000 byte ceiling. 0.3.2 splits the seam into `stream-types.ts` and `failure-text.ts`, which cuts `repair-stream.js` from 28955 to 27925 bytes but grows the plugin total to 56344, because import and export scaffolding is not free. P-0004 then took the total to 64539 and split the CLI the same way: `cli.ts` fell from 16640 to 8503 bytes while `cli-args.ts` and `scan-command.ts` added 9119, so the total rose again to 65521. Both splits are structural fixes, not byte fixes: the ceiling exists to stop one file from absorbing every patch. The working ceiling is 28000 bytes for the emitted `repair-stream.js`, 10000 bytes for the emitted `cli.js`, and 68000 bytes for the plugin total, and a patch that crosses a per-file number splits that file again.
 - The package still ships `dist/*.js`, `dist/*.d.ts`, `fixtures/`, `cordis.patch.yml`, `README.md`, `LICENSE`; no sourcemaps.
-- The plugin entry is 20 tar entries; the core entry is 17 tar entries. The 0.3.1 core tarball is 11585 bytes compressed, 17 entries, 38582 bytes unpacked.
+- The 0.3.3 plugin tarball is 29 files and the 0.3.3 core tarball is 19 files (0.3.0 shipped 20 and 17). The 0.3.1 core tarball is 11585 bytes compressed, 17 entries, 38582 bytes unpacked.
 
 ## Install and use
 
 - Install into a DSH profile: `dsh plugin --profile <name> add dsh-remedy`.
 - Embed as a library: `pnpm add dsh-remedy dsh-remedy-core`.
-- CLI commands: `dsh-remedy status`, `dsh-remedy repair [file]`, `dsh-remedy scan <session.jsonl>`, `dsh-remedy verify`.
+- CLI commands: `dsh-remedy status`, `dsh-remedy repair [file]`, `dsh-remedy scan <session.jsonl|directory>`, `dsh-remedy verify`.
 - CLI exit codes: 0 ok, 1 finding, 2 usage, 3 unavailable.
-- Scan accepts a `.jsonl` session log; a `.jsonl.zstd` log is read by the library helper `decompressSessionLog`.
+- Scan accepts one `.jsonl` file or a directory: plain JSONL is read line by line, and a `session.v4.jsonl.zstd` log is read through the same `decompressSessionLog` helper the plugin ships. `scan --since <ISO>` is supported.
 - The repair config keys: `repair` (default true), `retryOnMalformed` (default 0), `maxCalls` (default 8), `journalPath` (unset), `log` (default true).
 
 ## Limits (public wording may use these)
@@ -200,4 +213,4 @@
 
 ## Numbers allowed in copy
 
-0 1 2 3 4 5 6 7 8 9 10 11 13 17 19 20 22 25 27 30 37 40 45 48 60 84 93 121 126 131 147 2694 3583 4427 5276 9118 9401 11585 13797 15864 16701 16994 17423 17484 19114 19569 22418 24689 26345 27925 28000 32537 38582 41926 52247 52828 53000 56344 58000 63170 64933 74014 81904 98424 0.1.0 0.1.1 0.2.0 0.3.0 0.3.1 0.3.2
+0 1 2 3 4 5 6 7 8 9 10 11 13 17 19 20 22 25 27 30 37 38 39 40 43 45 48 60 77 84 93 121 126 131 147 159 276 2694 3583 4427 5276 9118 9401 10000 11585 13797 15864 16701 16776 16994 17423 17484 19114 19569 20389 22418 24689 26345 27925 28000 28378 32537 35393 38582 41926 52247 52828 53000 55684 56344 58000 63170 64539 64933 68000 74014 81904 94769 98424 0.1.0 0.1.1 0.2.0 0.3.0 0.3.1 0.3.2 0.3.3

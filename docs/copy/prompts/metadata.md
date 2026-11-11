@@ -13,15 +13,17 @@ Keys:
   ecosystem, the defect family, the category, and `typescript`. Do not use
   language names other than `typescript`, and do not repeat `deepseek` when
   `deepseek-harness` is already present.
-- `release_blurb`: a short Markdown section for the current release (0.3.2). It
-  must name 0.3.2 as the installable release and say that plugin 0.3.0 carries a
-  literal `workspace:*` dependency and cannot be installed from the registry, that
-  0.3.1 was superseded before it reached the registry, that P-0001, P-0002 and
-  P-0003 are all verified on a real host (P-0003's live run is the one whose
-  journal wrote a non-zero `refused`), that P-0005 is tested rather than verified
-  because no live host has produced the bare-value shape, that the counter line
-  carries eight names plus the optional `resealed` while the four verdict words
-  are unchanged, and link to the live evidence paths.
+- `release_blurb`: a short Markdown section for the current release. Do not
+  hardcode a version number; take the release status from FACTS, which names both
+  the published `latest` release and any prepared-but-unpublished one. It must
+  say that plugin 0.3.0 carries a literal `workspace:*` dependency and cannot be
+  installed from the registry, that 0.3.1 was superseded before it reached the
+  registry, that P-0001, P-0002 and P-0003 are all verified on a real host
+  (P-0003's live run is the one whose journal wrote a non-zero `refused`), that
+  P-0004 and P-0005 are tested rather than verified (P-0004 moves an offline
+  reader, P-0005 has no live bare-value shape yet), that the counter line carries
+  eight names plus the optional `resealed` while the four verdict words are
+  unchanged, and link to the live evidence paths.
 - `social_preview`: one sentence of alt text for a social preview image. No
   invented image URL.
 

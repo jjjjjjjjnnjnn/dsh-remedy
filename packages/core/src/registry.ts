@@ -138,6 +138,36 @@ export const PATCHES: readonly PatchRecord[] = [
       'the ninth counter is optional in the type on purpose: a 0.3.x artifact has no `resealed` field and must render exactly as it did',
     ],
   },
+  {
+    id: 'P-0004',
+    title: 'A scan must read the log it is pointed at, and a redaction must see every path shape',
+    symptom:
+      '`dsh-remedy scan <session.v4.jsonl.zstd>` reported 0 attempts and one unreadable line per compressed byte, and artifacts that cited a session file carried the account name in three shapes the redactor could not match',
+    rootCause:
+      'cmdScan read a multi-frame zstd session with readFileSync(file, "utf8") instead of the decompressSessionLog reader the plugin already ships (packages/plugin/src/cli.ts:236 in 0.3.2), and core/redact.ts matched only a single-backslash C:\\Users\\<name>, so a JSON-escaped path, a slashed path and a DSH session directory named after the home path all passed through.',
+    surface: 'cli',
+    status: 'tested',
+    severity: 'major',
+    evidence: [
+      'docs/patches/P-0004-scan-fidelity.md',
+      'tests/e2e/cli.test.ts',
+      'tests/unit/session-scan.test.ts',
+      'tests/unit/redact.test.ts',
+    ],
+    guards: [
+      'tests/e2e/cli.test.ts',
+      'tests/unit/session-scan.test.ts',
+      'tests/unit/redact.test.ts',
+      'scripts/gate_ssot.mjs',
+      'scripts/redact_artifacts.mjs',
+    ],
+    limits: [
+      'reports a filtered scan as before_since instead of guessing; an unstamped event inside a window is unreadable, never assumed in the window',
+      'one undecompressable file is a failures line and exit 3, not a silent zero',
+      'does not deduplicate the same repair seen by both the journal and the session file',
+      'matches a home path only when the directory starts with a drive letter; another workspace spelling is unmeasured',
+    ],
+  },
 ]
 
 /** Look up one patch by id. */

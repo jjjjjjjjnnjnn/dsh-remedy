@@ -27,14 +27,28 @@ export interface ScanReport {
   readonly produced_by: string
   readonly generated_at: string
   readonly source: string
+  readonly files: number
   readonly attempts: number
   readonly fused_calls: number
   readonly fusion_failures: number
   readonly repairable_failures: number
   readonly unreadable_lines: number
+  readonly before_since: number
+  readonly window: ScanWindow
   readonly by_tool: Readonly<Record<string, number>>
   readonly examples: readonly ScanExample[]
   readonly redaction: RedactionSummary
+}
+
+/** Epoch milliseconds of the kept events, or null for an empty window. */
+export interface ScanWindow {
+  readonly oldest: number | null
+  readonly newest: number | null
+}
+
+export interface ScanOptions {
+  /** Drop every event older than this epoch-ms instant; count them instead. */
+  readonly since?: number
 }
 
 interface AttemptBuffer {
@@ -73,13 +87,18 @@ function fragmentsOf(text: string): number {
  *
  * @param text - the `.jsonl` contents, one event per line.
  * @param source - a label for the report (the caller redacts the path).
+ * @param options - `since` drops older events; they are counted, never dropped
+ *   silently, because a window that hides its own exclusions is a lie.
  */
-export function scanSessionText(text: string, source: string): ScanReport {
+export function scanSessionText(text: string, source: string, options: ScanOptions = {}): ScanReport {
   let attempts = 0
   let fusedCalls = 0
   let fusionFailures = 0
   let repairableFailures = 0
   let unreadable = 0
+  let beforeSince = 0
+  let oldest: number | null = null
+  let newest: number | null = null
   const byTool: Record<string, number> = {}
   const examples: ScanExample[] = []
   const redactionKinds = new Set<string>()
@@ -110,6 +129,25 @@ export function scanSessionText(text: string, source: string): ScanReport {
     const type = asString(event.type)
     const data = asRecord(event.data)
     const seq = asNumber(event.seq)
+    const time = asNumber(event.time)
+
+    // The window is applied before any counting, but the dropped events are
+    // reported as `before_since`: a filtered scan must still say how much it
+    // did not look at.
+    if (options.since !== undefined) {
+      if (time === null) {
+        unreadable += 1
+        continue
+      }
+      if (time < options.since) {
+        beforeSince += 1
+        continue
+      }
+    }
+    if (time !== null) {
+      oldest = oldest === null ? time : Math.min(oldest, time)
+      newest = newest === null ? time : Math.max(newest, time)
+    }
 
     if (type === 'assistant/attempt' && data !== null) {
       attempts += 1
@@ -195,15 +233,129 @@ export function scanSessionText(text: string, source: string): ScanReport {
     produced_by: 'dsh-remedy scan',
     generated_at: new Date().toISOString(),
     source: redact(source).text,
+    files: 1,
     attempts,
     fused_calls: fusedCalls,
     fusion_failures: fusionFailures,
     repairable_failures: repairableFailures,
     unreadable_lines: unreadable,
+    before_since: beforeSince,
+    window: { oldest, newest },
     by_tool: Object.fromEntries(Object.entries(byTool).sort(([a], [b]) => a.localeCompare(b))),
     examples,
     redaction: { replacements: redactions, kinds: [...redactionKinds].sort() },
   }
+}
+
+/** Add one report's numbers onto an accumulator (the per-file loop). */
+function addReport(into: ScanReport, from: ScanReport, source: string): ScanReport {
+  const merged: Record<string, number> = { ...into.by_tool }
+  for (const [tool, count] of Object.entries(from.by_tool)) {
+    merged[tool] = (merged[tool] ?? 0) + count
+  }
+  const oldest =
+    into.window.oldest === null
+      ? from.window.oldest
+      : from.window.oldest === null
+        ? into.window.oldest
+        : Math.min(into.window.oldest, from.window.oldest)
+  const newest =
+    into.window.newest === null
+      ? from.window.newest
+      : from.window.newest === null
+        ? into.window.newest
+        : Math.max(into.window.newest, from.window.newest)
+  return {
+    ...into,
+    source,
+    files: into.files + from.files,
+    attempts: into.attempts + from.attempts,
+    fused_calls: into.fused_calls + from.fused_calls,
+    fusion_failures: into.fusion_failures + from.fusion_failures,
+    repairable_failures: into.repairable_failures + from.repairable_failures,
+    unreadable_lines: into.unreadable_lines + from.unreadable_lines,
+    before_since: into.before_since + from.before_since,
+    window: { oldest, newest },
+    by_tool: Object.fromEntries(Object.entries(merged).sort(([a], [b]) => a.localeCompare(b))),
+    examples: [...into.examples, ...from.examples].slice(0, MAX_EXAMPLES),
+    redaction: {
+      replacements: into.redaction.replacements + from.redaction.replacements,
+      kinds: [...new Set([...into.redaction.kinds, ...from.redaction.kinds])].sort(),
+    },
+  }
+}
+
+/** One session file's contribution, so a multi-file scan never hides a file. */
+export interface ScanRow {
+  readonly source: string
+  readonly files: number
+  readonly attempts: number
+  readonly fused_calls: number
+  readonly fusion_failures: number
+  readonly repairable_failures: number
+  readonly unreadable_lines: number
+  readonly before_since: number
+}
+
+export interface ScanBatch {
+  readonly report: ScanReport
+  readonly rows: readonly ScanRow[]
+}
+
+/**
+ * Scan several session files at once.
+ *
+ * The per-file counts are summed and the source becomes a label instead of a
+ * path: a session directory has no single path to report, and inventing one
+ * would make the artifact cite a file that was never read. Every file also
+ * keeps its own row, because a total that cannot be broken down is a total
+ * nobody can audit.
+ *
+ * @param files - pairs of label and text, in the caller's order.
+ * @param source - the label for the merged report.
+ * @param options - passed to every file (`since` applies to all of them).
+ */
+export function scanSessions(
+  files: readonly { readonly label: string; readonly text: string }[],
+  source: string,
+  options: ScanOptions = {},
+): ScanBatch {
+  const empty: ScanReport = {
+    schema_version: 1,
+    produced_by: 'dsh-remedy scan',
+    generated_at: new Date().toISOString(),
+    source: redact(source).text,
+    files: 0,
+    attempts: 0,
+    fused_calls: 0,
+    fusion_failures: 0,
+    repairable_failures: 0,
+    unreadable_lines: 0,
+    before_since: 0,
+    window: { oldest: null, newest: null },
+    by_tool: {},
+    examples: [],
+    redaction: { replacements: 0, kinds: [] },
+  }
+  let report = empty
+  const rows: ScanRow[] = []
+  for (const file of files) {
+    // Per-file reports are built with a redacted label so an example can never
+    // carry one file's path into another file's summary.
+    const one = scanSessionText(file.text, file.label, options)
+    rows.push({
+      source: one.source,
+      files: one.files,
+      attempts: one.attempts,
+      fused_calls: one.fused_calls,
+      fusion_failures: one.fusion_failures,
+      repairable_failures: one.repairable_failures,
+      unreadable_lines: one.unreadable_lines,
+      before_since: one.before_since,
+    })
+    report = addReport(report, one, empty.source)
+  }
+  return { report, rows }
 }
 
 /** Redact every string in a report before it is printed or written. */

@@ -33,7 +33,7 @@ pnpm run verify
 node scripts/gate.mjs --mutate
 ```
 
-`pnpm run verify` runs the build, typecheck, 147 tests, and 5 gates (`ssot`, `registry`, `namespace`, `step-review`, `copy`).
+`pnpm run verify` runs the build, typecheck, tests, and 5 gates (`ssot`, `registry`, `namespace`, `step-review`, `copy`).
 
 `node scripts/gate.mjs --mutate` verifies gate sensitivity. In mutate mode every gate must fail, because a gate that stays green under its injected violation is vacuous.
 
@@ -43,15 +43,17 @@ Adding a patch follows five sequential steps:
 
 1. Write the defect record in `docs/patches/`: document symptoms, failure mechanism, counter-evidence, and boundaries.
 2. Add the registry entry to `packages/core/src/registry.ts` with status `drafted`.
-3. Write the failing test first: define negative controls and fixtures before implementing repairs.
+3. Write the failing test first: define fixtures and negative controls before implementing repairs.
 4. Live-verify on a real host before marking status `verified`: execute against DeepSeek Harness and save evidence to `data/results/live-*`.
 5. Record the registry snapshot by running `node scripts/record_patch_registry.mjs` and update `audit/patch_ledger.json`.
 
 P-0002 and P-0003 are the two worked examples of a patch that went all the way to `verified` with a live artifact: P-0002 has a run that repaired a real two-call fusion, and P-0003 has a run whose journal wrote a non-zero `refused`.
 
-P-0005 is the worked example of a `tested` patch: eleven negative controls and one measured fixture, no host run yet.
+P-0005 is the worked example of a `tested` patch on the resident seam: eleven negative controls and one measured fixture, no host run yet.
 
-Contrast all three: a `drafted` entry is only a written symptom, and a `tested` entry is negative controls without a host run. A `verified` entry requires a live host run with an artifact in `data/results/live-*`.
+P-0004 is the worked example of a `tested` patch that is honest about a different reason: it moves an offline reader and a redaction rule, so no journal can ever attest it, and its evidence is end-to-end tests plus a measured scan of one machine.
+
+Contrast all four: a `drafted` entry is only a written symptom, and a `tested` entry is evidence without a host run. A `verified` entry requires a live host run with an artifact in `data/results/live-*`.
 
 ## Pull requests
 

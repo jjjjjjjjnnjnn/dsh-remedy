@@ -24,7 +24,27 @@ const RULES: readonly Rule[] = [
     replacement: '$1$2***',
   },
   { kind: 'email', pattern: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g, replacement: '***@***' },
-  { kind: 'windows-home', pattern: /\b[A-Za-z]:\\Users\\[^\\\s"']+/gi, replacement: '<home>' },
+  {
+    // MEASURED: a home path reaches an artifact in three shapes, and only the
+    // first one was redacted. A path quoted inside JSON doubles its separators
+    // (`C:\\Users\\rongj`), and a file URL writes them as slashes
+    // (`C:/Users/rongj`) — both leaked the account name until this rule
+    // matched one-or-two backslashes or a forward slash. The username is the
+    // sensitive part, so only it is dropped.
+    kind: 'windows-home',
+    pattern: /\b[A-Za-z]:(?:\\{1,2}|\/)(?:Users|users)(?:\\{1,2}|\/)[^\\/\s"']+/gi,
+    replacement: '<home>',
+  },
+  {
+    // MEASURED: DSH names a session directory after the absolute workspace
+    // path with `-` as the separator and `~XXXX` for each escaped code point,
+    // so `C:/Users/rongj/Desktop/x` appears as `--C-Users-rongj-Desktop-…--`.
+    // No separator survived to match, and the account name leaked through the
+    // directory name in every artifact that cited a session path.
+    kind: 'encoded-home',
+    pattern: /\b[A-Za-z]-Users-[A-Za-z0-9._]+(?:~[0-9A-Fa-f]{4})*(?=-)/,
+    replacement: '<home-encoded>',
+  },
   { kind: 'posix-home', pattern: /\/home\/[^/\s"']+/g, replacement: '<home>' },
 ]
 

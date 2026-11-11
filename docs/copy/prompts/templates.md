@@ -42,6 +42,8 @@ Files and requirements:
 
 Rules:
 
-- Use only facts from FACTS. The version is `0.3.2`.
+- Use only facts from FACTS. Do not hardcode a version number; ask the reporter
+  for the output of `dsh-remedy status --json` instead, and take any version
+  mentioned in prose from FACTS.
 - No emoji, no exclamation marks.
 - Each file must be directly usable by GitHub without edits.

@@ -5,6 +5,21 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-11-10
+
+### Added
+- P-0004: `scan` reads the log it is pointed at (a single session file or a whole session directory, plain `.jsonl` or multi-frame `.jsonl.zstd` through the same reader the plugin ships), keeps one auditable row per file, supports `--since`, reports the events it dropped as `before_since` instead of hiding them, and turns one undecompressable file into a failure line and a non-zero exit instead of a silent zero report.
+- The redaction fix: a home path escaped with one or two backslashes, and a DSH session directory that encodes the same path, are now matched, and a measured pass rewrote three already recorded artifacts while leaving `produced_by` and `generated_at` untouched.
+
+### Changed
+- The seam split continues: the scan command and the argument plumbing move into their own modules because `dist/*.js` crossed the budget again.
+
+### Fixed
+- The same installable-manifest property carried forward.
+
+### Notes
+- P-0004 is `tested`, not `verified`, because it changes an offline reader and a redaction rule rather than the resident `llm/stream` seam, so no journal can attest it; and that the pending release is prepared but not published, with the previous release still the registry `latest`.
+
 ## [0.3.2] - 2026-11-10
 
 ### Added
@@ -62,18 +77,3 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ### Notes
 - Version 0.1.1 applies to `dsh-remedy`; `dsh-remedy-core` remains at 0.1.0.
-
-## [0.1.0] - 2026-11-09
-
-### Added
-- The `llm/stream` wrapper, the splitter, the CLI commands, the session scanner, the multi-frame zstd reader, the four gates.
-
-### Fixed
-- P-0001 tool-call fusion; the synchronous-waterfall regression found on the first real mount.
-
-### Verified
-- Headless verification on profile `remedy-live`: 2 runs, 10 streams observed, 1 fused call, 1 repaired, 0 unrepaired, 5 tool calls, 5 tool results, and `completed` turn outcome; evidence recorded in `data/results/live-2026-11-09T17-00-00.000Z.json`.
-
-### Notes
-- First release, published to npm for both packages (`dsh-remedy` and `dsh-remedy-core`).
-- Limits are documented in `audit/blind_spots.json`; no retry-as-fix (`retryOnMalformed` defaults to 0); no asar patching.

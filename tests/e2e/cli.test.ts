@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { after, test } from 'node:test'
 import { fileURLToPath } from 'node:url'
+import { zstdCompressSync } from 'node:zlib'
 
 const cli = fileURLToPath(new URL('../../packages/plugin/dist/cli.js', import.meta.url))
 const repoRoot = fileURLToPath(new URL('../../', import.meta.url))
@@ -110,4 +111,111 @@ test('status --json exposes the registry', () => {
 test('an unknown command is a usage error, a missing session is unavailable', () => {
   assert.equal(run('nonsense').status, 2)
   assert.equal(run('scan', join(work, 'missing.jsonl')).status, 3)
+})
+
+/** A session whose one attempt carries a fused tool call and whose turn died. */
+function fusedSession(time: number): string {
+  const fused = '{"command":"ls"}{"path":"a.ts"}'
+  return [
+    JSON.stringify({
+      type: 'assistant/attempt',
+      seq: 2,
+      time,
+      data: { stream: [{ type: 'tool-call-chunks', index: 0, id: 'call_x', name: 'ops_bash', args: [fused] }] },
+    }),
+    JSON.stringify({
+      type: 'turn/end',
+      seq: 3,
+      time: time + 10,
+      data: {
+        reason: {
+          kind: 'error',
+          error: { code: 'MALFORMED_RESPONSE', message: `Tool call "ops_bash": bad\n\nReceived arguments:\n${fused}` },
+        },
+      },
+    }),
+  ].join('\n') + '\n'
+}
+
+test('scan reads a concatenated-frame zstd session instead of treating it as text', () => {
+  const file = join(work, 'session.v4.jsonl.zstd')
+  const text = fusedSession(1_760_000_000_000)
+  const frame = text.indexOf('{"type":"turn/end"')
+  const buffer = Buffer.concat([
+    zstdCompressSync(Buffer.from(text.slice(0, frame), 'utf8')),
+    zstdCompressSync(Buffer.from(text.slice(frame), 'utf8')),
+  ])
+  writeFileSync(file, buffer)
+
+  const result = run('scan', file, '--json')
+  assert.equal(result.status, 1, result.stderr)
+  const report = JSON.parse(result.stdout) as {
+    files: number
+    attempts: number
+    unreadable_lines: number
+    fused_calls: number
+    window: { oldest: number | null; newest: number | null }
+  }
+  // Before this fix the whole file was one unreadable line: the compressed
+  // bytes were split on newlines and none of them parsed.
+  assert.equal(report.attempts, 1)
+  assert.equal(report.unreadable_lines, 0)
+  assert.equal(report.fused_calls, 1)
+  assert.equal(report.files, 1)
+  assert.deepEqual(report.window, { oldest: 1_760_000_000_000, newest: 1_760_000_000_010 })
+})
+
+test('scan of a directory merges every session and keeps one row per file', () => {
+  const dir = join(work, 'sessions')
+  mkdirSync(join(dir, 'one'), { recursive: true })
+  mkdirSync(join(dir, 'two'), { recursive: true })
+  writeFileSync(join(dir, 'one', 'session.v4.jsonl.zstd'), zstdCompressSync(Buffer.from(fusedSession(1_760_000_000_000), 'utf8')))
+  writeFileSync(
+    join(dir, 'two', 'session.v4.jsonl.zstd'),
+    zstdCompressSync(Buffer.from(JSON.stringify({ type: 'step/end', seq: 1, time: 1_760_000_100_000, data: {} }), 'utf8')),
+  )
+
+  const result = run('scan', dir, '--json')
+  assert.equal(result.status, 1, result.stderr)
+  const report = JSON.parse(result.stdout) as {
+    files: number
+    attempts: number
+    fused_calls: number
+    rows: { files: number; fused_calls: number }[]
+    source: string
+  }
+  assert.equal(report.files, 2)
+  assert.equal(report.attempts, 1)
+  assert.equal(report.fused_calls, 1)
+  assert.equal(report.rows.length, 2, 'one row per file, so the total can be audited')
+  assert.equal(report.rows.reduce((sum, row) => sum + row.files, 0), 2)
+})
+
+test('scan --since drops older events but reports how many it dropped', () => {
+  const dir = join(work, 'windowed')
+  mkdirSync(dir, { recursive: true })
+  const session = join(dir, 'session.v4.jsonl.zstd')
+  writeFileSync(
+    session,
+    Buffer.concat([
+      zstdCompressSync(Buffer.from(fusedSession(1_700_000_000_000), 'utf8')),
+      zstdCompressSync(
+        Buffer.from(`${JSON.stringify({ type: 'step/end', seq: 9, time: 1_760_000_000_000, data: {} })}\n`, 'utf8'),
+      ),
+    ]),
+  )
+
+  const cut = new Date(1_750_000_000_000).toISOString()
+  const result = run('scan', session, '--since', cut, '--json')
+  assert.equal(result.status, 0, result.stderr)
+  const report = JSON.parse(result.stdout) as { attempts: number; before_since: number; window: { oldest: number } }
+  assert.equal(report.attempts, 0, 'the two old events are outside the window')
+  assert.equal(report.before_since, 2, 'a filtered scan must say what it did not look at')
+  assert.equal(report.window.oldest, 1_760_000_000_000)
+})
+
+test('scan rejects a --since that is not an instant', () => {
+  const session = join(work, 'bad-since.jsonl')
+  writeFileSync(session, '{"type":"step/end","seq":1,"data":{}}', 'utf8')
+  assert.equal(run('scan', session, '--since', 'yesterday').status, 2)
 })

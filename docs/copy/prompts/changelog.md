@@ -12,7 +12,18 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-11-10
+### Added
+### Changed
+### Fixed
+### Notes
+
 ## [0.3.2] - 2026-11-10
+### Added
+### Changed
+### Fixed
+### Notes
+
 ## [0.3.1] - 2026-11-10
 ### Fixed
 ### Notes
@@ -36,6 +47,24 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 Rules:
 
+- Add a `0.3.3` section above `0.3.2`. Its Added entry is P-0004: `scan` reads the
+  log it is pointed at (a single session file or a whole session directory,
+  plain `.jsonl` or multi-frame `.jsonl.zstd` through the same reader the plugin
+  ships), keeps one auditable row per file, supports `--since`, reports the
+  events it dropped as `before_since` instead of hiding them, and turns one
+  undecompressable file into a failure line and a non-zero exit instead of a
+  silent zero report. Its second Added entry is the redaction fix: a home path
+  escaped with one or two backslashes, and a DSH session directory that encodes
+  the same path, are now matched, and a measured pass rewrote three already
+  recorded artifacts while leaving `produced_by` and `generated_at` untouched.
+  Its Changed entry is that the seam split continues: the scan command and the
+  argument plumbing move into their own modules because `dist/*.js` crossed the
+  budget again. Its Fixed entry is the same installable-manifest property
+  carried forward. Its Notes entry is that P-0004 is `tested`, not `verified`,
+  because it changes an offline reader and a redaction rule rather than the
+  resident `llm/stream` seam, so no journal can attest it; and that the pending
+  release is prepared but not published, with the previous release still the
+  registry `latest`.
 - Add a `0.3.2` section above `0.3.1`. Its Added entry is P-0005: a tool call whose
   single member value was written without a quote is resealed instead of being
   thrown away, but only when exactly one segment reproduces the whole text as one
@@ -95,8 +124,7 @@ Rules:
   tarball omitted the fixtures, so `dsh-remedy verify` failed from an installed
   copy; 0.1.1 ships `fixtures/` and the CLI resolves them from the package.
 - `0.1.0` is the first release and is published to npm for both packages; say so
-  under Notes, not under Added.
-- Added: the `llm/stream` wrapper, the splitter, the CLI commands, the session
+  under Notes, not under Added.- Added: the `llm/stream` wrapper, the splitter, the CLI commands, the session
   scanner, the multi-frame zstd reader, the four gates.
 - Fixed: P-0001 tool-call fusion; the synchronous-waterfall regression found on
   the first real mount.

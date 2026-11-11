@@ -82,6 +82,25 @@
         "tests/unit/verdict.test.ts",
         "scripts/gate_registry.mjs"
       ]
+    },
+    {
+      "id": "P-0004",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.3.3",
+      "evidence": [
+        "docs/patches/P-0004-scan-fidelity.md",
+        "tests/e2e/cli.test.ts",
+        "tests/unit/session-scan.test.ts",
+        "tests/unit/redact.test.ts"
+      ],
+      "guards": [
+        "tests/e2e/cli.test.ts",
+        "tests/unit/session-scan.test.ts",
+        "tests/unit/redact.test.ts",
+        "scripts/gate_ssot.mjs",
+        "scripts/redact_artifacts.mjs"
+      ]
     }
   ]
 }

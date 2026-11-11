@@ -7,8 +7,7 @@ body:
     id: remedy_version
     attributes:
       label: dsh-remedy version
-      description: The version of dsh-remedy in use.
-      placeholder: "0.3.2"
+      description: The version of dsh-remedy in use (from dsh-remedy status --json).
     validations:
       required: true
   - type: input

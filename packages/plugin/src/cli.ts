@@ -12,9 +12,7 @@
  *             2 usage · 3 unavailable (missing file)
  */
 
-import { createHash } from 'node:crypto'
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
-import { basename, resolve } from 'node:path'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import process from 'node:process'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import {
@@ -25,86 +23,18 @@ import {
   splitTopLevelJsonObjects,
   type RemedyCounters,
 } from 'dsh-remedy-core'
-import { redactReport, scanSessionText, type ScanReport } from './session-scan.js'
-
-const EXIT_OK = 0
-const EXIT_FINDING = 1
-const EXIT_USAGE = 2
-const EXIT_UNAVAILABLE = 3
-
-const USAGE = `dsh-remedy — resident repair layer for DeepSeek Harness
-
-Usage:
-  dsh-remedy status [--json] [--journal <file>]
-  dsh-remedy repair [<file>] [--name <tool>] [--id <call-id>] [--max-calls <n>] [--truncated] [--json]
-  dsh-remedy scan <session.jsonl> [--json] [--out <file>]
-  dsh-remedy verify [--json]
-
-Commands:
-  status   List the patch registry and, with --journal, the last live counters.
-  repair   Split a fused tool-call argument text. Reads stdin when no file is given.
-           A .json fixture is read through its "arguments" field.
-  scan     Count fused calls and MALFORMED_RESPONSE turns in a session log.
-  verify   Run the bundled fixtures through the repair engine.
-
-Exit codes: 0 ok · 1 finding · 2 usage · 3 unavailable
-`
-
-interface Args {
-  readonly command: string
-  readonly positional: readonly string[]
-  readonly flags: ReadonlyMap<string, string | true>
-}
-
-function parseArgs(argv: readonly string[]): Args {
-  const positional: string[] = []
-  const flags = new Map<string, string | true>()
-  for (let index = 0; index < argv.length; index += 1) {
-    const token = argv[index]
-    if (token === undefined) break
-    if (!token.startsWith('--')) {
-      positional.push(token)
-      continue
-    }
-    const name = token.slice(2)
-    const next = argv[index + 1]
-    if (next !== undefined && !next.startsWith('--')) {
-      flags.set(name, next)
-      index += 1
-    } else {
-      flags.set(name, true)
-    }
-  }
-  return { command: positional[0] ?? 'status', positional: positional.slice(1), flags }
-}
-
-function flagString(args: Args, name: string): string | undefined {
-  const value = args.flags.get(name)
-  return typeof value === 'string' ? value : undefined
-}
-
-function readInput(file: string | undefined): { text: string; name?: string; id?: string } {
-  if (file === undefined || file === '-') return { text: readFileSync(0, 'utf8') }
-  const text = readFileSync(file, 'utf8')
-  // A bundled fixture is `{name, call_id, arguments, expect}`; read the field,
-  // not the wrapper. `--raw` is unnecessary because flags still win and a raw
-  // tool-call object never has a string `arguments` member at the top level.
-  if (file.endsWith('.json')) {
-    try {
-      const parsed = JSON.parse(text) as { arguments?: unknown; name?: unknown; call_id?: unknown }
-      if (typeof parsed.arguments === 'string') {
-        return {
-          text: parsed.arguments,
-          name: typeof parsed.name === 'string' ? parsed.name : undefined,
-          id: typeof parsed.call_id === 'string' ? parsed.call_id : undefined,
-        }
-      }
-    } catch {
-      // Not a fixture; treat the file as raw argument text.
-    }
-  }
-  return { text }
-}
+import {
+  EXIT_FINDING,
+  EXIT_OK,
+  EXIT_UNAVAILABLE,
+  EXIT_USAGE,
+  flagString,
+  parseArgs,
+  readInput,
+  type Args,
+  USAGE,
+} from './cli-args.js'
+import { cmdScan } from './scan-command.js'
 
 function fixtureDir(): URL | null {
   // Installed tarball: dist/../fixtures; source checkout: dist/../../../data.
@@ -214,47 +144,6 @@ function cmdRepair(args: Args): number {
   }
 
   return result.status === 'rejected' ? EXIT_FINDING : EXIT_OK
-}
-
-function writeArtifact(path: string, report: ScanReport): void {
-  const json = `${JSON.stringify(report, null, 2)}\n`
-  writeFileSync(path, json, 'utf8')
-  const digest = createHash('sha256').update(json).digest('hex')
-  writeFileSync(`${path}.sha256`, `${digest}  ${basename(path)}\n`, 'utf8')
-}
-
-function cmdScan(args: Args): number {
-  const file = args.positional[0]
-  if (file === undefined) {
-    process.stderr.write('scan: missing <session.jsonl>\n')
-    return EXIT_USAGE
-  }
-  if (!existsSync(file)) {
-    process.stderr.write(`scan: not found: ${file}\n`)
-    return EXIT_UNAVAILABLE
-  }
-  const report = redactReport(scanSessionText(readFileSync(file, 'utf8'), resolve(file)))
-  const out = flagString(args, 'out')
-  if (out !== undefined) writeArtifact(out, report)
-
-  if (args.flags.has('json')) {
-    process.stdout.write(`${JSON.stringify(report, null, 2)}\n`)
-  } else {
-    process.stdout.write(`source: ${report.source}\n`)
-    process.stdout.write(
-      `attempts=${report.attempts} fused_calls=${report.fused_calls} fusion_failures=${report.fusion_failures} repairable=${report.repairable_failures} unreadable_lines=${report.unreadable_lines}\n`,
-    )
-    for (const [tool, count] of Object.entries(report.by_tool)) {
-      process.stdout.write(`  ${tool}: ${count}\n`)
-    }
-    for (const example of report.examples) {
-      process.stdout.write(`  seq=${example.seq ?? '?'} tool=${example.tool} fragments=${example.fragments}\n`)
-      process.stdout.write(`    ${example.excerpt.replaceAll('\n', '\\n')}\n`)
-    }
-    if (out !== undefined) process.stdout.write(`written: ${out} (+ .sha256)\n`)
-  }
-
-  return report.fused_calls > 0 || report.fusion_failures > 0 ? EXIT_FINDING : EXIT_OK
 }
 
 interface VerifyCase {

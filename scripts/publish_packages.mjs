@@ -69,6 +69,84 @@ export function publishProblems({ root, core, plugin, distExists, packed }) {
 const BLOCK = 512
 
 /**
+ * What the npm exit status actually means.
+ *
+ * The registry answers a PUT with 404 for "this account may not write here" as
+ * readily as for "this package does not exist", so a bare 404 cannot be read as
+ * a missing one-time password. On 2026-11-11 a real publish died on
+ * `PUT 404 https://registry.npmjs.org/dsh-remedy-core` while `npm whoami`
+ * answered 401 — the tarball and the script were fine, the shell was logged out.
+ * Telling the operator to reach for `--otp` first sent one publish attempt down
+ * the wrong path, so the advice now asks the cheap question first.
+ */
+export function npmFailureAdvice(status) {
+  if (status === 404) {
+    return [
+      'A 404 on the PUT is a permission answer, not a missing package:',
+      '  run `npm whoami` and expect your npm user name. If it answers 401,',
+      '  run `npm login` and publish again before suspecting the tarball.',
+    ]
+  }
+  if (status === 401 || status === 403) {
+    return [
+      'The registry rejected the publish as unauthenticated:',
+      '  run `npm login`, then confirm `npm whoami` prints your npm user name.',
+    ]
+  }
+  if (status === 402 || status === 429) {
+    return ['The registry is rate limiting or billing: wait, then run `npm whoami` to confirm the account.']
+  }
+  return [
+    'If npm asked for a one-time password, re-run with --otp <code>;',
+    'if the publish was refused with no password prompt, check `npm whoami` first.',
+  ]
+}
+
+/**
+ * Every reason the shell cannot publish, from the `npm whoami` answer alone.
+ * Kept pure so a governance test can pin it without touching the network.
+ */
+export function publishAuthProblems(whoami) {
+  const status = whoami?.status
+  const name = String(whoami?.stdout ?? '').trim()
+  const said = `${String(whoami?.stdout ?? '')}\n${String(whoami?.stderr ?? '')}`
+  if (status === 0 && name !== '') return []
+  if (status === 0) {
+    return ['`npm whoami` succeeded without printing a user name; log in again with `npm login`']
+  }
+  // npm reports the registry's 401 through its own exit code, so a status of 1
+  // with `E401` in the output means the same thing as a status of 401.
+  if (status === 401 || status === 403 || /(?:E40[13]|401 Unauthorized|403 Forbidden)/.test(said)) {
+    return ['`npm whoami` answered 401: the token in your npmrc is missing or expired. Run `npm login` and confirm `npm whoami` prints your user name']
+  }
+  const detail = String(whoami?.stderr ?? '').split('\n').find((line) => line.trim() !== '') ?? 'no output'
+  return [`\`npm whoami\` exited ${String(status ?? 'without a status')}: ${detail.trim()}`]
+}
+
+/**
+ * The 2026-11-11 publish reached the registry and came back `EOTP`, which is a
+ * different failure from the 404 of the day before: the credential was valid,
+ * but the account is on `auth-and-writes`, so every write needs a fresh code.
+ * The registry's answer is already the right instruction, so the script must
+ * repeat it verbatim instead of explaining it away -- the URL npm prints is the
+ * only way to complete a web-authenticated publish.
+ */
+export function otpAdvice(status, stderr) {
+  const text = String(stderr ?? '')
+  if (status !== 1 || !/EOTP|one-time password/i.test(text)) return []
+  const printed = text
+    .split('\n')
+    .map((line) => line.replace(/npm error\s*/g, '').trim())
+    .filter((line) => line.startsWith('http'))
+  const advice = [
+    'The registry wants a one-time password; this is EOTP, not a permission problem.',
+    '  re-run with --otp <code> from your authenticator, or open the URL npm printed:',
+  ]
+  for (const url of printed) advice.push(`  ${url}`)
+  return advice
+}
+
+/**
  * Read `package/package.json` out of a packed `.tgz` without a dependency on tar.
  *
  * The point is not to validate the archive format in general: it is to look at
@@ -99,6 +177,12 @@ function run(command, args, cwd) {
   return spawnSync(joined, WINDOWS ? [] : args, { cwd, stdio: 'inherit', shell: WINDOWS })
 }
 
+/** Same shim as `run`, but keeps the output so the caller can read the answer. */
+function runCapture(command, args, cwd) {
+  const joined = WINDOWS ? [command, ...args].join(' ') : command
+  return spawnSync(joined, WINDOWS ? [] : args, { cwd, encoding: 'utf8', shell: WINDOWS })
+}
+
 function main() {
   const root = readJson(join(ROOT, 'package.json'))
   const core = readJson(join(ROOT, 'packages/core/package.json'))
@@ -117,6 +201,18 @@ function main() {
     console.error('publish refused:')
     for (const problem of problems) console.error(`  - ${problem}`)
     return 2
+  }
+
+  // Ask the registry who we are before packing anything. A logged-out shell makes
+  // `npm publish` answer 404, which is indistinguishable from the registry saying
+  // no, and the fix (`npm login`) is cheaper than a failed publish run.
+  const whoami = runCapture('npm', ['whoami'], ROOT)
+  const authProblems = publishAuthProblems(whoami)
+  if (authProblems.length > 0) {
+    const reporter = dryRun ? console.warn : console.error
+    reporter(dryRun ? 'the shell is not logged in (a real publish would stop here):' : 'publish refused:')
+    for (const problem of authProblems) reporter(`  - ${problem}`)
+    if (!dryRun) return 2
   }
 
   const staging = mkdtempSync(join(tmpdir(), 'dsh-remedy-publish-'))
@@ -171,12 +267,17 @@ function main() {
       if (otp !== null) args.push('--otp', otp)
       if (dryRun) args.push('--dry-run')
       console.log(`\n$ npm ${args.join(' ')}`)
-      const result = run('npm', args, cwd)
+      // The publish output is captured rather than inherited: the registry puts
+      // the EOTP instructions (including the authenticator URL) on stderr, and
+      // advice that cannot quote that URL is advice the operator cannot follow.
+      const result = runCapture('npm', args, cwd)
+      if (result.stdout) process.stdout.write(String(result.stdout))
+      if (result.stderr) process.stderr.write(String(result.stderr))
       if (result.status !== 0) {
         if (result.error !== undefined) console.error(`\nspawn error: ${result.error.message}`)
         console.error(`\nstopped: npm exited ${result.status ?? 'without a status'} in ${relative}`)
-        console.error('If npm asked for a one-time password, re-run with --otp <code>;')
-        console.error('if the registry answered 404 through pnpm, that is the missing OTP too.')
+        const twoFactor = otpAdvice(result.status, result.stderr)
+        for (const line of twoFactor.length > 0 ? twoFactor : npmFailureAdvice(result.status)) console.error(line)
         return result.status ?? 1
       }
     }

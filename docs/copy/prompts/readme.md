@@ -88,14 +88,14 @@ Rules:
   controls, and a measured fixture or a measured scan, but no live host run has
   produced the bare-value shape that P-0005 repairs, and P-0004 changes an
   offline reader rather than the resident seam. Name the release status from
-  FACTS: the newest published release of both packages is the one FACTS names as
-  `latest`, and the pending release is prepared but not published. Do not
-  hardcode a patch version; the npm badge is the version.
+  FACTS: FACTS now names `0.3.3` as published and as `latest` for both packages,
+  so write that and do not call any release pending or unpublished. Do not
+  hardcode a patch version in the install commands; the npm badge is the version.
 - Include one short paragraph or table listing the package size: the published
   plugin tarball size, entries, unpacked size, the unpacked breakdown, the core
   tarball size, the sourcemaps that are no longer shipped, and the `dist/*.js`
   byte budget that P-0005 crossed, which is why the seam was split. Use only
-  FACTS numbers, and do not invent a size for the pending release.
+  FACTS numbers, and do not invent any size FACTS does not state.
 - "Development": the exact commands from FACTS.
 - Link to `README.zh-CN.md` near the top for Chinese readers.
 - End with MIT and "not affiliated with DeepSeek".

@@ -7,13 +7,13 @@
 
 | 项 | 值 |
 |---|---|
-| 版本 | **工作树 `0.3.3`，registry 仍是 `0.3.2`**（0.3.3 已打包、已全绿，未发布）。0.3.0 的 plugin 在 registry 上不可安装：manifest 里是字面 `workspace:*`；0.3.1 在上市前就被 0.3.2 取代，从未到过 registry |
+| 版本 | **`0.3.3`，工作树与 registry 一致**（两包 `latest` 都是 0.3.3，2026-11-11 发布）。0.3.0 的 plugin 在 registry 上不可安装：manifest 里是字面 `workspace:*`；0.3.1 在上市前就被 0.3.2 取代，从未到过 registry |
 | 补丁 | **P-0001 `verified`**（headless + 桌面两次真机）· **P-0002 `verified`**（2026-11-10 headless 真机修好一次真实两调用粘连、合成 id 被派发执行）· **P-0003 `verified`**（2026-11-10 headless 真机 journal 第一次写出非零 `refused`：`too-many-calls` 拒绝而不是假装修好）· **P-0005 `tested`**（裸值 reseal；单测 + 负对照 + 一条实测夹具，无 live 产物）· **P-0004 `tested`**（scan 认 zstd + 目录 + `--since`，redaction 补三种路径形状；改的是离线读取器，live journal 永远证不了它） |
-| 基线 | **159 tests / 5 gates / `--mutate` 5-5** |
-| 包体 | **已发布 0.3.2 = 24 689 B 压缩 / 25 文件 / 81 904 B 解包**（`dist/*.js` 56 344 / `dist/*.d.ts` 16 701 / fixtures 3 583 / 包根 5 276）；core **0.3.2 = 15 864 B / 19 文件 / 52 828 B 解包**。**待发布 0.3.3 = 28 378 B 压缩 / 29 文件 / 94 769 B 解包**（`dist/*.js` 65 521 / `dist/*.d.ts` 20 389 / fixtures 3 583 / 包根 5 276），core **0.3.3 = 16 776 B / 19 文件 / 55 684 B 解包**。两次拆接缝都是结构性修复不是省字节：0.3.2 把 `repair-stream.js` 28 955 → 27 925 而总量 +529；0.3.3 把 `cli.js` 16 640 → 8 503 而总量 64 539 → 65 521（+982） |
-| 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1` / **`v0.3.2`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release） |
-| 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 / 0.3.0 / 0.3.1 都用本地双 tgz 验过 5/5；**0.3.2 已从 registry 单装 plugin 验过 `OK 6 fixture(s)`（`.tmp/install-check-final/`）**；0.3.3 目前只在 `.tmp/pack14/` 有 tarball，**尚未在空目录验收、也还没装进两个 profile** |
-| 下一件事 | **发布 0.3.3**：`node scripts/publish_packages.mjs --dry-run` 已应通过 → 用户手动 `node scripts/publish_packages.mjs --otp <code>` → `record_publish.mjs --stamp <ISO> --retries 3` → 空目录 `npm install dsh-remedy@0.3.3` 验收 → `gh release create v0.3.3` → 两个 profile 换 `.tmp/pack14/` 的 tgz → 重启桌面 App。发布前先看 A 段：0.3.3 里 P-0004 仍 `tested`，这是有意的 |
+| 基线 | **169 tests / 5 gates / `--mutate` 5-5** |
+| 包体 | **已发布 0.3.2 = 24 689 B 压缩 / 25 文件 / 81 904 B 解包**（`dist/*.js` 56 344 / `dist/*.d.ts` 16 701 / fixtures 3 583 / 包根 5 276）；core **0.3.2 = 15 864 B / 19 文件 / 52 828 B 解包**。**已发布 0.3.3 = 28 378 B 压缩 / 29 文件 / 94 769 B 解包**（`dist/*.js` 65 521 / `dist/*.d.ts` 20 389 / fixtures 3 583 / 包根 5 276），core **0.3.3 = 16 776 B / 19 文件 / 55 684 B 解包**。两次拆接缝都是结构性修复不是省字节：0.3.2 把 `repair-stream.js` 28 955 → 27 925 而总量 +529；0.3.3 把 `cli.js` 16 640 → 8 503 而总量 64 539 → 65 521（+982） |
+| 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1` / `v0.3.2` / **`v0.3.3`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release） |
+| 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 / 0.3.0 / 0.3.1 都用本地双 tgz 验过 5/5；**0.3.2 已从 registry 单装 plugin 验过 `OK 6 fixture(s)`（`.tmp/install-check-final/`）**；**0.3.3 已从 registry 单装 plugin 验过 `OK 6 fixture(s)`（`.tmp/install-check-033/`）**，两个 profile 也已换成 `.tmp/pack14/` 的 0.3.3（App 需重启才加载） |
+| 下一件事 | **重启桌面 App 让 0.3.3 生效**，然后按 A 段取下一个补丁（P-0003 的 `withdrawn` 空洞或 scan 按会话去重）。0.3.3 的发布链已走完：npm 两包 `latest`、`record_publish` 产物 `ok: true`、空目录验收 6/6、release `v0.3.3` 已建；P-0004 仍 `tested`，这是有意的 |
 
 ## 五分钟检查
 
@@ -24,7 +24,7 @@ pnpm install
 pnpm run verify                  # build → typecheck → test → gate
 node scripts/gate.mjs --mutate   # 5 门都必须红
 node packages/plugin/dist/cli.js verify   # OK 6 fixture(s)
-npm view dsh-remedy version      # 0.3.2（0.3.3 发布后才是 0.3.3）
+npm view dsh-remedy version      # 0.3.3
 ```
 
 `git` 要注意：本目录不是 git 根。
@@ -108,8 +108,48 @@ git -C .. log --oneline -3
   **不再硬编码版本**，安装段改成「从 registry 拿最新」，安全保证加 P-0004 五条；
   changelog 加 `## [0.3.3]`；metadata release_blurb 改成不硬编码版本；templates 也不写版本；
   contributing 写明 P-0004 是「改离线读取器所以永远无 journal 可证」的 tested 范例）。
-- **仍未做**：0.3.3 未发布、未在空目录验收、两个 profile 仍指向 0.3.2；P-0004 永远停在
-  `tested`（除非将来有 journal 能证明离线读取）；P-0003 的 `withdrawn` live 空洞仍未填。
+- **第一次发布尝试失败（2026-11-11）**：用户在终端跑发布，core 停在
+  `E404 / 404 Not Found - PUT https://registry.npmjs.org/dsh-remedy-core`。
+  同一个会话里 `GET 200 https://registry.npmjs.org/dsh-remedy-core` 是通的——读得到、
+  写不回，这是 npm 在凭证缺失时对未认证调用方的固定回答（registry 不会告诉你包存在），
+  不是包不存在（core 早已在 0.1.0 / 0.3.0 / 0.3.2 上）。同 shell 里 `npm whoami` 报
+  `E401 / 401 Unauthorized`。**根因是 shell 没登录，tarball 与脚本都没问题**
+  （core tarball 19 文件 / 16.8 kB / shasum `6fbbeb06…`，`packedManifest` 校验通过）。
+  当时脚本自己打印的建议（"if the registry answered 404 through pnpm, that is the
+  missing OTP too"）把人引向了并不存在的 OTP 问题——这是我自己写进去的错话。
+- **修法（R12 追加）**：`scripts/publish_packages.mjs` 在打包前先跑
+  `npm whoami`（`publishAuthProblems`），401 或空输出就直接拒绝发布并打印
+  "token missing or expired，先 `npm login`"；失败分支按 npm 退出码给建议
+  （`npmFailureAdvice`：404 / 401 / 403 先指向登录，只有无法归因的失败才提 OTP）。
+  `--dry-run` 打印同一条警告但继续走完打包校验，这样没登录的机器仍能验证 tarball。
+  实测：`--dry-run` 头部现在输出
+  `the shell is not logged in (a real publish would stop here): - \`npm whoami\` answered 401 …`，
+  之后两包照旧打包成功（plugin 28.4 kB / 94.8 kB / 29 文件 / shasum `46ad57ea…`）。
+- **测试**：159 → **169 tests / 0 fail**，10 条新增全在 `tests/unit/publish.test.ts`
+  （登录成功放行 / 401 指向登录而不是 OTP / 空输出不算登录 / 未知失败保留状态与 stderr 首行 /
+  404 先指向 `npm whoami` / 401 与 403 两个方向 / 无法归因才提 OTP；另有一条把 npm
+  把 401 报成退出码 1 的实测形状钉住）。**踩坑**：`npm whoami` 的 401 不是退出码 401，
+  是 `exit 1` + 输出里 `E401`——只按状态码判断会把真实登录失败读成"未知故障"。
+- **第二次发布尝试（同日）**：`npm whoami` 已恢复成 `jjjjjjjjnnjnn`（用户重新登录过，
+  `.npmrc` 里是一个 40 字符的 classic `npm_` token），发布这次走到了 registry 本体，
+  回的是 **`EOTP`**：`This operation requires a one-time password.` 并打印
+  `https://www.npmjs.com/auth/cli/<id>`。`npm profile get tfa` 证实账号是
+  `mode: "auth-and-writes"`、`auth-type = "web"`，所以每次写入都要现码——**这是设计要求，
+  不是故障**。脚本已补 `otpAdvice()`：EOTP 时把 npm 打印的那条 URL 原样转发（web-auth
+  只能靠它完成），不再把 EOTP 归因到"权限/包不存在"。
+- **profile 已提前换到 0.3.3**（不等发布）：`.tmp/switch-profiles-033.mjs` 把
+  `desktop` 与 `remedy-live` 的 `dsh-remedy` 指到 `.tmp/pack14/dsh-remedy-0.3.3.tgz`、
+  `pnpm-workspace.yaml` 的 `dsh-remedy-core` override 指到对应 core tgz（两处都先备份
+  `*.before-033`）；`pnpm install --no-frozen-lockfile` 两次都报
+  `- dsh-remedy 0.3.2 / + dsh-remedy 0.3.3`（670ms / 97ms）；
+  desktop 里 `node node_modules/dsh-remedy/dist/cli.js verify` → `OK 6 fixture(s)`，
+  `require` 两个包都是 `0.3.3`。**桌面 App 仍需重启才会加载它。**
+- **已完成（同日晚）**：0.3.3 发布（用户带着 2FA 的 token 自己跑完，`PUT 202` 两包都落了），
+  `record_publish.mjs` 产物 `publish-2026-11-11T08-35-00.000Z.json` 两包 `exact_ok` +
+  `latest_ok` 全 true，空目录 `npm install dsh-remedy@0.3.3` 后 `verify` 6/6，
+  `gh release v0.3.3` 已建（非 draft 非 prerelease），对外文字已重生成成"已发布"口径。
+- **仍未做**：P-0004 永远停在 `tested`（除非将来有 journal 能证明离线读取）；
+  P-0003 的 `withdrawn` live 空洞仍未填；桌面 App 还没重启过载入 0.3.3。
 
 **R11（2026-11-10）· P-0005：给裸值加引号，或者拒绝——从不猜。**
 
@@ -386,10 +426,17 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 
 ## 下一位 agent 的第一件事
 
-**A. 主线：发布 0.3.3（npm `--otp` → push → `gh release`）。** 五补丁已落地
-（P-0001 / P-0002 / P-0003 `verified`，P-0005 与 P-0004 `tested`），0.3.3 的代码已全绿
-（159 tests / 5 gates / `--mutate` 5-5），`--dry-run` 会证明 packed manifest 里 pin 的是
-`"dsh-remedy-core": "0.3.3"` 而不是 `workspace:*`。**只差发布、验收与推送。**
+**A. 主线：0.3.3 已发布并验收，接着做第六个补丁。** 五补丁已落地（P-0001 / P-0002 /
+P-0003 `verified`，P-0005 与 P-0004 `tested`），0.3.3 两包已是 registry `latest`
+（plugin shasum `46ad57ea…` / core `6fbbeb06…`），基库 169 tests / 5 gates / `--mutate` 5-5。
+发布链的原始记录仍在下面，留着是因为下次发布还会重复同样的认证前置。
+
+发布前两条命令先证明认证是通的，再谈 OTP（2026-11-11 那次 404 就是跳过这一步的结果）：
+
+```bash
+npm login
+npm whoami          # 必须打印用户名；输出 E401 就先解决登录，不要试 --otp
+```
 发布之后三条路，按价值排序：
 1. 补 P-0003 的最后一个空洞：真机出现一次 `withdrawn`（中途撤回或截断）。现在只证了
    预算拒绝这一支；要造它就在同一条流里前一个 block 可修、后一个 block 必拒。
@@ -399,7 +446,7 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
    再加功能就先给它定一个。
 3. 把 `record_live_mount.mjs` 的 journal 形状演进做成数据迁移（旧六字段与新九字段共存）。
 
-**B. 清账：两个本地 profile 现在指向 0.3.2，发布 0.3.3 后要换到 `.tmp/pack14/`。**
+**B. 清账：两个本地 profile 已指向 `.tmp/pack14/` 的 0.3.3，只差重启 App。**
 
 ```powershell
 # 0.3.2 → 0.3.3 的换法照 .tmp/switch-profiles-032.mjs（改 two keys + pnpm-workspace.yaml 的 overrides）
@@ -431,12 +478,13 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | `live-2026-11-10T16-30-00.000Z.json` | 绿 | 0.3.0 headless 真机拒绝：5 流 / `too-many-calls` / `fused:1 refused:1 unrepaired:1` / verdict `degraded` / 会话 `turn_end=error` / 无合成 id |
 | `patch-registry-2026-11-10T22-30-00.000Z.json` | 绿 | **当前**注册表快照（五个补丁：P-0001/2/3 `verified`，P-0004/5 `tested`） |
 | `gates-2026-11-10T22-25-00.000Z.json` / `gates-mutate-2026-11-10T22-20-00.000Z.json` | 绿 | P-0004 批次的门禁证据（`ALL GREEN · 5 gates` 与 `5/5 CAUGHT`） |
+| `gates-2026-11-11T09-45-00.000Z.json` / `gates-mutate-2026-11-11T09-40-00.000Z.json` | 绿 | **0.3.3 发布后**的门禁证据（事实包改成"已发布"口径、8 个对外文件重生成之后） |
 | `publish-2026-11-09T20-00-00.000Z.json` | 绿 | 0.1.0 发布（core + plugin） |
 | `publish-2026-11-10T00-10-00.000Z.json` | **红（保留）** | 0.1.1 副本延迟，记录时还看不到 |
 | `publish-2026-11-10T06-40-00.000Z.json` | 绿 | 0.1.1 settled：core 0.1.0 / plugin 0.1.1 |
 | `session-sample-2026-11-10T11-20-00.000Z.json` | 绿 | 本机故障样本（`--until` 截断，可复现） |
 | `publish-2026-11-10T20-00-00.000Z.json` | 绿 | 0.3.2 发布：两包 `exact_ok` 与 `latest_ok` 均为 true |
-| `publish-2026-11-*` | 待产 | 0.3.3 发布产物（发布后由 `record_publish.mjs` 生成，新 stamp） |
+| `publish-2026-11-11T08-35-00.000Z.json` | 绿 | **0.3.3 发布**：两包 `exact_ok` 与 `latest_ok` 均为 true（plugin shasum `46ad57ea…` / core `6fbbeb06…`） |
 
 每个 `.json` 都有同名 `.sha256`。红产物不编辑，用新 stamp 重记。
 

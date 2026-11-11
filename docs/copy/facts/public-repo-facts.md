@@ -11,7 +11,9 @@
 - Version: 0.3.3 (plugin), 0.3.3 (core)
 - License: MIT
 - Repository: https://github.com/jjjjjjjjnnjnn/dsh-remedy (public, created 2026-11-09)
-- npm: `0.3.2` is published and is `latest` for both `dsh-remedy` and `dsh-remedy-core`. `0.3.3` is prepared and not published yet. `dsh-remedy@0.3.0` reached the registry with a literal `workspace:*` dependency because npm published the raw workspace manifest, so installing that version fails with `EUNSUPPORTEDPROTOCOL`; 0.3.2 republishes the same code from a pnpm-packed tarball, whose manifest pins `"dsh-remedy-core": "0.3.2"`. 0.3.1 was built with the same manifest fix but never reached the registry.
+- npm: `0.3.3` is published and is `latest` for both `dsh-remedy` and `dsh-remedy-core`; its packed manifest pins `"dsh-remedy-core": "0.3.3"`, so installing the plugin alone resolves the core. `dsh-remedy@0.3.0` reached the registry with a literal `workspace:*` dependency because npm published the raw workspace manifest, so installing that version fails with `EUNSUPPORTEDPROTOCOL`; 0.3.2 republished the same code from a pnpm-packed tarball with the manifest fix. 0.3.1 was built with the same fix but never reached the registry. Publishing needs a fresh one-time password every time: the account is `auth-and-writes`, and a write without one is answered `EOTP`.
+- The 0.3.3 publish: core first (`HTTP 202` SET on `PUT https://registry.npmjs.org/dsh-remedy-core`), then the plugin (`HTTP 202` SET on `PUT https://registry.npmjs.org/dsh-remedy`); the metadata read for the plugin answered `404` for a few seconds after its own `202`, which is the documented replica lag and not a failed publish. Both packages now answer `latest = 0.3.3`.
+- Publishing needs the account authentication mode in view: `npm whoami` proves the credential, `npm profile get tfa` reports `auth-and-writes`, and a write without a fresh code is answered `EOTP`. A logged-out shell instead answers the write with `404`, which is why the publish script asks `npm whoami` before it packs.
 - Independent project; not affiliated with DeepSeek.
 - Language of code and CLI: English. Chinese README is a translation.
 
@@ -131,7 +133,7 @@
 
 ## Tests and gates
 
-- Tests: 159 pass, 0 fail.
+- Tests: 169 pass, 0 fail.
 - Gates: 5 (`ssot`, `registry`, `namespace`, `step-review`, `copy`).
 - Negative controls (`--mutate`): 5 of 5 caught.
 - Publishing: `scripts/publish_packages.mjs` publishes the two package
@@ -143,6 +145,13 @@
   `pnpm pack` tarball: pnpm rewrites the protocol to the exact version, npm
   does not, and the registry then answers a plain install with
   `EUNSUPPORTEDPROTOCOL`.
+- A registry write with no valid credential is reported as `404 Not Found` on
+  the PUT while the metadata read in the same session answers `200`; on
+  2026-11-11 that is exactly how a logged-out shell presented itself, and
+  `npm whoami` answered `401 Unauthorized`. The publish script therefore asks
+  who it is before it packs anything and refuses a real publish when the answer
+  is 401 or empty; `--dry-run` prints the same warning and keeps going so the
+  tarball checks still run on a machine that is not logged in.
 - Fixtures: 6, including one real fused call, one counter-evidence call, and one measured bare-value program.
 - The plugin tarball ships `fixtures/`; `dsh-remedy verify` works from an installed copy (0.2.0), and 0.3.0 keeps that property.
 - Test command: `pnpm run verify` (build, typecheck, test, gate).
@@ -160,7 +169,7 @@
 - The package still ships `dist/*.js`, `dist/*.d.ts`, `fixtures/`, `cordis.patch.yml`, `README.md`, `LICENSE`; no sourcemaps.
 - Dropping sourcemaps removes 41926 bytes of the unpacked payload (measured in `docs/research/stability-audit-2026-11-10.md`).
 - Shipped 0.3.2 tarball: 24689 bytes compressed, 25 entries, 81904 bytes unpacked. Breakdown: 56344 bytes of `dist/*.js`, 16701 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/` (6 fixtures plus `checksums.json`), 5276 bytes of package-root files.
-- The 0.3.3 tarball, which is prepared and not published, is 28378 bytes compressed, 29 files, 94769 bytes unpacked (65521 bytes of `dist/*.js`, 20389 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, 5276 bytes of package-root files). The 0.3.3 core tarball is 16776 bytes compressed, 19 files, 55684 bytes unpacked (35393 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`).
+- The published 0.3.3 plugin tarball is 28378 bytes compressed, 29 files, 94769 bytes unpacked (65521 bytes of `dist/*.js`, 20389 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, 5276 bytes of package-root files), shasum `46ad57ea718be732133979c4b0449f7221ee69c7`. The published 0.3.3 core tarball is 16776 bytes compressed, 19 files, 55684 bytes unpacked (35393 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`), shasum `6fbbeb060505cb80c7f454dbab5ea74acd463fdd`.
 - The 0.3.2 core tarball is 15864 bytes compressed, 19 entries, 52828 bytes unpacked (32537 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`).
 - Byte budget, restated honestly: `dist/*.js` reached 55815 bytes after P-0005, over the 53000 byte ceiling. 0.3.2 splits the seam into `stream-types.ts` and `failure-text.ts`, which cuts `repair-stream.js` from 28955 to 27925 bytes but grows the plugin total to 56344, because import and export scaffolding is not free. P-0004 then took the total to 64539 and split the CLI the same way: `cli.ts` fell from 16640 to 8503 bytes while `cli-args.ts` and `scan-command.ts` added 9119, so the total rose again to 65521. Both splits are structural fixes, not byte fixes: the ceiling exists to stop one file from absorbing every patch. The working ceiling is 28000 bytes for the emitted `repair-stream.js`, 10000 bytes for the emitted `cli.js`, and 68000 bytes for the plugin total, and a patch that crosses a per-file number splits that file again.
 - The package still ships `dist/*.js`, `dist/*.d.ts`, `fixtures/`, `cordis.patch.yml`, `README.md`, `LICENSE`; no sourcemaps.
@@ -213,4 +222,4 @@
 
 ## Numbers allowed in copy
 
-0 1 2 3 4 5 6 7 8 9 10 11 13 17 19 20 22 25 27 30 37 38 39 40 43 45 48 60 77 84 93 121 126 131 147 159 276 2694 3583 4427 5276 9118 9401 10000 11585 13797 15864 16701 16776 16994 17423 17484 19114 19569 20389 22418 24689 26345 27925 28000 28378 32537 35393 38582 41926 52247 52828 53000 55684 56344 58000 63170 64539 64933 68000 74014 81904 94769 98424 0.1.0 0.1.1 0.2.0 0.3.0 0.3.1 0.3.2 0.3.3
+0 1 2 3 4 5 6 7 8 9 10 11 13 17 19 20 22 25 27 30 37 38 39 40 43 45 48 60 77 84 93 121 126 131 147 159 169 276 2694 3583 4427 5276 9118 9401 10000 11585 13797 15864 16701 16776 16994 17423 17484 19114 19569 20389 22418 24689 26345 27925 28000 28378 32537 35393 38582 41926 52247 52828 53000 55684 56344 58000 63170 64539 64933 68000 74014 81904 94769 98424 0.1.0 0.1.1 0.2.0 0.3.0 0.3.1 0.3.2 0.3.3

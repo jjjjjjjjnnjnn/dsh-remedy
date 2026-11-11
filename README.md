@@ -129,12 +129,12 @@ Evidence artifacts and sidecars:
 
 ## Status
 
-The newest published release of both packages (`dsh-remedy` and `dsh-remedy-core`) is marked `latest` on npm, and the pending release is prepared but not published yet.
+Release 0.3.3 is published and is latest for both dsh-remedy and dsh-remedy-core.
 
 - P-0001, P-0002 and P-0003 are all `verified` on a real host: P-0001 on the headless profile and the desktop app, P-0002 on a `2026-11-10` headless run that repaired a real two-call fusion and saw the synthesized call dispatched, and P-0003 on a `2026-11-10` headless run whose journal wrote a non-zero `refused` after the code declined to repair a budget refusal.
 - P-0005 and P-0004 are `tested`, not `verified`: both have unit tests, negative controls, and a measured fixture or a measured scan, but no live host run has produced the bare-value shape that P-0005 repairs, and P-0004 changes an offline reader rather than the resident seam.
 
-The published plugin tarball is 24689 bytes compressed (25 entries, 81904 bytes unpacked: 56344 bytes of `dist/*.js`, 16701 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, and 5276 bytes of package-root files). The published core tarball is 15864 bytes compressed (19 entries, 52828 bytes unpacked: 32537 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`). Sourcemaps are no longer shipped, removing 41926 bytes of unpacked payload. P-0005 crossed the 53000 byte ceiling for `dist/*.js` (reaching 55815 bytes), which is why the seam was split into `stream-types.ts` and `failure-text.ts`, cutting `repair-stream.js` from 28955 to 27925 bytes while total `dist/*.js` is 56344 bytes from import and export scaffolding. The working ceiling is 28000 bytes for emitted `repair-stream.js`, 10000 bytes for emitted `cli.js`, and 68000 bytes for the plugin total.
+The published 0.3.3 plugin tarball is 28378 bytes compressed (29 files, 94769 bytes unpacked: 65521 bytes of `dist/*.js`, 20389 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, and 5276 bytes of package-root files). The published 0.3.3 core tarball is 16776 bytes compressed (19 files, 55684 bytes unpacked: 35393 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`). Sourcemaps are no longer shipped, removing 41926 bytes of the unpacked payload. P-0005 crossed the 53000 byte ceiling for `dist/*.js` (reaching 55815 bytes), which is why the seam was split into `stream-types.ts` and `failure-text.ts`, cutting `repair-stream.js` from 28955 to 27925 bytes while total `dist/*.js` grew to 56344 bytes from import and export scaffolding. P-0004 took the total to 64539 bytes and split the CLI, cutting `cli.ts` from 16640 to 8503 bytes while `cli-args.ts` and `scan-command.ts` added 9119 bytes, bringing the plugin total to 65521 bytes. The working ceiling is 28000 bytes for emitted `repair-stream.js`, 10000 bytes for emitted `cli.js`, and 68000 bytes for the plugin total.
 
 ## Development
 

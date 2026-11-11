@@ -18,7 +18,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - The same installable-manifest property carried forward.
 
 ### Notes
-- P-0004 is `tested`, not `verified`, because it changes an offline reader and a redaction rule rather than the resident `llm/stream` seam, so no journal can attest it; and that the pending release is prepared but not published, with the previous release still the registry `latest`.
+- P-0004 is `tested`, not `verified`, because it changes an offline reader and a redaction rule rather than the resident `llm/stream` seam, so no journal can attest it; and that this release is now published and is the registry `latest` for both packages, while the previous one (0.3.2) stays listed as superseded.
 
 ## [0.3.2] - 2026-11-10
 

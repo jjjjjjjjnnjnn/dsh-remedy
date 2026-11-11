@@ -14,8 +14,8 @@ Keys:
   language names other than `typescript`, and do not repeat `deepseek` when
   `deepseek-harness` is already present.
 - `release_blurb`: a short Markdown section for the current release. Do not
-  hardcode a version number; take the release status from FACTS, which names both
-  the published `latest` release and any prepared-but-unpublished one. It must
+  hardcode a version number; take the release status from FACTS, which names
+  `0.3.3` as published and as the `latest` release of both packages. It must
   say that plugin 0.3.0 carries a literal `workspace:*` dependency and cannot be
   installed from the registry, that 0.3.1 was superseded before it reached the
   registry, that P-0001, P-0002 and P-0003 are all verified on a real host

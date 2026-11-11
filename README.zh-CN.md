@@ -31,7 +31,7 @@ dsh plugin --profile <name> add dsh-remedy
 pnpm add dsh-remedy dsh-remedy-core
 ```
 
-plugin 的 0.3.0 版本在 registry 里装不上，因为 npm 直接发布了原始 workspace manifest，依赖写成字面 `workspace:*`；其后的发布用 pnpm 打出的 tarball 修掉这个 manifest；0.3.1 用了同样的 manifest 修法，但在上市前就被取代，从未到达 registry。
+plugin 的 0.3.0 在 registry 里装不上（npm 直接发布了原始 workspace manifest，依赖写成字面 `workspace:*`），其后的发布用 pnpm 打出的 tarball 修掉这个 manifest；0.3.1 用了同样的 manifest 修法，但在上市前就被取代，从未到达 registry。
 
 面向从源码构建的贡献者：
 
@@ -129,12 +129,12 @@ dsh-remedy scan <session.jsonl|directory>
 
 ## 状态
 
-两个包（`dsh-remedy` 与 `dsh-remedy-core`）最新发布的版本在 npm 上均标记为 `latest`，待发布的版本已准备就绪但尚未发布；plugin 的 0.3.0 是坏发布。
+0.3.3 版本已发布，且在 dsh-remedy 与 dsh-remedy-core 上均为 latest；plugin 的 0.3.0 是坏发布。
 
 - P-0001、P-0002 与 P-0003 在真实宿主上均为 `verified`：P-0001 在 headless profile 与桌面 App 上完成验证；P-0002 在 2026-11-10 的 headless 真机运行里修好了一次真实的两调用粘连，并确认合成 id 被实际派发执行；P-0003 在 2026-11-10 的另一次 headless 运行里，代码拒绝修复一次预算超限的粘连，journal 中 `refused` 首次非零。
 - P-0005 与 P-0004 是 `tested` 而不是 `verified`：均包含单测、负对照，以及一条实测夹具或一次实测扫描，但还没有真机产生过 P-0005 修复的裸值形状，P-0004 修改的是离线读取器而非常驻接缝。
 
-已发布的 plugin tarball 压缩体积为 24689 字节（25 个条目，解包体积 81904 字节：56344 字节 `dist/*.js`、16701 字节 `dist/*.d.ts`、3583 字节 `fixtures/`、5276 字节包根文件）。已发布的 core tarball 压缩体积为 15864 字节（19 个条目，解包体积 52828 字节：32537 字节 `dist/*.js`、16994 字节 `dist/*.d.ts`）。sourcemap 不再进包，移除了 41926 字节的解包载荷。在 P-0005 之后，`dist/*.js` 达到 55815 字节，越过了 53000 字节的上限，这正是将接缝拆入 `stream-types.ts` 与 `failure-text.ts` 的原因：此举将 `repair-stream.js` 从 28955 字节降至 27925 字节，但因导入导出脚手架开销使 `dist/*.js` 总量变为 56344 字节。工作上限为：生成的 `repair-stream.js` 为 28000 字节，生成的 `cli.js` 为 10000 字节，插件总量为 68000 字节。
+已发布的 0.3.3 plugin tarball 压缩体积为 28378 字节（29 个文件，解包体积 94769 字节：65521 字节 `dist/*.js`、20389 字节 `dist/*.d.ts`、3583 字节 `fixtures/`、5276 字节包根文件）。已发布的 0.3.3 core tarball 压缩体积为 16776 字节（19 个文件，解包体积 55684 字节：35393 字节 `dist/*.js`、16994 字节 `dist/*.d.ts`）。sourcemap 不再进包，移除了 41926 字节的解包载荷。在 P-0005 之后，`dist/*.js` 达到 55815 字节，越过了 53000 字节的上限，这正是将接缝拆入 `stream-types.ts` 与 `failure-text.ts` 的原因：此举将 `repair-stream.js` 从 28955 字节降至 27925 字节，但因导入导出脚手架开销使 `dist/*.js` 总量变为 56344 字节。P-0004 随后使总量增至 64539 字节并对 CLI 进行了相同拆分：`cli.ts` 从 16640 字节降至 8503 字节，而 `cli-args.ts` 与 `scan-command.ts` 增加了 9119 字节，插件总量随之升至 65521 字节。工作上限为：生成的 `repair-stream.js` 为 28000 字节，生成的 `cli.js` 为 10000 字节，插件总量为 68000 字节。
 
 ## 开发
 

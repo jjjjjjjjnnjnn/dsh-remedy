@@ -77,6 +77,41 @@ and both failed on 2026-11-10 with a misleading error:
 | `pnpm -r publish` at the root | `ERR_PNPM_FAILED_TO_PUBLISH ... status 404 Not Found` | pnpm without a one-time password surfaces the registry's authorization answer as 404, not as an OTP prompt |
 | `npm publish` at the root | `EPRIVATE ... This package has been marked as private` | the root is `dsh-remedy-workspace`, deliberately private; it is not a publishable package |
 | `npm publish` inside `packages/core` | `EOTP: This operation requires a one-time password` | this is the truth; pass `--otp <code>` |
+| `npm publish <tgz>` with a logged-out shell (2026-11-11) | `E404 ... 404 Not Found - PUT https://registry.npmjs.org/dsh-remedy-core` | the account could not authenticate; `dsh-remedy-core` was already on the registry at 0.1.0/0.3.0/0.3.2, so the PUT 404 was a permission answer. `npm whoami` answered `401 Unauthorized` in the same shell |
+
+### The 404 of 2026-11-11 was a logged-out shell
+
+The 0.3.3 publish was run by hand and stopped on the first package:
+
+```text
+npm error code E404
+npm error 404 Not Found - PUT https://registry.npmjs.org/dsh-remedy-core - Not found
+npm error 404  The requested resource 'dsh-remedy-core@0.3.3' could not be found or you do not have permission to access it.
+```
+
+The tarball was fine (`dsh-remedy-core@0.3.3`, 19 files, 16.8 kB, shasum
+`6fbbeb060505cb80c7f454dbab5ea74acd463fdd`) and the registry metadata read
+answered 200 in the same session (`GET 200 https://registry.npmjs.org/dsh-remedy-core`),
+then the write answered 404. That pair — read 200, write 404 — is what npm
+reports when the credential is missing or expired, because the registry refuses
+to tell an unauthenticated caller that a package exists. In the same shell
+`npm whoami` returned `npm error code E401 / 401 Unauthorized`.
+
+The advice the script printed at the time ("if the registry answered 404 through
+pnpm, that is the missing OTP too") sent the operator after a one-time password
+that was not the problem. `scripts/publish_packages.mjs` now asks the cheapest
+question first: it runs `npm whoami` before packing anything, refuses to publish
+when the answer is 401 (or empty), and maps the npm exit status to advice that
+names the login before it names the OTP.
+
+```bash
+npm login                       # in the shell that will publish
+npm whoami                      # must print the npm user name, not E401
+node scripts/publish_packages.mjs --otp <code>
+```
+
+`--dry-run` prints the same warning but keeps going, so the tarball checks can
+still be exercised on a machine that is not logged in.
 
 `scripts/publish_packages.mjs` publishes the two package directories in order
 (core, then plugin), refuses to start when the workspace root lost its
@@ -126,7 +161,12 @@ directory. It now:
    `optionalDependencies` still names `workspace:`, `file:`, `link:` or
    `portal:` (`unpublishableDependencies`),
 4. asserts the plugin pins the exact `dsh-remedy-core` version,
-5. only then runs `npm publish <tarball> --access public [--otp <code>]`.
+5. asks `npm whoami` before it packs and refuses when the shell is not logged in
+   (`publishAuthProblems`), so a missing credential is reported as a missing
+   credential instead of as a registry 404,
+6. only then runs `npm publish <tarball> --access public [--otp <code>]`, and
+   maps the npm exit status to advice that names the login before the OTP
+   (`npmFailureAdvice`).
 
 Five negative controls in `tests/unit/publish.test.ts` cover the failure, and a
 sixth reads the packed tarball itself when it exists, so the packed manifest is
@@ -150,11 +190,33 @@ unpacked), core `f5b773559be49363238d9665bf2f477e8b918f40` (15864 B compressed,
 (`ok: true`, `exact_ok` and `latest_ok` true for both packages). Release:
 <https://github.com/jjjjjjjjnnjnn/dsh-remedy/releases/tag/v0.3.2>.
 
-**0.3.3 is prepared (2026-11-11) and not published yet.** It carries P-0004: the `scan` command
-now reads the log it is pointed at (a `session.v4.jsonl.zstd` file used to come back as 236
-unreadable lines and zeros), takes a directory, and supports `--since` with a `before_since`
-count; the redaction rule now covers the JSON-escaped and encoded-home shapes a session actually
-writes. It also splits the CLI so `cli.ts` stops absorbing every patch.
+**Published 2026-11-11.** Both packages are the registry `latest`: `dsh-remedy@0.3.3`
+(shasum `46ad57ea718be732133979c4b0449f7221ee69c7`, 28378 B compressed, 94769 B unpacked, 29 files)
+and `dsh-remedy-core@0.3.3` (shasum `6fbbeb060505cb80c7f454dbab5ea74acd463fdd`, 16776 B
+compressed, 55684 B unpacked, 19 files), matching the packed tarballs byte for byte. A stranger
+install from the registry alone (`npm install dsh-remedy@0.3.3` in an empty directory, which also
+resolves the pinned core) then `npx dsh-remedy verify` gives `OK 6 fixture(s)`, exit 0. Evidence:
+`data/results/publish-2026-11-11T08-35-00.000Z.json` (`ok: true`, `exact_ok` and `latest_ok`
+true for both packages). Release:
+<https://github.com/jjjjjjjjnnjnn/dsh-remedy/releases/tag/v0.3.3>.
+
+The publish itself needed three attempts, and the failures are recorded because they are the
+reason the script now preflights them:
+
+1. A logged-out shell answered the write with `404`, which reads as "package missing" but is a
+   permission answer; `npm whoami` said `E401`. Fixed by asking `npm whoami` before packing.
+2. The next run reached the registry and was answered `EOTP`: the account is
+   `auth-and-writes` (`npm profile get tfa`), so every write needs a fresh code. Fixed by
+   forwarding the URL npm prints instead of guessing at permissions.
+3. The owner published with a 2FA-capable token; both `PUT`s answered `202`. The plugin's
+   metadata read answered `404` for a few seconds *after* its own `202` — that is registry
+   replica lag, not a failed publish, and it is why `record_publish.mjs` takes `--retries`.
+
+It carries P-0004: the `scan` command now reads the log it is pointed at (a
+`session.v4.jsonl.zstd` file used to come back as 236 unreadable lines and zeros), takes a
+directory, and supports `--since` with a `before_since` count; the redaction rule now covers the
+JSON-escaped and encoded-home shapes a session actually writes. It also splits the CLI so
+`cli.ts` stops absorbing every patch.
 
 Three recorded artifacts were rewritten in place by `scripts/redact_artifacts.mjs` to strip home
 paths the old rule missed (`live-2026-11-09T17-00-00.000Z.json`,

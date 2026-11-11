@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
-import { packedManifest, publishProblems, unpublishableDependencies } from '../../scripts/publish_packages.mjs'
+import { npmFailureAdvice, otpAdvice, packedManifest, publishAuthProblems, publishProblems, unpublishableDependencies } from '../../scripts/publish_packages.mjs'
 
 const manifestOf = (path: string) => JSON.parse(readFileSync(path, 'utf8')) as { version: string }
 const version = manifestOf('packages/plugin/package.json').version
@@ -99,4 +99,87 @@ test('the tracked workspace manifest still uses the workspace protocol', () => {
     dependencies: Record<string, string>
   }
   assert.equal(manifest.dependencies['dsh-remedy-core'], 'workspace:*')
+})
+
+// The 2026-11-11 publish: a logged-out shell made `npm publish` answer
+// `PUT 404`, which reads like "no such package" even though `dsh-remedy-core`
+// was already on the registry at 0.1.0/0.3.0/0.3.2. The advice now asks the
+// cheap question first instead of sending the operator after an OTP code.
+test('a logged-out shell is refused before anything is packed', () => {
+  assert.deepEqual(publishAuthProblems({ status: 0, stdout: 'jjjjjjjjnnjnn\n' }), [])
+})
+
+test('the 401 from npm whoami is a login problem, not an OTP problem', () => {
+  const problems = publishAuthProblems({ status: 401, stdout: '', stderr: 'npm error code E401\n' })
+  assert.equal(problems.length, 1)
+  assert.match(String(problems[0]), /npm login/)
+  assert.doesNotMatch(String(problems[0]), /--otp/)
+})
+
+test('npm reports a 401 as exit 1, and E401 in the output is the same answer', () => {
+  // Measured on 2026-11-11: `npm whoami` exited 1 and printed
+  // `npm error code E401 / 401 Unauthorized`. Keying on the exit status alone
+  // would have read that as "an unexplained failure".
+  const problems = publishAuthProblems({
+    status: 1,
+    stdout: '',
+    stderr: 'npm error code E401\nnpm error 401 Unauthorized - GET https://registry.npmjs.org/-/whoami\n',
+  })
+  assert.equal(problems.length, 1)
+  assert.match(String(problems[0]), /npm login/)
+})
+
+test('a whoami that prints nothing is not a login, even when it exits zero', () => {
+  const problems = publishAuthProblems({ status: 0, stdout: '   \n' })
+  assert.equal(problems.length, 1)
+  assert.match(String(problems[0]), /npm login/)
+})
+
+test('an unexpected whoami failure keeps the status and the first stderr line', () => {
+  const problems = publishAuthProblems({ status: 7, stderr: 'network down\nsecond line\n' })
+  assert.equal(problems.length, 1)
+  assert.match(String(problems[0]), /exited 7/)
+  assert.match(String(problems[0]), /network down/)
+})
+
+test('a 404 on the PUT points at npm whoami before it points at an OTP', () => {
+  const advice = npmFailureAdvice(404).join('\n')
+  assert.match(advice, /npm whoami/)
+  assert.match(advice, /npm login/)
+})
+
+test('a 401 or 403 is reported as unauthenticated, in both directions', () => {
+  for (const status of [401, 403]) {
+    assert.match(npmFailureAdvice(status).join('\n'), /npm login/)
+  }
+})
+
+test('an unexplained failure still offers the OTP as one possibility, not as the answer', () => {
+  const advice = npmFailureAdvice(1).join('\n')
+  assert.match(advice, /--otp/)
+  assert.match(advice, /npm whoami/)
+})
+
+// Measured later on 2026-11-11, with a valid credential: the publish reached the
+// registry and came back EOTP, because the account is on `auth-and-writes`. That
+// answer must be repeated verbatim, including the URL npm printed, because a web
+// authentication is the only way to finish that publish.
+test('an EOTP is reported as a password challenge with the URL npm printed', () => {
+  const stderr = [
+    'npm error code EOTP',
+    'npm error This operation requires a one-time password.',
+    'npm error Open this URL in your browser to authenticate:',
+    'npm error   https://www.npmjs.com/auth/cli/abc123def456',
+    'npm error',
+  ].join('\n')
+  const advice = otpAdvice(1, stderr)
+  assert.ok(advice.length >= 3)
+  assert.match(advice[0] ?? '', /one-time password/)
+  assert.ok(advice.some((line) => line.includes('https://www.npmjs.com/auth/cli/abc123def456')))
+})
+
+test('a failure that is not a password challenge gets no OTP advice', () => {
+  assert.deepEqual(otpAdvice(1, 'npm error code E404\nnpm error 404 Not Found - PUT\n'), [])
+  assert.deepEqual(otpAdvice(0, ''), [])
+  assert.deepEqual(otpAdvice(null, 'npm error code EOTP\n'), [])
 })

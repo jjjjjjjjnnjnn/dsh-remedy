@@ -12,8 +12,8 @@
 | 基线 | **189 tests / 6 gates / `--mutate` 6-6** |
 | 包体 | **已发布 0.3.5 = 29 448 B 压缩 / 29 文件 / 97 944 B 解包**（`dist/*.js` 67 908 / `dist/*.d.ts` 21 177 / fixtures 3 583 / 包根 5 276），core **0.3.5 = 18 723 B / 19 文件 / 61 553 B 解包**（`dist/*.js` 41 262 / `dist/*.d.ts` 16 994）：P-0008 只加 `scripts/gate_size.mjs`，`scripts/` 不进包，所以 plugin 的字节数与 0.3.4 相同、shasum 因 manifest 版本变了从 `5f20282e…` 到 `c1b1b431…`；core 因多一条补丁记录变大。**已发布 0.3.2 = 24 689 B 压缩 / 25 文件 / 81 904 B 解包**（`dist/*.js` 56 344 / `dist/*.d.ts` 16 701 / fixtures 3 583 / 包根 5 276）；core **0.3.2 = 15 864 B / 19 文件 / 52 828 B 解包**。**已发布 0.3.3 = 28 378 B 压缩 / 29 文件 / 94 769 B 解包**（`dist/*.js` 65 521 / `dist/*.d.ts` 20 389 / fixtures 3 583 / 包根 5 276），core **0.3.3 = 16 776 B / 19 文件 / 55 684 B 解包**。**已发布 0.3.4 = 29 448 B 压缩 / 29 文件 / 97 944 B 解包**（`dist/*.js` 67 908 / `dist/*.d.ts` 21 177 / fixtures 3 583 / 包根 5 276），core **0.3.4 = 18 202 B / 19 文件 / 59 864 B 解包**（`dist/*.js` 39 573 / `dist/*.d.ts` 16 994）：P-0007 只多了两条注册表条目，没有新增模块。两次拆接缝都是结构性修复不是省字节：0.3.2 把 `repair-stream.js` 28 955 → 27 925 而总量 +529；0.3.3 把 `cli.js` 16 640 → 8 503 而总量 64 539 → 65 521（+982） |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1` / `v0.3.2` / `v0.3.3` / `v0.3.4` / **`v0.3.5`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release） |
-| 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 / 0.3.0 / 0.3.1 都用本地双 tgz 验过 5/5；**0.3.2 已从 registry 单装 plugin 验过 `OK 6 fixture(s)`（`.tmp/install-check-final/`）**；**0.3.3 已从 registry 单装 plugin 验过 `OK 6 fixture(s)`（`.tmp/install-check-033/`）**；0.3.4 已从 registry 单装验过 `OK 6 fixture(s)`（`.tmp/install-check-034/`）；**0.3.5 也已从 registry 单装在空目录验过 `OK 6 fixture(s)`（`.tmp/install-check-035.mjs`）**，两个 profile 还指向 `.tmp/pack16/` 的 0.3.4（换装脚本照 `.tmp/switch-profiles-034.mjs`，App 需重启才加载） |
-| 下一件事 | **重启桌面 App 让已装的版本生效**，然后把两个 profile 从 `.tmp/pack16` 的 0.3.4 换成 `.tmp/pack17` 的 0.3.5。0.3.5 的发布链已走完：两包 `latest`、`record_publish` 产物 `ok: true`（两次，14:55 那次因副本延迟记成 `ok: false`，15:05 那次才对）、空目录验收 6/6、release `v0.3.5` 已建。0.3.4 的发布链已走完：两包 `latest`、`record_publish` 产物 `ok: true`、空目录验收 6/6、release `v0.3.4` 已建。0.3.3 的发布链已走完：npm 两包 `latest`、`record_publish` 产物 `ok: true`、空目录验收 6/6、release `v0.3.3` 已建；P-0004 与 P-0006 都仍 `tested`，这是有意的 |
+| 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 / 0.3.0 / 0.3.1 都用本地双 tgz 验过 5/5；**0.3.2 已从 registry 单装 plugin 验过 `OK 6 fixture(s)`（`.tmp/install-check-final/`）**；**0.3.3 已从 registry 单装 plugin 验过 `OK 6 fixture(s)`（`.tmp/install-check-033/`）**；0.3.4 已从 registry 单装验过 `OK 6 fixture(s)`（`.tmp/install-check-034/`）；**0.3.5 也已从 registry 单装在空目录验过 `OK 6 fixture(s)`（`.tmp/install-check-035.mjs`）**；两个 profile 已换成 `.tmp/pack17/` 的 0.3.5（`.tmp/switch-profiles-035.mjs`，desktop 内 `verify` 6/6、两包均 0.3.5，App 需重启才加载） |
+| 下一件事 | **重启桌面 App 让已装的 0.3.5 生效**（两个 profile 已是 0.3.5，desktop 内 `verify` 6/6）。0.3.5 的发布链已走完：两包 `latest`、`record_publish` 产物 `ok: true`（两次，14:55 那次因副本延迟记成 `ok: false`，15:05 那次才对）、空目录验收 6/6、release `v0.3.5` 已建。0.3.4 的发布链已走完：两包 `latest`、`record_publish` 产物 `ok: true`、空目录验收 6/6、release `v0.3.4` 已建。0.3.3 的发布链已走完：npm 两包 `latest`、`record_publish` 产物 `ok: true`、空目录验收 6/6、release `v0.3.3` 已建；P-0004 与 P-0006 都仍 `tested`，这是有意的 |
 
 ## 五分钟检查
 
@@ -90,8 +90,9 @@ git -C .. log --oneline -3
 - **对外文字**：事实包改成「0.3.5 两包 `latest`」，加了 0.3.5 的两个 tarball 实测行与 0.3.5 发布的时间线；
   四个 prompt 的发布状态从"0.3.4 是 latest、0.3.5 已准备"翻成"0.3.5 是 latest、0.3.4 是上一个"；
   8 个对外文件全部重生成。
-- **仍未做**：桌面 App 未重启；两个 profile 仍指向 `.tmp/pack16/`（0.3.4）；
-  事实包里的 census 样本仍是旧的 287 turns / 375 attempts（复测是 289 / 392，本轮没有改，因为改它要连带重生成全部对外文件）。
+- **已做（同日晚）**：两个 profile 已换成 `.tmp/pack17/` 的 0.3.5（`desktop` 内 `verify` 6/6、两包均 0.3.5）。
+- **仍未做**：桌面 App 未重启；事实包里的 census 样本仍是旧的 287 turns / 375 attempts
+  （复测是 289 / 392，本轮没有改，因为改它要连带重生成全部对外文件）。
 
 **R14（2026-11-11）· P-0007：报 "exited null" 的通道修不好任何东西。**
 
@@ -574,11 +575,11 @@ npm whoami          # 必须打印用户名；输出 E401 就先解决登录，�
    现在两份事实包都是 ASCII，一旦事实包里出现中文就会低估长度。要修就把 `ARGV_LIMIT` 的判断换成
    `Buffer.byteLength(text, 'utf16le') / 2`，并加一条带非 ASCII 的边界测试。
 
-**B. 清账：两个本地 profile 已指向 `.tmp/pack16/` 的 0.3.4，只差重启 App；0.3.5 的 tarball 在 `.tmp/pack17/`。**
+**B. 清账：两个本地 profile 已指向 `.tmp/pack17/` 的 0.3.5，只差重启 App。**
 
 ```powershell
 # 换法照 .tmp/switch-profiles-034.mjs（改两个 key + pnpm-workspace.yaml 的 overrides + 备份后缀）
-#    desktop 与 remedy-live 的 package.json: dsh-remedy -> file:.tmp/pack17/dsh-remedy-0.3.5.tgz
+#    desktop 与 remedy-live 的 package.json: dsh-remedy -> file:.tmp/pack17/dsh-remedy-0.3.5.tgz  【已执行】
 #    pnpm-workspace.yaml overrides: dsh-remedy-core -> file:.tmp/pack17/dsh-remedy-core-0.3.5.tgz
 # 然后 pnpm install --no-frozen-lockfile，再重启 DeepSeek Harness 才加载新版本。
 # 直接 dsh plugin --profile desktop add 会 ETARGET（core 必须一起 add，或改文件）
@@ -679,12 +680,12 @@ npm whoami          # 必须打印用户名；输出 E401 就先解决登录，�
 
 ## 明确边界
 
-- 桌面 profile 与 `remedy-live` profile 现在都指向 **`.tmp/pack16/dsh-remedy-0.3.4.tgz`**（直改
-  `package.json` + `pnpm-workspace.yaml` 的 `overrides`），换装脚本是 `.tmp/switch-profiles-034.mjs`；
-  两个 profile 内 `verify` 都是 6/6、两包都是 0.3.4，但桌面 App 仍需重启才加载。
-  在这台机器上走 profile 换装是因为本地 tgz 可以成对替换；registry 上的两包也已都是 0.3.4，
+- 桌面 profile 与 `remedy-live` profile 现在都指向 **`.tmp/pack17/dsh-remedy-0.3.5.tgz`**（直改
+  `package.json` + `pnpm-workspace.yaml` 的 `overrides`），换装脚本是 `.tmp/switch-profiles-035.mjs`；
+  两个 profile 内 `verify` 都是 6/6、两包都是 0.3.5，但桌面 App 仍需重启才加载。
+  在这台机器上走 profile 换装是因为本地 tgz 可以成对替换；registry 上的两包也已都是 0.3.5，
   所以 `dsh plugin --profile desktop add dsh-remedy` 现在能解析到 core。
-- **npm 上 `latest` 是 0.3.4**（两包，2026-11-11 发布，空目录单装验过 6/6）。0.2.0 与 0.3.1 从未进入 registry；
+- **npm 上 `latest` 是 0.3.5**（两包，2026-11-11 发布，空目录单装验过 6/6）。0.2.0 与 0.3.1 从未进入 registry；
   0.3.0 的 plugin 到 registry 时带着 `workspace:*`，装不上，也不能撤回（超过 24 小时）。
   发布账号是 `auth-and-writes`：每次写入都要现码，脚本会先跑 `npm whoami`；
   `npm profile get tfa` 在 2026-11-11 回 `E403`（端点权限），preflight 不依赖它。

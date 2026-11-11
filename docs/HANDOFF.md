@@ -639,11 +639,12 @@ npm whoami          # 必须打印用户名；输出 E401 就先解决登录，�
 
 ## 明确边界
 
-- 桌面 profile 与 `remedy-live` profile 现在都指向 **`.tmp/pack14/dsh-remedy-0.3.3.tgz`**（直改
-  `package.json` + `pnpm-workspace.yaml` 的 `overrides`），换装脚本是 `.tmp/switch-profiles-033.mjs`；
-  两个 profile 内 `verify` 都是 6/6，但桌面 App 仍需重启才加载。0.3.4 尚未装进 profile。
-  `dsh plugin --profile desktop add` 单独加 plugin 会 `ERR_PNPM_NO_MATCHING_VERSION`（未发布的 core 拉不到）。
-- **npm 上 `latest` 是 0.3.3**（两包）；0.3.4 已准备但未发布。0.2.0 与 0.3.1 从未进入 registry；
+- 桌面 profile 与 `remedy-live` profile 现在都指向 **`.tmp/pack16/dsh-remedy-0.3.4.tgz`**（直改
+  `package.json` + `pnpm-workspace.yaml` 的 `overrides`），换装脚本是 `.tmp/switch-profiles-034.mjs`；
+  两个 profile 内 `verify` 都是 6/6、两包都是 0.3.4，但桌面 App 仍需重启才加载。
+  在这台机器上走 profile 换装是因为本地 tgz 可以成对替换；registry 上的两包也已都是 0.3.4，
+  所以 `dsh plugin --profile desktop add dsh-remedy` 现在能解析到 core。
+- **npm 上 `latest` 是 0.3.4**（两包，2026-11-11 发布，空目录单装验过 6/6）。0.2.0 与 0.3.1 从未进入 registry；
   0.3.0 的 plugin 到 registry 时带着 `workspace:*`，装不上，也不能撤回（超过 24 小时）。
   发布账号是 `auth-and-writes`：每次写入都要现码，脚本会先跑 `npm whoami`；
   `npm profile get tfa` 在 2026-11-11 回 `E403`（端点权限），preflight 不依赖它。

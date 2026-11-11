@@ -104,6 +104,16 @@ export function cmdScan(args: Args): number {
     process.stdout.write(
       `attempts=${report.attempts} fused_calls=${report.fused_calls} fusion_failures=${report.fusion_failures} repairable=${report.repairable_failures} unreadable_lines=${report.unreadable_lines}\n`,
     )
+    // P-0006: the census is the fault map. A report that only names the one
+    // class this plugin can repair describes one road and calls it a map.
+    const t = report.turns
+    process.stdout.write(
+      `turns=${t.completed + t.max_tokens + t.aborted + t.error} completed=${t.completed} max_tokens=${t.max_tokens} aborted=${t.aborted} error=${t.error}\n`,
+    )
+    const codes = Object.entries(report.error_codes)
+    if (codes.length > 0) {
+      process.stdout.write(`  error codes: ${codes.map(([code, count]) => `${code}=${count}`).join(' ')}\n`)
+    }
     if (report.before_since > 0) process.stdout.write(`before_since=${report.before_since}\n`)
     if (report.window.oldest !== null && report.window.newest !== null) {
       process.stdout.write(

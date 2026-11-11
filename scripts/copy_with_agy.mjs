@@ -9,6 +9,10 @@
  * The raw output, the exact request hash, the facts hash and the output hash are
  * recorded in `docs/copy/manifest.json`, so a reviewer can prove which model
  * wrote which bytes. `--split` expects `<<<FILE: path>>>` markers.
+ *
+ * The request outgrew the Windows command line once the fact pack grew, so the
+ * transport rules live in `lib/agy-channel.mjs` and are tested without a model
+ * call. See the P-0007 record for the two failures that produced them.
  */
 
 import { spawnSync } from 'node:child_process'
@@ -16,6 +20,15 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { createHash } from 'node:crypto'
 import { abs, isoStamp } from './lib/kit.mjs'
+import {
+  AGY_TIMEOUT_MS,
+  buildRequest,
+  cleanOutput,
+  describeSpawnFailure,
+  responseOf,
+  stdinMessage,
+  transportFor,
+} from './lib/agy-channel.mjs'
 
 const argv = process.argv.slice(2)
 const flag = (name, fallback) => {
@@ -41,54 +54,45 @@ const patternsPath = 'docs/copy/facts/oss-patterns.md'
 const facts = readFileSync(abs(factsPath), 'utf8')
 const patterns = readFileSync(abs(patternsPath), 'utf8')
 const brief = readFileSync(abs(promptPath), 'utf8')
-
-const request = `${brief}
-
----
-
-# FACTS (the only source of numbers and claims)
-
-${facts}
-
----
-
-# STRUCTURE NOTES FROM HIGH-STAR REPOSITORIES
-
-${patterns}
-
----
-
-# OUTPUT CONTRACT
-
-- Output only the file content. No commentary, no preamble, no code fence around
-  the whole file.
-- Never invent a number, a benchmark, a user count, a date or a URL that is not in
-  FACTS.
-- If a fact is unknown, say it is unknown instead of filling it in.
-- No emoji, no exclamation marks, no marketing adjectives.
-`
+const request = buildRequest(brief, facts, patterns)
 
 const agyPath = existsSync(join(process.env.LOCALAPPDATA ?? '', 'agy', 'bin', 'agy.exe'))
   ? join(process.env.LOCALAPPDATA, 'agy', 'bin', 'agy.exe')
   : 'agy'
 
-const started = new Date().toISOString()
-const run = spawnSync(agyPath, ['--model', model, '--print', request], {
+const SPAWN_OPTIONS = {
   encoding: 'buffer',
   maxBuffer: 32 * 1024 * 1024,
-  timeout: 600000,
+  timeout: AGY_TIMEOUT_MS,
   env: { ...process.env, NO_COLOR: '1' },
-})
+}
+
+const transport = transportFor(request)
+const started = new Date().toISOString()
+const run = transport === 'argv'
+  ? spawnSync(agyPath, ['--model', model, '--print', request], SPAWN_OPTIONS)
+  : spawnSync(
+      agyPath,
+      ['--model', model, '--input-format', 'stream-json', '--output-format', 'stream-json'],
+      { ...SPAWN_OPTIONS, input: Buffer.from(stdinMessage(request), 'utf8') },
+    )
+
+if (run.error) {
+  process.stderr.write(`copy_with_agy: could not start agy (${run.error.code ?? 'unknown'}): ${describeSpawnFailure(run.error)}\n`)
+  process.exit(1)
+}
 if (run.status !== 0) {
   process.stderr.write(`copy_with_agy: agy exited ${run.status}\n${run.stderr?.toString('utf8') ?? ''}\n`)
   process.exit(1)
 }
 
-const stdout = run.stdout?.toString('utf8') ?? ''
-const cleaned = stdout
-  .replace(/^\s*```[a-zA-Z]*\s*\n/, '')
-  .replace(/\n```\s*$/, '')
-  .trim()
+const transcript = run.stdout?.toString('utf8') ?? ''
+const stdout = transport === 'stdin' ? responseOf(transcript) ?? '' : transcript
+if (transport === 'stdin' && stdout === '') {
+  process.stderr.write('copy_with_agy: agy answered without a result event\n')
+  process.exit(1)
+}
+const cleaned = cleanOutput(stdout)
 if (cleaned === '') {
   process.stderr.write('copy_with_agy: empty output\n')
   process.exit(1)
@@ -151,4 +155,4 @@ for (const part of parts) {
 
 manifest.updated_at = isoStamp(new Date().toISOString())
 writeFileSync(abs(manifestPath), `${JSON.stringify(manifest, null, 2)}\n`, 'utf8')
-process.stdout.write(`RECORDED ${manifestPath} · ${parts.length} file(s) · model ${model}\n`)
+process.stdout.write(`RECORDED ${manifestPath} · ${parts.length} file(s) · model ${model} · via ${transport}\n`)

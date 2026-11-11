@@ -31,11 +31,13 @@ Rules:
   real two-call fusion, and P-0003 has a run whose journal wrote a non-zero
   `refused`. Name P-0005 as the worked example of a `tested` patch on the resident
   seam: eleven negative controls and one measured fixture, no host run yet. Name
-  P-0004 as the worked example of a `tested` patch that is honest about a different
-  reason: it moves an offline reader and a redaction rule, so no journal can ever
-  attest it, and its evidence is end-to-end tests plus a measured scan of one
-  machine. Contrast all four: a `drafted` entry is only a written symptom, and a
-  `tested` entry is evidence without a host run.
+  P-0004, P-0006 and P-0007 as the worked examples of a `tested` patch that is
+  honest about a different reason: P-0004 and P-0006 move the offline session
+  reader, so no journal can ever attest them, and P-0007 moves the build-side
+  copy channel that writes the outward files, so a broken channel cannot attest
+  itself. Their evidence is end-to-end or unit tests plus a measured scan of one
+  machine. Contrast all six: a `drafted` entry is only a written
+  symptom, and a `tested` entry is evidence without a host run.
 - "Pull requests": one project per commit; describe what changed, why, the
   failing test, and the evidence path; do not mix a behavior change with a
   docs-only change.
@@ -44,8 +46,12 @@ Rules:
   dependency.
 - "Evidence rules": `data/results` is written by scripts, not by hand; every
   artifact has `produced_by`, `generated_at`, `schema_version` and a `.sha256`;
-  `verified` requires a `data/results/live-*` file.
-- "Scope": one seam per patch; no `app.asar` patching; no retry-as-fix.
+  `verified` requires a `data/results/live-*` file. A patch that only moves an
+  offline reader can never reach `verified`, so say `tested` and give the
+  measured scan instead of inventing a host run.
+- "Scope": one seam per patch; no `app.asar` patching; no retry-as-fix; a
+  truncation is counted and never repaired, because a cut tail is missing bytes
+  rather than a missing quote.
 - No invented contact email or chat server; point to GitHub issues and security
   advisories.
 - Keep it practical and under 140 lines.

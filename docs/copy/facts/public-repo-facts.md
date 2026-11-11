@@ -8,11 +8,11 @@
 - Name: dsh-remedy
 - Tagline (internal, not final copy): a resident repair layer for DeepSeek Harness.
 - Package names: `dsh-remedy` (plugin), `dsh-remedy-core` (engine).
-- Version: 0.3.3 (plugin), 0.3.3 (core)
+- Version: 0.3.4 (plugin), 0.3.4 (core). Both are published and both are `latest`.
 - License: MIT
 - Repository: https://github.com/jjjjjjjjnnjnn/dsh-remedy (public, created 2026-11-09)
-- npm: `0.3.3` is published and is `latest` for both `dsh-remedy` and `dsh-remedy-core`; its packed manifest pins `"dsh-remedy-core": "0.3.3"`, so installing the plugin alone resolves the core. `dsh-remedy@0.3.0` reached the registry with a literal `workspace:*` dependency because npm published the raw workspace manifest, so installing that version fails with `EUNSUPPORTEDPROTOCOL`; 0.3.2 republished the same code from a pnpm-packed tarball with the manifest fix. 0.3.1 was built with the same fix but never reached the registry. Publishing needs a fresh one-time password every time: the account is `auth-and-writes`, and a write without one is answered `EOTP`.
-- The 0.3.3 publish: core first (`HTTP 202` SET on `PUT https://registry.npmjs.org/dsh-remedy-core`), then the plugin (`HTTP 202` SET on `PUT https://registry.npmjs.org/dsh-remedy`); the metadata read for the plugin answered `404` for a few seconds after its own `202`, which is the documented replica lag and not a failed publish. Both packages now answer `latest = 0.3.3`.
+- npm: `0.3.4` is published and is `latest` for both `dsh-remedy` and `dsh-remedy-core`; its packed manifest pins `"dsh-remedy-core": "0.3.4"`, so installing the plugin alone resolves the core. `dsh-remedy@0.3.0` reached the registry with a literal `workspace:*` dependency because npm published the raw workspace manifest, so installing that version fails with `EUNSUPPORTEDPROTOCOL`; 0.3.2 republished the same code from a pnpm-packed tarball with the manifest fix. 0.3.1 was built with the same fix but never reached the registry. Publishing needs a fresh one-time password every time: the account is `auth-and-writes`, and a write without one is answered `EOTP`.
+- The 0.3.3 publish: core first (`HTTP 202` SET on `PUT https://registry.npmjs.org/dsh-remedy-core`), then the plugin (`HTTP 202` SET on `PUT https://registry.npmjs.org/dsh-remedy`); the metadata read for the plugin answered `404` for a few seconds after its own `202`, which is the documented replica lag and not a failed publish. Both packages answer `latest = 0.3.4`. Publishing 0.3.4 printed `both packages published`, and the registry confirmed `0.3.4` on both names within a minute; `npm view` kept answering `0.3.3` after the publish had succeeded, which is the same replica lag this file already records.
 - Publishing needs the account authentication mode in view: `npm whoami` proves the credential, `npm profile get tfa` reports `auth-and-writes`, and a write without a fresh code is answered `EOTP`. A logged-out shell instead answers the write with `404`, which is why the publish script asks `npm whoami` before it packs.
 - Independent project; not affiliated with DeepSeek.
 - Language of code and CLI: English. Chinese README is a translation.
@@ -105,6 +105,26 @@
 - A measured redaction pass rewrote 3 of 17 recorded artifacts and left every other one clean; `produced_by` and `generated_at` are never restated by a redaction fix.
 - Still unmeasured: the same repair seen by both a journal and a session file is not deduplicated, and a home path without a drive letter is not matched.
 
+## The turn census (P-0006)
+
+- Status: `tested` — an offline reader, so no resident journal can attest it.
+- What it fixes: `scan` counted only the turns that died on `MALFORMED_RESPONSE` (44 here) and dropped every other ending, so the largest failure classes on this machine were invisible in the one report meant to map them.
+- The census counts every `turn/end` by its top-level `reason.kind`: completed, `max_tokens`, aborted, error. On this machine that is 92 completed, 88 `max_tokens`, 99 error and 8 aborted out of 287 turns, so the 88 truncated turns are 31 percent of all turns.
+- Every error turn also names its `reason.error.code`: `MALFORMED_RESPONSE` 44, `UNSUPPORTED_REASONING_EFFORT` 36, `SERVER` 16, `UNKNOWN` 1, `MISSING_CREDENTIAL` 1, `INVALID_REQUEST` 1.
+- A census is reported, never promoted into a finding: the exit code still turns on `fused_calls` and `fusion_failures`, so the truncated turns do not make every scripted scan fail. `fusion_failures` keeps its exact meaning.
+- Truncation stays unfixed on purpose: a cut tail is missing bytes rather than a missing quote, and no truncated turn could be tied to a buffered call, so there is nothing honest to repair.
+- A measured run over this machine: 78 files, 375 attempts, 38 fused calls, 44 fusion failures, 39 repairable, 0 unreadable lines.
+- Still unmeasured: a `reason.kind` the census does not recognise is left uncounted rather than given an invented bucket.
+
+## The copy channel (P-0007)
+
+- Status: `tested` — the build side, so no resident journal attests it and no outward file was edited by hand to prove it.
+- What it fixes: the two longest outward files could not be regenerated at all, and every attempt printed the same six words, `copy_with_agy: agy exited null`, with no status, no reason and no difference between a model that refused and a process that never started.
+- Two faults printed that one line: the request is the brief plus the whole fact pack plus the pattern notes, and it measured 35509 characters for the changelog and 33530 for the readme against the 32767 character cap on one Windows command line, so the spawn failed with `ENAMETOOLONG` before agy started; and a generation longer than the 600000 ms spawn timeout was killed, which also leaves a null status.
+- What it does now: below 30000 characters the prompt still travels on argv exactly as before; above it the prompt travels over stdin as one `stream-json` user event and the answer is read from the final `result` event; a failed spawn is named by its own code; the timeout is half an hour.
+- A refused generation is not retried across transports and the fact pack is not shortened to fit the cap: the facts are the point, and the operator re-runs a failure by hand after reading a named cause.
+- Measured after the change: `README.md` regenerated at 10872 bytes and `CHANGELOG.md` at 6851 bytes, both via stdin, and `node scripts/gate.mjs` printed `ALL GREEN · 5 gates` with the copy gate verifying both manifests.
+
 ## Live verification
 
 - Profile: `remedy-live`, a headless DSH profile; the desktop provider block was copied into it.
@@ -133,7 +153,7 @@
 
 ## Tests and gates
 
-- Tests: 169 pass, 0 fail.
+- Tests: 189 pass, 0 fail.
 - Gates: 5 (`ssot`, `registry`, `namespace`, `step-review`, `copy`).
 - Negative controls (`--mutate`): 5 of 5 caught.
 - Publishing: `scripts/publish_packages.mjs` publishes the two package
@@ -169,9 +189,10 @@
 - The package still ships `dist/*.js`, `dist/*.d.ts`, `fixtures/`, `cordis.patch.yml`, `README.md`, `LICENSE`; no sourcemaps.
 - Dropping sourcemaps removes 41926 bytes of the unpacked payload (measured in `docs/research/stability-audit-2026-11-10.md`).
 - Shipped 0.3.2 tarball: 24689 bytes compressed, 25 entries, 81904 bytes unpacked. Breakdown: 56344 bytes of `dist/*.js`, 16701 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/` (6 fixtures plus `checksums.json`), 5276 bytes of package-root files.
+- The published 0.3.4 plugin tarball is 29448 bytes compressed, 29 files, 97944 bytes unpacked (67908 bytes of `dist/*.js`, 21177 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, 5276 bytes of package-root files), shasum `5f20282efe981cf9d1039e4273853b37702efc2f`. The published 0.3.4 core tarball is 18202 bytes compressed, 19 files, 59864 bytes unpacked (39573 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`), shasum `38400db9779cea1175864977b888a407d56f9f99`; it grew by one patch record, not by new modules.
 - The published 0.3.3 plugin tarball is 28378 bytes compressed, 29 files, 94769 bytes unpacked (65521 bytes of `dist/*.js`, 20389 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, 5276 bytes of package-root files), shasum `46ad57ea718be732133979c4b0449f7221ee69c7`. The published 0.3.3 core tarball is 16776 bytes compressed, 19 files, 55684 bytes unpacked (35393 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`), shasum `6fbbeb060505cb80c7f454dbab5ea74acd463fdd`.
 - The 0.3.2 core tarball is 15864 bytes compressed, 19 entries, 52828 bytes unpacked (32537 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`).
-- Byte budget, restated honestly: `dist/*.js` reached 55815 bytes after P-0005, over the 53000 byte ceiling. 0.3.2 splits the seam into `stream-types.ts` and `failure-text.ts`, which cuts `repair-stream.js` from 28955 to 27925 bytes but grows the plugin total to 56344, because import and export scaffolding is not free. P-0004 then took the total to 64539 and split the CLI the same way: `cli.ts` fell from 16640 to 8503 bytes while `cli-args.ts` and `scan-command.ts` added 9119, so the total rose again to 65521. Both splits are structural fixes, not byte fixes: the ceiling exists to stop one file from absorbing every patch. The working ceiling is 28000 bytes for the emitted `repair-stream.js`, 10000 bytes for the emitted `cli.js`, and 68000 bytes for the plugin total, and a patch that crosses a per-file number splits that file again.
+- Byte budget, restated honestly: `dist/*.js` reached 55815 bytes after P-0005, over the 53000 byte ceiling. 0.3.2 splits the seam into `stream-types.ts` and `failure-text.ts`, which cuts `repair-stream.js` from 28955 to 27925 bytes but grows the plugin total to 56344, because import and export scaffolding is not free. P-0004 then took the total to 64539 and split the CLI the same way: `cli.ts` fell from 16640 to 8503 bytes while `cli-args.ts` and `scan-command.ts` added 9119, so the total rose again to 65521. Both splits are structural fixes, not byte fixes: the ceiling exists to stop one file from absorbing every patch. P-0006 then took the total to 67908 bytes, 92 bytes under the ceiling, after a first attempt that moved the census into a separate module and overshot to 70389 bytes: the scaffolding of a ninth file costs more than the code it holds, so the module was deleted and the helpers were inlined. The working ceiling is 28000 bytes for the emitted `repair-stream.js`, 10000 bytes for the emitted `cli.js`, and 68000 bytes for the plugin total, and a patch that crosses a per-file number splits that file again.
 - The package still ships `dist/*.js`, `dist/*.d.ts`, `fixtures/`, `cordis.patch.yml`, `README.md`, `LICENSE`; no sourcemaps.
 - The 0.3.3 plugin tarball is 29 files and the 0.3.3 core tarball is 19 files (0.3.0 shipped 20 and 17). The 0.3.1 core tarball is 11585 bytes compressed, 17 entries, 38582 bytes unpacked.
 
@@ -222,4 +243,4 @@
 
 ## Numbers allowed in copy
 
-0 1 2 3 4 5 6 7 8 9 10 11 13 17 19 20 22 25 27 30 37 38 39 40 43 45 48 60 77 84 93 121 126 131 147 159 169 276 2694 3583 4427 5276 9118 9401 10000 11585 13797 15864 16701 16776 16994 17423 17484 19114 19569 20389 22418 24689 26345 27925 28000 28378 32537 35393 38582 41926 52247 52828 53000 55684 56344 58000 63170 64539 64933 68000 74014 81904 94769 98424 0.1.0 0.1.1 0.2.0 0.3.0 0.3.1 0.3.2 0.3.3
+0 1 0001 2 0002 3 0003 4 0004 0005 5 0006 6 0007 08 8 09 10 11 12 13 15 16 17 18 19 20 21 22 25 27 28 29 30 31 35 36 37 38 39 40 43 44 48 56 77 78 84 88 92 93 99 120 189 256 272 276 287 375 401 956 2026 2694 3583 4427 5276 6851 8503 9119 10000 10872 11585 13797 15864 16640 16701 16776 16994 18202 19114 19569 20389 21177 22418 24689 26345 27925 28000 28378 28955 29448 30000 32537 32767 33530 35393 35509 38582 39573 41926 52247 52828 53000 55684 55815 56344 59864 63170 64539 64933 65521 67908 68000 70389 74014 81904 94769 97944 98424 600000 0.3.4 0.3.2 0.3.1 0.3.3 0.2.0 0.3.0 12.15.0 0.2.2 0.1.1

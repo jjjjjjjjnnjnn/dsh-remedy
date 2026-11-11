@@ -168,6 +168,61 @@ export const PATCHES: readonly PatchRecord[] = [
       'matches a home path only when the directory starts with a drive letter; another workspace spelling is unmeasured',
     ],
   },
+  {
+    id: 'P-0006',
+    title: 'A scan that counts only the repairable turns is not a fault map',
+    symptom:
+      '`dsh-remedy scan` reported 44 fusion failures out of 287 finished turns on this host: the 88 turns that died on `max-tokens` (31% of all turns) and the 36 that died on `UNSUPPORTED_REASONING_EFFORT` were not counted anywhere, so the biggest failure classes were invisible in the one report meant to map them',
+    rootCause:
+      'packages/plugin/src/session-scan.ts read `data.reason` on `turn/end` and returned early twice, on `kind !== "error"` and on `code !== "MALFORMED_RESPONSE"`. That filter is correct for "can this layer repair it?" and wrong for "how did the turn end?": the report carried the filter into the map.',
+    surface: 'cli',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'docs/patches/P-0006-turn-census.md',
+      'tests/unit/session-scan.test.ts',
+      'tests/e2e/cli.test.ts',
+    ],
+    guards: [
+      'tests/unit/session-scan.test.ts',
+      'tests/e2e/cli.test.ts',
+      'scripts/gate_registry.mjs',
+    ],
+    limits: [
+      'a census is reported, never promoted into a finding: the scan exit code still turns on fused_calls and fusion_failures, so 88 truncated turns do not make every scripted scan fail',
+      'truncated turns stay unfixed: a cut tail is missing bytes, not a missing quote, and 0 of 88 truncated turns could be tied to a buffered call',
+      '`fusion_failures` keeps its exact meaning (`MALFORMED_RESPONSE` turns only), so an older artifact reads the same as it did before',
+      'an error code is counted under the name the adapter emitted; the report is redacted before it leaves the CLI, and the code vocabulary is a closed set of short identifiers',
+      'a `reason.kind` this census does not know is left uncounted rather than given a bucket of its own',
+    ],
+  },
+  {
+    id: 'P-0007',
+    title: 'A copy channel that reports "exited null" cannot be repaired',
+    symptom:
+      'the two longest outward files, README.md and CHANGELOG.md, could not be regenerated at all: every attempt printed `copy_with_agy: agy exited null` and nothing else, so the same six words had to be retried from scratch with no way to learn what went wrong between attempts',
+    rootCause:
+      'scripts/copy_with_agy.mjs put the whole request on one Windows command line. Once the fact pack grew the request measured 35509 characters for changelog and 33530 for readme against the 32767 character cap, so spawnSync failed before agy ever started: run.error.code was ENAMETOOLONG and run.status was null. A generation that instead outlived the 600000 ms spawn timeout was killed the same way, with the same null status, so two different faults printed one unreadable line',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'docs/patches/P-0007-copy-channel-transport.md',
+      'tests/unit/agy-channel.test.ts',
+      'docs/copy/manifest.json',
+    ],
+    guards: [
+      'tests/unit/agy-channel.test.ts',
+      'scripts/gate_copy.mjs',
+      'scripts/lib/agy-channel.mjs',
+    ],
+    limits: [
+      'the channel does not retry a failed generation across transports: it picks one transport from the request length and reports whatever went wrong, so the operator still re-runs a failure by hand',
+      'the timeout is raised to half an hour, not removed: an agy that hangs is still killed and still named as a timeout',
+      'a transport failure is diagnosed, not repaired — a refusal, a missing model and a missing binary each keep their own message',
+      'the fact pack is not shortened to fit the cap, so the stdin path stays the normal path and the argv path only serves the smallest briefs',
+    ],
+  },
 ]
 
 /** Look up one patch by id. */
@@ -181,7 +236,12 @@ export interface RegistryProblem {
 }
 
 const ID_PATTERN = /^P-\d{4}$/
-const SURFACES = new Set(['llm/stream', 'agent/request-error', 'cli', 'profile'])
+/**
+ * The seams a patch may name. `scripts` is the build side — the copy channel,
+ * the gates, the recorders — and it is a surface because a broken recorder
+ * silently turns "unknown" into "green".
+ */
+const SURFACES = new Set(['llm/stream', 'agent/request-error', 'cli', 'profile', 'scripts'])
 
 /**
  * Structural invariants that do not need the filesystem. The gate adds the

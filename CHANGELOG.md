@@ -5,6 +5,18 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.3.4] - 2026-11-11
+
+### Added
+- P-0006: `scan` now counts how every turn ended (`completed`, `max_tokens`, `aborted`, `error`) and names every `reason.error.code`, where before it counted only the `MALFORMED_RESPONSE` turns and dropped every other ending, so the largest failure classes were invisible in the report meant to map them. Of 287 turns, 92 completed, 88 `max_tokens`, 99 error and 8 aborted, and the error codes `MALFORMED_RESPONSE` 44, `UNSUPPORTED_REASONING_EFFORT` 36, `SERVER` 16, `UNKNOWN` 1, `MISSING_CREDENTIAL` 1, `INVALID_REQUEST` 1.
+- P-0007: the copy channel could not regenerate the two longest outward files at all and printed only `copy_with_agy: agy exited null`, because the whole request travelled on one Windows command line once the fact pack grew (35509 characters for the changelog and 33530 for the readme, against a 32767 character cap — the spawn failed with `ENAMETOOLONG` before agy started and reported a null status), and because a generation that outlived the 600000 ms spawn timeout was killed and reported the same null status. Above the cap the prompt now travels over stdin as one `stream-json` user event, the answer is read from the final `result` event, a failed spawn is reported by its own code instead of a null status, and the timeout is half an hour; this is the build-side channel and touches no seam.
+
+### Changed
+- The census was first written as a separate module, the plugin `dist` then overshot the 68000 byte ceiling at 70389 bytes, and the module was deleted and its helpers inlined so the total settled at 67908 bytes — the scaffolding of a ninth file costs more than the code it holds.
+
+### Notes
+- A census is reported and never promoted into a finding (the exit code still turns on `fused_calls` and `fusion_failures`); P-0006 is `tested` and not `verified` because it moves an offline reader; truncated turns stay unfixed on purpose; and this release is published and is the registry `latest` for both packages. `0.3.3` becomes the previous release and must be described as superseded.
+
 ## [0.3.3] - 2026-11-10
 
 ### Added

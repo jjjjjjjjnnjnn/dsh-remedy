@@ -131,3 +131,73 @@ test('an empty batch is a zero report, not a missing one', () => {
   assert.equal(batch.rows.length, 0)
   assert.deepEqual(batch.report.window, { oldest: null, newest: null })
 })
+
+// ---- P-0006: the scan is a fault map, so it must count every way a turn ends.
+// The repairable class is one road; a map with one road is not a map.
+
+/** One `turn/end` line with the given reason, so each test states its shape. */
+function turnEnd(seq: number, time: number, reason: Record<string, unknown>): string {
+  return JSON.stringify({ type: 'turn/end', seq, time, data: { turn: 1, reason } })
+}
+
+test('a scan counts every way a turn can end, not only the repairable one', () => {
+  const text = [
+    turnEnd(1, 1_760_000_000_000, { kind: 'completed' }),
+    turnEnd(2, 1_760_000_000_100, { kind: 'max-tokens' }),
+    turnEnd(3, 1_760_000_000_200, { kind: 'aborted', reason: { kind: 'user' } }),
+    turnEnd(4, 1_760_000_000_300, { kind: 'error', error: { code: 'SERVER', message: '503' } }),
+  ].join('\n')
+  const report = scanSessionText(text, 'turns.jsonl')
+  assert.deepEqual(report.turns, { completed: 1, max_tokens: 1, aborted: 1, error: 1 })
+  // Only MALFORMED_RESPONSE is repairable, so only it moves the failure count.
+  assert.equal(report.fusion_failures, 0)
+})
+
+test('an error code that cannot be repaired is counted and named', () => {
+  const text = [
+    turnEnd(1, 1_760_000_000_000, {
+      kind: 'error',
+      error: { code: 'UNSUPPORTED_REASONING_EFFORT', message: 'model does not support reasoning effort "xhigh"' },
+    }),
+    turnEnd(2, 1_760_000_000_100, { kind: 'error', error: { code: 'SERVER', message: '503' } }),
+  ].join('\n')
+  const report = scanSessionText(text, 'codes.jsonl')
+  assert.deepEqual(report.error_codes, { SERVER: 1, UNSUPPORTED_REASONING_EFFORT: 1 })
+  assert.equal(report.fusion_failures, 0, 'a non-repairable error is never a fusion failure')
+  assert.equal(report.turns.error, 2)
+})
+
+test('a malformed turn is both a fusion failure and a census error', () => {
+  const report = scanSessionText(lines.join('\n'), 'mixed.jsonl')
+  assert.equal(report.fusion_failures, 1)
+  assert.deepEqual(report.error_codes, { MALFORMED_RESPONSE: 1 })
+  assert.equal(report.turns.error, 1)
+})
+
+test('the census is summed across files and each row keeps its own', () => {
+  const one = turnEnd(1, 1_760_000_000_000, { kind: 'max-tokens' })
+  const two = turnEnd(1, 1_760_000_000_500, { kind: 'completed' })
+  const batch = scanSessions(
+    [
+      { label: 'a/session.jsonl', text: one },
+      { label: 'b/session.jsonl', text: two },
+    ],
+    'sessions',
+  )
+  assert.deepEqual(batch.report.turns, { completed: 1, max_tokens: 1, aborted: 0, error: 0 })
+  assert.deepEqual(batch.rows[0]?.turns, { completed: 0, max_tokens: 1, aborted: 0, error: 0 })
+  assert.deepEqual(batch.rows[1]?.turns, { completed: 1, max_tokens: 0, aborted: 0, error: 0 })
+  assert.deepEqual(batch.report.error_codes, {})
+})
+
+test('a windowed scan counts only the turns it looked at', () => {
+  const text = [
+    turnEnd(1, 1_700_000_000_000, { kind: 'max-tokens' }),
+    turnEnd(2, 1_760_000_000_000, { kind: 'completed' }),
+  ].join('\n')
+  const report = scanSessionText(text, 'window.jsonl', { since: 1_750_000_000_000 })
+  // The dropped event is reported, not counted: before_since says how much was
+  // left outside, and the census only speaks for what was read.
+  assert.equal(report.before_since, 1)
+  assert.deepEqual(report.turns, { completed: 1, max_tokens: 0, aborted: 0, error: 0 })
+})

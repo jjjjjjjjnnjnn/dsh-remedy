@@ -1,6 +1,6 @@
 {
   "name": "dsh-remedy",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "DeepSeek Harness plugin that intercepts stream errors caused by fused tool calls, splits glued top-level JSON objects, and re-throws unprovable buffers.",
   "type": "module",
   "bin": {

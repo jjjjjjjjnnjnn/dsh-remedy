@@ -1,10 +1,12 @@
 /**
  * Offline scanner for DSH session logs.
  *
- * It answers two questions with the same engine the plugin uses:
+ * It answers three questions with the same engine the plugin uses:
  *  - how many tool calls were fused in this session (`assistant/attempt` deltas)?
  *  - how many turns died on `MALFORMED_RESPONSE`, and how many of those the
  *    patch would have repaired (`turn/end` failures)?
+ *  - how did *every* turn end, including the classes this layer cannot repair
+ *    (P-0006: a map with one road is not a map)?
  *
  * The scanner never writes and never trusts a log line it cannot parse: an
  * unreadable line is counted, not skipped silently.
@@ -22,6 +24,39 @@ export interface ScanExample {
   readonly excerpt: string
 }
 
+/**
+ * How every `turn/end` ended (P-0006), keyed by `reason.kind` with its hyphen
+ * turned into an underscore (`max-tokens` -> `max_tokens`).
+ */
+export interface ScanTurnCensus {
+  readonly completed: number
+  readonly max_tokens: number
+  readonly aborted: number
+  readonly error: number
+}
+
+/** One zeroed census; the counter names are also the accepted `reason.kind`s. */
+const emptyCensus = (): ScanTurnCensus => ({ completed: 0, max_tokens: 0, aborted: 0, error: 0 })
+
+/** Insertion order is not a report: every count map leaves sorted by name. */
+const sortedCounts = (o: Record<string, number>): Record<string, number> =>
+  Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)))
+
+/** Add two count maps together, sorting the result for the same reason. */
+const mergeCounts = (a: Readonly<Record<string, number>>, b: Readonly<Record<string, number>>): Record<string, number> => {
+  const out: Record<string, number> = { ...a }
+  for (const [key, count] of Object.entries(b)) out[key] = (out[key] ?? 0) + count
+  return sortedCounts(out)
+}
+
+/** The smaller of two nullable instants; a missing side never wins. */
+const lower = (a: number | null, b: number | null): number | null =>
+  a === null ? b : b === null ? a : Math.min(a, b)
+
+/** The larger of two nullable instants; a missing side never wins. */
+const higher = (a: number | null, b: number | null): number | null =>
+  a === null ? b : b === null ? a : Math.max(a, b)
+
 export interface ScanReport {
   readonly schema_version: 1
   readonly produced_by: string
@@ -35,6 +70,10 @@ export interface ScanReport {
   readonly unreadable_lines: number
   readonly before_since: number
   readonly window: ScanWindow
+  /** Every `turn/end`, by `reason.kind` (P-0006). */
+  readonly turns: ScanTurnCensus
+  /** `reason.error.code` for error turns (P-0006), redaction-safe names only. */
+  readonly error_codes: Readonly<Record<string, number>>
   readonly by_tool: Readonly<Record<string, number>>
   readonly examples: readonly ScanExample[]
   readonly redaction: RedactionSummary
@@ -103,6 +142,8 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
   const examples: ScanExample[] = []
   const redactionKinds = new Set<string>()
   let redactions = 0
+  let turns: ScanTurnCensus = emptyCensus()
+  const errorCodes: Record<string, number> = {}
 
   const addExample = (example: ScanExample): void => {
     if (examples.length >= MAX_EXAMPLES) return
@@ -203,10 +244,22 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
 
     if (type === 'turn/end' && data !== null) {
       const reason = asRecord(data.reason)
-      const error = asRecord(reason?.error)
-      if (reason === null || error === null) continue
-      if (asString(reason.kind) !== 'error') continue
-      if (asString(error.code) !== 'MALFORMED_RESPONSE') continue
+      if (reason === null) continue
+      // P-0006: count every ending first; the filter answers "can we repair
+      // this?", the census answers "how did it end?", and a map needs both.
+      const kind = asString(reason.kind)
+      const slot = kind === 'max-tokens' ? 'max_tokens' : kind
+      if (slot === 'completed' || slot === 'max_tokens' || slot === 'aborted' || slot === 'error') {
+        turns = { ...turns, [slot]: turns[slot] + 1 }
+      }
+      if (kind !== 'error') continue
+      const error = asRecord(reason.error)
+      if (error === null) continue
+      const rawCode = asString(error.code)
+      // A code is a closed-vocabulary identifier and `redactReport` sanitises
+      // the whole report, so it is counted by name rather than per-line.
+      if (rawCode !== '') errorCodes[rawCode] = (errorCodes[rawCode] ?? 0) + 1
+      if (rawCode !== 'MALFORMED_RESPONSE') continue
       fusionFailures += 1
       const message = asString(error.message)
       const marker = /Received arguments:\r?\n/.exec(message)
@@ -241,7 +294,9 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
     unreadable_lines: unreadable,
     before_since: beforeSince,
     window: { oldest, newest },
-    by_tool: Object.fromEntries(Object.entries(byTool).sort(([a], [b]) => a.localeCompare(b))),
+    turns,
+    error_codes: sortedCounts(errorCodes),
+    by_tool: sortedCounts(byTool),
     examples,
     redaction: { replacements: redactions, kinds: [...redactionKinds].sort() },
   }
@@ -249,22 +304,6 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
 
 /** Add one report's numbers onto an accumulator (the per-file loop). */
 function addReport(into: ScanReport, from: ScanReport, source: string): ScanReport {
-  const merged: Record<string, number> = { ...into.by_tool }
-  for (const [tool, count] of Object.entries(from.by_tool)) {
-    merged[tool] = (merged[tool] ?? 0) + count
-  }
-  const oldest =
-    into.window.oldest === null
-      ? from.window.oldest
-      : from.window.oldest === null
-        ? into.window.oldest
-        : Math.min(into.window.oldest, from.window.oldest)
-  const newest =
-    into.window.newest === null
-      ? from.window.newest
-      : from.window.newest === null
-        ? into.window.newest
-        : Math.max(into.window.newest, from.window.newest)
   return {
     ...into,
     source,
@@ -275,8 +314,15 @@ function addReport(into: ScanReport, from: ScanReport, source: string): ScanRepo
     repairable_failures: into.repairable_failures + from.repairable_failures,
     unreadable_lines: into.unreadable_lines + from.unreadable_lines,
     before_since: into.before_since + from.before_since,
-    window: { oldest, newest },
-    by_tool: Object.fromEntries(Object.entries(merged).sort(([a], [b]) => a.localeCompare(b))),
+    window: { oldest: lower(into.window.oldest, from.window.oldest), newest: higher(into.window.newest, from.window.newest) },
+    turns: {
+      completed: into.turns.completed + from.turns.completed,
+      max_tokens: into.turns.max_tokens + from.turns.max_tokens,
+      aborted: into.turns.aborted + from.turns.aborted,
+      error: into.turns.error + from.turns.error,
+    },
+    error_codes: mergeCounts(into.error_codes, from.error_codes),
+    by_tool: mergeCounts(into.by_tool, from.by_tool),
     examples: [...into.examples, ...from.examples].slice(0, MAX_EXAMPLES),
     redaction: {
       replacements: into.redaction.replacements + from.redaction.replacements,
@@ -295,6 +341,8 @@ export interface ScanRow {
   readonly repairable_failures: number
   readonly unreadable_lines: number
   readonly before_since: number
+  /** P-0006: this file's own turn census, so the total stays auditable. */
+  readonly turns: ScanTurnCensus
 }
 
 export interface ScanBatch {
@@ -333,6 +381,8 @@ export function scanSessions(
     unreadable_lines: 0,
     before_since: 0,
     window: { oldest: null, newest: null },
+    turns: emptyCensus(),
+    error_codes: {},
     by_tool: {},
     examples: [],
     redaction: { replacements: 0, kinds: [] },
@@ -352,6 +402,7 @@ export function scanSessions(
       repairable_failures: one.repairable_failures,
       unreadable_lines: one.unreadable_lines,
       before_since: one.before_since,
+      turns: one.turns,
     })
     report = addReport(report, one, empty.source)
   }

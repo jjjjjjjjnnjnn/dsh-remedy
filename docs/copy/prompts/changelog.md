@@ -12,6 +12,11 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.3.4] - 2026-11-11
+### Added
+### Changed
+### Notes
+
 ## [0.3.3] - 2026-11-10
 ### Added
 ### Changed
@@ -47,6 +52,37 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 Rules:
 
+- Add a `0.3.4` section above `0.3.3`, with only `Added`, `Changed` and `Notes`
+  subsections. Its Added entry is P-0006: `scan` now counts how every turn ended
+  (`completed`, `max_tokens`, `aborted`, `error`) and names every
+  `reason.error.code`, where before it counted only the `MALFORMED_RESPONSE`
+  turns and dropped every other ending, so the largest failure classes were
+  invisible in the report meant to map them. Give the measured census exactly
+  once, from FACTS: of 287 turns, 92 completed, 88 `max_tokens`, 99 error and
+  8 aborted, and the error codes `MALFORMED_RESPONSE` 44,
+  `UNSUPPORTED_REASONING_EFFORT` 36, `SERVER` 16, `UNKNOWN` 1,
+  `MISSING_CREDENTIAL` 1, `INVALID_REQUEST` 1. Its Changed entry is that the
+  census was first written as a separate module, that the plugin `dist` then
+  overshot the 68000 byte ceiling at 70389 bytes, and that the module was
+  deleted and its helpers inlined so the total settled at 67908 bytes — say
+  plainly that the scaffolding of a ninth file costs more than the code it
+  holds. Its Notes entry is that a census is reported and never promoted into a
+  finding (the exit code still turns on `fused_calls` and `fusion_failures`),
+  that P-0006 is `tested` and not `verified` because it moves an offline
+  reader, that truncated turns stay unfixed on purpose, and that this release
+  is published and is the registry `latest` for both packages.
+  `0.3.3` becomes the previous release and must be described as superseded.
+  Its second Added entry is P-0007: the copy channel could not regenerate the
+  two longest outward files at all and printed only `copy_with_agy: agy exited
+  null`, because the whole request travelled on one Windows command line once
+  the fact pack grew (35509 characters for the changelog and 33530 for the
+  readme, against a 32767 character cap — the spawn failed with `ENAMETOOLONG`
+  before agy started and reported a null status), and because a generation that
+  outlived the 600000 ms spawn timeout was killed and reported the same null
+  status. Above the cap the prompt now travels over stdin as one `stream-json`
+  user event, the answer is read from the final `result` event, a failed spawn is
+  reported by its own code instead of a null status, and the timeout is half an
+  hour. State that this is the build-side channel and touches no seam.
 - Add a `0.3.3` section above `0.3.2`. Its Added entry is P-0004: `scan` reads the
   log it is pointed at (a single session file or a whole session directory,
   plain `.jsonl` or multi-frame `.jsonl.zstd` through the same reader the plugin
@@ -132,4 +168,4 @@ Rules:
 - Notes: limits are documented in `audit/blind_spots.json`; no retry-as-fix; no
   asar patching.
 - Use only numbers from FACTS.
-- Output only the Markdown file, under 80 lines.
+- Output only the Markdown file, under 95 lines.

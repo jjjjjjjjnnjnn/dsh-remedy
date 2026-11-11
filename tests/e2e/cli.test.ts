@@ -219,3 +219,40 @@ test('scan rejects a --since that is not an instant', () => {
   writeFileSync(session, '{"type":"step/end","seq":1,"data":{}}', 'utf8')
   assert.equal(run('scan', session, '--since', 'yesterday').status, 2)
 })
+
+test('scan reports every way a turn ended, and exit stays quiet for a census', () => {
+  // P-0006: this session has no fusion at all, so it is not a finding for the
+  // repair layer, but the truncation inside it is exactly the class a fault
+  // map exists to name.
+  const session = join(work, 'census.jsonl')
+  writeFileSync(
+    session,
+    [
+      JSON.stringify({ type: 'turn/end', seq: 1, time: 1_760_000_000_000, data: { turn: 1, reason: { kind: 'completed' } } }),
+      JSON.stringify({ type: 'turn/end', seq: 2, time: 1_760_000_000_100, data: { turn: 2, reason: { kind: 'max-tokens' } } }),
+      JSON.stringify({
+        type: 'turn/end',
+        seq: 3,
+        time: 1_760_000_000_200,
+        data: { turn: 3, reason: { kind: 'error', error: { code: 'SERVER', message: '503' } } },
+      }),
+    ].join('\n'),
+    'utf8',
+  )
+
+  const json = run('scan', session, '--json')
+  assert.equal(json.status, 0, 'a census without a fusion is not a finding')
+  const report = JSON.parse(json.stdout) as {
+    turns: { completed: number; max_tokens: number; aborted: number; error: number }
+    error_codes: Record<string, number>
+    fusion_failures: number
+  }
+  assert.deepEqual(report.turns, { completed: 1, max_tokens: 1, aborted: 0, error: 1 })
+  assert.deepEqual(report.error_codes, { SERVER: 1 })
+  assert.equal(report.fusion_failures, 0)
+
+  const human = run('scan', session)
+  assert.equal(human.status, 0, human.stderr)
+  assert.match(human.stdout, /turns=3 completed=1 max_tokens=1 aborted=0 error=1/)
+  assert.match(human.stdout, /error codes: SERVER=1/)
+})

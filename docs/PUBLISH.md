@@ -246,6 +246,86 @@ because two consecutive splits each grew the total while shrinking the file that
 growing.
 
 
+**Published 2026-11-11: 0.3.4, with P-0006 and P-0007.**
+
+P-0007 is the copy channel itself. The two longest outward files, `README.md`
+and `CHANGELOG.md`, could not be regenerated at all: every attempt printed
+`copy_with_agy: agy exited null` and nothing else. Two different faults shared
+that one line. The request is the brief plus the whole fact pack plus the pattern
+notes, and it measured 35509 characters for the changelog and 33530 for the readme
+against the 32767 character cap on one Windows command line, so `spawnSync`
+failed with `ENAMETOOLONG` before agy ever started and reported a null status. A
+generation that instead outlived the 600000 ms spawn timeout was killed, which also
+leaves a null status.
+
+The channel now chooses its transport from the request length: at or under 30000
+characters the prompt still travels on argv exactly as before, and above it the
+prompt travels over stdin as one `stream-json` user event with the answer read from
+the final `result` event. A spawn that never started is named by its own code.
+The timeout is half an hour. The rules live in `scripts/lib/agy-channel.mjs` so the
+fourteen unit tests can exercise them without spending a model call.
+
+The channel touches nothing the plugin mounts, so P-0007 is `tested` and will stay
+`tested`.
+
+The packed 0.3.4 plugin is unchanged at 29448 bytes (P-0007 lives under `scripts/`,
+which is not packed); the core grew by the two registry entries:
+
+| package | bytes (gzip) | files | unpacked | `dist/*.js` | `dist/*.d.ts` | sha1 |
+|---|---|---|---|---|---|---|
+| `dsh-remedy-core@0.3.4` | 18202 | 19 | 59864 | 39573 | 16994 | `38400db9779cea1175864977b888a407d56f9f99` |
+| `dsh-remedy@0.3.4` | 29448 | 29 | 97944 | 67908 | 21177 | `5f20282efe981cf9d1039e4273853b37702efc2f` |
+
+The per-file caps did not move: `repair-stream.js` 27925 of 28000, `cli.js` 8503
+of 10000, plugin total 67908 of 68000. Core has no per-file cap because the
+plugin is what loads at startup.
+
+Baseline: `189 tests, 0 failing. 5 gates. --mutate catches 5 of 5.`
+
+`node scripts/publish_packages.mjs` published both packages and answered `both packages
+published`. The registry then reported `latest = 0.3.4` for both names, plugin shasum
+`5f20282efe981cf9d1039e4273853b37702efc2f` and core shasum
+`38400db9779cea1175864977b888a407d56f9f99`, matching the packed bytes above. `npm view` kept
+answering `0.3.3` for a while after the publish had already succeeded; that is the replica lag
+recorded further up, not a failed release. A cold directory installed `dsh-remedy@0.3.4` from the
+registry and `npx dsh-remedy verify` answered `OK 6 fixture(s)`. Publish evidence:
+`data/results/publish-2026-11-11T12-30-00.000Z.json`.
+
+**0.3.4 carries P-0006 (published 2026-11-11).** The `scan`
+command now counts how every turn ended (`completed`, `max_tokens`, `aborted`, `error`) and names
+every `reason.error.code`, instead of reporting only the `MALFORMED_RESPONSE` turns. On this
+machine that turns 44 visible endings into a 287-turn census: 92 completed, 88 `max_tokens`,
+99 error and 8 aborted, with the codes `MALFORMED_RESPONSE` 44,
+`UNSUPPORTED_REASONING_EFFORT` 36, `SERVER` 16, `UNKNOWN` 1, `MISSING_CREDENTIAL` 1 and
+`INVALID_REQUEST` 1. The census is reported and never promoted into a finding: the exit code
+still turns on `fused_calls` and `fusion_failures`. Truncated turns stay unfixed on purpose, and
+P-0006 stays `tested` because it moves an offline reader.
+
+The byte budget was hit again, by the patch itself: writing the census helpers as a ninth module
+(`turn-census.ts`) took `dist/*.js` from 65521 to **70389**, 2389 bytes over the 68000 cap. The
+module was deleted and its helpers inlined, which settles the total at **67908** (92 bytes under
+the cap). The per-file caps are unchanged: `repair-stream.js` 27925 (cap 28000), `cli.js` 8503
+(cap 10000), plugin total 67908 (cap 68000).
+
+The exact 0.3.4 tarballs were packed into `.tmp/pack15/` and read back with `packedManifest`:
+
+| package | bytes (gzip) | files | unpacked | `dist/*.js` | `dist/*.d.ts` | sha1 |
+|---|---|---|---|---|---|---|
+| `dsh-remedy-core@0.3.4` | 17381 | 19 | 57665 | 37374 | 16994 | `9e53fbd363a19e6fc66ee5697322c42926935b9a` |
+| `dsh-remedy@0.3.4` | 29448 | 29 | 97944 | 67908 | 21177 | `5f20282efe981cf9d1039e4273853b37702efc2f` |
+
+The packed plugin manifest names `"dsh-remedy-core": "0.3.4"`, not `workspace:*`.
+`--dry-run` exited 0 and reported `package size 29.4 kB / unpacked 97.9 kB / shasum
+5f20282efe981cf9d1039e4273853b37702efc2f / total files 29`. The preflight ran `npm whoami`
+and got `jjjjjjjjnnjnn`; `npm profile get tfa` answered `E403` this time (an endpoint
+permission answer, not an auth failure), and the preflight deliberately depends on `whoami`
+only. Publish in the usual order with a fresh one-time password:
+
+```bash
+node scripts/publish_packages.mjs --dry-run      # packs both, checks the manifests
+node scripts/publish_packages.mjs --otp <code>   # publishes core, then plugin
+```
+
 **0.3.2 is the release that ships.** It carries 0.3.1's manifest fix plus P-0005
 (the bare-value reseal) and the seam split that P-0005 forced:
 

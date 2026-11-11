@@ -101,6 +101,38 @@
         "scripts/gate_ssot.mjs",
         "scripts/redact_artifacts.mjs"
       ]
+    },
+    {
+      "id": "P-0006",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.3.4",
+      "evidence": [
+        "docs/patches/P-0006-turn-census.md",
+        "tests/unit/session-scan.test.ts",
+        "tests/e2e/cli.test.ts"
+      ],
+      "guards": [
+        "tests/unit/session-scan.test.ts",
+        "tests/e2e/cli.test.ts",
+        "scripts/gate_registry.mjs"
+      ]
+    },
+    {
+      "id": "P-0007",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.3.4",
+      "evidence": [
+        "docs/patches/P-0007-copy-channel-transport.md",
+        "tests/unit/agy-channel.test.ts",
+        "docs/copy/manifest.json"
+      ],
+      "guards": [
+        "tests/unit/agy-channel.test.ts",
+        "scripts/gate_copy.mjs",
+        "scripts/lib/agy-channel.mjs"
+      ]
     }
   ]
 }

@@ -15,15 +15,19 @@ Keys:
   `deepseek-harness` is already present.
 - `release_blurb`: a short Markdown section for the current release. Do not
   hardcode a version number; take the release status from FACTS, which names
-  `0.3.3` as published and as the `latest` release of both packages. It must
+  `0.3.4` as published and as the `latest` release of both packages, with
+  `0.3.3` as the previous release. It must
   say that plugin 0.3.0 carries a literal `workspace:*` dependency and cannot be
   installed from the registry, that 0.3.1 was superseded before it reached the
   registry, that P-0001, P-0002 and P-0003 are all verified on a real host
   (P-0003's live run is the one whose journal wrote a non-zero `refused`), that
-  P-0004 and P-0005 are tested rather than verified (P-0004 moves an offline
-  reader, P-0005 has no live bare-value shape yet), that the counter line carries
-  eight names plus the optional `resealed` while the four verdict words are
-  unchanged, and link to the live evidence paths.
+  P-0004, P-0005, P-0006 and P-0007 are tested rather than verified (P-0004 and
+  P-0006 move an offline reader, P-0007 moves the build-side copy channel, and
+  P-0005 has no live bare-value shape yet), that the
+  counter line carries eight names plus the optional `resealed` while the four
+  verdict words are unchanged, that `scan` now prints how every turn ended
+  alongside the error codes it counted and that this census is never promoted
+  into a finding, and link to the live evidence paths.
 - `social_preview`: one sentence of alt text for a social preview image. No
   invented image URL.
 

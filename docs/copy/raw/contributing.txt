@@ -29,13 +29,13 @@ pnpm run verify
 node scripts/gate.mjs --mutate
 ```
 
-`pnpm run verify` runs the build, typecheck, test suite, and all 5 gates.
+`pnpm run verify` runs the build, typecheck, test suite, and gates.
 
-In mutate mode (`node scripts/gate.mjs --mutate`), every gate must fail. A gate that stays green under its injected violation is vacuous.
+In mutate mode (`node scripts/gate.mjs --mutate`), every gate must fail, because a gate that stays green under its injected violation is vacuous.
 
 ## Adding a patch
 
-Follow these 5 steps in order:
+Follow these five steps in order:
 
 1. Write the defect record under `docs/patches/`.
 2. Add the registry entry in `packages/core/src/registry.ts` with status `drafted`.
@@ -45,11 +45,11 @@ Follow these 5 steps in order:
 
 P-0002 and P-0003 are the two worked examples of a patch that went all the way to `verified` with a live artifact: P-0002 has a run that repaired a real two-call fusion, and P-0003 has a run whose journal wrote a non-zero `refused`.
 
-P-0005 is the worked example of a `tested` patch on the resident seam: 11 negative controls and 1 measured fixture, no host run yet.
+P-0005 is the worked example of a `tested` patch on the resident seam: eleven negative controls and one measured fixture, no host run yet.
 
-P-0004, P-0006 and P-0007 are the worked examples of a `tested` patch that is honest about a different reason: P-0004 and P-0006 move the offline session reader, so no journal can ever attest them, and P-0007 moves the build-side copy channel that writes the outward files, so a broken channel cannot attest itself. Their evidence is end-to-end or unit tests plus a measured scan of 1 machine.
+P-0004, P-0006, P-0007 and P-0008 are the worked examples of a `tested` patch that is honest about a different reason: P-0004 and P-0006 move the offline session reader, so no journal can ever attest them, and P-0007 moves the build-side copy channel that writes the outward files, so a broken channel cannot attest itself. Their evidence is end-to-end or unit tests plus a measured scan of one machine.
 
-Contrast all 6: a `drafted` entry is only a written symptom, and a `tested` entry is evidence without a host run.
+Contrast all seven: a `drafted` entry is only a written symptom, and a `tested` entry is evidence without a host run.
 
 ## Pull requests
 

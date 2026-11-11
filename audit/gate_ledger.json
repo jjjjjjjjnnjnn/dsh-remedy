@@ -30,6 +30,12 @@
       "script": "scripts/gate_copy.mjs",
       "requires_build": false,
       "negative_control": "corrupts the stored output hash of every manifest entry"
+    },
+    {
+      "id": "size",
+      "script": "scripts/gate_size.mjs",
+      "requires_build": true,
+      "negative_control": "compares the measured plugin total against a cap one byte below it, so a gate that stopped comparing would stay green"
     }
   ]
 }

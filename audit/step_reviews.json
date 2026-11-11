@@ -258,6 +258,24 @@
         "tests/unit/agy-channel.test.ts",
         "docs/copy/manifest.json"
       ]
+    },
+    {
+      "id": "S15",
+      "gate": "size",
+      "title": "A budget no script checks is a suggestion, and this repository had already proved it three times",
+      "axes": {
+        "correctness": "The plugin total measured 67908 bytes against the 68000 byte cap, repair-stream.js 27925 of 28000, session-scan.js 13237 of 14000 and cli.js 8503 of 10000, so every emitted file is inside its own line. The gate reads the same numbers by stat-ing packages/plugin/dist, not by trusting the fact pack.",
+        "reproducibility": "node scripts/gate_size.mjs prints one line per file and exits 0; --mutate reports 67908 of 67907 and exits 1. No model call, no network, no clock.",
+        "compliance": "requires_build is true, matching the other build-dependent gates, so --fast skips it exactly where the dist is absent. The gate reads only packages/plugin/dist and writes nothing.",
+        "ssot": "The caps are constants in scripts/gate_size.mjs and are restated in the fact pack; the numbers the fact pack cites (67908, 27925, 13237, 8503) are the values this gate measures, so prose and mechanism cannot drift apart.",
+        "adversarial": "The failure this gate exists to stop happened three times by hand: 55815 after P-0005, 64539 after P-0004 and 70389 on the first P-0006 attempt, each noticed only after packing. It also refuses a new file above 10000 bytes with no cap, which is how a ninth module silently became the biggest file."
+      },
+      "evidence": [
+        "scripts/gate_size.mjs",
+        "audit/gate_ledger.json",
+        "docs/copy/facts/public-repo-facts.md",
+        "tests/governance/ledgers.test.ts"
+      ]
     }
   ]
 }

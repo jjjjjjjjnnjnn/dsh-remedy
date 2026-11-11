@@ -1,6 +1,6 @@
 <<<FILE: .github/ISSUE_TEMPLATE/bug_report.yml>>>
 name: Bug report
-description: Report a defect or failure in dsh-remedy
+description: Report an issue or defect in dsh-remedy.
 title: "[Bug]: "
 labels: ["bug"]
 body:
@@ -8,68 +8,60 @@ body:
     id: remedy_version
     attributes:
       label: dsh-remedy version
-      description: The version of dsh-remedy in use (from dsh-remedy status --json).
+      description: The installed dsh-remedy version, or the version reported by dsh-remedy status --json.
     validations:
       required: true
   - type: input
     id: dsh_version
     attributes:
       label: DSH version
-      description: The version of DeepSeek Harness in use.
+      description: DeepSeek Harness version.
     validations:
       required: true
   - type: input
     id: os
     attributes:
       label: OS
-      description: The operating system name and version.
+      description: Operating system and environment.
     validations:
       required: true
   - type: input
     id: provider_route
     attributes:
       label: Provider route
-      description: The configured provider route and model.
+      description: Provider route and model.
     validations:
       required: true
   - type: textarea
     id: what_happened
     attributes:
       label: What happened
-      description: Describe the defect and observed behavior.
+      description: Describe what happened.
     validations:
       required: true
   - type: textarea
     id: expected_behavior
     attributes:
       label: Expected behavior
-      description: Describe what should have happened.
+      description: Describe what you expected to happen.
     validations:
       required: true
   - type: textarea
     id: status_output
     attributes:
       label: dsh-remedy status --json output
-      description: Terminal output from dsh-remedy status --json.
+      description: Paste the output of dsh-remedy status --json here.
       render: json
-    validations:
-      required: true
   - type: textarea
     id: journal_excerpt
     attributes:
       label: Redacted journal excerpt
-      description: Relevant journal entries with sensitive values removed.
-      render: text
-    validations:
-      required: true
+      description: Relevant lines from the journal file if journalPath was configured. Redact any private paths or credentials.
   - type: textarea
     id: session_excerpt
     attributes:
       label: Redacted session excerpt
-      description: Relevant session log excerpt with sensitive values removed.
-      render: text
-    validations:
-      required: true
+      description: Relevant lines from the session log. Redact any private paths or credentials.
   - type: checkboxes
     id: confirmation
     attributes:
@@ -79,64 +71,62 @@ body:
           required: true
 <<<FILE: .github/ISSUE_TEMPLATE/feature_request.yml>>>
 name: Feature request
-description: Suggest an idea or repair capability for dsh-remedy
+description: Suggest an idea or improvement for dsh-remedy.
 title: "[Feature]: "
 labels: ["enhancement"]
 body:
   - type: textarea
     id: problem
     attributes:
-      label: The problem
-      description: Describe the problem or defect you are addressing.
+      label: Problem
+      description: Describe the problem, limitation, or defect you want to address.
     validations:
       required: true
   - type: textarea
     id: proposed_change
     attributes:
-      label: The proposed change
-      description: Describe the proposed modification and how it works.
+      label: Proposed change
+      description: Describe the proposed behavior or change.
     validations:
       required: true
   - type: textarea
     id: alternatives_considered
     attributes:
       label: Alternatives considered
-      description: Describe alternative solutions or workarounds you considered.
-    validations:
-      required: true
+      description: Describe any alternative solutions or workarounds you considered.
   - type: checkboxes
     id: scope
     attributes:
       label: Scope
       options:
-        - label: I confirm this change follows the project rule of one seam per patch.
+        - label: 'I confirm this proposal follows the project rule "one seam per patch".'
           required: true
 <<<FILE: .github/ISSUE_TEMPLATE/config.yml>>>
 blank_issues_enabled: false
 contact_links:
   - name: Security policy
     url: https://github.com/jjjjjjjjnnjnn/dsh-remedy/security/policy
-    about: Read the security policy for reporting vulnerabilities.
+    about: Read our security policy and report vulnerabilities privately.
 <<<FILE: .github/PULL_REQUEST_TEMPLATE.md>>>
 ## What changed
 
-Describe the changes introduced in this pull request.
+Describe what changed in this pull request.
 
 ## Why
 
-Explain the rationale and context for this change.
+Explain the rationale, defect mechanism, or issue being addressed.
 
 ## Failing test
 
-Reference the test that fails without this change.
+Describe or link to the failing test added to reproduce the issue before fixing it.
 
 ## Evidence
 
-Provide reproduction details, logs, or artifact references.
+Provide the path to the evidence artifact (e.g. under `data/results/`) or reproduction logs.
 
 ## Limits
 
-Describe known boundaries, non-goals, and unhandled cases.
+Document boundary conditions, refused inputs, or unmeasured cases.
 
 ## Checklist
 

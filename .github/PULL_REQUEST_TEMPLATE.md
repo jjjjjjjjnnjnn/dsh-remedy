@@ -1,22 +1,22 @@
 ## What changed
 
-Describe the changes introduced in this pull request.
+Describe what changed in this pull request.
 
 ## Why
 
-Explain the rationale and context for this change.
+Explain the rationale, defect mechanism, or issue being addressed.
 
 ## Failing test
 
-Reference the test that fails without this change.
+Describe or link to the failing test added to reproduce the issue before fixing it.
 
 ## Evidence
 
-Provide reproduction details, logs, or artifact references.
+Provide the path to the evidence artifact (e.g. under `data/results/`) or reproduction logs.
 
 ## Limits
 
-Describe known boundaries, non-goals, and unhandled cases.
+Document boundary conditions, refused inputs, or unmeasured cases.
 
 ## Checklist
 

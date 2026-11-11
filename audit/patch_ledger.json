@@ -133,6 +133,22 @@
         "scripts/gate_copy.mjs",
         "scripts/lib/agy-channel.mjs"
       ]
+    },
+    {
+      "id": "P-0008",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.3.4",
+      "evidence": [
+        "docs/patches/P-0008-byte-budget-gate.md",
+        "scripts/gate_size.mjs",
+        "audit/gate_ledger.json"
+      ],
+      "guards": [
+        "scripts/gate_size.mjs",
+        "tests/governance/ledgers.test.ts",
+        "scripts/gate.mjs"
+      ]
     }
   ]
 }

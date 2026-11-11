@@ -15,7 +15,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - The census was first written as a separate module, the plugin `dist` then overshot the 68000 byte ceiling at 70389 bytes, and the module was deleted and its helpers inlined so the total settled at 67908 bytes — the scaffolding of a ninth file costs more than the code it holds.
 
 ### Notes
-- A census is reported and never promoted into a finding (the exit code still turns on `fused_calls` and `fusion_failures`); P-0006 is `tested` and not `verified` because it moves an offline reader; truncated turns stay unfixed on purpose; and this release is published and is the registry `latest` for both packages. `0.3.3` becomes the previous release and must be described as superseded.
+- A census is reported and never promoted into a finding (the exit code still turns on `fused_calls` and `fusion_failures`); P-0006 is `tested` and not `verified` because it moves an offline reader; truncated turns stay unfixed on purpose; this release `0.3.5` is published and is the registry `latest` for both packages, so the 0.3.5 section is the shipped one; `0.3.4` becomes the previous release and `0.3.3` the one before it.
 
 ## [0.3.3] - 2026-11-10
 

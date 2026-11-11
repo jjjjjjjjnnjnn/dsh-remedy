@@ -70,9 +70,10 @@ Rules:
   finding (the exit code still turns on `fused_calls` and `fusion_failures`),
   that P-0006 is `tested` and not `verified` because it moves an offline
   reader, that truncated turns stay unfixed on purpose, and that this release
-  is published and is the registry `latest` for both packages.
-  `0.3.3` becomes the previous release and must be described as superseded.
-  Its second Added entry is P-0007: the copy channel could not regenerate the
+  `0.3.5` is published and is the registry `latest` for both packages, so the
+  0.3.5 section is the shipped one; `0.3.4` becomes the previous release and
+  `0.3.3` the one before it.
+  Its Added entry is P-0007: the copy channel could not regenerate the
   two longest outward files at all and printed only `copy_with_agy: agy exited
   null`, because the whole request travelled on one Windows command line once
   the fact pack grew (35509 characters for the changelog and 33530 for the

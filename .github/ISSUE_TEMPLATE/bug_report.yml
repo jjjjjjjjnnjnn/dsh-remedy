@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a defect or failure in dsh-remedy
+description: Report an issue or defect in dsh-remedy.
 title: "[Bug]: "
 labels: ["bug"]
 body:
@@ -7,68 +7,60 @@ body:
     id: remedy_version
     attributes:
       label: dsh-remedy version
-      description: The version of dsh-remedy in use (from dsh-remedy status --json).
+      description: The installed dsh-remedy version, or the version reported by dsh-remedy status --json.
     validations:
       required: true
   - type: input
     id: dsh_version
     attributes:
       label: DSH version
-      description: The version of DeepSeek Harness in use.
+      description: DeepSeek Harness version.
     validations:
       required: true
   - type: input
     id: os
     attributes:
       label: OS
-      description: The operating system name and version.
+      description: Operating system and environment.
     validations:
       required: true
   - type: input
     id: provider_route
     attributes:
       label: Provider route
-      description: The configured provider route and model.
+      description: Provider route and model.
     validations:
       required: true
   - type: textarea
     id: what_happened
     attributes:
       label: What happened
-      description: Describe the defect and observed behavior.
+      description: Describe what happened.
     validations:
       required: true
   - type: textarea
     id: expected_behavior
     attributes:
       label: Expected behavior
-      description: Describe what should have happened.
+      description: Describe what you expected to happen.
     validations:
       required: true
   - type: textarea
     id: status_output
     attributes:
       label: dsh-remedy status --json output
-      description: Terminal output from dsh-remedy status --json.
+      description: Paste the output of dsh-remedy status --json here.
       render: json
-    validations:
-      required: true
   - type: textarea
     id: journal_excerpt
     attributes:
       label: Redacted journal excerpt
-      description: Relevant journal entries with sensitive values removed.
-      render: text
-    validations:
-      required: true
+      description: Relevant lines from the journal file if journalPath was configured. Redact any private paths or credentials.
   - type: textarea
     id: session_excerpt
     attributes:
       label: Redacted session excerpt
-      description: Relevant session log excerpt with sensitive values removed.
-      render: text
-    validations:
-      required: true
+      description: Relevant lines from the session log. Redact any private paths or credentials.
   - type: checkboxes
     id: confirmation
     attributes:

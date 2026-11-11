@@ -31,12 +31,12 @@ Rules:
   real two-call fusion, and P-0003 has a run whose journal wrote a non-zero
   `refused`. Name P-0005 as the worked example of a `tested` patch on the resident
   seam: eleven negative controls and one measured fixture, no host run yet. Name
-  P-0004, P-0006 and P-0007 as the worked examples of a `tested` patch that is
+  P-0004, P-0006, P-0007 and P-0008 as the worked examples of a `tested` patch that is
   honest about a different reason: P-0004 and P-0006 move the offline session
   reader, so no journal can ever attest them, and P-0007 moves the build-side
   copy channel that writes the outward files, so a broken channel cannot attest
   itself. Their evidence is end-to-end or unit tests plus a measured scan of one
-  machine. Contrast all six: a `drafted` entry is only a written
+  machine. Contrast all seven: a `drafted` entry is only a written
   symptom, and a `tested` entry is evidence without a host run.
 - "Pull requests": one project per commit; describe what changed, why, the
   failing test, and the evidence path; do not mix a behavior change with a

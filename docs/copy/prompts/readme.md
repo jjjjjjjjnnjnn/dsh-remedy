@@ -97,20 +97,24 @@ Rules:
   run that repaired a real two-call fusion and saw the synthesized call
   dispatched, and P-0003 on a 2026-11-10 headless run whose journal wrote a
   non-zero `refused` after the code declined to repair a budget refusal).
-  P-0005, P-0004, P-0006 and P-0007 are `tested`, not `verified`: each has unit
+  P-0005, P-0004, P-0006, P-0007 and P-0008 are `tested`, not `verified`: each has unit
   tests, negative controls, and a measured fixture or a measured scan, but no
   live host run has produced the bare-value shape that P-0005 repairs, P-0004
   changes an offline reader rather than the resident seam, P-0006 changes the
-  same offline reader, and P-0007 changes the build-side copy channel. Name the release status from FACTS: FACTS names `0.3.4` as
-  published and as `latest` for both packages, and `0.3.3` as the previous
-  release, so write exactly that and do not call any published version pending.
+  same offline reader, P-0007 changes the build-side copy channel, and P-0008 adds
+  a build-side gate. Name the release status from FACTS: FACTS names `0.3.5` as
+  published and as `latest` for both packages, with `0.3.4` as the previous
+  release. Write exactly that: do not call a published version pending and do
+  not describe `0.3.4` as the current release.
   Do not hardcode a patch version in the install commands; the npm badge is the
   version.
 - Include one short paragraph or table listing the package size: the published
   0.3.4 plugin and core tarball sizes, entries, unpacked sizes and the unpacked
   breakdown, the 0.3.3 tarball sizes as the previous release, the sourcemaps
   that are no longer shipped, and the `dist/*.js` byte budget history including
-  P-0006 settling at 67908 bytes after an overshoot of 70389. Use only FACTS
+  P-0006 settling at 67908 bytes after an overshoot of 70389, and P-0008 turning
+  that ceiling into a gate on the total, `repair-stream.js`, `session-scan.js`
+  and `cli.js`. Use only FACTS
   numbers, and do not invent any size FACTS does not state.
 - "Development": the exact commands from FACTS.
 - Link to `README.zh-CN.md` near the top for Chinese readers.

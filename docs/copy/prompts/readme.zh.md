@@ -65,13 +65,13 @@ Rules:
   finding，退出码仍只看 `fused_calls` 与 `fusion_failures`。
 - "它不做什么": a table, one row per limit.
 - "自己验证": commands plus the real artifact path.
-- "状态": 从 FACTS 取发布状态：`0.3.4` 是两个包已发布的 `latest`，`0.3.3` 是上一个
-  版本，就照 FACTS 这么写，不要把任何已发布版本说成待发布；plugin 的 0.3.0 是坏发布。
+- "状态": 从 FACTS 取发布状态：`0.3.5` 是两个包已发布的 `latest`，`0.3.4` 是上一个
+  版本，就照 FACTS 这么写，不要把任何已发布版本说成待发布或已准备未发布；plugin 的 0.3.0 是坏发布。
   P-0001、P-0002 与 P-0003 都为 `verified`（P-0001 在
   headless profile 与桌面 App；P-0002 在 2026-11-10 的 headless 真机运行里修好了一次
   真实的两调用粘连，并看到合成 id 被真的派发执行；P-0003 在 2026-11-10 的另一次
   headless 运行里，代码拒绝修复一次预算超限的粘连，journal 里 `refused` 第一次非零）。
-  P-0005、P-0004、P-0006 与 P-0007 是 `tested` 而不是 `verified`：都有单测、负对照，
+  P-0005、P-0004、P-0006、P-0007 与 P-0008 是 `tested` 而不是 `verified`：都有单测、负对照，
   以及一条实测夹具或一次实测扫描，但还没有真机产生过 P-0005 修的裸值形状，P-0004 与
   P-0006 改的是离线读取器，P-0007 改的是构建侧的 copy 通道，三者都不动常驻接缝。
   加一小段

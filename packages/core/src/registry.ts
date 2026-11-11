@@ -223,6 +223,33 @@ export const PATCHES: readonly PatchRecord[] = [
       'the fact pack is not shortened to fit the cap, so the stdin path stays the normal path and the argv path only serves the smallest briefs',
     ],
   },
+  {
+    id: 'P-0008',
+    title: 'A byte budget that no script checks is a suggestion',
+    symptom:
+      'the byte budget was written down in prose and crossed three consecutive times before anyone noticed: the plugin total reached 55815 bytes after P-0005, 64539 after P-0004 and 70389 on the first P-0006 attempt, and each crossing was found by hand after the patch had already been built, tested and packed',
+    rootCause:
+      'the caps lived only in the fact pack and README.md. Nothing in scripts/ read them, so a patch that crossed a line stayed green through 189 tests and five gates, and the structural split that fixed it happened afterwards. grepping scripts/ for the ceiling returned no hits, which is the whole defect: the number had no mechanism',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'docs/patches/P-0008-byte-budget-gate.md',
+      'scripts/gate_size.mjs',
+      'audit/gate_ledger.json',
+    ],
+    guards: [
+      'scripts/gate_size.mjs',
+      'tests/governance/ledgers.test.ts',
+      'scripts/gate.mjs',
+    ],
+    limits: [
+      'the gate measures the emitted plugin only: core does not load at startup, so the ceiling protects what is loaded there',
+      'it does not shrink anything; the measured numbers stay what they were when the gate was written',
+      'it does not measure dist/*.d.ts, which is paid at build time rather than load time',
+      'it cannot decide how to split a file that crosses a cap — it only refuses the crossing, so the structural fix stays a human decision',
+    ],
+  },
 ]
 
 /** Look up one patch by id. */

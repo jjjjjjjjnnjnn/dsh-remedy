@@ -1,33 +1,31 @@
 name: Feature request
-description: Suggest an idea or repair capability for dsh-remedy
+description: Suggest an idea or improvement for dsh-remedy.
 title: "[Feature]: "
 labels: ["enhancement"]
 body:
   - type: textarea
     id: problem
     attributes:
-      label: The problem
-      description: Describe the problem or defect you are addressing.
+      label: Problem
+      description: Describe the problem, limitation, or defect you want to address.
     validations:
       required: true
   - type: textarea
     id: proposed_change
     attributes:
-      label: The proposed change
-      description: Describe the proposed modification and how it works.
+      label: Proposed change
+      description: Describe the proposed behavior or change.
     validations:
       required: true
   - type: textarea
     id: alternatives_considered
     attributes:
       label: Alternatives considered
-      description: Describe alternative solutions or workarounds you considered.
-    validations:
-      required: true
+      description: Describe any alternative solutions or workarounds you considered.
   - type: checkboxes
     id: scope
     attributes:
       label: Scope
       options:
-        - label: I confirm this change follows the project rule of one seam per patch.
+        - label: 'I confirm this proposal follows the project rule "one seam per patch".'
           required: true

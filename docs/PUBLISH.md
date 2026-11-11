@@ -246,6 +246,57 @@ because two consecutive splits each grew the total while shrinking the file that
 growing.
 
 
+**Published 2026-11-11: 0.3.5, with P-0008.**
+
+P-0008 is the byte budget. The caps had lived only in the fact pack and in
+`README.md`, so `grep -rn "68000" scripts/` returned nothing, and every crossing
+was found by hand after the patch had already been built, tested and packed:
+55815 bytes after P-0005, 64539 after P-0004 and 70389 on the first P-0006
+attempt. Each of those patches shipped with a fully green suite at the time; the
+number had no mechanism behind it.
+
+`scripts/gate_size.mjs` measures `packages/plugin/dist/*.js` on every gate run and
+refuses four things: a plugin total above 68000 bytes, `repair-stream.js` above
+28000, `session-scan.js` above 14000, and any file above 10000 bytes that has no
+cap of its own. Measured when it was written: 67908 in total, `repair-stream.js`
+27925, `session-scan.js` 13237, `cli.js` 8503, so it starts green rather than green
+by exception. `--mutate` compares the real total against a cap one byte below it,
+which is how `node scripts/gate.mjs --mutate` reports 6 of 6 gates caught.
+
+P-0008 adds only `scripts/gate_size.mjs`, and `scripts/` is not packed, so the
+plugin tarball keeps the same 29448 compressed bytes, 29 files and 97944 unpacked
+bytes as 0.3.4. It is not byte-identical: the packed manifest carries the new
+version, so the shasum moves from `5f20282e…` to `c1b1b431…`. The core tarball
+grows to 18723 compressed / 61553 unpacked / 19 files, shasum `cc9895f8…`,
+because the registry now carries one more patch record. `--dry-run` printed
+`package size 29.4 kB / unpacked 97.9 kB / shasum c1b1b43185ea49347c394c987dd878c717d8f4f5 / total files 29`
+and `dry run finished. Nothing was sent to the registry.`
+
+Baseline after the change: **189 tests, 0 failing. 6 gates. `--mutate` catches 6 of 6.**
+
+The publish: `node scripts/publish_packages.mjs` printed `both packages published`,
+and the direct metadata read confirmed `0.3.5` on both names within two minutes
+(core `modified 2026-11-11T13:47:32.623Z`, plugin `2026-11-11T13:47:05.132Z`), with
+the published plugin pinning `"dsh-remedy-core": "0.3.5"`. `record_publish.mjs` was
+run at 14:55 and answered `ok: false` because the core metadata still said `0.3.4`,
+then run again at 15:05 and answered `ok: true` — the replica lag, not a failed
+publish, which is exactly what `--retries` exists for. Evidence:
+`publish-2026-11-11T15-05-00.000Z.json`. A cold directory installed
+`dsh-remedy@0.3.5` from the registry and `npx dsh-remedy verify` printed
+`OK 6 fixture(s)`. Release: <https://github.com/jjjjjjjjnnjnn/dsh-remedy/releases/tag/v0.3.5>.
+
+Publishing needs the account be `auth-and-writes`, so every write needs a fresh
+code:
+
+```bash
+npm whoami                                     # a logged-out shell answers 401 first
+node scripts/publish_packages.mjs --otp <code> # core, then plugin
+node scripts/record_publish.mjs --stamp <ISO> --retries 3
+```
+
+The four caps are restated in the fact pack, so a patch that crosses one turns both
+`size` and `copy` red until the split happens.
+
 **Published 2026-11-11: 0.3.4, with P-0006 and P-0007.**
 
 P-0007 is the copy channel itself. The two longest outward files, `README.md`

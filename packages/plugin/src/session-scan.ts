@@ -124,10 +124,8 @@ function fragmentsOf(text: string): number {
 /**
  * Scan one session file's text.
  *
- * @param text - the `.jsonl` contents, one event per line.
- * @param source - a label for the report (the caller redacts the path).
- * @param options - `since` drops older events; they are counted, never dropped
- *   silently, because a window that hides its own exclusions is a lie.
+ * `source` is a label, not necessarily a path; `since` drops older events but
+ * counts them, because a window that hides its own exclusions is a lie.
  */
 export function scanSessionText(text: string, source: string, options: ScanOptions = {}): ScanReport {
   let attempts = 0
@@ -172,22 +170,27 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
     const seq = asNumber(event.seq)
     const time = asNumber(event.time)
 
+    // P-0009: a session opens with a `session` header whose instant is
+    // `createdAt`, not `time`; reading it as "no time" spends one unreadable
+    // line per session on a record that parsed perfectly.
+    const stamp = time ?? (type === 'session' ? asNumber(event.createdAt) : null)
+
     // The window is applied before any counting, but the dropped events are
     // reported as `before_since`: a filtered scan must still say how much it
     // did not look at.
     if (options.since !== undefined) {
-      if (time === null) {
+      if (stamp === null) {
         unreadable += 1
         continue
       }
-      if (time < options.since) {
+      if (stamp < options.since) {
         beforeSince += 1
         continue
       }
     }
-    if (time !== null) {
-      oldest = oldest === null ? time : Math.min(oldest, time)
-      newest = newest === null ? time : Math.max(newest, time)
+    if (stamp !== null) {
+      oldest = oldest === null ? stamp : Math.min(oldest, stamp)
+      newest = newest === null ? stamp : Math.max(newest, stamp)
     }
 
     if (type === 'assistant/attempt' && data !== null) {
@@ -353,11 +356,9 @@ export interface ScanBatch {
 /**
  * Scan several session files at once.
  *
- * The per-file counts are summed and the source becomes a label instead of a
- * path: a session directory has no single path to report, and inventing one
- * would make the artifact cite a file that was never read. Every file also
- * keeps its own row, because a total that cannot be broken down is a total
- * nobody can audit.
+ * The source becomes a label, not a path: a directory has no single path, and
+ * inventing one would cite a file that was never read. Every file also keeps
+ * its own row, because a total that cannot be broken down cannot be audited.
  *
  * @param files - pairs of label and text, in the caller's order.
  * @param source - the label for the merged report.

@@ -12,6 +12,16 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.3.6] - 2026-11-11
+### Added
+### Changed
+### Notes
+
+## [0.3.5] - 2026-11-11
+### Added
+### Changed
+### Notes
+
 ## [0.3.4] - 2026-11-11
 ### Added
 ### Changed
@@ -52,6 +62,22 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 Rules:
 
+- Add a `0.3.6` section above `0.3.5`, with only `Added`, `Changed` and
+  `Notes` subsections. Its Added entry is P-0009: a windowed `scan --since`
+  over a real session directory reported `unreadable_lines=78` for 78 files,
+  because every session opens with a `session` header whose instant is the
+  top-level `createdAt` rather than `time` and the scanner required `time`
+  before it would apply the window, so it called the one reliably dated line
+  in the log unreadable. Say the header now falls back to `createdAt`, that the
+  same command went to `unreadable_lines=0` with the same `attempts=67`, and
+  that an ordinary event with no instant is still counted unreadable. Note
+  that P-0009 landed at 67997 of 68000 emitted bytes, so the plugin now sits
+  three bytes under its ceiling and the next patch that adds code to `dist`
+  must split a file instead of absorbing it. Its Notes entry is that P-0009 is
+  `tested` and not `verified` because, like P-0004 and P-0006, it moves an
+  offline reader, and that `0.3.6` is prepared and not published yet, so no
+  entry may claim it has shipped; `0.3.5` remains the registry `latest` and
+  `0.3.4` is the release before it.
 - Add a `0.3.4` section above `0.3.3`, with only `Added`, `Changed` and `Notes`
   subsections. Its Added entry is P-0006: `scan` now counts how every turn ended
   (`completed`, `max_tokens`, `aborted`, `error`) and names every
@@ -72,7 +98,7 @@ Rules:
   reader, that truncated turns stay unfixed on purpose, and that this release
   `0.3.5` is published and is the registry `latest` for both packages, so the
   0.3.5 section is the shipped one; `0.3.4` becomes the previous release and
-  `0.3.3` the one before it.
+  `0.3.3` the one before it, while `0.3.6` is prepared and not published yet.
   Its Added entry is P-0007: the copy channel could not regenerate the
   two longest outward files at all and printed only `copy_with_agy: agy exited
   null`, because the whole request travelled on one Windows command line once

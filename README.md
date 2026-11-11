@@ -71,7 +71,7 @@ The first call keeps its original id; subsequent synthesized calls receive `<id>
 - Zero disk writes by default: the plugin writes nothing unless `journalPath` is configured.
 - If any buffer cannot be proven, nothing is emitted and the original failure is re-thrown.
 - A single object that fails to parse is rejected, not split.
-- `}{` inside a JSON string literal is not treated as an object boundary.
+- `}{` inside a JSON string is not a boundary.
 - A call whose tool name never arrived is rejected, never dispatched to an empty name.
 - A tool name that changes inside one index aborts the rescue and the original failure is re-thrown.
 - A repaired `finish` preserves the adapter `replayState`.
@@ -140,9 +140,9 @@ P-0001, P-0002 and P-0003 are all `verified` on a real host:
 - P-0002 on a 2026-11-10 headless run that repaired a real two-call fusion and saw the synthesized call dispatched.
 - P-0003 on a 2026-11-10 headless run whose journal wrote a non-zero `refused` after the code declined to repair a budget refusal.
 
-P-0005, P-0004, P-0006, P-0007 and P-0008 are `tested`, not `verified`: each has unit tests, negative controls, and a measured fixture or a measured scan, but no live host run has produced the bare-value shape that P-0005 repairs, P-0004 changes an offline reader rather than the resident seam, P-0006 changes the same offline reader, P-0007 changes the build-side copy channel, and P-0008 adds a build-side gate.
+P-0005, P-0004, P-0006, P-0007, P-0008 and P-0009 are `tested`, not `verified`: each has unit tests, negative controls, and a measured fixture or a measured scan, but no live host run has produced the bare-value shape that P-0005 repairs; P-0004, P-0006 and P-0009 change an offline reader rather than the resident seam; P-0007 changes the build-side copy channel; and P-0008 adds a build-side gate.
 
-0.3.5 is published and is `latest` for both `dsh-remedy` and `dsh-remedy-core`. 0.3.4 is the previous release.
+0.3.5 is published and is `latest` for both `dsh-remedy` and `dsh-remedy-core`. 0.3.4 is the previous release. 0.3.6 is prepared and not published yet.
 
 Package sizes and payloads:
 - Published 0.3.5 plugin tarball (same byte count as 0.3.4): 29448 bytes compressed, 29 files, 97944 bytes unpacked (67908 bytes of `dist/*.js`, 21177 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, 5276 bytes of package-root files), shasum `c1b1b43185ea49347c394c987dd878c717d8f4f5`.
@@ -150,7 +150,7 @@ Package sizes and payloads:
 - Published 0.3.3 plugin tarball: 28378 bytes compressed, 29 files, 94769 bytes unpacked (65521 bytes of `dist/*.js`, 20389 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, 5276 bytes of package-root files), shasum `46ad57ea718be732133979c4b0449f7221ee69c7`.
 - Published 0.3.3 core tarball: 16776 bytes compressed, 19 files, 55684 bytes unpacked (35393 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`), shasum `6fbbeb060505cb80c7f454dbab5ea74acd463fdd`.
 - Sourcemaps are no longer shipped, removing 41926 bytes of unpacked payload.
-- Byte budget: `dist/*.js` reached 55815 bytes after P-0005, split in 0.3.2 cutting `repair-stream.js` to 27925 bytes while total reached 56344, rose to 64539 and 65521 in P-0004, and settled at 67908 bytes under P-0006 after an overshoot of 70389 bytes. Working ceilings are 28000 bytes for emitted `repair-stream.js`, 14000 for `session-scan.js`, 10000 for `cli.js`, and 68000 bytes for the plugin total. P-0008 turned that ceiling into a gate on the total, `repair-stream.js`, `session-scan.js` and `cli.js`.
+- Byte budget: `dist/*.js` reached 55815 bytes after P-0005, split in 0.3.2 cutting `repair-stream.js` to 27925 bytes while total reached 56344, rose to 64539 and 65521 in P-0004, and settled at 67908 bytes under P-0006 after an overshoot of 70389 bytes. Working ceilings are 28000 bytes for emitted `repair-stream.js`, 14000 for `session-scan.js`, 10000 for `cli.js`, and 68000 bytes for the plugin total. P-0008 turned that ceiling into a gate on the total, `repair-stream.js`, `session-scan.js` and `cli.js`. P-0009 landed at 67997 of 68000, so the emitted plugin now sits three bytes under the ceiling.
 
 ## Development
 

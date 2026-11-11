@@ -246,6 +246,43 @@ because two consecutive splits each grew the total while shrinking the file that
 growing.
 
 
+**0.3.6 is prepared (2026-11-11) and not published yet: P-0009, the windowed scan fix.**
+
+P-0009 is a small, measured reader fix. A windowed scan over the real session
+directory reported `unreadable_lines=78` for 78 files: every session log opens with
+`{"type":"session",…}` and its instant is the top-level `createdAt`, not `time`, so
+the scanner counted the one reliably dated line in every file as unreadable. Measured
+on the host: 78 files, 78 headers, 78 headers without a `time` field, in three key
+shapes that all carry `createdAt`. After the fix the same command reports
+`unreadable_lines=0` with `attempts=67` and `before_since=156209` unchanged in kind.
+
+Only the `session` header falls back to `createdAt`; an ordinary event with no
+instant is still one unreadable line, because there is no second field to read. The
+header contributes an instant to the reported window and nothing to the census, so
+the fault map does not move.
+
+The patch also had to stay inside the byte budget it had just made a rule. Adding the
+fallback took `packages/plugin/dist/*.js` to 68351 of 68000, so the fix trimmed the
+explanatory comment to two lines and condensed two doc blocks on the same file
+instead of adding a tenth module; the emitted total settled at 67997, three bytes
+under the ceiling.
+
+0.3.6 tarballs in `.tmp/pack18/`: plugin **29445 compressed / 29 files / 97807
+unpacked** (`dist/*.js` 67997, `dist/*.d.ts` 20951, fixtures 3583, root 5276),
+shasum `fe85d15a…`; core **19247 / 19 / 63408** (`dist/*.js` 43117, `dist/*.d.ts`
+16994, root 3297), shasum `76777609…`, because the registry carries one more patch
+record.
+
+Baseline after the change: **192 tests, 0 failing. 6 gates. `--mutate` catches 6 of 6.**
+
+To publish it:
+
+```bash
+npm whoami                                     # must answer jjjjjjjjnnjnn
+node scripts/publish_packages.mjs --otp <code> # core, then plugin
+node scripts/record_publish.mjs --stamp <ISO> --retries 3
+```
+
 **Published 2026-11-11: 0.3.5, with P-0008.**
 
 P-0008 is the byte budget. The caps had lived only in the fact pack and in

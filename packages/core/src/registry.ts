@@ -250,6 +250,34 @@ export const PATCHES: readonly PatchRecord[] = [
       'it cannot decide how to split a file that crosses a cap — it only refuses the crossing, so the structural fix stays a human decision',
     ],
   },
+  {
+    id: 'P-0009',
+    title: 'A windowed scan called the one dated line every session starts with unreadable',
+    symptom:
+      'scan --since over a real session directory reported unreadable_lines equal to the number of files it read: 78 files produced 78 unreadable lines while every byte of them parsed. The tool answered "I could not read this" about the single most reliable event in the log',
+    rootCause:
+      'packages/plugin/src/session-scan.ts:178 required a numeric `time` before it would apply the window and counted anything else as unreadable. A session log opens with a `{"type":"session",…}` header whose instant is `createdAt`, not `time`, so every header fell into that branch. The scanner was reading the file correctly and reporting the schema wrong',
+    surface: 'cli',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'docs/patches/P-0009-session-header-window.md',
+      'packages/plugin/src/session-scan.ts',
+      'tests/unit/session-scan.test.ts',
+      'tests/e2e/cli.test.ts',
+    ],
+    guards: [
+      'tests/unit/session-scan.test.ts',
+      'tests/e2e/cli.test.ts',
+      'packages/plugin/src/session-scan.ts',
+    ],
+    limits: [
+      'only the `session` header is dated by createdAt; an ordinary event with no instant is still an unreadable line, because there is no second field to fall back to',
+      'the fix does not make the scan faster or smaller — it changes which bucket a header lands in',
+      'a header inside the window contributes its instant to the reported window but adds no attempts or turns, so the census does not move',
+      'it does not validate createdAt against the wall clock of the file; a hand-edited session can still claim any date',
+    ],
+  },
 ]
 
 /** Look up one patch by id. */

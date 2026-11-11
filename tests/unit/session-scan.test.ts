@@ -98,6 +98,26 @@ test('an event with no time is unreadable in a windowed scan, not silently kept'
   assert.deepEqual(report.window, { oldest: null, newest: null })
 })
 
+// ---- P-0009: the first line of every session is a `session` header whose
+// time lives in `createdAt`, not `time`. A window that calls that unreadable
+// reports a readable file as broken data and inflates the unreadable count by
+// exactly one per session.
+
+test('a session header is dated by createdAt, so a windowed scan reads it', () => {
+  const header = JSON.stringify({ type: 'session', version: 4, id: 'session-x', createdAt: 1_760_000_000_000 })
+  const report = scanSessionText(header, 'one.jsonl', { since: 1_750_000_000_000 })
+  assert.equal(report.unreadable_lines, 0, 'the header has a time, it is just called createdAt')
+  assert.deepEqual(report.window, { oldest: 1_760_000_000_000, newest: 1_760_000_000_000 })
+})
+
+test('a session header older than the window is counted as before_since', () => {
+  const header = JSON.stringify({ type: 'session', version: 4, id: 'session-x', createdAt: 1_700_000_000_000 })
+  const report = scanSessionText(header, 'one.jsonl', { since: 1_750_000_000_000 })
+  assert.equal(report.unreadable_lines, 0)
+  assert.equal(report.before_since, 1, 'it was looked at and left outside, which is not the same as unreadable')
+  assert.deepEqual(report.window, { oldest: null, newest: null })
+})
+
 test('a multi-file scan sums the files and keeps one auditable row each', () => {
   const fused = '{"command":"ls"}{"path":"a.ts"}'
   const one = JSON.stringify({

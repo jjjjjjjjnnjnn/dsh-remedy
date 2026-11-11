@@ -220,6 +220,29 @@ test('scan rejects a --since that is not an instant', () => {
   assert.equal(run('scan', session, '--since', 'yesterday').status, 2)
 })
 
+test('a windowed directory scan does not spend one unreadable line per session header', () => {
+  // P-0009: every real session begins with a `session` header whose instant is
+  // `createdAt`. A window that cannot see that instant reported 78 unreadable
+  // lines for 78 files, which is a zero that lies in the other direction.
+  const dir = join(work, 'headers')
+  for (const name of ['one', 'two']) {
+    mkdirSync(join(dir, name), { recursive: true })
+    const header = JSON.stringify({ type: 'session', version: 4, id: `session-${name}`, createdAt: 1_700_000_000_000 })
+    const event = JSON.stringify({ type: 'step/end', seq: 1, time: 1_760_000_000_000, data: {} })
+    writeFileSync(
+      join(dir, name, 'session.v4.jsonl.zstd'),
+      zstdCompressSync(Buffer.from(`${header}\n${event}\n`, 'utf8')),
+    )
+  }
+
+  const result = run('scan', dir, '--since', new Date(1_750_000_000_000).toISOString(), '--json')
+  assert.equal(result.status, 0, result.stderr)
+  const report = JSON.parse(result.stdout) as { files: number; unreadable_lines: number; before_since: number }
+  assert.equal(report.files, 2)
+  assert.equal(report.unreadable_lines, 0, 'a header that parsed is not an unreadable line')
+  assert.equal(report.before_since, 2, 'both headers are dated and both are outside the window')
+})
+
 test('scan reports every way a turn ended, and exit stays quiet for a census', () => {
   // P-0006: this session has no fusion at all, so it is not a finding for the
   // repair layer, but the truncation inside it is exactly the class a fault

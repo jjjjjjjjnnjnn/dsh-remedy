@@ -149,6 +149,23 @@
         "tests/governance/ledgers.test.ts",
         "scripts/gate.mjs"
       ]
+    },
+    {
+      "id": "P-0009",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.3.6",
+      "evidence": [
+        "docs/patches/P-0009-session-header-window.md",
+        "packages/plugin/src/session-scan.ts",
+        "tests/unit/session-scan.test.ts",
+        "tests/e2e/cli.test.ts"
+      ],
+      "guards": [
+        "tests/unit/session-scan.test.ts",
+        "tests/e2e/cli.test.ts",
+        "packages/plugin/src/session-scan.ts"
+      ]
     }
   ]
 }

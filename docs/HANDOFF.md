@@ -3,17 +3,17 @@
 > **下一会话从 `dsh-remedy/` 开始。** 读本文件 → `PROJECT_RULES.md` → `AGENTS.md` 即可开工。
 > 本目录是**公开仓库根**；`dsh-triage/` 在父目录，是另一个项目，不属于本仓库。
 
-## 三十秒状态（2026-11-11 · R15）
+## 三十秒状态（2026-11-11 · R16）
 
 | 项 | 值 |
 |---|---|
-| 版本 | **`0.3.5`，工作树与 registry 一致**（两包 `latest` 都是 0.3.5，2026-11-11 发布；空目录从 registry 单装验过 `OK 6 fixture(s)`）。0.3.0 的 plugin 在 registry 上不可安装：manifest 里是字面 `workspace:*`；0.3.1 在上市前就被 0.3.2 取代，从未到过 registry |
-| 补丁 | **P-0001 `verified`**（headless + 桌面两次真机）· **P-0002 `verified`**（2026-11-10 headless 真机修好一次真实两调用粘连、合成 id 被派发执行）· **P-0003 `verified`**（2026-11-10 headless 真机 journal 第一次写出非零 `refused`：`too-many-calls` 拒绝而不是假装修好）· **P-0005 `tested`**（裸值 reseal；单测 + 负对照 + 一条实测夹具，无 live 产物）· **P-0004 `tested`**（scan 认 zstd + 目录 + `--since`，redaction 补三种路径形状；改的是离线读取器，live journal 永远证不了它）· **P-0006 `tested`**（scan 统计每一种 turn 结束方式并点名每个 error code；同样是离线读取器）· **P-0007 `tested`**（copy 通道：超过命令行上限的请求走 stdin、失败按原因命名；改的是构建侧，不动任何接缝） |
-| 基线 | **189 tests / 6 gates / `--mutate` 6-6** |
+| 版本 | **`0.3.6` 已 bump、已打包实测、尚未发布；registry 上 `latest` 仍是 `0.3.5`**（两包 `latest` 都是 0.3.5，2026-11-11 发布；空目录从 registry 单装验过 `OK 6 fixture(s)`）。0.3.0 的 plugin 在 registry 上不可安装：manifest 里是字面 `workspace:*`；0.3.1 在上市前就被 0.3.2 取代，从未到过 registry |
+| 补丁 | **P-0001 `verified`**（headless + 桌面两次真机）· **P-0002 `verified`**（2026-11-10 headless 真机修好一次真实两调用粘连、合成 id 被派发执行）· **P-0003 `verified`**（2026-11-10 headless 真机 journal 第一次写出非零 `refused`：`too-many-calls` 拒绝而不是假装修好）· **P-0005 `tested`**（裸值 reseal；单测 + 负对照 + 一条实测夹具，无 live 产物）· **P-0004 `tested`**（scan 认 zstd + 目录 + `--since`，redaction 补三种路径形状；改的是离线读取器，live journal 永远证不了它）· **P-0006 `tested`**（scan 统计每一种 turn 结束方式并点名每个 error code；同样是离线读取器）· **P-0007 `tested`**（copy 通道：超过命令行上限的请求走 stdin、失败按原因命名；改的是构建侧，不动任何接缝）· **P-0009 `tested`**（窗口化扫描把每个会话的首行 `session` 头记录当成 unreadable：实测 78 文件 78 行；改为头记录用 `createdAt` 参与窗口；同样是离线读取器） |
+| 基线 | **192 tests / 6 gates / `--mutate` 6-6** |
 | 包体 | **已发布 0.3.5 = 29 448 B 压缩 / 29 文件 / 97 944 B 解包**（`dist/*.js` 67 908 / `dist/*.d.ts` 21 177 / fixtures 3 583 / 包根 5 276），core **0.3.5 = 18 723 B / 19 文件 / 61 553 B 解包**（`dist/*.js` 41 262 / `dist/*.d.ts` 16 994）：P-0008 只加 `scripts/gate_size.mjs`，`scripts/` 不进包，所以 plugin 的字节数与 0.3.4 相同、shasum 因 manifest 版本变了从 `5f20282e…` 到 `c1b1b431…`；core 因多一条补丁记录变大。**已发布 0.3.2 = 24 689 B 压缩 / 25 文件 / 81 904 B 解包**（`dist/*.js` 56 344 / `dist/*.d.ts` 16 701 / fixtures 3 583 / 包根 5 276）；core **0.3.2 = 15 864 B / 19 文件 / 52 828 B 解包**。**已发布 0.3.3 = 28 378 B 压缩 / 29 文件 / 94 769 B 解包**（`dist/*.js` 65 521 / `dist/*.d.ts` 20 389 / fixtures 3 583 / 包根 5 276），core **0.3.3 = 16 776 B / 19 文件 / 55 684 B 解包**。**已发布 0.3.4 = 29 448 B 压缩 / 29 文件 / 97 944 B 解包**（`dist/*.js` 67 908 / `dist/*.d.ts` 21 177 / fixtures 3 583 / 包根 5 276），core **0.3.4 = 18 202 B / 19 文件 / 59 864 B 解包**（`dist/*.js` 39 573 / `dist/*.d.ts` 16 994）：P-0007 只多了两条注册表条目，没有新增模块。两次拆接缝都是结构性修复不是省字节：0.3.2 把 `repair-stream.js` 28 955 → 27 925 而总量 +529；0.3.3 把 `cli.js` 16 640 → 8 503 而总量 64 539 → 65 521（+982） |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1` / `v0.3.2` / `v0.3.3` / `v0.3.4` / **`v0.3.5`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release） |
 | 装机验收 | 空目录 `npm install dsh-remedy@0.1.1` → `dsh-remedy verify` **5/5**；0.2.0 / 0.3.0 / 0.3.1 都用本地双 tgz 验过 5/5；**0.3.2 已从 registry 单装 plugin 验过 `OK 6 fixture(s)`（`.tmp/install-check-final/`）**；**0.3.3 已从 registry 单装 plugin 验过 `OK 6 fixture(s)`（`.tmp/install-check-033/`）**；0.3.4 已从 registry 单装验过 `OK 6 fixture(s)`（`.tmp/install-check-034/`）；**0.3.5 也已从 registry 单装在空目录验过 `OK 6 fixture(s)`（`.tmp/install-check-035.mjs`）**；两个 profile 已换成 `.tmp/pack17/` 的 0.3.5（`.tmp/switch-profiles-035.mjs`，desktop 内 `verify` 6/6、两包均 0.3.5，App 需重启才加载） |
-| 下一件事 | **重启桌面 App 让已装的 0.3.5 生效**（两个 profile 已是 0.3.5，desktop 内 `verify` 6/6）。0.3.5 的发布链已走完：两包 `latest`、`record_publish` 产物 `ok: true`（两次，14:55 那次因副本延迟记成 `ok: false`，15:05 那次才对）、空目录验收 6/6、release `v0.3.5` 已建。0.3.4 的发布链已走完：两包 `latest`、`record_publish` 产物 `ok: true`、空目录验收 6/6、release `v0.3.4` 已建。0.3.3 的发布链已走完：npm 两包 `latest`、`record_publish` 产物 `ok: true`、空目录验收 6/6、release `v0.3.3` 已建；P-0004 与 P-0006 都仍 `tested`，这是有意的 |
+| 下一件事 | **发布 0.3.6**（`.tmp/pack18/` 的两个 tarball 已在盘上，`--dry-run` 已实测 exit 0：plugin 29.4 kB / 97.8 kB / 29 files / shasum `fe85d15a…`；`npm whoami` → `publish_packages.mjs --otp <code>` → `record_publish.mjs --retries 3`），发布后重启桌面 App 让新版本生效。已在装的 0.3.5 生效还需要重启 App（两个 profile 已是 0.3.5，desktop 内 `verify` 6/6）。0.3.5 的发布链已走完：两包 `latest`、`record_publish` 产物 `ok: true`（两次，14:55 那次因副本延迟记成 `ok: false`，15:05 那次才对）、空目录验收 6/6、release `v0.3.5` 已建。0.3.4 的发布链已走完：两包 `latest`、`record_publish` 产物 `ok: true`、空目录验收 6/6、release `v0.3.4` 已建。0.3.3 的发布链已走完：npm 两包 `latest`、`record_publish` 产物 `ok: true`、空目录验收 6/6、release `v0.3.3` 已建；P-0004 与 P-0006 都仍 `tested`，这是有意的 |
 
 ## 五分钟检查
 
@@ -56,9 +56,64 @@ git -C .. log --oneline -3
 - 容器 `main` **没有**推到 `dsh-triage` 远端（推上去会破坏那个仓库的根布局）。不要顺手推。
 - `dsh-triage/` 只是同级项目，规则以它自己的 `AGENTS.md` 为准。
 
-## 当前批次（R15 → R1）
+## 当前批次（R16 → R1）
+
+**R16（2026-11-11）· P-0009：窗口化扫描把每个会话开头那行唯一可靠的日期报成"不可读"。**
+
+- **起因**：`node packages/plugin/dist/cli.js scan "C:/Users/rongj/.dsh/sessions" --since 2026-11-11T00:00:00Z`
+  报 `files=78 attempts=67 … unreadable_lines=78`。78 个文件正好 78 行不可读，不是某个坏文件，
+  而是每个会话日志都以同一行开头。探针实测 `files=78 headers=78 headers_without_time=78`：
+  头记录形如 `{"type":"session","version":4,"id":"session-…","createdAt":1794318268790,…}`，
+  时间是顶层 `createdAt`（epoch 毫秒），**没有 `time`**；三种键集都带 `createdAt`。
+- **机制**：`packages/plugin/src/session-scan.ts:178` 在 `--since` 下要求 `time` 是数字，否则一律
+  `unreadable += 1; continue`。头记录因此每次都被记坏。`unreadable_lines` 的存在意义是让人能
+  把"我全读了、没缺陷"和"我读不了证据"分开，而它随文件数增长就把这个区分变成噪音——这是
+  第二个会说谎的零（第一个是 P-0004 修掉的那次，整个文件读不出来却报 `attempts=0`）。
+- **修法**：`const stamp = time ?? (type === 'session' ? asNumber(event.createdAt) : null)`，
+  窗口判断与 `window` 更新都用 `stamp`。只有 `session` 头记录回退到 `createdAt`；没有时间字段的
+  普通事件仍然是 unreadable，因为确实没有第二个字段可读。
+- **判据先行**：先写让旧实现变红的单测。`tests/unit/session-scan.test.ts` 新增
+  `a session header is dated by createdAt, so a windowed scan reads it`（期望 `unreadable_lines 0`、
+  window 等于该时刻）与 `a session header older than the window is counted as before_since`
+  （期望 `before_since 1`、不是 unreadable）；`tests/e2e/cli.test.ts` 新增
+  `a windowed directory scan does not spend one unreadable line per session header`
+  （两个 zstd 文件各带头记录，期望 `unreadable_lines 0`、`before_since 2`）。原有那条
+  "普通事件无时间→unreadable" 保留不动，避免修复变成万能豁免。
+- **字节账**：加这段回退让 `dist/*.js` 到 68 351，超过刚立的 68 000 上限（第六门当场红）。
+  修法不是放宽上限，而是把同一文件里那三行解释压成两行、并压缩 `scanSessionText` 与
+  `scanSessions` 两个文档块，最终 67 997，**离上限只剩 3 字节**。事实包里已写明：下一个往
+  `dist` 加代码的补丁必须拆文件，不能再"吸收"。
+- **实测**：`node scripts/gate.mjs` → `ALL GREEN · 6 gates`；`--mutate` → `6/6 CAUGHT`；
+  `node --test` → **192 tests / 0 fail**（原 189，新增 3）。那条同命令的实测从
+  `unreadable_lines=78` 变成 `unreadable_lines=0`，`attempts=67` 与 `before_since=156209` 口径不变。
+- **台账**：`docs/patches/P-0009-session-header-window.md`（Status `tested`、severity minor、
+  surface `cli`）；`registry.ts` 追加 P-0009（evidence 4 / guards 3 / limits 4）；
+  `audit/patch_ledger.json` 加条目（`since: "0.3.6"`、**无 `verified_at`**）；
+  `audit/step_reviews.json` 加 **S16**。快照 `patch-registry-2026-11-11T16-30-00.000Z.json`
+  （sha256 `5218a55d…`，九补丁）。
+- **打包**：`.tmp/pack18/` plugin **29 445 B / 29 文件 / 97 807 B 解包**
+  （`dist/*.js` 67 997 / `dist/*.d.ts` 20 951 / fixtures 3 583 / 包根 5 276），manifest 钉
+  `"dsh-remedy-core": "0.3.6"`，sha1 `fe85d15a…`；core **19 247 B / 19 文件 / 63 408 B 解包**
+  （`dist/*.js` 43 117 / `dist/*.d.ts` 16 994 / 根 3 297），deps `{}`，sha1 `76777609…`
+  （core 变大只因为多一条补丁记录）。
+- **交接后续（2026-11-11 17:00 → 17:20）**：`sh .tmp/regenerate-copy-036.sh` 已于 17:13
+  `failures=0` 收尾，八个对外文件全部按 0.3.6 口径重生成：`README.md` 11 684 B
+  （16:38）、`README.zh-CN.md` 12 024 B（16:44）、`CONTRIBUTING.md` 3 078 B（16:46）、
+  `SECURITY.md` 1 014 B（16:49）、`CODE_OF_CONDUCT.md` 4 652 B（16:51）、`CHANGELOG.md`
+  10 033 B（17:05）、`docs/copy/repo-metadata.json` 2 255 B（17:09）、模板四件
+  `1 981 / 903 / 212 / 593 B`（17:12）。交接时唯一红的 `copy` 门随之转绿。
+  **门禁证据已重录**：`gates-mutate-2026-11-11T17-20-00.000Z.json`（`6/6 CAUGHT`）与
+  `gates-2026-11-11T17-25-00.000Z.json`（`ALL GREEN · 6 gates`，192 tests）；16:40 那条
+  红产物已删。**教训（写在这里以免下次重犯）**：事实包里说 0.3.6 打包字节的那一行被
+  试改过一次（把钉住的 core 版本从 `0.3.5` 改成 `0.3.6`），一改立刻让 `copy` 门全红，
+  因为它会改变事实包 hash 而对外文件已经生成完；**未发布的版本不要在事实包里描述其
+  tarball 细节**，等发布后一次性翻口径再重生成，否则就是一次 90 分钟的无谓往返。
+- **仍未做**：0.3.6 未发布（`--dry-run` 已于 17:15 实测 exit 0、拓扑与 `.tmp/pack18/` 逐字节一致）；桌面 App 未重启（已在装的 0.3.5 也还没生效）；
+  事实包里的 census 样本仍是旧的 287 turns / 375 attempts（复测 289 / 392），改它要连带重生成
+  全部对外文件，本轮仍未做。
 
 **R15（2026-11-11）· P-0008：没人检查的字节预算只是建议，而这个仓库已经证明过三次。**
+
 
 - **起因**：字节上限只写在事实包与 `README.md` 的散文里，`grep -rn "68000" scripts/` 返回空。
   于是三次越线都是事后人工量出来的，且每次当时 189 tests 与六门全绿：P-0005 之后 55 815、
@@ -550,12 +605,27 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 
 ## 下一位 agent 的第一件事
 
-**A. 主线：0.3.5 已发布并验收；下一个补丁从这里开始。** 八补丁已落地（P-0001 / P-0002 / P-0003 `verified`，
-P-0005 / P-0004 / P-0006 / P-0007 / P-0008 `tested`），基库 189 tests / 6 gates / `--mutate` 6-6；
-**0.3.5 已发布**（两包 `latest`、空目录单装 6/6、release `v0.3.5`、产物 `publish-2026-11-11T15-05-00.000Z.json`）。
-0.3.5 的内容是 P-0008：字节预算从散文变成第六门 `size`（`scripts/gate_size.mjs`，四条 cap，`--mutate` 拿实测总量对 cap-1 比较）。
-`node scripts/publish_packages.mjs` 一次成功、shasum `c1b1b431…`、29 文件 / 97.9 kB 解包；core 18723 B / 61553 B 解包 / shasum `cc9895f8…`。
-发布链的原始记录仍在下面，留着是因为下次发布还会重复同样的认证前置。
+**A. 主线：0.3.6 已 bump、已打包，只差发布；下一个补丁从这里开始。** 九补丁已落地
+（P-0001 / P-0002 / P-0003 `verified`，P-0005 / P-0004 / P-0006 / P-0007 / P-0008 / P-0009 `tested`），
+基线 192 tests / 6 gates / `--mutate` 6-6；**registry 上 `latest` 仍是 `0.3.5`**
+（两包、空目录单装 6/6、release `v0.3.5`、产物 `publish-2026-11-11T15-05-00.000Z.json`）。
+0.3.6 的内容是 P-0009：窗口化扫描把每个会话首行的 `session` 头记录（时间在 `createdAt`）记成
+unreadable，实测 78 文件 78 行；修法是只有头记录回退到 `createdAt`，普通无时间事件仍是 unreadable。
+它在字节账上付出的是**压缩注释**：加回退后 `dist/*.js` 到 68 351 超过 68 000，第六门当场红，
+于是把解释压成两行并收紧了两个文档块，最终 **67 997，离上限 3 字节**。
+`.tmp/pack18/` 已打包：plugin 29 445 B / 29 / 97 807 B 解包（sha1 `fe85d15a…`）、
+core 19 247 B / 19 / 63 408 B 解包（sha1 `76777609…`）。**`--dry-run` 已实测 exit 0**（`package size 29.4 kB / unpacked 97.8 kB / shasum fe85d15a… / total files 29`，与 `.tmp/pack18/` 逐字节一致，末尾 `dry run finished. Nothing was sent to the registry.`），preflight 通过（`npm whoami` = `jjjjjjjjnnjnn`）。
+
+**下一个必须做的，按顺序：**
+1. 发布 0.3.6：`npm whoami` → `node scripts/publish_packages.mjs --otp <code>` →
+   `node scripts/record_publish.mjs --stamp <ISO> --retries 3` → 空目录 `npm install dsh-remedy@0.3.6`
+   + `npx dsh-remedy verify`（期望 `OK 6 fixture(s)`）→ `gh release create v0.3.6`。
+   副本延迟期间 `record_publish` 必须重跑，别当成发布失败。
+2. 发布后把事实包翻成"0.3.6 已发布"口径并重生成 8 个对外文件（约 70–90 分钟）。
+3. 两个 profile 从 `.tmp/pack17` 换 `.tmp/pack18`，然后重启桌面 App。
+4. 再往 `dist` 加代码之前先想清楚拆哪个文件：**只剩 3 字节**。
+
+发布前两条命令先证明认证是通的，再谈 OTP（2026-11-11 那次 404 就是跳过这一步的结果）：
 
 发布前两条命令先证明认证是通的，再谈 OTP（2026-11-11 那次 404 就是跳过这一步的结果）：
 
@@ -575,7 +645,7 @@ npm whoami          # 必须打印用户名；输出 E401 就先解决登录，�
    现在两份事实包都是 ASCII，一旦事实包里出现中文就会低估长度。要修就把 `ARGV_LIMIT` 的判断换成
    `Buffer.byteLength(text, 'utf16le') / 2`，并加一条带非 ASCII 的边界测试。
 
-**B. 清账：两个本地 profile 已指向 `.tmp/pack17/` 的 0.3.5，只差重启 App。**
+**B. 清账：两个本地 profile 指向 `.tmp/pack17/` 的 0.3.5（还没重启 App），发布 0.3.6 后要换成 `.tmp/pack18/`。**
 
 ```powershell
 # 换法照 .tmp/switch-profiles-034.mjs（改两个 key + pnpm-workspace.yaml 的 overrides + 备份后缀）
@@ -608,14 +678,16 @@ npm whoami          # 必须打印用户名；输出 E401 就先解决登录，�
 | `patch-registry-2026-11-10T22-30-00.000Z.json` | 绿 | 历史快照（五个补丁：P-0001/2/3 `verified`，P-0004/5 `tested`） |
 | `patch-registry-2026-11-11T10-30-00.000Z.json` | 绿 | 历史快照（六个补丁；sha256 `c484300c…`） |
 | `patch-registry-2026-11-11T11-20-00.000Z.json` | 绿 | 历史快照（七个补丁：P-0001/2/3 `verified`，P-0004/5/6/7 `tested`；sha256 `b272ddfe…`） |
-| `patch-registry-2026-11-11T13-50-00.000Z.json` | 绿 | **当前**注册表快照（八个补丁：P-0001/2/3 `verified`，P-0004/5/6/7/8 `tested`；sha256 `4ed8ae3a…`） |
+| `patch-registry-2026-11-11T13-50-00.000Z.json` | 绿 | 历史快照（八个补丁：P-0001/2/3 `verified`，P-0004/5/6/7/8 `tested`；sha256 `4ed8ae3a…`） |
+| `patch-registry-2026-11-11T16-30-00.000Z.json` | 绿 | **当前**注册表快照（九个补丁：P-0001/2/3 `verified`，P-0004/5/6/7/8/9 `tested`；sha256 `5218a55d…`） |
 | `gates-2026-11-10T22-25-00.000Z.json` / `gates-mutate-2026-11-10T22-20-00.000Z.json` | 绿 | P-0004 批次的门禁证据（`ALL GREEN · 5 gates` 与 `5/5 CAUGHT`） |
 | `gates-2026-11-11T09-45-00.000Z.json` / `gates-mutate-2026-11-11T09-40-00.000Z.json` | 绿 | 0.3.3 发布后的门禁证据（事实包改成"已发布"口径、8 个对外文件重生成之后） |
 | `gates-2026-11-11T10-40-00.000Z.json` / `gates-mutate-2026-11-11T10-45-00.000Z.json` | 绿 | 历史门禁证据（P-0006 批次，175 tests） |
 | `gates-2026-11-11T11-30-00.000Z.json` / `gates-mutate-2026-11-11T11-25-00.000Z.json` | 绿 | P-0007 台账批次的门禁证据（对外文件重生成之前） |
 | `gates-2026-11-11T13-15-00.000Z.json` / `gates-mutate-2026-11-11T13-10-00.000Z.json` | 绿 | 0.3.4 发布后的门禁证据（`ALL GREEN · 5 gates` 与 `5/5 CAUGHT`，189 tests） |
 | `gates-2026-11-11T14-35-00.000Z.json` / `gates-mutate-2026-11-11T14-30-00.000Z.json` | （已删） | 0.3.5 台账落地时的一次门禁证据，已被 15:45 的重跑取代 |
-| `gates-2026-11-11T15-45-00.000Z.json` / `gates-mutate-2026-11-11T15-40-00.000Z.json` | 绿 | **当前**门禁证据：0.3.5 发布后、事实包改成「0.3.5 已发布」并重生成 8 个对外文件之后，`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，189 tests |
+| `gates-2026-11-11T15-45-00.000Z.json` / `gates-mutate-2026-11-11T15-40-00.000Z.json` | 绿 | 0.3.5 发布后的门禁证据（`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，189 tests） |
+| `gates-2026-11-11T17-25-00.000Z.json` / `gates-mutate-2026-11-11T17-20-00.000Z.json` | 绿 | **当前**门禁证据：P-0009 台账落地、双包 bump 0.3.6、八个对外文件按 0.3.6 口径全部重生成之后，`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，192 tests（16:40 那条红产物已删） |
 | `publish-2026-11-09T20-00-00.000Z.json` | 绿 | 0.1.0 发布（core + plugin） |
 | `publish-2026-11-10T00-10-00.000Z.json` | **红（保留）** | 0.1.1 副本延迟，记录时还看不到 |
 | `publish-2026-11-10T06-40-00.000Z.json` | 绿 | 0.1.1 settled：core 0.1.0 / plugin 0.1.1 |
@@ -623,7 +695,7 @@ npm whoami          # 必须打印用户名；输出 E401 就先解决登录，�
 | `publish-2026-11-10T20-00-00.000Z.json` | 绿 | 0.3.2 发布：两包 `exact_ok` 与 `latest_ok` 均为 true |
 | `publish-2026-11-11T08-35-00.000Z.json` | 绿 | 0.3.3 发布：两包 `exact_ok` 与 `latest_ok` 均为 true（plugin shasum `46ad57ea…` / core `6fbbeb06…`） |
 | `publish-2026-11-11T12-30-00.000Z.json` | 绿 | 0.3.4 发布，两包 `exact_ok` 与 `latest_ok` 均为 true（plugin shasum `5f20282e…` / core `38400db9…`） |
-| `publish-2026-11-11T15-05-00.000Z.json` | 绿 | **当前**：0.3.5 发布，两包 `exact_ok` 与 `latest_ok` 均为 true（plugin shasum `c1b1b431…` / core `cc9895f8…`）；14:55 那次因副本延迟记成 `ok: false`，已删 |
+| `publish-2026-11-11T15-05-00.000Z.json` | 绿 | **当前**：0.3.5 发布，两包 `exact_ok` 与 `latest_ok` 均为 true（plugin shasum `c1b1b431…` / core `cc9895f8…`）；14:55 那次因副本延迟记成 `ok: false`，已删。0.3.6 尚未发布 |
 
 每个 `.json` 都有同名 `.sha256`。红产物不编辑，用新 stamp 重记。
 

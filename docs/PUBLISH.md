@@ -246,6 +246,47 @@ because two consecutive splits each grew the total while shrinking the file that
 growing.
 
 
+**0.3.7 is prepared (2026-11-12) and not published yet: P-0010, the CLI usage text.**
+
+P-0010 fixes two strings that described a CLI two releases out of date. The
+packaged `README.md` — the page npm renders — said `scan <session.jsonl> [--json]
+[--out <file>]` and the CLI's own usage said `scan <session.jsonl|session.v4.jsonl.zstd>
+[--json] [--out <file>]`; neither admitted a directory, `--since` or `--max-files`,
+which have shipped since 0.3.3. Nothing watched either string: the copy gate
+covers the eleven outward files at the repository root, this file is hand-written
+package prose with no recorded hash, and no test ran `help` or compared them.
+
+Both now carry `<session.jsonl|directory> [--since <iso>] [--max-files <n>] [--json]
+[--out <file>]`, and `tests/unit/cli-usage.test.ts` fails if they ever diverge or if
+the one-file-only shape returns. The longer flag list had to pay for itself: the
+emitted plugin sat at 67997 of 68000 bytes, so the four per-command descriptions
+were condensed to one line each, which took `cli-args.js` from 3086 to 2972 bytes
+and the plugin total to 67883 — no cap was raised.
+
+Baseline after the change: **195 tests, 0 failing. 6 gates. `--mutate` catches 6 of 6.**
+
+Measured with `pnpm pack` through the publish script's `--dry-run`:
+
+- `dsh-remedy@0.3.7`: 29.5 kB compressed, 98.0 kB unpacked, 29 files, shasum
+  `69087301f5ff802e387061af61756b65b883b11d`.
+- `dsh-remedy-core@0.3.7`: 19.9 kB compressed, 65.6 kB unpacked, 19 files, shasum
+  `41bad1549c8867b4a6cf045193abe287aff9b664`.
+
+To publish it:
+
+```bash
+npm whoami                                     # must answer jjjjjjjjnnjnn
+node scripts/publish_packages.mjs --otp <code> # core, then plugin
+node scripts/record_publish.mjs --stamp <ISO> --retries 3
+node scripts/record_install_acceptance.mjs --version 0.3.7 --stamp <ISO>
+gh release create v0.3.7 --notes-file <utf8 notes>
+```
+
+Then flip the fact pack from "0.3.7 prepared" to "0.3.7 published" and regenerate
+all eleven outward files **in one pass**: 0.3.6 and R17 each paid for splitting
+that into two rounds, because a fact-pack change invalidates every entry's
+`facts_sha256` at once.
+
 **Published 2026-11-11: 0.3.6, with P-0009.**
 
 P-0009 is a small, measured reader fix. A windowed scan over the real session

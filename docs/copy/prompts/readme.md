@@ -97,12 +97,13 @@ Rules:
   run that repaired a real two-call fusion and saw the synthesized call
   dispatched, and P-0003 on a 2026-11-10 headless run whose journal wrote a
   non-zero `refused` after the code declined to repair a budget refusal).
-  P-0005, P-0004, P-0006, P-0007, P-0008 and P-0009 are `tested`, not `verified`:
-  each has unit tests, negative controls, and a measured fixture or a measured
-  scan, but no live host run has produced the bare-value shape that P-0005
-  repairs; P-0004, P-0006 and P-0009 change an offline reader rather than the
-  resident seam; P-0007 changes the build-side copy channel; and P-0008 adds a
-  build-side gate. Name the release status from FACTS: FACTS names `0.3.6` as
+  P-0005, P-0004, P-0006, P-0007, P-0008, P-0009 and P-0010 are `tested`, not
+  `verified`: each has unit tests and negative controls, and a measured fixture or
+  a measured scan where one exists, but no live host run has produced the bare-value
+  shape that P-0005 repairs; P-0004, P-0006 and P-0009 change an offline reader rather
+  than the resident seam; P-0007 changes the build-side copy channel; P-0008 adds a
+  build-side gate; and P-0010 changes the CLI usage text and the packaged README.
+  Name the release status from FACTS: FACTS names `0.3.6` as
   published and as `latest` for both packages, with `0.3.5` as the previous
   release. Write exactly that: do not call a published version pending, do not
   describe `0.3.5` as the current release, and do not claim a version that

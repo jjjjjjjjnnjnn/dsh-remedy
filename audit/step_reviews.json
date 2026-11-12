@@ -314,7 +314,25 @@
         "tests/governance/public-copy.test.ts",
         "scripts/gate_copy.mjs"
       ]
+    },
+    {
+      "id": "S18",
+      "gate": "copy",
+      "title": "The npm page documented a CLI that had not existed since 0.3.3",
+      "axes": {
+        "correctness": "The test compares the packaged README scan line with the CLI USAGE scan line after whitespace normalisation, then requires --since, --max-files, --json, --out and a directory form on it. Before the patch the two strings differed (one said session.v4.jsonl.zstd, the other said session.jsonl) so the equality assertion was red; after the patch both say <session.jsonl|directory> [--since <iso>] [--max-files <n>] [--json] [--out <file>] and all six assertions pass.",
+        "reproducibility": "node --test tests/unit/cli-usage.test.ts goes from 1 fail to 2 pass, and `node packages/plugin/dist/cli.js --help | grep scan` prints the same line the README carries. The linked byte work is measured rather than argued: `node scripts/gate_size.mjs` reports 67883 of 68000 across 9 files, with cli-args.js at 2972 (was 3086).",
+        "compliance": "Two strings and one test; no seam is mounted differently, no dependency, no new module, no write to the host. The package README is hand-written prose and stays hand-written: this patch does not move it into the copy channel, it puts a test around the one line that must agree with the binary.",
+        "ssot": "The fact pack gained a P-0010 section that states the two stale strings, the mechanism that let them rot, the new common line and the byte cost, so the eleven generated outward files describe the same reality as the packaged README. `audit/patch_ledger.json` and `packages/core/src/registry.ts` carry the same status, and the registry snapshot was re-recorded after the change.",
+        "adversarial": "The defect is proven twice: the pre-patch strings are quoted verbatim in the test as the shape it refuses, and `git show HEAD:packages/plugin/README.md | grep scan` reproduces the stale line on demand. The test also refuses a regression to the one-file-only shape, which is how the defect arrived the first time."
+      },
+      "evidence": [
+        "docs/patches/P-0010-cli-usage-truth.md",
+        "packages/plugin/src/cli-args.ts",
+        "packages/plugin/README.md",
+        "tests/unit/cli-usage.test.ts"
+      ]
     }
   ],
-  "updated_at": "2026-11-11T19:45:00.000Z"
+  "updated_at": "2026-11-12T08:00:00.000Z"
 }

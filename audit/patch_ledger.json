@@ -166,6 +166,23 @@
         "tests/e2e/cli.test.ts",
         "packages/plugin/src/session-scan.ts"
       ]
+    },
+    {
+      "id": "P-0010",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.3.7",
+      "evidence": [
+        "docs/patches/P-0010-cli-usage-truth.md",
+        "packages/plugin/README.md",
+        "packages/plugin/src/cli-args.ts",
+        "tests/unit/cli-usage.test.ts"
+      ],
+      "guards": [
+        "tests/unit/cli-usage.test.ts",
+        "packages/plugin/README.md",
+        "packages/plugin/src/cli-args.ts"
+      ]
     }
   ]
 }

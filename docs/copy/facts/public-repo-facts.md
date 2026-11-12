@@ -81,6 +81,7 @@
 - The CLI prints one line with all eight counters: `streams=`, `fused=`, `repaired=`, `unrepaired=`, `truncated=`, `errors=`, `refused=`, `withdrawn=`.
 - `unrepaired` now means exactly one thing: a fusion was proven and was not repaired.
 - Blind spot `BS-12` is closed by this patch.
+- The live host has witnessed the budget-refusal branch and a clean repair; it has not yet witnessed a mid-stream withdrawal. The `withdrawn` bucket therefore rests on unit tests and fixtures only, and P-0003 stays `verified` for the branch that was actually observed rather than for the whole row.
 
 ## The reseal (P-0005)
 
@@ -127,6 +128,15 @@
 - Guards: `tests/unit/session-scan.test.ts` dates a header by `createdAt` and expects zero unreadable lines, dates one before the window and expects `before_since`, and keeps the ordinary-event case expecting one unreadable line; `tests/e2e/cli.test.ts` scans a two-file zstd directory and asserts both numbers.
 - Unmeasured: whether `createdAt` ever disagrees with the file itself. The fix trusts the header’s own claim and does not compare it against the wall clock or the mtime.
 
+## The CLI documentation (P-0010)
+
+- Status `tested`. Surface `cli`. It changes two strings, so no resident journal can attest it.
+- The npm page for the plugin said `scan <session.jsonl> [--json] [--out <file>]` and the CLI's own usage said `scan <session.jsonl|session.v4.jsonl.zstd> [--json] [--out <file>]`. Both had been wrong since 0.3.3: `scan` has accepted a directory, `--since` and `--max-files` since P-0004.
+- Nothing watched either string. The copy gate covers the eleven outward files at the repository root and this file is hand-written package prose with no recorded hash, so it had no gate; no test ran `help` or compared the two strings.
+- Both now carry the same line, `<session.jsonl|directory> [--since <iso>] [--max-files <n>] [--json] [--out <file>]`, and `tests/unit/cli-usage.test.ts` fails if they ever differ again or if the old one-file-only shape returns.
+- Paid for under the byte ceiling by stating each command on one line instead of two: the emitted `cli-args.js` fell from 3086 to 2972 bytes and the plugin total from 67997 to 67883.
+- Unmeasured: the gate set still does not cover `packages/*/README.md` as a whole; the new test compares the two `scan` lines, not the rest of the package README.
+
 ## The byte budget gate (P-0008)
 
 - Status `tested`. Surface `scripts`. It is a build-side gate: nothing the plugin mounts changes, so no live journal can attest it.
@@ -171,10 +181,14 @@
 - The session that run produced has 21 events, zero tool calls, no synthetic id, and `turn_end` `kind=error`: the refusal re-threw the original failure rather than pretending to repair it.
 - That verdict was `degraded` with `1 fused call(s), 1 could not be repaired` and `the original failure was re-thrown, not swallowed`.
 - 0.3.0 refusal live evidence: `data/results/live-2026-11-10T16-30-00.000Z.json`; the same tarball; `cross_check.match` true.
+- 0.3.6 live run (2026-11-11 to 2026-11-12): the shipped 0.3.6 tarball was installed into `remedy-live` and asked, eleven times, to issue two `read` calls in one assistant message. One of those turns produced a real fusion. The journal holds 60 `stream` events plus one `repaired`, and the `repaired` event reads `fused=1, repaired=1, unrepaired=0, truncated=0, errors=0, refused=0, withdrawn=0`.
+- That session (`session-be170c33`) shows seq 18 `call_00_2n6gr905wxda0su0f6bsmkm5` reading `docs/copy/manifest.json`, seq 19 `call_00_2n6gr905wxda0su0f6bsmkm5#remedy-1` reading `docs/copy/facts/public-repo-facts.md`, the two matching tool results, and `turn/end` `kind=completed`: the synthesized call was dispatched and answered on the current release.
+- 0.3.6 live evidence: `data/results/live-2026-11-12T06-00-00.000Z.json`; the verdict is `repaired` with `1/1 fused call(s) split into valid calls`; journal and session cross-check agree.
+- Still unmeasured on a real host: a mid-stream withdrawal (`withdrawn`). Twelve attempts at composing a proven repair next to a deliberately malformed call produced no fusion at all, because the relay fuses intermittently and the model would not emit a syntactically broken argument pair, so the `withdrawn` bucket remains unit- and fixture-proven only.
 
 ## Tests and gates
 
-- Tests: 193 pass, 0 fail.
+- Tests: 195 pass, 0 fail.
 - Gates: 6 (`ssot`, `registry`, `namespace`, `step-review`, `copy`, `size`).
 - Negative controls (`--mutate`): 6 of 6 caught.
 - Publishing: `scripts/publish_packages.mjs` publishes the two package
@@ -213,7 +227,7 @@
 - The published 0.3.6 plugin tarball is 29445 bytes compressed, 29 files, 97807 bytes unpacked (67997 bytes of `dist/*.js`, 20951 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, 5276 bytes of package-root files), shasum `fe85d15a5e97e9956a8a899d993ec1122f0c8774`. The published 0.3.6 core tarball is 19247 bytes compressed, 19 files, 63408 bytes unpacked (43117 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`), shasum `76777609f4e3928af5ed591c01edb7ee1c2323f0`; it grew by one patch record, not by new modules. The 0.3.5 tarballs remain 29448 / 29 / 97944 (shasum `c1b1b43185ea49347c394c987dd878c717d8f4f5`) and 18723 / 19 / 61553 (shasum `cc9895f826b56e9e7a5a1af2ed0886cb43514531`).
 - The published 0.3.3 plugin tarball is 28378 bytes compressed, 29 files, 94769 bytes unpacked (65521 bytes of `dist/*.js`, 20389 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, 5276 bytes of package-root files), shasum `46ad57ea718be732133979c4b0449f7221ee69c7`. The published 0.3.3 core tarball is 16776 bytes compressed, 19 files, 55684 bytes unpacked (35393 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`), shasum `6fbbeb060505cb80c7f454dbab5ea74acd463fdd`.
 - The 0.3.2 core tarball is 15864 bytes compressed, 19 entries, 52828 bytes unpacked (32537 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`).
-- Byte budget, restated honestly: `dist/*.js` reached 55815 bytes after P-0005, over the 53000 byte ceiling. 0.3.2 splits the seam into `stream-types.ts` and `failure-text.ts`, which cuts `repair-stream.js` from 28955 to 27925 bytes but grows the plugin total to 56344, because import and export scaffolding is not free. P-0004 then took the total to 64539 and split the CLI the same way: `cli.ts` fell from 16640 to 8503 bytes while `cli-args.ts` and `scan-command.ts` added 9119, so the total rose again to 65521. Both splits are structural fixes, not byte fixes: the ceiling exists to stop one file from absorbing every patch. P-0006 then took the total to 67908 bytes, 92 bytes under the ceiling, after a first attempt that moved the census into a separate module and overshot to 70389 bytes: the scaffolding of a ninth file costs more than the code it holds, so the module was deleted and the helpers were inlined. The working ceiling is 28000 bytes for the emitted `repair-stream.js`, 14000 for `session-scan.js`, 10000 for `cli.js`, and 68000 bytes for the plugin total, and a patch that crosses a per-file number splits that file again. P-0008 turned those four numbers into a gate: `scripts/gate_size.mjs` measures `packages/plugin/dist` on every run and refuses the crossing, so the next patch cannot produce a 70389 byte total and have 192 tests and six gates pass green before anyone notices. P-0009 then landed at 67997 of 68000 bytes, leaving three bytes of headroom, so the next patch that adds code to the emitted plugin must split a file, move a helper out of the load path, or stop paying for prose in `dist/*.js`.
+- Byte budget, restated honestly: `dist/*.js` reached 55815 bytes after P-0005, over the 53000 byte ceiling. 0.3.2 splits the seam into `stream-types.ts` and `failure-text.ts`, which cuts `repair-stream.js` from 28955 to 27925 bytes but grows the plugin total to 56344, because import and export scaffolding is not free. P-0004 then took the total to 64539 and split the CLI the same way: `cli.ts` fell from 16640 to 8503 bytes while `cli-args.ts` and `scan-command.ts` added 9119, so the total rose again to 65521. Both splits are structural fixes, not byte fixes: the ceiling exists to stop one file from absorbing every patch. P-0006 then took the total to 67908 bytes, 92 bytes under the ceiling, after a first attempt that moved the census into a separate module and overshot to 70389 bytes: the scaffolding of a ninth file costs more than the code it holds, so the module was deleted and the helpers were inlined. The working ceiling is 28000 bytes for the emitted `repair-stream.js`, 14000 for `session-scan.js`, 10000 for `cli.js`, and 68000 bytes for the plugin total, and a patch that crosses a per-file number splits that file again. P-0008 turned those four numbers into a gate: `scripts/gate_size.mjs` measures `packages/plugin/dist` on every run and refuses the crossing, so the next patch cannot produce a 70389 byte total and have 192 tests and six gates pass green before anyone notices. P-0009 then landed at 67997 of 68000 bytes, leaving three bytes of headroom, and P-0010 paid for its longer flag list by stating each command on one line, which took the total back to 67883 bytes.
 - The package still ships `dist/*.js`, `dist/*.d.ts`, `fixtures/`, `cordis.patch.yml`, `README.md`, `LICENSE`; no sourcemaps.
 - The 0.3.3 plugin tarball is 29 files and the 0.3.3 core tarball is 19 files (0.3.0 shipped 20 and 17). The 0.3.1 core tarball is 11585 bytes compressed, 17 entries, 38582 bytes unpacked.
 
@@ -264,4 +278,4 @@
 
 ## Numbers allowed in copy
 
-0 1 0001 2 0002 3 0003 4 0004 5 05 0005 6 0006 0007 08 8 0008 09 0009 10 11 12 13 14 15 16 17 18 19 20 21 22 25 27 28 29 30 35 37 38 39 40 43 44 48 55 56 77 78 84 88 92 93 94 100 120 192 193 256 272 276 293 393 401 956 2026 2694 3583 4427 5276 6851 8503 9119 10000 10872 11585 13237 13797 14000 15864 16640 16701 16776 16994 18723 19114 19247 19569 20389 20951 22418 24689 26345 27925 28000 28378 28955 29445 29448 30000 32537 32767 33530 35393 35509 38582 41926 43117 52247 52828 53000 55684 55815 56344 61553 63170 63408 64539 64933 65521 67908 67997 68000 70389 74014 81904 94769 97807 97944 98424 600000 3221226505 0.3.6 0.3.2 0.3.1 0.3.3 0.3.5 0.2.0 0.3.0 12.15.0 0.2.2 0.1.1
+0 1 0001 2 0002 3 0003 4 0004 5 05 0005 6 0006 0007 08 8 0008 09 0009 10 0010 11 12 13 14 15 16 17 18 19 20 21 22 25 27 28 29 30 35 37 38 39 40 43 44 48 55 56 60 77 78 84 88 92 93 94 100 120 192 195 256 272 276 293 393 401 956 2026 2694 2972 3086 3583 4427 5276 6851 8503 9119 10000 10872 11585 13237 13797 14000 15864 16640 16701 16776 16994 18723 19114 19247 19569 20389 20951 22418 24689 26345 27925 28000 28378 28955 29445 29448 30000 32537 32767 33530 35393 35509 38582 41926 43117 52247 52828 53000 55684 55815 56344 61553 63170 63408 64539 64933 65521 67883 67908 67997 68000 70389 74014 81904 94769 97807 97944 98424 600000 3221226505 0.3.6 0.3.2 0.3.1 0.3.3 0.3.5 0.2.0 0.3.0 12.15.0 0.2.2 0.1.1

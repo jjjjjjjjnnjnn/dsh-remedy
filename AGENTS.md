@@ -1,12 +1,14 @@
 # dsh-remedy AGENTS.md
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
-> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.3.6`
-> **Stand**：R17（2026-11-11，**0.3.6 已发布并完成陌生人安装验收**：空目录装
-> `dsh-remedy@0.3.6` 后 `verify` 6/6；本轮把该验收第一次落成产物
-> `data/results/install-acceptance-2026-11-11T19-30-00.000Z.json`。R17 还重测了 census
-> （293 turns / 393 attempts）并全量重生成 11 个对外文件，`copy` 门重新变绿。
-> **193 测试 / 6 门**)｜R16（2026-11-11，P-0009 窗口化扫描的 `createdAt` 回退）｜
+> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.3.7`（已 bump、已打包实测、未发布；registry 上仍是 0.3.6）
+> **Stand**：R18（2026-11-12，**P-0010 落地 + 0.3.7 bump**：npm 页面（`packages/plugin/README.md`）
+> 与 CLI `USAGE` 的 `scan` 用法第一次一致，并由 `tests/unit/cli-usage.test.ts` 守着；
+> 0.3.6 真机第一次修好真实粘连（`data/results/live-2026-11-12T06-00-00.000Z.json`，
+> `fused:1 repaired:1`、合成 id 被派发并回答），但 `withdrawn` 仍未在真机出现。
+> **195 测试 / 6 门**)｜R17（2026-11-11，收尾 0.3.6 的对外文字与台账，重测 census 到
+> 293 turns / 393 attempts，装机验收第一次落成产物）｜R16（2026-11-11，P-0009 窗口化扫描的
+> `createdAt` 回退）｜
 > R15（P-0008 字节预算门）｜R14（P-0007 copy 通道传输）｜R13（P-0006 turn census）｜
 > R12（P-0004 scan 保真 + 脱敏形状）｜R11（P-0005 裸值 reseal）｜R10（0.3.0 被 npm 写坏，
 > 0.3.1 修）｜R9（P-0003 升 `verified`）｜R8（P-0002 升 `verified`）｜R7（0.3.0 可观测性）｜
@@ -14,7 +16,7 @@
 > App 重启）｜R2（P-0001 升 `verified`）｜R1（首个补丁落地）
 > **接手先读**：`docs/HANDOFF.md` → `PROJECT_RULES.md` → `INDEX.md`
 >
-> **基线（2026-11-11）**：`pnpm run verify` = **193 tests / 6 gates**；
+> **基线（2026-11-12）**：`pnpm run verify` = **195 tests / 6 gates**；
 > `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.3.6`（latest）+
 > `dsh-remedy-core@0.3.6`。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
 > `v0.3.6`。

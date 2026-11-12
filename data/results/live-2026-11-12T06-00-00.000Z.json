@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_live_mount.mjs",
+  "generated_at": "2026-11-12T06:00:00.000Z",
+  "profile": {
+    "name": "remedy-live",
+    "dsh_version": "0.2.2-rc.1",
+    "install": "dsh plugin --profile remedy-live add <tarball>",
+    "package": "dsh-remedy@0.3.6",
+    "tarball": ".tmp/pack18/dsh-remedy-0.3.6.tgz",
+    "tarball_sha256": "969a39736b48431d27af029936948d17039c97bf28bdd9a58c71dc26a9c5c1c0",
+    "bundle_row": "remedy-stream",
+    "surface": "llm/stream"
+  },
+  "journal": {
+    "file": ".tmp/live-r17/journal.jsonl",
+    "events": 61,
+    "stream_events": 60,
+    "repaired_events": 1,
+    "rejected_events": 0
+  },
+  "counters": {
+    "streams": 60,
+    "fused": 1,
+    "repaired": 1,
+    "unrepaired": 0,
+    "truncated": 0,
+    "errors": 0,
+    "refused": 0,
+    "withdrawn": 0
+  },
+  "cross_check": {
+    "match": true,
+    "from": "journal",
+    "mode": "desktop-session (one long-lived process)",
+    "journal_totals": {
+      "streams": 60,
+      "fused": 1,
+      "repaired": 1,
+      "unrepaired": 0,
+      "truncated": 0,
+      "errors": 0,
+      "refused": 0,
+      "withdrawn": 0
+    },
+    "journal_groups": 20
+  },
+  "verdict": {
+    "state": "repaired",
+    "headline": "defect seen and repaired",
+    "reasons": [
+      "1/1 fused call(s) split into valid calls"
+    ]
+  },
+  "attempts": [],
+  "session": {
+    "file": "<home>/.dsh/sessions/--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--/session-be170c33-5dbd-4003-9ddd-8a9328cae0f3/session.v4.jsonl.zstd",
+    "sha256": "80d2297c04dc567410920888d79d9c0043204b609bc6cfc88eccd1d473923236",
+    "events": 28,
+    "turn_end": "completed",
+    "tool_calls": 2,
+    "tool_results": 2,
+    "fused_calls": 0,
+    "fusion_failures": 0,
+    "repairable_failures": 0,
+    "attempt_events": 0,
+    "attempt_logs": false,
+    "note": "this profile does not persist assistant/attempt streams; the fusion is evidenced by the journal and the synthetic id",
+    "synthetic_ids": [
+      "call_00_2n6gr905wxda0su0f6bsmkm5#remedy-1"
+    ],
+    "repaired_step": {
+      "turn": 1,
+      "step": 1,
+      "calls": [
+        {
+          "callId": "call_00_2n6gr905wxda0su0f6bsmkm5",
+          "name": "read"
+        },
+        {
+          "callId": "call_00_2n6gr905wxda0su0f6bsmkm5#remedy-1",
+          "name": "read"
+        }
+      ]
+    },
+    "journal_scope": "journal and session agree on the repaired count",
+    "turn_note": "",
+    "assistant_tail": "`docs/copy/manifest.json` 记录 11 个对外文件（changelog、readme、readme-zh、contributing、security、code-of-conduct、metadata 及 4 个 GitHub 模板）的统一模型 `gemini-3.8-flash-high` 与各自的 `output_sha256`，全部指向同一事实包哈希 `b40213c7…bfa93e7`，而该事实包即 `docs/copy/facts/public-repo-facts.md`，其中以 dsh-remedy 0.3.6 为主线，逐条列出缺陷机制、修复边界、真实运行证据、193 测试 / 6 门 / `--mutate` 6-6 以及允许出现在文案里的数字白名单。",
+    "answer_after_repair": "`docs/copy/manifest.json` 记录 11 个对外文件（changelog、readme、readme-zh、contributing、security、code-of-conduct、metadata 及 4 个 GitHub 模板）的统一模型 `gemini-3.8-flash-high` 与各自的 `output_sha256`，全部指向同一事实包哈希 `b40213c7…bfa93e7`，而该事实包即 `docs/copy/facts/public-repo-facts.md`，其中以 dsh-remedy 0.3.6 为主线，逐条列出缺陷机制、修复边界、真实运行证据、193 测试 / 6 门 / `--mutate` 6-6 以及允许出现在文案里的数字白名单。"
+  },
+  "task": "Two independent reads requested in one message; the model emitted them as parallel tool calls, which is the shape that fuses at the relay.",
+  "limits": [
+    "one machine, one provider route, one profile; not a population estimate",
+    "the live profile is a headless profile with the desktop provider block copied; the desktop UI was not restarted",
+    "the plugin build is the tarball named above; its sha256 is recorded, not inferred"
+  ],
+  "redaction": {
+    "replacements": 2,
+    "kinds": [
+      "encoded-home",
+      "windows-home"
+    ]
+  }
+}

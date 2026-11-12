@@ -5,13 +5,21 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.3.7] - unreleased
+### Added
+- P-0010: the packaged `README.md` — the page npm renders — documented `scan` as `<session.jsonl> [--json] [--out <file>]` and the CLI's own usage said `<session.jsonl|session.v4.jsonl.zstd>` with the same missing flags, while the binary has accepted a directory, `--since` and `--max-files` since 0.3.3. Both strings now carry the identical line and `tests/unit/cli-usage.test.ts` fails if they ever differ again.
+### Changed
+- The four per-command descriptions were condensed to one line each, which took the emitted `cli-args.js` from 3086 to 2972 bytes and the plugin total from 67997 to 67883, so the byte ceiling with three bytes of headroom became a ceiling with 117.
+### Notes
+- P-0010 is `tested` and not `verified`, because a usage string is not a resident seam, and that `0.3.6` remains the `latest` while `0.3.5` is the release before it.
+
 ## [0.3.6] - 2026-11-11
 ### Added
-- P-0009: a windowed `scan --since` over a real session directory reported `unreadable_lines=78` for 78 files, because every session opens with a `session` header whose instant is the top-level `createdAt` rather than `time` and the scanner required `time` before it would apply the window, so it called the one reliably dated line in the log unreadable. The header now falls back to `createdAt`, the same command went to `unreadable_lines=0` with the same `attempts=67`, and an ordinary event with no instant is still counted unreadable. P-0009 landed at 67997 of 68000 emitted bytes, so the plugin now sits three bytes under its ceiling and the next patch that adds code to `dist` must split a file instead of absorbing it.
+- P-0009: a windowed `scan --since` over a real session directory reported `unreadable_lines=78` for 78 files, because every session opens with a `session` header whose instant is the top-level `createdAt` rather than `time` and the scanner required `time` before it would apply the window, so it called the one reliably dated line in the log unreadable. The header now falls back to `createdAt`, the same command went to `unreadable_lines=0` with the same `attempts=67`, and an ordinary event with no instant is still counted unreadable. P-0009 landed at 67997 of 68000 emitted bytes.
 ### Changed
 - Documentation blocks in `session-scan.ts` were condensed to keep the emitted plugin within the 68000 byte ceiling without raising the cap.
 ### Notes
-- P-0009 is `tested` and not `verified` because, like P-0004 and P-0006, it moves an offline reader, and that this release `0.3.6` is published and is the registry `latest` for both packages, so the 0.3.6 section is the shipped one; `0.3.5` becomes the previous release and `0.3.4` the one before it.
+- P-0009 is `tested` and not `verified` because, like P-0004 and P-0006, it moves an offline reader, and that `0.3.6` is published and is the registry `latest` for both packages, with `0.3.5` the release before it.
 
 ## [0.3.5] - 2026-11-11
 ### Added

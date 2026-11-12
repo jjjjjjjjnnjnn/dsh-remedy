@@ -16,16 +16,14 @@ export const USAGE = `dsh-remedy — resident repair layer for DeepSeek Harness
 Usage:
   dsh-remedy status [--json] [--journal <file>]
   dsh-remedy repair [<file>] [--name <tool>] [--id <call-id>] [--max-calls <n>] [--truncated] [--json]
-  dsh-remedy scan <session.jsonl|session.v4.jsonl.zstd> [--json] [--out <file>]
+  dsh-remedy scan <session.jsonl|directory> [--since <iso>] [--max-files <n>] [--json] [--out <file>]
   dsh-remedy verify [--json]
 
 Commands:
-  status   List the patch registry and, with --journal, the last live counters.
-  repair   Split a fused tool-call argument text. Reads stdin when no file is given.
-           A .json fixture is read through its "arguments" field.
-  scan     Count fused calls and MALFORMED_RESPONSE turns in a session log.
-           Reads plain JSONL and multi-frame zstd logs alike.
-  verify   Run the bundled fixtures through the repair engine.
+  status   the patch registry; --journal prints the last live counters
+  repair   split a fused argument text; stdin when no file, .json via "arguments"
+  scan     a log or a directory, plain or multi-frame zstd, plus the turn census
+  verify   run the bundled fixtures through the repair engine
 
 Exit codes: 0 ok · 1 finding · 2 usage · 3 unavailable
 `

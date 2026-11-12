@@ -12,6 +12,11 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.3.7] - unreleased
+### Added
+### Changed
+### Notes
+
 ## [0.3.6] - 2026-11-11
 ### Added
 ### Changed
@@ -62,22 +67,34 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 Rules:
 
-- Add a `0.3.6` section above `0.3.5`, with only `Added`, `Changed` and
-  `Notes` subsections. Its Added entry is P-0009: a windowed `scan --since`
-  over a real session directory reported `unreadable_lines=78` for 78 files,
-  because every session opens with a `session` header whose instant is the
-  top-level `createdAt` rather than `time` and the scanner required `time`
-  before it would apply the window, so it called the one reliably dated line
-  in the log unreadable. Say the header now falls back to `createdAt`, that the
-  same command went to `unreadable_lines=0` with the same `attempts=67`, and
-  that an ordinary event with no instant is still counted unreadable. Note
-  that P-0009 landed at 67997 of 68000 emitted bytes, so the plugin now sits
-  three bytes under its ceiling and the next patch that adds code to `dist`
-  must split a file instead of absorbing it. Its Notes entry is that P-0009 is
-  `tested` and not `verified` because, like P-0004 and P-0006, it moves an
-  offline reader, and that this release `0.3.6` is published and is the registry
-  `latest` for both packages, so the 0.3.6 section is the shipped one; `0.3.5`
-  becomes the previous release and `0.3.4` the one before it.
+- The newest section is `0.3.7` and it is **unreleased**: nothing may claim it
+  has shipped, and the release status still reads `0.3.6` as the registry
+  `latest`. Its Added entry is P-0010: the packaged `README.md` - the page npm
+  renders - documented `scan` as `<session.jsonl> [--json] [--out <file>]` and
+  the CLI's own usage said `<session.jsonl|session.v4.jsonl.zstd>` with the same
+  missing flags, while the binary has accepted a directory, `--since` and
+  `--max-files` since 0.3.3. Say both strings now carry the identical line and
+  that `tests/unit/cli-usage.test.ts` fails if they ever differ again. Its
+  Changed entry is that the four per-command descriptions were condensed to one
+  line each, which took the emitted `cli-args.js` from 3086 to 2972 bytes and the
+  plugin total from 67997 to 67883, so the byte ceiling with three bytes of
+  headroom became a ceiling with 117. Its Notes entry is that P-0010 is `tested`
+  and not `verified`, because a usage string is not a resident seam, and that
+  `0.3.6` remains the `latest` while `0.3.5` is the release before it.
+- Keep the `0.3.6` section below it as the shipped one, with only `Added`,
+  `Changed` and `Notes` subsections. Its Added entry is P-0009: a windowed
+  `scan --since` over a real session directory reported `unreadable_lines=78`
+  for 78 files, because every session opens with a `session` header whose
+  instant is the top-level `createdAt` rather than `time` and the scanner
+  required `time` before it would apply the window, so it called the one
+  reliably dated line in the log unreadable. Say the header now falls back to
+  `createdAt`, that the same command went to `unreadable_lines=0` with the same
+  `attempts=67`, and that an ordinary event with no instant is still counted
+  unreadable. Note that P-0009 landed at 67997 of 68000 emitted bytes. Its
+  Notes entry is that P-0009 is `tested` and not `verified` because, like
+  P-0004 and P-0006, it moves an offline reader, and that `0.3.6` is published
+  and is the registry `latest` for both packages, with `0.3.5` the release
+  before it.
 - Add a `0.3.4` section above `0.3.3`, with only `Added`, `Changed` and `Notes`
   subsections. Its Added entry is P-0006: `scan` now counts how every turn ended
   (`completed`, `max_tokens`, `aborted`, `error`) and names every

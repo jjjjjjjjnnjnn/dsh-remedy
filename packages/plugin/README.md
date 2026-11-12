@@ -34,10 +34,16 @@ nothing when there is nothing to repair.
 
 ```
 dsh-remedy status  [--json] [--journal <file>]
-dsh-remedy repair  [<file>] [--name <tool>] [--id <id>] [--truncated] [--json]
-dsh-remedy scan    <session.jsonl> [--json] [--out <file>]
+dsh-remedy repair  [<file>] [--name <tool>] [--id <call-id>] [--max-calls <n>] [--truncated] [--json]
+dsh-remedy scan    <session.jsonl|directory> [--since <iso>] [--max-files <n>] [--json] [--out <file>]
 dsh-remedy verify  [--json]
 ```
+
+`scan` takes one plain `.jsonl` file, a multi-frame `session.v4.jsonl.zstd` log,
+or a directory of them; `--since` drops older events and reports how many it
+dropped, `--max-files` caps the walk. It also prints the turn census and the
+error codes it counted. `repair` reads stdin when no file is given, and a `.json`
+fixture through its `arguments` field.
 
 Exit codes: `0` ok · `1` finding · `2` usage · `3` unavailable.
 

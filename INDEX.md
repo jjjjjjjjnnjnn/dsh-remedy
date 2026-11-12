@@ -115,6 +115,7 @@
 | `tests/unit/registry.test.ts` | 注册表形状与状态语义 |
 | `tests/unit/package-files.test.ts` | 包里必须带哪些文件（fixtures 进包） |
 | `tests/unit/publish.test.ts` | 发布 preflight：登录、404/401/403、OTP、manifest 协议 |
+| `tests/unit/cli-usage.test.ts` | 包内 README 与 CLI `USAGE` 的 `scan` 行必须一致（P-0010） |
 | `tests/unit/agy-channel.test.ts` | 传输边界 / 失败命名 / 最后一条 `result` 胜出 |
 | `tests/governance/ledgers.test.ts` | 台账 / 六格披露行 / 唯一 SessionID / 快照一致 |
 | `tests/governance/public-copy.test.ts` | 对外文件 / 事实包 / 模板 / 元数据 |

@@ -17,12 +17,14 @@ Usage:
   dsh-remedy status [--json] [--journal <file>]
   dsh-remedy repair [<file>] [--name <tool>] [--id <call-id>] [--max-calls <n>] [--truncated] [--json]
   dsh-remedy scan <session.jsonl|directory> [--since <iso>] [--max-files <n>] [--json] [--out <file>]
+  dsh-remedy explain [--sessions <dir>] [--profile-file <cordis.patch.yml>]
   dsh-remedy verify [--json]
 
 Commands:
   status   the patch registry; --journal prints the last live counters
   repair   split a fused argument text; stdin when no file, .json via "arguments"
   scan     a log or a directory, plain or multi-frame zstd, plus the turn census
+  explain  which failure classes this host hits, and which patch covers each here
   verify   run the bundled fixtures through the repair engine
 
 Exit codes: 0 ok · 1 finding · 2 usage · 3 unavailable

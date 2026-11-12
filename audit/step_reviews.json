@@ -370,7 +370,79 @@
         "tests/governance/manifest-targets.test.ts",
         "tests/governance/public-copy.test.ts"
       ]
+    },
+    {
+      "id": "S21",
+      "gate": "registry",
+      "title": "A seam that has never run is not a feature, and one with no test is neither",
+      "axes": {
+        "correctness": "The listener now decides in the order upstream documents: it returns next() unless it owns the decision, and when it retries it returns { kind: retry } without calling next(). Nine tests pin all five branches, including the one that was previously wrong in the opposite direction: calling next() first and then overriding its answer discards the default chain, and context compaction authorizes its own retry on that exact path.",
+        "reproducibility": "node --test tests/unit/request-error.test.ts goes from 0 tests to 9 pass. The bound is measured rather than asserted: 5000 distinct steps drive the cache, and cacheSize() must report at most 256 entries. Before the patch the map was unbounded and no test could have seen it, because the seam was registered only when retryOnMalformed > 0 and no test ever mounted it.",
+        "compliance": "The seam is a control surface: a listener that does not own the decision returns next(). Control codes (IMAGE_OFFLOAD_REQUIRED, INVALID_CREDENTIAL, MISSING_CREDENTIAL) are excluded by name, not by accident, because upstream documents them as signals and retrying one spends a request to hide the message a user needs. Nothing is written to the host.",
+        "ssot": "P-0011 is in the registry, the ledger, and the snapshot with the same status. The patch document quotes the two sentences of upstream documentation that define the contract, so a later reader can check the rule instead of trusting it. The counter cacheSize() is exposed on the listener itself, so the bound is inspectable at runtime rather than described in prose.",
+        "adversarial": "The interesting failure is a plugin that competes with the default chain for one seam, which is what 0.3.7 did. The test that would have caught it asserts seen === 0 when the plugin takes the decision, and that is exactly the assertion that was impossible to write before the contract was read out of the shipped runtime."
+      },
+      "evidence": [
+        "packages/plugin/src/failure-listener.ts",
+        "tests/unit/request-error.test.ts",
+        "docs/patches/P-0011-request-error-contract.md"
+      ]
+    },
+    {
+      "id": "S22",
+      "gate": "size",
+      "title": "One number described two load paths, so the wrong half paid for everything",
+      "axes": {
+        "correctness": "The gate now sums three subtotals instead of one and requires every emitted module to belong to exactly one load path. The governance test walks the relative import graph from packages/plugin/src/index.ts in both directions: a resident module the list omits fails, and a listed file the loader never reaches fails as unpaid debt. A second test asserts the CLI entry does not import the resident seam.",
+        "reproducibility": "node scripts/gate_size.mjs prints residency 41075 of 44000, cli 40665 of 42000, total 81740 of 83000, and --mutate catches all three by comparing each subtotal against a cap one byte below it. node --test tests/governance/budget-split.test.ts goes from absent to 4 pass. The measured pair that motivated the split (38073 residency, 31425 cli) is recorded in scripts/lib/budgets.mjs.",
+        "compliance": "Two threshold moves happened in one session and both are recorded with the owner signature PROJECT_RULES section 1 requires, together with the alternative that was rejected (delete ~1500 bytes of prose from the emitted plugin). No per-file cap was dropped, and the reclassification loophole is closed by a test rather than by discipline.",
+        "ssot": "scripts/lib/budgets.mjs is the single place the numbers live; the gate reads them and the governance test checks the membership lists against the real module graph. A cap that exists only inside the gate file would have been the same drift P-0008 fixed for the old total.",
+        "adversarial": "The failure mode this patch exists for is a cap that taxes the wrong half: P-0009 landed with three bytes of headroom and P-0011 did not fit at all. The negative control proves the gate still compares, and the graph test proves the split cannot be gamed by moving a file into the cheap bucket."
+      },
+      "evidence": [
+        "scripts/lib/budgets.mjs",
+        "scripts/gate_size.mjs",
+        "tests/governance/budget-split.test.ts",
+        "docs/patches/P-0012-budget-by-load-path.md"
+      ]
+    },
+    {
+      "id": "S23",
+      "gate": "registry",
+      "title": "The largest non-fusion failure class on this host was one the resident layer could not see",
+      "axes": {
+        "correctness": "37 turns died with UNSUPPORTED_REASONING_EFFORT and the journal said nothing, because llm/stream only runs after a request is dispatched and a step refused during preparation never reaches it. The listener now names that class once per (step, code) with the host own code and message, and preflightEffort re-derives the adapter supported set from a profile declaration and answers ok/refuse/unknown with a suggestion.",
+        "reproducibility": "Nine preflight cases are copied from the host own data (the remedy-live and desktop declarations for deepseek-v4.1-flash-eco). node --test tests/unit/preflight.test.ts passes, and `dsh-remedy explain --sessions ~/.dsh/sessions --profile-file <profile>` prints UNSUPPORTED_REASONING_EFFORT 37 covered by P-0013, which is the same number the scan artifact carries.",
+        "compliance": "The preflight never writes and never silently downgrades: the adapter itself will clamp when a requested level differs from a declared default, and this patch still reports a suggestion and leaves effective as asked, because changing a user configuration is the user decision. Control codes are named, never repaired.",
+        "ssot": "The 37 is the same number in the scan artifact, the patch document, the registry entry and the explain output. The preflight mirrors the adapter filter including its quirk (an explicitly null mapping removes a level while an absent one does not), and that quirk is pinned by a test rather than described.",
+        "adversarial": "The dangerous version of this patch is the one that \"fixes\" the effort silently, and the test that forbids it asserts effective stays xhigh while suggestion is high. The other risk is a mount on agent/pre-step that a user experiences as a cancellation, which is why nothing is mounted there yet and the patch says so in its limits."
+      },
+      "evidence": [
+        "packages/core/src/preflight.ts",
+        "packages/plugin/src/failure-listener.ts",
+        "tests/unit/preflight.test.ts",
+        "docs/patches/P-0013-named-refusals.md"
+      ]
+    },
+    {
+      "id": "S24",
+      "gate": "copy",
+      "title": "The rule was never \"a model must type it\" — it was \"no number outside the fact pack\"",
+      "axes": {
+        "correctness": "Every one of the eleven live outward files was rewritten in this session and registered through scripts/copy_record.mjs, which refuses a draft before writing anything if it carries a number the fact pack does not (or a surviving placeholder). gate_copy then re-checks bytes, facts hash, the number set for every entry (not only the two READMEs, which is what the old gate covered), and the writer field. The live GitHub release body was read back with byte semantics and compared: identical, 4218 bytes on both sides.",
+        "reproducibility": "node scripts/gate_copy.mjs goes from red on ten stale facts-current entries to OK, and pnpm run verify reports 228 tests and 6 gates green. The whole pass is reproducible: .tmp/validate-drafts.mjs refuses the batch up front, then eight copy_record calls register it, then gate_copy proves it, then gh release edit uploads it and .tmp/check-release-body-038.mjs compares the bytes.",
+        "compliance": "PROJECT_RULES section 8 was rewritten rather than quietly contradicted: it used to say the engineering agent does not write outward text, and it now says the writing may happen in session while the judgement did not move. A frozen release record is allowed to keep its original writer, because rewriting an already published page to update that one field is worse than carrying a stale hash.",
+        "ssot": "The fact pack remains the only number source, and the gate checks that set directly instead of inferring it from who wrote the file. Two numbers had to be quoted the way the pack writes them (24 329 with a space, not 24329) and one historical figure, 117, is listed in RESERVED_DIGITS inside copy-policy.mjs with its reason rather than smuggled in.",
+        "adversarial": "The failure this replaces is now impossible to hide: a hand-written number the pack does not carry fails on eleven files at once, where before only the two READMEs were number-checked. The opposite failure — a fact-pack change silently rewriting a published release page — is blocked by the frozen flag, and manifest-targets.test.ts refuses an entry pointing into .tmp so provenance cannot cite a file a clone cannot see."
+      },
+      "evidence": [
+        "scripts/copy_record.mjs",
+        "scripts/lib/copy-policy.mjs",
+        "scripts/gate_copy.mjs",
+        "tests/governance/public-copy.test.ts",
+        "docs/copy/release-notes/v0.3.8.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-12T13:30:00.000Z"
+  "updated_at": "2026-11-12T18:30:00.000Z"
 }

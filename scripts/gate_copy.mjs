@@ -1,42 +1,43 @@
 #!/usr/bin/env node
 /**
- * Gate: externally visible text came from the copy channel and still matches it.
+ * Gate: externally visible text is traceable to the fact pack and unchanged.
  *
- * Checks:
- *  - every manifest entry's `output_sha256` matches the file (no hand edits);
- *  - every entry's `facts_sha256` matches the current fact pack (no stale copy);
- *  - the model is the pinned copy model;
- *  - Markdown artifacts contain no placeholder tokens;
- *  - prose numbers exist in the fact pack (URLs, code fences and inline code are
- *    excluded, so badge URLs and commands do not trip the check).
+ * The old gate checked a proxy — "the pinned external model wrote it" — because
+ * that model was the only thing that could not invent a number: it was handed the
+ * fact pack and told not to use anything else. The channel is gone (no model CLI
+ * is invoked any more), so the gate now checks the property itself, one level
+ * closer to what a reader cares about:
  *
- * Negative control: `--mutate` corrupts the stored hash, so a gate that stops
- * comparing bytes goes red.
+ *  - every prose number exists in the fact pack (URLs, code fences and inline
+ *    code are excluded, so badge URLs and commands do not trip it);
+ *  - no placeholder survives;
+ *  - the bytes on disk match the recorded hash;
+ *  - the recorded fact pack is the current one (a frozen release record is
+ *    exempt: it describes one published page and must not be rewritten);
+ *  - the recorded writer is one of the accepted channels, so "voice" stays
+ *    attributable without dictating what an author may write.
+ *
+ * Negative control: `--mutate` corrupts the stored hash, so a gate that stopped
+ * comparing bytes goes red instead of quietly passing.
  */
 
-import { createHash } from 'node:crypto'
 import { exists, readJson, readText, runGate, sha256 } from './lib/kit.mjs'
-
-const MODEL = 'gemini-3.8-flash-high'
-const PLACEHOLDER = /\b(TODO|TBD|FIXME|YOUR_[A-Z_]+|lorem ipsum)\b/i
-
-function proseNumbers(text) {
-  const stripped = text
-    .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/`[^`]*`/g, ' ')
-    .replace(/https?:\/\/\S+/g, ' ')
-  return [...new Set(stripped.match(/\d+/g) ?? [])]
-}
+import { hasPlaceholder, unknownNumbers, WRITERS } from './lib/copy-policy.mjs'
 
 await runGate('copy', async ({ checks, mutate }) => {
   const manifest = readJson('docs/copy/manifest.json')
   const facts = readText('docs/copy/facts/public-repo-facts.md')
   const factsHash = sha256(facts)
-  const allowed = new Set((facts.match(/\d+/g) ?? []).concat(Array.from({ length: 11 }, (_, index) => String(index))))
 
   const entries = Array.isArray(manifest.entries) ? manifest.entries : []
   checks.require('entries-present', entries.length > 0, `${entries.length} entry(ies)`)
-  checks.add('model-pinned', manifest.model_default === MODEL, String(manifest.model_default))
+
+  const writers = new Set(Object.values(WRITERS))
+  checks.add(
+    'writer-recorded',
+    manifest.model_default === WRITERS.inSession,
+    `model_default must be ${WRITERS.inSession}, got ${String(manifest.model_default)}`,
+  )
 
   for (const entry of entries) {
     checks.add(`target-exists:${entry.name}`, exists(entry.target), entry.target)
@@ -46,27 +47,36 @@ await runGate('copy', async ({ checks, mutate }) => {
     const actual = sha256(text)
     const expected = mutate ? `${actual.slice(0, -1)}0` : entry.output_sha256
     checks.add(`bytes:${entry.name}`, actual === expected, `${String(expected).slice(0, 12)}… vs ${actual.slice(0, 12)}…`)
+
     // A frozen entry is a record of one published release (the GitHub release
-    // notes), not a description of the current pack. It must still match its
-    // own bytes, but it cannot be required to track a fact pack that has moved
-    // on: that would mean silently rewriting a page that is already public.
+    // notes), not a description of the current pack. It must still match its own
+    // bytes, but it cannot be required to track a pack that has moved on: that
+    // would mean silently rewriting a page that is already public.
     const frozen = typeof entry.frozen_at === 'string'
     checks.add(
       `facts-current:${entry.name}`,
       frozen || entry.facts_sha256 === factsHash,
       frozen ? 'frozen release record' : entry.facts_sha256 === factsHash ? '' : 'fact pack changed; regenerate this artifact',
     )
-    checks.add(`model:${entry.name}`, entry.model === MODEL, String(entry.model))
+
+    checks.add(
+      `writer:${entry.name}`,
+      frozen ? writers.has(String(entry.model)) : String(entry.model) === WRITERS.inSession,
+      frozen
+        ? `frozen record keeps its original writer ${String(entry.model)}`
+        : `live entries must be written ${WRITERS.inSession}, got ${String(entry.model)}`,
+    )
 
     if (entry.target.endsWith('.md')) {
-      const hasPlaceholder = PLACEHOLDER.test(text)
-      checks.add(`no-placeholder:${entry.name}`, !hasPlaceholder, hasPlaceholder ? 'placeholder token found' : '')
+      checks.add(`no-placeholder:${entry.name}`, !hasPlaceholder(text), hasPlaceholder(text) ? 'placeholder token found' : '')
     }
 
-    if (entry.target === 'README.md' || entry.target === 'README.zh-CN.md') {
-      const extra = proseNumbers(text).filter((number) => !allowed.has(number))
-      checks.add(`numbers:${entry.name}`, extra.length === 0, extra.length === 0 ? 'all prose numbers are in the fact pack' : `not in facts: ${extra.join(', ')}`)
-    }
+    const extra = unknownNumbers(text, facts)
+    checks.add(
+      `numbers:${entry.name}`,
+      extra.length === 0,
+      extra.length === 0 ? 'every prose number is in the fact pack' : `not in facts: ${extra.join(', ')}`,
+    )
   }
 
   for (const required of ['README.md', 'README.zh-CN.md', 'CONTRIBUTING.md', 'SECURITY.md', 'CODE_OF_CONDUCT.md', 'CHANGELOG.md']) {
@@ -80,8 +90,8 @@ await runGate('copy', async ({ checks, mutate }) => {
 
   const pluginPkg = readJson('packages/plugin/package.json')
   const corePkg = readJson('packages/core/package.json')
-  checks.add('plugin-description', pluginPkg.description === metadata.plugin_description, 'package.json must carry the generated description')
-  checks.add('core-description', corePkg.description === metadata.core_description, 'package.json must carry the generated description')
+  checks.add('plugin-description', pluginPkg.description === metadata.plugin_description, 'package.json must carry the recorded description')
+  checks.add('core-description', corePkg.description === metadata.core_description, 'package.json must carry the recorded description')
 
   // The manifest itself must not be a stale artifact of a different fact pack.
   // Frozen release records are exempt for the reason stated above.

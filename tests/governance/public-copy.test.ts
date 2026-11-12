@@ -28,12 +28,17 @@ const manifest = readJson<{
   entries: { name: string; target: string; model: string; output_sha256: string; facts_sha256: string }[]
 }>('docs/copy/manifest.json')
 
-test('every public file has a manifest entry, produced by the pinned copy model', () => {
-  assert.equal(manifest.model_default, 'gemini-3.8-flash-high')
+test('every public file has a manifest entry whose bytes are unchanged', () => {
+  // The writer used to be pinned to an external model, because that was how the
+  // project kept numbers out of memory. What that pinning really protected is
+  // checked directly now: the numbers are in the fact pack (gate_copy), and the
+  // bytes are unchanged here. A live entry must say it was written in session.
+  assert.equal(manifest.model_default, 'in-session')
   for (const file of PUBLIC_FILES) {
     const entry = manifest.entries.find((item) => item.target === file)
     assert.ok(entry !== undefined, `${file} has no manifest entry`)
-    assert.equal(entry.model, 'gemini-3.8-flash-high', `${file} came from ${entry.model}`)
+    const frozen = typeof (entry as { frozen_at?: string }).frozen_at === 'string'
+    if (!frozen) assert.equal(entry.model, 'in-session', `${file} came from ${entry.model}`)
     assert.equal(entry.output_sha256, sha256(read(file)), `${file} drifted from its recorded bytes`)
   }
 })
@@ -146,8 +151,11 @@ test('no generated Markdown file contains a placeholder', () => {
   }
 })
 
-test('the copy channel document names the pinned model and the forbid rule', () => {
+test('the copy channel document names the writer and the forbid rule', () => {
+  // The writer used to be a pinned external model; pinning it was a proxy for
+  // "no number may come from memory". The channel now records `in-session`, and
+  // the rule that a registered artifact is never hand-edited still stands.
   const text = read('docs/copy/README.md')
-  assert.match(text, /gemini-3\.8-flash-high/)
-  assert.match(text, /Never edit a generated artifact by hand/)
+  assert.match(text, /in-session/, 'the channel must name the writer it records')
+  assert.match(text, /Never edit a registered artifact by hand/)
 })

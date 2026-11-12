@@ -12,6 +12,12 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.3.8] - 2026-11-12
+### Added
+### Changed
+### Fixed
+### Notes
+
 ## [0.3.7] - 2026-11-12
 ### Added
 ### Changed
@@ -67,25 +73,30 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 Rules:
 
-- The newest section is `0.3.7` and it is **the shipped one**: `0.3.7` is
-  published and is the registry `latest` for both packages, so nothing may call
-  it pending, and `0.3.6` is the release before it. Its Added entry is P-0010: the packaged `README.md` - the page npm
-  renders - documented `scan` as `<session.jsonl> [--json] [--out <file>]` and
-  the CLI's own usage said `<session.jsonl|session.v4.jsonl.zstd>` with the same
-  missing flags, while the binary has accepted a directory, `--since` and
-  `--max-files` since 0.3.3. Say both strings now carry the identical line and
-  that `tests/unit/cli-usage.test.ts` fails if they ever differ again. Its
-  Changed entry is that the four per-command descriptions were condensed to one
-  line each, which took the emitted `cli-args.js` from 3086 to 2972 bytes and the
-  plugin total from 67997 to 67883, so the byte ceiling with three bytes of
-  headroom became a ceiling with 117. Its Notes entry is that P-0010 is `tested`
-  and not `verified`, because a usage string is not a resident seam, and that
-  `0.3.7` is the registry `latest` while `0.3.6` is the release before it. Also
-  record that the whole `MALFORMED_RESPONSE` corpus on one host was replayed
-  through the built engine (47 turns, 39 repaired, 8 refused, none unparsable) and
-  that a 300000-case generated stress pass found no unparsable dispatch, no
-  duplicate id and no lost tool name.
-- Keep the `0.3.6` section below it as the shipped one, with only `Added`,
+- The newest section is `0.3.8` and it is **the shipped one**: `0.3.8` is
+  published and is the registry `latest` for both packages, so nothing may call it
+  pending, and `0.3.7` is the release before it. Its Added entries are three:
+  P-0011, that the second seam `agent/request-error` had **no test at all** since
+  0.2.0 and called `next()` before overriding the answer, which the runtime's own
+  documentation forbids (a handler returns `{ kind: 'retry' }` **without** calling
+  `next()`), plus a retry budget that grew by one entry per step forever and is now
+  a bounded cache of 256; P-0013, that 37 turns on one machine died with
+  `UNSUPPORTED_REASONING_EFFORT` and the journal said nothing because
+  `llm/stream` only runs after a request is dispatched, so those classes are now
+  named once per step and code and a pure preflight answers whether a configured
+  effort will be refused before a token is spent; and `dsh-remedy explain`, which
+  prints per failure class how often this machine hit it, which patch covers it and
+  whether that patch is switched on in the named profile. Its Changed entry is
+  P-0012: the byte budget was one number describing two load paths, and is now
+  three checks (residency, cli, total) with a module-graph test that refuses a file
+  moved into the cheaper half. Its Notes entry is that all three are `tested` and
+  not `verified`, that `agent/pre-step` is deliberately not mounted because
+  nobody has measured what a user sees when a plugin rejects a step. Also record
+  that the whole `MALFORMED_RESPONSE` corpus on one host was replayed through the
+  built engine (47 turns, 39 repaired, 8 refused, none unparsable) and that a
+  300000-case generated stress pass found no unparsable dispatch, no duplicate id
+  and no lost tool name.
+- Keep a `0.3.7` section below it (Add P-0010, the packaged README and the CLI usage text), then the `0.3.6` section below that, with only `Added`,
   `Changed` and `Notes` subsections. Its Added entry is P-0009: a windowed
   `scan --since` over a real session directory reported `unreadable_lines=78`
   for 78 files, because every session opens with a `session` header whose

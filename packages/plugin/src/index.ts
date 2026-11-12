@@ -18,6 +18,9 @@ import { appendFileSync, mkdirSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { PATCHES, redactValue } from 'dsh-remedy-core'
 import { RemedyMonitor, repairStream, type RepairEvent } from './repair-stream.js'
+import { makeFailureListener, RETRY_CACHE_LIMIT, type FailureListener } from './failure-listener.js'
+
+export { makeFailureListener, RETRY_CACHE_LIMIT, type FailureListener }
 
 export interface RemedyLogger {
   info?(message: string): void
@@ -28,6 +31,10 @@ export interface RequestErrorPayload {
   readonly turn?: unknown
   readonly step?: unknown
   readonly failure?: { readonly code?: string; readonly message?: string }
+  /** Present on a live payload; a cancelled step must not be retried. */
+  readonly signal?: { readonly aborted?: boolean }
+  /** Present on a live payload; the preparation's policy, which this plugin ignores. */
+  readonly retryPolicy?: unknown
 }
 
 /** The narrow slice of the Cordis context this plugin uses. */
@@ -117,24 +124,21 @@ function mount(ctx: RemedyContext, config: RemedyConfig, monitor: RemedyMonitor)
       )
     }
 
+    // P-0011 + P-0013 share one listener: naming a failure and retrying it are
+    // two decisions on the same dispatch, and a second listener would only pay
+    // twice for it. Naming is always on; the retry budget defaults to 0.
     const retryMax = config.retryOnMalformed ?? 0
-    if (retryMax > 0) {
-      const budget = new Map<string, number>()
-      disposers.push(
-        ctx.on('agent/request-error', async (payload, next) => {
-          const action = await next()
-          if (action !== undefined && action !== null) return action
-          if (payload.failure?.code !== 'MALFORMED_RESPONSE') return action
-          const key = `${String(payload.turn)}:${String(payload.step)}`
-          const used = budget.get(key) ?? 0
-          if (used >= retryMax) return action
-          budget.set(key, used + 1)
-          monitor.recordRetry(key)
-          ctx.logger?.warn?.(`remedy: retry ${used + 1}/${retryMax} for ${key} after MALFORMED_RESPONSE`)
-          return { kind: 'retry' }
+    disposers.push(
+      ctx.on(
+        'agent/request-error',
+        makeFailureListener({
+          retryMax,
+          onRetry: (key) => monitor.recordRetry(key),
+          onDiagnosis: (code, key) => monitor.recordDiagnosis(code, key),
+          logger: ctx.logger,
         }),
-      )
-    }
+      ),
+    )
 
     return () => {
       for (const dispose of disposers) dispose()

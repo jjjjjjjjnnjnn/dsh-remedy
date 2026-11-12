@@ -1,7 +1,7 @@
 {
   "name": "dsh-remedy",
-  "version": "0.3.7",
-  "description": "DeepSeek Harness plugin that intercepts stream errors caused by fused tool calls, splits glued top-level JSON objects, and re-throws unprovable buffers.",
+  "version": "0.3.8",
+  "description": "DeepSeek Harness plugin that intercepts MALFORMED_RESPONSE streams, splits fused tool-call arguments, re-throws unprovable buffers, and names the deterministic refusals it does not retry.",
   "type": "module",
   "bin": {
     "dsh-remedy": "./dist/cli.js",
@@ -21,7 +21,11 @@
       "types": "./dist/session-scan.d.ts",
       "default": "./dist/session-scan.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./retry-listener": {
+      "types": "./dist/retry-listener.d.ts",
+      "default": "./dist/retry-listener.js"
+    }
   },
   "files": [
     "dist",

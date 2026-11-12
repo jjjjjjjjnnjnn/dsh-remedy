@@ -60,6 +60,16 @@ export interface RemedyCounters {
    * folds the fields P-0003 added.
    */
   readonly resealed?: number
+  /**
+   * Failure classes named but deliberately not repaired (P-0013).
+   *
+   * Optional for the same reason `resealed` is: a counter object written by an
+   * earlier build has no such field, and judging it must stay byte-identical.
+   * This counter never moves the verdict — a named diagnosis is not a repair,
+   * not a refusal and not an error; it exists so the journal says "we saw this
+   * and here is what it was" instead of leaving the user with a dead turn.
+   */
+  readonly diagnoses?: number
 }
 
 export type RemedyState = 'unmeasured' | 'quiet' | 'repaired' | 'degraded'

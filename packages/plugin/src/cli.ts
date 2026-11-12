@@ -35,6 +35,7 @@ import {
   USAGE,
 } from './cli-args.js'
 import { cmdScan } from './scan-command.js'
+import { cmdExplain } from './explain-command.js'
 
 function fixtureDir(): URL | null {
   // Installed tarball: dist/../fixtures; source checkout: dist/../../../data.
@@ -231,6 +232,8 @@ function main(argv: readonly string[]): number {
       return cmdRepair(args)
     case 'scan':
       return cmdScan(args)
+    case 'explain':
+      return cmdExplain(args)
     case 'verify':
       return cmdVerify(args)
     default:

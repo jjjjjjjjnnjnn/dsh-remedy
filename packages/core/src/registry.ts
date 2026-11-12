@@ -144,6 +144,88 @@ export const PATCHES: readonly PatchRecord[] = [
     ],
   },
   {
+    id: 'P-0011',
+    title: 'A second seam with no test is a seam nobody has ever run',
+    symptom:
+      'agent/request-error shipped in 0.2.0 behind retryOnMalformed and had zero tests: 20 test files, none of them mentioned the seam. It also called next() first and then overrode the answer, kept its budget in a Map that was never pruned (one entry per turn:step for the life of a desktop process), and would have retried IMAGE_OFFLOAD_REQUIRED / INVALID_CREDENTIAL / MISSING_CREDENTIAL if the code ever reached it, because only MALFORMED_RESPONSE was checked but the control codes were not excluded on purpose',
+    rootCause:
+      'the listener was written against an assumed contract. The shipped runtime documents the real one: "a handling listener returns { kind: retry } without calling next(), while an unhandled failure is terminal", and "a waterfall listener that does not own the decision must return next()". Calling next() first and overriding it discards whatever the default chain decided, and context compaction authorizes its own retry on exactly that path. Nothing measured either direction, so both defects were invisible',
+    surface: 'agent/request-error',
+    status: 'tested',
+    severity: 'major',
+    evidence: [
+      'tests/unit/request-error.test.ts',
+      'packages/plugin/src/failure-listener.ts',
+      'docs/patches/P-0011-request-error-contract.md',
+    ],
+    guards: [
+      'tests/unit/request-error.test.ts',
+      'packages/plugin/src/failure-listener.ts',
+    ],
+    limits: [
+      'only MALFORMED_RESPONSE is retried: SERVER, TRANSPORT and TIMEOUT are already retried upstream (195 of 213 failing groups self-healed inside the same turn), so a second layer here would compete for the seam',
+      'the retry budget defaults to 0, so nothing is retried unless a deployment asks for it',
+      'the bound is 256 cache entries, which is far more than one turn needs and small enough that a week of desktop use cannot grow it; an entry older than that is evicted, so a very long single turn could revisit a step and spend a fresh retry',
+      'no live artifact: a retry is a decision on a seam, and the headless profile that produced the other live artifacts runs that seam only when a turn fails in a way this plugin retries, which never happened with the default budget of 0',
+    ],
+  },
+  {
+    id: 'P-0012',
+    title: 'One byte cap for two load paths is a cap that taxes the wrong half',
+    symptom:
+      'the single 68000-byte ceiling counted a mounted plugin and a CLI invocation as the same thing. P-0009 landed with three bytes of headroom, and the next patch (P-0011) needed 4263 bytes of new module that simply did not fit: the only way to pay for it under the old cap was to delete prose from files a daemon loads at startup',
+    rootCause:
+      'scripts/gate_size.mjs summed every emitted module and compared one number. It never asked which of those modules a running plugin imports, so 31425 bytes of CLI-only code (cli, cli-args, scan-command, session-scan) sat inside the same budget as the 38073 bytes that actually load on every session, and every resident byte had to be financed out of the CLI half',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'scripts/lib/budgets.mjs',
+      'scripts/gate_size.mjs',
+      'tests/governance/budget-split.test.ts',
+      'docs/patches/P-0012-budget-by-load-path.md',
+    ],
+    guards: [
+      'scripts/gate_size.mjs',
+      'tests/governance/budget-split.test.ts',
+    ],
+    limits: [
+      'it still refuses a crossing; the caps moved twice in one session (R20) and both moves are recorded in scripts/lib/budgets.mjs with the owner signature PROJECT_RULES section 1 requires',
+      'the class lists are explicit, but the governance test only checks the relative import graph: a module pulled in through dsh-remedy-core or a dynamic import would not be caught',
+      'a split budget cannot tell good growth from bad; it only says which half pays',
+      'it caps emitted JavaScript only, not declarations, fixtures or package-root files',
+    ],
+  },
+  {
+    id: 'P-0013',
+    title: 'The failure class this host hits most after fusion was named by nobody',
+    symptom:
+      '37 turns on this host died with UNSUPPORTED_REASONING_EFFORT, all of them the same sentence: provider "opendesign" model "deepseek-v4.1-flash-eco" does not support reasoning effort "xhigh", across three workspaces, eleven sessions and two days. scan counted them; the resident layer said nothing, so a user got a dead turn and no line explaining why. INVALID_REQUEST, MISSING_CREDENTIAL and EMPTY_RESPONSE were silent in the same way',
+    rootCause:
+      'the resident layer only spoke about two outcomes: a repair it made, and a stream it saw end. A deterministic refusal before any request was dispatched left no event at all, because repair-stream is mounted on llm/stream and a step rejected during preparation never reaches it. The knowledge existed (the error code and its message) and had no path into the journal',
+    surface: 'agent/request-error',
+    status: 'tested',
+    severity: 'major',
+    evidence: [
+      'packages/core/src/preflight.ts',
+      'packages/plugin/src/failure-listener.ts',
+      'tests/unit/preflight.test.ts',
+      'tests/unit/request-error.test.ts',
+      'docs/patches/P-0013-named-refusals.md',
+    ],
+    guards: [
+      'tests/unit/preflight.test.ts',
+      'tests/unit/request-error.test.ts',
+      'packages/core/src/preflight.ts',
+    ],
+    limits: [
+      'naming is always on, but it never repairs and never retries: a deterministic refusal costs one named line instead of one dead turn, which is the whole claim',
+      'preflight is a pure decision, not a mount: it re-derives the adapter supported set from a profile declaration and answers ok/refuse/unknown. Nothing wires it into agent/pre-step yet, because that seam must first be proven to reject the step without being read as a user cancellation',
+      'it does not silently downgrade a level. The adapter itself is willing to (resolvedConfig = { ...defaulted, reasoningEffort: effective } when the requested level differs from a declared default), but changing a user configuration is a decision the user makes, so the patch reports a suggestion instead',
+      'the preflight cannot see a model whose metadata lives only in the adapter: it reads what the profile declares, and a profile that declares nothing is reported as unknown rather than assumed',
+    ],
+  },
+  {
     id: 'P-0004',
     title: 'A scan must read the log it is pointed at, and a redaction must see every path shape',
     symptom:

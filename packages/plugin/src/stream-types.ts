@@ -78,6 +78,8 @@ export type RepairEvent =
       readonly detail: string
     }
   | { readonly kind: 'retry'; readonly detail: string }
+  /** A class named and deliberately not repaired (P-0013): the code is the host's own. */
+  | { readonly kind: 'diagnosis'; readonly code: string; readonly detail: string }
   | { readonly kind: 'stream'; readonly counters: RemedyCounters }
 
 export interface RepairStreamOptions {

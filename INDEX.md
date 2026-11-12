@@ -23,16 +23,20 @@
 | `packages/core/src/reseal.ts` | 裸值成员值只在唯一候选时 reseal，否则拒（P-0005） |
 | `packages/core/src/registry.ts` | `PATCHES`：补丁的单一真相源 |
 | `packages/core/src/verdict.ts` | unmeasured / quiet / repaired / degraded |
+| `packages/core/src/preflight.ts` | reasoning effort 预检：ok / refuse / unknown + 建议档位（P-0013） |
 | `packages/core/src/redact.ts` | 证据脱敏（五种家目录形状） |
 | `packages/plugin/src/repair-stream.ts` | `llm/stream` 包装器 + 计数 |
 | `packages/plugin/src/stream-types.ts` | P-0005 拆出的流类型（编译期擦除） |
 | `packages/plugin/src/failure-text.ts` | P-0005 拆出的失败消息助手 |
+| `packages/plugin/src/monitor.ts` | P-0014 拆出的计数器账本 |
+| `packages/plugin/src/failure-listener.ts` | `agent/request-error`：命名诊断 + 有界重试（P-0011/P-0013） |
 | `packages/plugin/src/index.ts` | DSH loader 入口（默认导出 `{name, apply}`） |
 | `packages/plugin/src/session-scan.ts` | 离线扫描（zstd / 目录 / `--since` / turn census） |
 | `packages/plugin/src/session-log.ts` | 多帧 zstd 会话日志读取 |
 | `packages/plugin/src/cli-args.ts` | `EXIT_*` / `USAGE` / `parseArgs`（P-0004 拆出） |
 | `packages/plugin/src/scan-command.ts` | `scan` 的目录遍历 / 读取 / 产物写入（P-0004 拆出） |
-| `packages/plugin/src/cli.ts` | `status` / `repair` / `scan` / `verify` |
+| `packages/plugin/src/cli.ts` | `status` / `repair` / `scan` / `explain` / `verify` |
+| `packages/plugin/src/explain-command.ts` | `explain`：故障类 → 覆盖补丁 → 本 profile 是否启用 |
 | `packages/plugin/cordis.patch.yml` | profile 补丁层（只有 `insert:` 与 `remedy-*`） |
 
 ## 证据
@@ -66,7 +70,7 @@
 | `.github/ISSUE_TEMPLATE/` / `.github/PULL_REQUEST_TEMPLATE.md` | issue / PR 模板 |
 | `.github/workflows/ci.yml` | 独立公开仓库的 CI（verify + mutate） |
 | `docs/copy/facts/` | 事实包：唯一数字来源 |
-| `docs/copy/prompts/` / `raw/` / `manifest.json` | 提示词、原始输出、provenance |
+| `docs/copy/prompts/` / `raw/` / `manifest.json` | 草稿要求、原始草稿、provenance |
 | `docs/copy/repo-metadata.json` | GitHub 描述 / topics / 发布文案 / npm 描述 |
 | `docs/copy/release-notes/` | GitHub release 正文（同一 copy 通道；条目带 `frozen_at`，不随事实包漂移） |
 | `docs/PUBLISH.md` | `git subtree split` 与首次发布步骤 |
@@ -81,10 +85,12 @@
 | `scripts/gate_namespace.mjs` | 补丁层形状 |
 | `scripts/gate_step_review.mjs` | 每步五轴 review |
 | `scripts/gate_copy.mjs` | 对外文件字节 / 事实包 / 数字一致性 |
-| `scripts/gate_size.mjs` | 第六门：`dist/*.js` 字节预算（P-0008） |
+| `scripts/gate_size.mjs` | 第六门：字节预算，按加载路径分 residency / cli / total（P-0012） |
+| `scripts/lib/budgets.mjs` | 三个 cap、两份模块清单、`approved_by` 签名 |
 | `scripts/lib/kit.mjs` | 门禁共用 `runGate` / `readJson` / `sha256` / `isoStamp` |
-| `scripts/lib/agy-channel.mjs` | copy 通道的传输规则（argv / stdin，P-0007） |
-| `scripts/copy_with_agy.mjs` | copy 通道：调用 agy 并记录 provenance |
+| `scripts/lib/copy-policy.mjs` | 数字白名单 / 占位符 / writer，纯函数 |
+| `scripts/lib/agy-channel.mjs` | 已退役通道的传输规则（P-0007 历史记录） |
+| `scripts/copy_record.mjs` | copy 通道：登记本会话写的草稿（先校验数字再写盘） |
 | `scripts/publish_packages.mjs` | `pnpm pack` → 读回 manifest → `npm publish` |
 | `scripts/redact_artifacts.mjs` | 已落盘产物的脱敏重写（P-0004） |
 | `scripts/record_live_mount.mjs` | 真机 journal/session → `live-*` 产物 |
@@ -122,7 +128,10 @@
 | `tests/unit/cli-usage.test.ts` | 包内 README 与 CLI `USAGE` 的 `scan` 行必须一致（P-0010） |
 | `tests/unit/fuzz-invariants.test.ts` | 属性测试：任何被接受的调用，其参数必须各自能 parse |
 | `tests/governance/manifest-targets.test.ts` | manifest 条目必须指向仓库内存在的文件（不得指向 `.tmp/`） |
-| `tests/unit/agy-channel.test.ts` | 传输边界 / 失败命名 / 最后一条 `result` 胜出 |
+| `tests/unit/request-error.test.ts` | 第二接缝的五种决定、`next()` 契约、有界缓存 |
+| `tests/unit/preflight.test.ts` | reasoning effort 预检：9 例，全部取自本机数据 |
+| `tests/governance/budget-split.test.ts` | 预算的两份清单必须与真实模块图双向一致 |
+| `tests/unit/agy-channel.test.ts` | 已退役通道的传输规则（P-0007 历史） |
 | `tests/governance/ledgers.test.ts` | 台账 / 六格披露行 / 唯一 SessionID / 快照一致 |
 | `tests/governance/public-copy.test.ts` | 对外文件 / 事实包 / 模板 / 元数据 |
 | `tests/e2e/cli.test.ts` | 四条命令的退出码与产物 |

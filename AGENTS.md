@@ -1,12 +1,12 @@
 # dsh-remedy AGENTS.md
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
-> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.3.7`（已发布，两包 `latest`）
-> **Stand**：R19（2026-11-12，**0.3.7 已发布并完成陌生人验收**；另加两个大样本测试：
-> 本机全部 47 条 `MALFORMED_RESPONSE` 语料回放（39 修 / 8 拒 / 0 条不可 parse 的派发）
-> 与 300 000 例生成式压力（0 不可 parse、0 重复 id、0 丢名）；`withdrawn` 本机不可达，
-> 已实测证明（BS-14）。
-> **201 测试 / 6 门**)｜R17（2026-11-11，收尾 0.3.6 的对外文字与台账，重测 census 到
+> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.3.8`（已发布，两包 `latest`）
+> **Stand**：R21（2026-11-12，**0.3.8 发布 + 对外文字改用本会话直写**。第二个接缝 `agent/request-error`
+> 有契约与 9 条测试；字节预算按加载路径拆；37 次 `UNSUPPORTED_REASONING_EFFORT` 从"无人命名"变成
+> 按 (step, code) 命名一次 + 纯函数 preflight；新增 `explain`；**copy 通道改用 `copy_record.mjs`，
+> 判据是"每个散文数字都在事实包里"，不再靠模型身份**。
+> **228 测试 / 6 门**)｜R17（2026-11-11，收尾 0.3.6 的对外文字与台账，重测 census 到
 > 293 turns / 393 attempts，装机验收第一次落成产物）｜R16（2026-11-11，P-0009 窗口化扫描的
 > `createdAt` 回退）｜
 > R15（P-0008 字节预算门）｜R14（P-0007 copy 通道传输）｜R13（P-0006 turn census）｜
@@ -16,10 +16,10 @@
 > App 重启）｜R2（P-0001 升 `verified`）｜R1（首个补丁落地）
 > **接手先读**：`docs/HANDOFF.md` → `PROJECT_RULES.md` → `INDEX.md`
 >
-> **基线（2026-11-12）**：`pnpm run verify` = **201 tests / 6 gates**；
-> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.3.7`（latest）+
-> `dsh-remedy-core@0.3.7`。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
-> `v0.3.7`。
+> **基线（2026-11-12）**：`pnpm run verify` = **228 tests / 6 gates**；
+> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.3.8`（latest）+
+> `dsh-remedy-core@0.3.8`。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
+> `v0.3.8`。
 > **本目录不是 git 根**：提交在 `..`（容器），公开仓库由
 > `git subtree split --prefix=dsh-remedy` 切出。
 
@@ -51,6 +51,7 @@ dsh-remedy/
 │   ├── json-split.ts       # 顶层 JSON 对象切分（字符串/深度状态机）
 │   ├── toolcall-repair.ts  # 一个调用 → unchanged | repaired | rejected
 │   ├── reseal.ts           # 裸值成员值的唯一候选 reseal（P-0005）
+│   ├── preflight.ts        # reasoning effort 预检：纯函数，ok/refuse/unknown（P-0013）
 │   ├── registry.ts         # PATCHES：每个补丁的名字、证据、守卫、边界
 │   ├── redact.ts           # 证据离开机器前的脱敏
 │   ├── verdict.ts          # unmeasured / quiet / repaired / degraded
@@ -61,11 +62,14 @@ dsh-remedy/
 │   ├── repair-stream.ts    # chunk 包装器；计数与事件
 │   ├── stream-types.ts     # P-0005 拆出的流类型（编译期擦除）
 │   ├── failure-text.ts     # P-0005 拆出的失败消息助手
+│   ├── monitor.ts          # P-0014 拆出的计数器账本（每条计数为何移动）
+│   ├── failure-listener.ts # 第二接缝：命名诊断 + 有界重试（P-0011/P-0013）
 │   ├── session-scan.ts     # 离线扫描 .jsonl / zstd 目录 + turn census
 │   ├── session-log.ts      # 多帧 zstd 会话日志读取
 │   ├── cli-args.ts         # EXIT_* / USAGE / parseArgs（P-0004 拆出）
 │   ├── scan-command.ts     # scan 的目录遍历 / 读取 / 产物写入（P-0004 拆出）
-│   └── cli.ts              # status / repair / scan / verify
+│   ├── explain-command.ts  # explain：故障类 → 谁覆盖 → 本 profile 是否启用
+│   └── cli.ts              # status / repair / scan / explain / verify
 ├── packages/plugin/fixtures/          # pack 时由 sync_fixtures 生成（gitignore）
 ├── packages/plugin/cordis.patch.yml   # 只有 insert: + remedy-* 行
 ├── scripts/
@@ -75,10 +79,12 @@ dsh-remedy/
 │   ├── gate_namespace.mjs  # 补丁层不能挂错东西
 │   ├── gate_step_review.mjs# 每步五轴 review + 证据可解析
 │   ├── gate_copy.mjs       # 对外文件字节 / 事实包 / 数字一致性
-│   ├── gate_size.mjs       # 第六门：dist/*.js 字节预算（P-0008）
+│   ├── gate_size.mjs       # 第六门：字节预算，按加载路径分 residency/cli/total（P-0012）
+│   ├── lib/budgets.mjs     # 三个 cap 与两份模块清单（含 approved_by 签名）
 │   ├── lib/kit.mjs         # 门禁共用：runGate / readJson / sha256 / isoStamp
-│   ├── lib/agy-channel.mjs # copy 通道传输规则（argv vs stdin，P-0007）
-│   ├── copy_with_agy.mjs   # copy 通道：agy + manifest
+│   ├── lib/agy-channel.mjs # 已退役通道的传输规则（P-0007 历史记录，保留供追溯）
+│   ├── copy_record.mjs     # copy 通道：登记本会话写的草稿（先校验数字再写盘）
+│   ├── lib/copy-policy.mjs # 数字白名单 / 占位符 / writer，纯函数
 │   ├── publish_packages.mjs    # pnpm pack → 校验 manifest → npm publish
 │   ├── redact_artifacts.mjs    # 已落盘产物的脱敏重写（P-0004）
 │   ├── record_live_mount.mjs   # 真机 journal/session → live 产物

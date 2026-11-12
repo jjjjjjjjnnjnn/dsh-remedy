@@ -78,6 +78,7 @@ test('the measured error-finish sequence is repaired into two calls plus stop', 
     refused: 0,
     withdrawn: 0,
     resealed: 0,
+    diagnoses: 0,
   })
 })
 
@@ -182,6 +183,7 @@ test('all-or-nothing: one unrepairable call aborts the rescue', async () => {
     refused: 1,
     withdrawn: 0,
     resealed: 0,
+    diagnoses: 0,
   })
   const abandoned = monitor.events().find((event) => event.kind === 'rejected' && event.code === 'abandoned-rescue')
   assert.ok(abandoned !== undefined, 'the proven-but-abandoned split must be recorded with its own code')

@@ -20,13 +20,11 @@
 
 import {
   DEFAULT_MAX_CALLS,
-  judgeRemedy,
   repairToolCallArguments,
-  type RemedyCounters,
-  type RemedyVerdict,
   type ToolCallInput,
 } from 'dsh-remedy-core'
 import { argumentsFromFailure, isFusionFailure, normalizeArguments } from './failure-text.js'
+import type { RemedyMonitor } from './monitor.js'
 import type {
   BlockEndChunk,
   FinishChunk,
@@ -37,6 +35,11 @@ import type {
   RepairStreamOptions,
   StreamChunk,
 } from './stream-types.js'
+
+// The counter ledger moved to `monitor.ts` (P-0014 seam split) because the
+// reasoning behind each counter is the largest part of it and the stream
+// wrapper has its own cap to stay under.
+export { RemedyMonitor } from './monitor.js'
 
 // The data vocabulary moved to `stream-types.ts` (P-0005 seam split); every name
 // still resolves through this module, so `index.ts` and the `./repair-stream`
@@ -54,178 +57,6 @@ export type {
   ToolCallDeltaChunk,
   UsageChunk,
 } from './stream-types.js'
-
-/** Live counters for one plugin instance. */
-export class RemedyMonitor {
-  private streams = 0
-  private fused = 0
-  private repaired = 0
-  private unrepaired = 0
-  private truncated = 0
-  private errors = 0
-  private refused = 0
-  private withdrawn = 0
-  private resealed = 0
-  private readonly listeners = new Set<(event: RepairEvent) => void>()
-  private readonly recorded: RepairEvent[] = []
-
-  enterStream(): void {
-    this.streams += 1
-  }
-
-  recordRepaired(tool: string, callId: string, fragments: number): void {
-    this.fused += 1
-    this.repaired += 1
-    this.emit({ kind: 'repaired', tool, callId, fragments })
-  }
-
-  /**
-   * Book one bare-value reseal (P-0005).
-   *
-   * This is not a fusion: exactly one call was intended, it kept its id, and its
-   * bytes went out unchanged inside a JSON string. So it moves `resealed` only —
-   * never `fused` (which means "a fusion was observed") and never `repaired`
-   * (which means "a fused call was split"). The verdict reads it as a repair
-   * because a defect was seen and fixed, and `quiet` would be a lie.
-   */
-  recordResealed(tool: string, callId: string, key: string): void {
-    this.resealed += 1
-    this.emit({ kind: 'resealed', tool, callId, key })
-  }
-
-  /**
-   * Book one refusal (P-0003 / BS-12).
-   *
-   * `fused` keeps its P-0001 meaning: a fusion was actually observed. Before
-   * P-0003 every rejection incremented it, so a plain bad JSON argument read as
-   * a fusion and a stream whose only defect was syntax reported `degraded`
-   * (BS-12). Three buckets, and no fourth:
-   *
-   *  - `refused` alone — we refused and the text was never proven to be a
-   *    fusion: `not-an-object-sequence`, `single-object`, `unparsable-fragment`,
-   *    `fragment-not-object`, `missing-id`, `missing-name`, `name-changed`.
-   *    An unknown code lands here too: a code this build does not know is not
-   *    assumed repairable.
-   *  - `fused` + `refused` + `unrepaired` — `too-many-calls`: the input *was* a
-   *    proven fusion shape, but our own `maxCalls` budget refused to split it.
-   *    It is a fusion we chose not to take (`fused`), a refusal (`refused`),
-   *    and — because the original failure then goes out untouched — a proven
-   *    fusion that was never repaired (`unrepaired`).
-   *
-   *    Booking `fused` without `unrepaired` here would be a lie. `judgeRemedy`
-   *    reports `repaired` (headline "defect seen and repaired") whenever
-   *    `fused > 0` and `unrepaired === 0`, even with `repaired === 0`; and
-   *    dropping `fused` too would report `quiet` ("defect not seen") for a
-   *    stream we just refused to fix. `degraded` is the only state that
-   *    describes a proven fusion left unrepaired, which is exactly what
-   *    `unrepaired` is defined to be.
-   *  - `withdrawn` alone — `rolled-back`: a repair that was already proven is
-   *    given back, so the run must not claim it. The proven-but-abandoned split
-   *    itself is booked by `recordAbandoned`, which is the only place that can
-   *    move `fused` + `unrepaired` for an abandoned proof.
-   *  - `withdrawn` alone — `consumer-abort`: the consumer stopped reading before
-   *    any decision. This code keeps its P-0002 booking (`fused` +
-   *    `unrepaired`) *in addition to* `withdrawn`, because the verdict
-   *    vocabulary is fixed: with `fused > 0` and `unrepaired === 0`, `judgeRemedy`
-   *    would report "repaired", and with `fused === 0` it would report "quiet".
-   *    Both claims are false for a stream whose buffered call was never emitted.
-   *
-   *    `truncated` never reaches this method: a cut stream is counted by
-   *    `recordTruncated()`, and a truncation withdrawal is not a failed repair.
-   */
-  recordRejected(tool: string, callId: string, code: string, detail: string): void {
-    switch (code) {
-      case 'rolled-back':
-        this.withdrawn += 1
-        break
-      case 'consumer-abort':
-        this.withdrawn += 1
-        // See the note above: the fixed verdict vocabulary cannot express
-        // "undecided buffer abandoned", so this keeps the P-0002 counters that
-        // stop a truncated-by-consumer stream from reading quiet or repaired.
-        this.fused += 1
-        this.unrepaired += 1
-        break
-      case 'too-many-calls':
-        this.fused += 1
-        this.refused += 1
-        // The original failure goes out untouched, so the proven fusion really is
-        // unrepaired; see the note above. Without this, `judgeRemedy` would claim
-        // "defect seen and repaired" for a stream that repaired nothing.
-        this.unrepaired += 1
-        break
-      default:
-        this.refused += 1
-    }
-    this.emit({ kind: 'rejected', tool, callId, code, detail })
-  }
-
-  /**
-   * Book a rescue that was proven for at least one candidate and then abandoned
-   * because another candidate in the same stream could not be split.
-   *
-   * The proof existed, so this is a fusion (`fused`); the calls were never
-   * dispatched, so it is `unrepaired`. This is the only place `unrepaired`
-   * moves: it stays the single bucket for "proven fusion, no repair". The
-   * refused candidate is booked separately by `recordRejected`, so
-   * `fused`+`unrepaired` here and `refused` there are two different candidates,
-   * never the same one counted twice.
-   */
-  recordAbandoned(tool: string, callId: string, detail: string): void {
-    this.fused += 1
-    this.unrepaired += 1
-    this.emit({ kind: 'rejected', tool, callId, code: 'abandoned-rescue', detail })
-  }
-
-  recordTruncated(): void {
-    this.truncated += 1
-  }
-
-  recordError(): void {
-    this.errors += 1
-  }
-
-  recordRetry(detail: string): void {
-    this.emit({ kind: 'retry', detail })
-  }
-
-  /** One line per stream, so a quiet run still has evidence it observed the seam. */
-  recordStreamEnd(): void {
-    this.emit({ kind: 'stream', counters: this.counters() })
-  }
-
-  counters(): RemedyCounters {
-    return {
-      streams: this.streams,
-      fused: this.fused,
-      repaired: this.repaired,
-      unrepaired: this.unrepaired,
-      truncated: this.truncated,
-      errors: this.errors,
-      refused: this.refused,
-      withdrawn: this.withdrawn,
-      resealed: this.resealed,
-    }
-  }
-
-  verdict(): RemedyVerdict {
-    return judgeRemedy(this.counters())
-  }
-
-  events(): readonly RepairEvent[] {
-    return [...this.recorded]
-  }
-
-  onEvent(listener: (event: RepairEvent) => void): () => void {
-    this.listeners.add(listener)
-    return () => this.listeners.delete(listener)
-  }
-
-  private emit(event: RepairEvent): void {
-    this.recorded.push(event)
-    for (const listener of this.listeners) listener(event)
-  }
-}
 
 function ceilingOf(options: RepairStreamOptions): number {
   const value = options.maxCalls

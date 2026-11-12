@@ -1,7 +1,7 @@
 {
   "name": "dsh-remedy-core",
-  "version": "0.3.7",
-  "description": "Pure tool-call splitting and repair engine for DeepSeek Harness. Guarantees that unproven buffers are never emitted and original failures are re-thrown unchanged.",
+  "version": "0.3.8",
+  "description": "Pure tool-call splitting and repair engine for DeepSeek Harness. Nothing unproven is ever emitted; a failure it cannot split is re-thrown unchanged.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

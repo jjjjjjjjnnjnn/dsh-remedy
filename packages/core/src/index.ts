@@ -39,3 +39,11 @@ export { redact, redactValue } from './redact.js'
 
 export type { RemedyCounters, RemedyState, RemedyVerdict } from './verdict.js'
 export { formatRemedyVerdict, judgeRemedy } from './verdict.js'
+
+export type {
+  EffortLevel,
+  ModelCapability,
+  PreflightDecision,
+  PreflightVerdict,
+} from './preflight.js'
+export { describePreflight, EFFORT_ORDER, preflightEffort, supportedEfforts } from './preflight.js'

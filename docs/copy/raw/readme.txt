@@ -8,22 +8,25 @@
 
 [中文说明](README.zh-CN.md)
 
-dsh-remedy is a resident repair layer for DeepSeek Harness (DSH). When a relay streams multiple tool calls into a single delta index, DSH aborts the turn with `MALFORMED_RESPONSE`. dsh-remedy intercepts `llm/stream`, buffers tool-call deltas, splits fused JSON payloads at verified boundaries, and emits valid tool call blocks. It operates strictly in-memory, writes nothing to disk unless configured, and re-throws the original error if an argument payload cannot be proven.
+dsh-remedy is a resident repair layer for DeepSeek Harness (DSH). It mounts on `llm/stream`, splits tool-call argument text that a relay glued into one index, and re-throws the original failure whenever it cannot prove the split. It also names the failure classes it refuses to repair, so a dead turn comes with a line explaining it instead of silence.
 
 ## What it fixes
 
-When an upstream provider relay packs two tool calls into one index, `@earendil-works/pi-ai` receives `{...}{...}` and throws. `dsh-llm-pi-ai` converts this into `LlmError(..., 'MALFORMED_RESPONSE')`, and `dsh-agent-loop` aborts the turn because `MALFORMED_RESPONSE` is not in default `retryableCodes`. Upstream discussion deepseek-ai/deepseek-harness #4427 describes the same fusion family.
+When an upstream provider relay packs two tool calls into one index, `@earendil-works/pi-ai` receives `{...}{...}` and throws. `dsh-llm-pi-ai` converts this into `LlmError(..., 'MALFORMED_RESPONSE')`, and `dsh-agent-loop` aborts the turn because `MALFORMED_RESPONSE` is not in `retryableCodes`. Upstream discussion deepseek-ai/deepseek-harness #4427 describes the same failure family.
 
 ```text
 Tool call "<name>": Unexpected non-whitespace character after JSON at position N
 Received arguments: {...}{...}
 ```
 
-Measured sample from the host session log: 78 session files, 393 attempts, 38 fused calls, 44 `MALFORMED_RESPONSE` failures of which 39 are repairable, and 0 unreadable lines.
+Measured over this machine's session directory: 78 session files, 393 attempts, 38 fused calls, 44 `MALFORMED_RESPONSE` failures of which 39 are repairable, and 0 unreadable lines.
 
-The census of 293 turns on the same host recorded 94 completed, 88 `max_tokens`, 100 error and 11 aborted. The six recorded error codes are `MALFORMED_RESPONSE` 44, `UNSUPPORTED_REASONING_EFFORT` 37, `SERVER` 16, `UNKNOWN` 1, `MISSING_CREDENTIAL` 1, and `INVALID_REQUEST` 1.
+The turn census of the same directory counted 293 turns: 94 completed, 88 `max_tokens`, 100 error and 11 aborted. The error codes it named are `MALFORMED_RESPONSE` 44, `UNSUPPORTED_REASONING_EFFORT` 37, `SERVER` 16, `UNKNOWN` 1, `MISSING_CREDENTIAL` 1 and `INVALID_REQUEST` 1.
 
-The offline `scan` command reads a single session file or a whole session directory, understands both plain `.jsonl` and multi-frame `.jsonl.zstd`, reports one row per file with `--since` support, and prints the turn census with the error codes it counted.
+Two of those classes needed different treatment, and both are now visible:
+
+- `MALFORMED_RESPONSE` is a fusion, so it is repaired when the split can be proven.
+- `UNSUPPORTED_REASONING_EFFORT` is a deterministic refusal: a profile asked for a level the adapter does not offer (`provider "opendesign" model "deepseek-v4.1-flash-eco" does not support reasoning effort "xhigh"`). Retrying it spends a request to learn the same answer twice, so the plugin names it once and refuses to touch it.
 
 ## Install
 
@@ -39,7 +42,7 @@ Install as a project dependency:
 pnpm add dsh-remedy dsh-remedy-core
 ```
 
-Version 0.3.0 cannot be installed from the registry because npm published its raw workspace manifest with a literal `workspace:*` dependency. Published releases after it repair that manifest by shipping a pnpm-packed tarball. Version 0.3.1 was built with the same manifest fix but was superseded before it ever reached the registry.
+Version 0.3.0 of the plugin cannot be installed from the registry, because npm published its raw workspace manifest with a literal `workspace:*` dependency. Every release after it ships a pnpm-packed tarball instead. Version 0.3.1 carried the same manifest fix but was superseded before it reached the registry.
 
 Source workflow for contributors:
 
@@ -52,7 +55,7 @@ pnpm run verify
 
 ## How it works
 
-dsh-remedy buffers incoming tool call deltas on the `llm/stream` Cordis seam:
+dsh-remedy buffers incoming tool-call deltas on the `llm/stream` Cordis seam:
 
 ```text
 Input chunks:
@@ -68,84 +71,130 @@ Repaired output:
   finish      { kind: 'stop' }
 ```
 
-The repair follows an all-or-nothing rule. Every open buffer must parse into valid top-level JSON objects. If all buffers are verified, each call receives its own `block-start` and `block-end`, and the error finish is replaced with `{kind:'stop'}`. If any buffer cannot be proven, nothing is emitted and the original failure is re-thrown.
+The repair is all-or-nothing. Every open buffer must parse into top-level JSON objects. If all of them are proven, each call gets its own `block-start` and `block-end` and the error finish becomes `{kind:'stop'}`. If any buffer cannot be proven, nothing is emitted and the original failure goes out untouched.
+
+A second listener runs on `agent/request-error`, which the loop calls after a failed attempt:
+
+```text
+no code, empty code, or an aborted signal  → next()
+UNSUPPORTED_REASONING_EFFORT,              → name it once per step and code, then next()
+INVALID_REQUEST, MISSING_CREDENTIAL,
+EMPTY_RESPONSE
+IMAGE_OFFLOAD_REQUIRED, INVALID_CREDENTIAL → next()
+MALFORMED_RESPONSE with budget left        → { kind: 'retry' }
+anything else, or budget spent              → next()
+```
+
+That order follows the contract the runtime documents: a handling listener returns `{ kind: 'retry' }` **without** calling `next()`, and a listener that does not own the decision must return `next()`. Calling `next()` first and then overriding its answer would discard what the default chain decided, and context compaction authorizes its own retry on exactly that path.
+
+Retry is off by default (`retryOnMalformed: 0`). The budget is a bounded cache of 256 entries per process, which is far more than one turn needs and small enough that a long-lived desktop session cannot grow it.
+
+## Ask it what is happening
+
+`dsh-remedy explain` reads the registry, an optional profile layer and an optional session directory, and prints one row per failure class: how often this machine hit it, which patch covers it, and whether that patch is switched on in the profile you named.
+
+```bash
+dsh-remedy explain --sessions ~/.dsh/sessions --profile-file ~/.dsh/profiles/<name>/cordis.patch.yml
+```
+
+```text
+failure class                turns  covered by          enabled here
+---------------------------  -----  -------------------  -------------------
+completed                      124  (none)               (none)
+max-tokens                      88  by design            no (by design)
+MALFORMED_RESPONSE              47  P-0001…P-0005,P-0011 P-0001…P-0005
+UNSUPPORTED_REASONING_EFFORT    37  P-0013               P-0013
+SERVER                          16  by design            no (by design)
+MISSING_CREDENTIAL               1  P-0013               P-0013
+```
+
+Without `--sessions` it prints no counts rather than a row of zeros, and without `--profile-file` it says the answer is unknown rather than assuming the default. A class this machine hits, that a patch covers, but that your profile switched off, makes it exit 1.
 
 ## Safety guarantees
 
-- Top-level JSON objects are split strictly at depth zero; `}{` inside a string is not a boundary.
+- Top-level JSON objects are split strictly at depth zero; `}{` inside a JSON string is not a boundary.
 - The first split call keeps its original id; synthetic calls receive `<id>#remedy-N`.
 - If any buffer cannot be proven, nothing is emitted and the original failure is re-thrown.
 - A single object that fails to parse is rejected, never split.
-- The plugin mounts only `remedy-stream`, adding no routes, tools, or UI.
+- The plugin mounts only its own rows, adding no route, no tool and no UI.
 - The plugin writes nothing to disk unless `journalPath` is configured.
 - `retryOnMalformed` defaults to 0 because retry is a stop-gap, not the fix.
-- An empty tool name is rejected (`missing-name`), never dispatched.
-- A tool name change inside one index aborts the rescue (`name-changed`) and the original failure is re-thrown.
-- Adapter `replayState` is preserved across a repaired `finish`.
-- A `block-end` repair is held atomic until the tool-call phase ends; any later block rejection withdraws the repair (`rolled-back`) and emits the original chunks.
-- `maxCalls` bounds the total calls synthesized for the entire stream, not per block.
-- Early consumer termination is recorded as `consumer-abort`, never as quiet.
+- An empty tool name is rejected (`missing-name`) and never dispatched.
+- A tool name that changes inside one index aborts the rescue (`name-changed`) and the original failure is re-thrown.
+- Adapter `replayState` is preserved across a repaired finish.
+- A `block-end` repair is held until the tool-call phase ends; a later rejection in the same stream withdraws it (`rolled-back`) and the original chunks go out.
+- `maxCalls` bounds the calls synthesized for the whole stream, not per block.
+- A consumer that stops early is recorded as `consumer-abort`, never as quiet.
 - A synthesized call is emitted as a `block-start` plus a `block-end`, never a bare `block-end`.
-- A withdrawn repair returns its allocated calls to the stream `maxCalls` budget.
-- A `max-tokens` stream is counted as truncated and is never repaired as an unrepaired fusion.
-- A passed-through provider error is counted in `errors`.
+- A withdrawn repair returns its calls to the stream `maxCalls` budget.
+- A `max-tokens` stream is counted as truncated, never as an unrepaired fusion.
+- A provider error that passes through is counted in `errors`.
 - A pure refusal raises `refused` and never `fused`.
-- A budget refusal (`too-many-calls`) raises `fused`, `refused`, and `unrepaired`, ensuring a refused-but-unrepaired stream never reads `repaired`.
-- An abandoned stream keeps `fused` and `unrepaired` and also raises `withdrawn`.
-- A stream truncation raises `withdrawn` and never `fused`.
-- The four verdict words remain unchanged (`unmeasured`, `quiet`, `degraded`, `repaired`), evaluated in that order, while the counter line prints eight metrics: `streams=`, `fused=`, `repaired=`, `unrepaired=`, `truncated=`, `errors=`, `refused=`, `withdrawn=`.
+- A budget refusal (`too-many-calls`) raises `fused`, `refused` and `unrepaired`, because no repair happened.
+- The four verdict words are unchanged (`unmeasured`, `quiet`, `degraded`, `repaired`), evaluated in that order; only the counter line grew, to eight names plus the optional `resealed`.
 - A bare member value is quoted only when exactly one segment reproduces the whole text as one plain object with a byte-identical payload.
-- A resealed call keeps its own id and name, synthesizes nothing, and does not consume the stream-wide `maxCalls` budget.
-- Zero candidate segments is refused as `bare-value-unproven`; two or more candidate segments is refused as `ambiguous-bare-value`.
-- A stream whose only defect was a reseal reads `repaired` and never `quiet`.
-- The ninth counter `resealed` is optional in the type, allowing older counter objects to render their original output byte for byte.
-- `scan` reads multi-frame `.jsonl.zstd` logs through `decompressSessionLog`, the same reader the plugin ships.
-- Directory scanning preserves one auditable row per file.
-- `--since` reports dropped records as `before_since` rather than hiding them.
-- An undecompressable file produces a failure line and exit code 3 instead of a zero report.
-- Redaction matches home paths escaped with single or double backslashes and encoded session directories.
-- The scanner counts every `turn/end` (completed, `max_tokens`, aborted, error) and names every `reason.error.code`, rather than reporting only `MALFORMED_RESPONSE`.
-- The turn census is reported and never promoted into a finding, so the exit code still turns strictly on `fused_calls` and `fusion_failures`.
-- Maintainer copy channel: the build-side copy channel moves requests longer than a Windows command line onto stdin, reads answers from the final `result` event, and names every spawn failure by its cause instead of printing a null status; it is the build-side channel and touches no seam and no outward wording.
+- Zero candidates is refused as `bare-value-unproven`; two or more is refused as `ambiguous-bare-value` instead of guessed.
+- A stream whose only defect was a reseal reads `repaired`, never `quiet`.
+- The retry listener names a diagnosis exactly once per step and code, so a host-level retry of the same failure cannot fill the journal with the same sentence.
+- A cancellation is never overridden by a retry.
+- Control codes (`IMAGE_OFFLOAD_REQUIRED`, `INVALID_CREDENTIAL`, `MISSING_CREDENTIAL`) are passed through and never retried.
+- `scan` reads a multi-frame zstd log through `decompressSessionLog`, the same reader the plugin ships.
+- A directory scan keeps one auditable row per file.
+- `--since` reports what it dropped as `before_since` instead of hiding it.
+- An undecompressable file is a failure line and exit 3, never a silent zero.
+- Redaction matches a home path escaped with one or two backslashes as well as the session directory that encodes it.
+- The scan counts every `turn/end` (completed, `max_tokens`, aborted, error) and names every `reason.error.code`.
+- The census is reported and never promoted into a finding, so the exit code still turns on `fused_calls` and `fusion_failures` alone.
+- The byte budget is a gate, not a paragraph: it measures the modules a mounted plugin loads (residency), the modules only a command loads, and the total, and every emitted module must belong to exactly one of the first two.
 
 ## What it does not do
 
 | Limit | Reality |
 |---|---|
-| Attribution | Stops at assembled text; cannot prove whether the relay or adapter glued the objects. |
-| Truncation | A `max-tokens` truncation is missing bytes and is not repaired. |
-| Localized strings | The fallback parses English `Received arguments:`; non-English disables fallback, though delta buffering still functions. |
-| Headless session files | Headless profile does not persist `assistant/attempt` streams; `session.fused_calls` is 0, proof rests on journal counters and synthetic ids. |
-| Synthetic IDs | IDs like `<id>#remedy-N` are traceability aids, not durable identities. |
-| Desktop completion | Desktop verification artifact records `turn_end=aborted` because the operator stopped after the answer. |
-| App cache | Verification applies strictly to recorded tarball sha256, not to whatever a running desktop app has cached. |
-| Verdict granularity | A single verdict word cannot express observed and correctly refused; bad JSON alone reads `quiet`. |
-| Journal line migration | Existing journal lines are not migrated; `status --json` reports the schema of the last line. |
-| Custom index tracking | Adapters closing blocks independently with custom index tracking remain unmeasured (`BS-11`). |
-| Request retries | `retryOnMalformed` defaults to 0 and is a stop-gap; host already retries server errors. |
+| Attribution | Stops at the assembled text: the plugin cannot prove whether the relay or the adapter glued the objects. |
+| Truncation | A `max-tokens` cut is missing bytes and is not repaired. |
+| Localized messages | The fallback parses the English `Received arguments:` text; a localized host message disables that fallback, though delta buffering still works. |
+| Headless session files | A headless profile does not persist `assistant/attempt` streams, so the artifact reports 0 fused calls; the journal counters and the synthetic id carry the proof. |
+| Synthetic IDs | `<id>#remedy-N` are traceability aids, not durable identities. |
+| Desktop completion | The desktop artifact records `turn_end=aborted` because the operator stopped after the answer. |
+| App cache | Verification applies to the recorded tarball's sha256, not to whatever a running app has cached. |
+| Verdict granularity | One verdict word cannot express "observed and correctly refused"; only the counter line can. |
+| Journal migration | Existing journal lines are not migrated; in a mixed journal `status --json` reports the shape of the last line. |
+| Custom index tracking | An adapter that closes blocks itself and keeps its own index bookkeeping is still unmeasured (`BS-11`). |
+| Request retries | Off by default. `SERVER`, `TRANSPORT` and `TIMEOUT` are already retried upstream, so this plugin only retries `MALFORMED_RESPONSE`, and only inside a budget you set. |
+| Reasoning effort | The plugin can tell you a configured effort will be refused, but it never changes it for you. `agent/pre-step` is deliberately not mounted: nobody has measured what a user sees when a plugin rejects a step. |
+| Mid-stream withdrawal | Measured unreachable on this host: none of the persisted attempt streams carried a provable fusion inside a `block-end`, which is what `rolled-back` requires (`BS-14`). |
 
 ## Verify it yourself
 
 ```bash
 dsh-remedy verify
 dsh-remedy scan ~/.dsh/sessions --json
+dsh-remedy explain --sessions ~/.dsh/sessions
 pnpm run verify
 node scripts/gate.mjs --mutate
 ```
 
-Artifacts with sha256 sidecars are committed in `data/results/`, including live run `data/results/live-2026-11-12T12-20-00.000Z.json` and session scan `data/results/scan-full-2026-11-11T18-15-00.000Z.json`.
+Every artifact in `data/results/` is script-produced and has a `.sha256` sidecar. Two are worth opening first: the live run `data/results/live-2026-11-12T12-20-00.000Z.json` and the corpus replay `data/results/malformed-replay-2026-11-12T11-30-00.000Z.json`.
+
+The whole `MALFORMED_RESPONSE` corpus on one machine was replayed through the built engine: 47 turns, 39 repaired, 8 refused, and no repaired case dispatched a call whose arguments failed to parse. A generated stress pass of 300000 argument texts asserts the same invariant with a recorded seed.
 
 ## Status
 
-P-0001, P-0002, and P-0003 are `verified` on a real host: P-0001 on the headless profile and the desktop app; P-0002 on a 2026-11-10 headless run that repaired a real two-call fusion and saw the synthesized call dispatched; P-0003 on a 2026-11-10 headless run whose journal wrote a non-zero `refused` after the code declined to repair a budget refusal.
+P-0001, P-0002 and P-0003 are `verified` on a real host: P-0001 on a headless profile and on the desktop app, P-0002 on a 2026-11-10 headless run that repaired a real two-call fusion and saw the synthesized call dispatched, and P-0003 on a 2026-11-10 headless run whose journal wrote a non-zero `refused` after the code declined to repair a budget refusal.
 
-P-0005, P-0004, P-0006, P-0007, P-0008, P-0009, and P-0010 are `tested`, not `verified`: each has unit tests and negative controls, and a measured fixture or a measured scan where one exists, but no live host run has produced the bare-value shape that P-0005 repairs; P-0004, P-0006, and P-0009 change an offline reader rather than the resident seam; P-0007 changes the build-side copy channel; P-0008 adds a build-side gate; and P-0010 changes the CLI usage text and the packaged README.
+P-0004, P-0005, P-0006, P-0007, P-0008, P-0009, P-0010, P-0011, P-0012 and P-0013 are `tested`, not `verified`. Each has unit tests and negative controls, and a measured fixture, scan or corpus where one exists. P-0004, P-0006 and P-0009 change an offline reader; P-0005 has no live bare-value shape yet; P-0007 and P-0012 are build-side; P-0010 changes the CLI usage text; and P-0011 and P-0013 sit on a seam a live journal witnesses only when a turn fails in a class this plugin retries, which the default budget of 0 never triggers.
 
-Release status: `0.3.7` is published and `latest` for both `dsh-remedy` and `dsh-remedy-core`. The previous release is `0.3.6`.
+Release status: `0.3.8` is published and is the registry `latest` for both `dsh-remedy` and `dsh-remedy-core`. The previous release is `0.3.7`.
 
-Tarball sizes for 0.3.4 are unrecorded in FACTS. Published 0.3.7 plugin: 29462 bytes compressed, 29 files, 98001 bytes unpacked (67883 bytes `dist/*.js`, 20835 bytes `dist/*.d.ts`, 3583 bytes `fixtures/`, 5700 bytes package-root files). Core 0.3.7: 20000 bytes compressed, 19 files, 65961 bytes unpacked (45670 bytes `dist/*.js`, 16994 bytes `dist/*.d.ts`). Previous 0.3.6 plugin: 29445 bytes compressed, 29 files, 97807 bytes unpacked; core 0.3.6: 19247 bytes compressed, 19 files, 63408 bytes unpacked. Earlier 0.3.3 plugin: 28378 bytes compressed, 29 files, 94769 bytes unpacked; core 0.3.3: 16776 bytes compressed, 19 files, 55684 bytes unpacked. Sourcemaps are no longer shipped, removing 41926 bytes unpacked.
+Package sizes:
 
-Byte budget history: `dist/*.js` reached 55815 bytes after P-0005. P-0006 initially overshot to 70389 bytes before helper inlining settled it at 67908 bytes. P-0008 turned ceilings into a gate (`gate_size.mjs`) on the plugin total (68000 bytes), `repair-stream.js` (28000 bytes), `session-scan.js` (14000 bytes), and `cli.js` (10000 bytes). P-0009 landed at 67997 of 68000 bytes (three bytes under ceiling), and P-0010 single-line usage brought the plugin total to 67883 bytes.
+- 0.3.8 plugin: 35898 bytes compressed, 35 files, 117750 bytes unpacked (81740 bytes of `dist/*.js`, 26605 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, 5822 bytes of package-root files), shasum `3bc47df12f21fe7d68336f595d397ff868b3d4d7`.
+- 0.3.8 core: 26551 bytes compressed, 21 files, 83461 bytes unpacked (58062 bytes of `dist/*.js`, 22102 bytes of `dist/*.d.ts`), shasum `0df993f85589e101b15b830fa105e7ef8c66c5d5`.
+- 0.3.7 plugin: 29462 bytes compressed, 29 files, 98001 bytes unpacked, shasum `69087301f5ff802e387061af61756b65b883b11d`; core: 20000 bytes compressed, 19 files, 65961 bytes unpacked, shasum `33eaaf0320eb474d5d7c5ce2761f10de79d17d21`.
+- No sourcemaps are shipped; that removal is worth 41926 bytes of unpacked payload.
+
+The emitted plugin budget is three checks: residency 41075 of 44000 bytes (the modules a mounted plugin loads), cli 40665 of 42000 bytes (the modules only a command loads), and a total of 81740 of 83000 bytes. Per-file caps: `repair-stream.js` 28000, `session-scan.js` 14000, `cli.js` 12000. A patch that crosses a per-file number splits that file instead of absorbing it.
 
 ## Development
 
@@ -156,19 +205,22 @@ pnpm run gate
 node scripts/gate.mjs --mutate
 ```
 
+Six gates run on every change: `ssot`, `registry`, `namespace`, `step-review`, `copy`, `size`. `--mutate` breaks each one on purpose and requires every one to go red; it currently catches 6 of 6. The suite is 228 tests and 0 failing.
+
 ## Contributing
 
 - Issues and pull requests are welcome.
-- A behavior change requires a failing test first.
-- `pnpm run verify` must pass; `node scripts/gate.mjs --mutate` must catch every gate.
+- A behaviour change needs a failing test first.
+- `pnpm run verify` must pass, and `node scripts/gate.mjs --mutate` must catch every gate.
 - Gates use Node built-ins only; a new gate must be registered in `audit/gate_ledger.json`.
-- No new runtime dependencies in `dsh-remedy-core`.
+- No new runtime dependency in `dsh-remedy-core`.
 - A patch cannot claim `verified` without a `data/results/live-*` artifact.
+- Outward text is checked, not authored freely: every number in it must exist in `docs/copy/facts/public-repo-facts.md`, and the bytes must match `docs/copy/manifest.json`.
 
 ## Security
 
-Security reports should use GitHub private vulnerability reporting on the public repository (https://github.com/jjjjjjjjnnjnn/dsh-remedy).
+Security reports should use GitHub private vulnerability reporting on the public repository: https://github.com/jjjjjjjjnnjnn/dsh-remedy/security/policy
 
 ## License
 
-MIT License. Independent project; not affiliated with DeepSeek.
+MIT. Independent project; not affiliated with DeepSeek.

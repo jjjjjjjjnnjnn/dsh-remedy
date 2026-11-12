@@ -1,56 +1,83 @@
 #!/usr/bin/env node
 /**
- * Gate: the byte budget.
+ * Gate: the byte budget, split by load path (P-0012).
  *
- * The budget is written down (`dist/repair-stream.js` 28000,
- * `dist/session-scan.js` 14000, `dist/cli.js` 10000, plugin total 68000) and
- * three consecutive patches crossed a line anyway — 55815 after P-0005,
- * 64539 after P-0004 and 70389 after the first P-0006 attempt — each caught by
- * a person measuring by hand afterwards. A budget no script checks is a
- * suggestion, and this repository has already proved that three times.
+ * A budget no script checks is a suggestion, and this repository crossed one
+ * three times before P-0008 turned it into this gate. P-0012 splits that gate's
+ * single cap into the two numbers it was always describing — what a mounted
+ * plugin loads, and what a CLI invocation loads — because a daemon pays only the
+ * first and one cap forced every resident byte to be financed by deleting CLI
+ * code. The reasoning, the measured pair, and the owner's signature live in
+ * `scripts/lib/budgets.mjs`.
  *
- * The rules enforced here:
- *   - the plugin total stays inside its cap;
- *   - the three largest emitted files each stay inside their own cap, because
- *     the cap exists to stop one file from absorbing every patch;
- *   - a file that grows past UNCHECKED_LIMIT must be named in CAPS, so a new
- *     module cannot quietly become the new biggest file with no cap at all.
- *
- * Negative control: `--mutate` compares the measured total against a cap one
- * byte below it, so a gate that stopped comparing goes green instead of red.
+ * Negative control: `--mutate` compares each measured subtotal against a cap one
+ * byte below it, so a gate that stopped comparing goes red instead of green.
  */
 
 import { statSync } from 'node:fs'
 import { abs, listDir, runGate } from './lib/kit.mjs'
+import {
+  CLI_CAP,
+  CLI_FILES,
+  FILE_CAPS,
+  RESIDENCY_CAP,
+  RESIDENCY_FILES,
+  TOTAL_CAP,
+  UNCHECKED_LIMIT,
+} from './lib/budgets.mjs'
 
 const DIST = 'packages/plugin/dist'
-const TOTAL_CAP = 68000
-const UNCHECKED_LIMIT = 10000
-const CAPS = new Map([
-  ['repair-stream.js', 28000],
-  ['session-scan.js', 14000],
-  ['cli.js', 10000],
-])
 
-const bytesOf = (path) => {
+const bytesOf = (name) => {
   try {
-    return statSync(abs(path)).size
+    return statSync(abs(`${DIST}/${name}`)).size
   } catch {
     return null
   }
 }
 
+const subtotal = (sizes, names) =>
+  names.reduce((sum, name) => {
+    const found = sizes.find((item) => item.name === name)
+    return sum + (found?.bytes ?? 0)
+  }, 0)
+
 await runGate('size', async ({ checks, mutate }) => {
   const names = listDir(DIST).filter((entry) => entry.isFile && entry.name.endsWith('.js'))
   checks.require('dist-present', names.length > 0, `no ${DIST}/*.js — run the build first`)
 
-  const sizes = names.map((entry) => ({ name: entry.name, bytes: bytesOf(`${DIST}/${entry.name}`) ?? 0 }))
+  const sizes = names.map((entry) => ({ name: entry.name, bytes: bytesOf(entry.name) ?? 0 }))
   const total = sizes.reduce((sum, item) => sum + item.bytes, 0)
+  const residency = subtotal(sizes, RESIDENCY_FILES)
+  const cli = subtotal(sizes, CLI_FILES)
 
-  const totalCap = mutate ? Math.max(0, total - 1) : TOTAL_CAP
-  checks.add('total', total <= totalCap, `${total} of ${totalCap} bytes across ${sizes.length} files`)
+  // Every emitted module must belong to exactly one load path, or the two
+  // subtotals stop adding up to the total and one of them is silently unpaid.
+  const classified = [...RESIDENCY_FILES, ...CLI_FILES]
+  const unclassified = sizes.map((item) => item.name).filter((name) => !classified.includes(name))
+  checks.add(
+    'every-module-is-classified',
+    unclassified.length === 0,
+    unclassified.length === 0 ? 'every emitted module belongs to one load path' : `unclassified: ${unclassified.join(', ')}`,
+  )
 
-  for (const [name, cap] of CAPS) {
+  checks.add(
+    'residency',
+    residency <= (mutate ? Math.max(0, residency - 1) : RESIDENCY_CAP),
+    `${residency} of ${mutate ? residency - 1 : RESIDENCY_CAP} bytes across ${RESIDENCY_FILES.length} resident modules`,
+  )
+  checks.add(
+    'cli',
+    cli <= (mutate ? Math.max(0, cli - 1) : CLI_CAP),
+    `${cli} of ${mutate ? cli - 1 : CLI_CAP} bytes across ${CLI_FILES.length} CLI modules`,
+  )
+  checks.add(
+    'total',
+    total <= (mutate ? Math.max(0, total - 1) : TOTAL_CAP),
+    `${total} of ${mutate ? total - 1 : TOTAL_CAP} bytes across ${sizes.length} files`,
+  )
+
+  for (const [name, cap] of FILE_CAPS) {
     const found = sizes.find((item) => item.name === name)
     checks.add(
       `file:${name}`,
@@ -61,12 +88,13 @@ await runGate('size', async ({ checks, mutate }) => {
 
   // A file above the unchecked limit that nobody capped is the shape of the bug
   // this gate exists to stop: it grows quietly and the total is the only alarm.
-  const uncapped = sizes.filter((item) => item.bytes > UNCHECKED_LIMIT && !CAPS.has(item.name))
+  const caps = new Map(FILE_CAPS)
+  const uncapped = sizes.filter((item) => item.bytes > UNCHECKED_LIMIT && !caps.has(item.name))
   checks.add(
     'uncapped-large-files',
     uncapped.length === 0,
     uncapped.length === 0
-      ? 'every file above 10000 bytes has a cap'
+      ? `every file above ${UNCHECKED_LIMIT} bytes has a cap`
       : uncapped.map((item) => `${item.name} ${item.bytes} bytes`).join(', '),
   )
 })

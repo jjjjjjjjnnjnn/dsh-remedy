@@ -183,6 +183,55 @@
         "packages/plugin/README.md",
         "packages/plugin/src/cli-args.ts"
       ]
+    },
+    {
+      "id": "P-0011",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.3.8",
+      "evidence": [
+        "tests/unit/request-error.test.ts",
+        "packages/plugin/src/failure-listener.ts",
+        "docs/patches/P-0011-request-error-contract.md"
+      ],
+      "guards": [
+        "tests/unit/request-error.test.ts",
+        "packages/plugin/src/failure-listener.ts"
+      ]
+    },
+    {
+      "id": "P-0012",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.3.8",
+      "evidence": [
+        "scripts/lib/budgets.mjs",
+        "scripts/gate_size.mjs",
+        "tests/governance/budget-split.test.ts",
+        "docs/patches/P-0012-budget-by-load-path.md"
+      ],
+      "guards": [
+        "scripts/gate_size.mjs",
+        "tests/governance/budget-split.test.ts"
+      ]
+    },
+    {
+      "id": "P-0013",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.3.8",
+      "evidence": [
+        "packages/core/src/preflight.ts",
+        "packages/plugin/src/failure-listener.ts",
+        "tests/unit/preflight.test.ts",
+        "tests/unit/request-error.test.ts",
+        "docs/patches/P-0013-named-refusals.md"
+      ],
+      "guards": [
+        "tests/unit/preflight.test.ts",
+        "tests/unit/request-error.test.ts",
+        "packages/core/src/preflight.ts"
+      ]
     }
   ]
 }

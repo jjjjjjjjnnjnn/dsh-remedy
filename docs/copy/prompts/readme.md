@@ -99,16 +99,16 @@ Rules:
   run that repaired a real two-call fusion and saw the synthesized call
   dispatched, and P-0003 on a 2026-11-10 headless run whose journal wrote a
   non-zero `refused` after the code declined to repair a budget refusal).
-  P-0005, P-0004, P-0006, P-0007, P-0008, P-0009 and P-0010 are `tested`, not
+  P-0005, P-0004, P-0006, P-0007, P-0008, P-0009, P-0010, P-0011, P-0012 and P-0013 are `tested`, not
   `verified`: each has unit tests and negative controls, and a measured fixture or
   a measured scan where one exists, but no live host run has produced the bare-value
   shape that P-0005 repairs; P-0004, P-0006 and P-0009 change an offline reader rather
   than the resident seam; P-0007 changes the build-side copy channel; P-0008 adds a
   build-side gate; and P-0010 changes the CLI usage text and the packaged README.
-  Name the release status from FACTS: FACTS names `0.3.7` as
-  published and as `latest` for both packages, with `0.3.6` as the previous
+  Name the release status from FACTS: FACTS names `0.3.8` as
+  published and as `latest` for both packages, with `0.3.7` as the previous
   release. Write exactly that: do not call a published version pending, do not
-  describe `0.3.6` as the current release, and do not claim a version that
+  describe `0.3.7` as the current release, and do not claim a version that
   FACTS does not name has shipped.
   Do not hardcode a patch version in the install commands; the npm badge is the
   version.

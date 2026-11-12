@@ -5,6 +5,22 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.3.8] - 2026-11-12
+### Added
+- P-0011: the second seam, `agent/request-error`, had **no test at all** since 0.2.0 (twenty test files, none of which mentioned it). It also called `next()` and then overrode whatever the default chain returned, and kept its retry budget in a map that was never pruned, so a long-lived process kept one entry per step forever. It now follows the contract the runtime documents in its own README: a handling listener returns `{ kind: 'retry' }` **without calling `next()`**, and a listener that does not own the decision returns `next()`. The budget is a bounded cache of 256 entries, and the listener exposes `cacheSize()` so a test proves the bound. Nine tests pin every branch.
+- P-0013: 37 turns on this host died with `UNSUPPORTED_REASONING_EFFORT` — `provider "opendesign" model "deepseek-v4.1-flash-eco" does not support reasoning effort "xhigh"` — across three workspaces, eleven sessions and two days, and the journal said nothing, because `repair-stream` is mounted on `llm/stream` and a step refused during preparation never reaches that seam. Those classes are now named once per `(step, code)` and never retried, and `packages/core/src/preflight.ts` can answer `ok` / `refuse` / `unknown` for a declared effort before a token is spent.
+- `dsh-remedy explain`: a new command that prints, per failure class, how often this machine hit it, which patch covers it, and whether that patch is switched on in the named profile.
+### Changed
+- P-0012: the byte budget was one number describing two load paths — the modules a mounted plugin loads at startup, and the modules only a command loads. A daemon pays the first half on every session and the second half never, so one cap made every resident byte compete with CLI code. It is now three checks (`residency` ≤ 44000, `cli` ≤ 42000, total ≤ 83000) plus a rule that every emitted module belongs to exactly one of them, with a governance test that walks the real module graph in both directions.
+- The copy channel's transport is retired: outward files are written in the session that does the work, and `scripts/gate_copy.mjs` enforces the property the channel existed for — every prose number traceable to the fact pack, every artifact's bytes unchanged — instead of checking the identity of the author.
+### Fixed
+- The largest non-fusion failure class on the measured machine is no longer silent, and the second seam is no longer unverified code.
+### Notes
+- P-0011, P-0012 and P-0013 are `tested`, not `verified`. P-0011 and P-0013 live on a seam a live journal witnesses only when a turn fails in a class this plugin retries, and the retry budget defaults to 0; P-0012 is a build-side gate.
+- `agent/pre-step` is deliberately **not** mounted. The upstream contract is that a rejected `PreStepDecision` opens no step, but nobody has measured what a user sees when a plugin rejects one, so mounting a refusal would be guessing.
+- The `withdrawn` counter was measured unreachable on this host: 0 of 24 329 persisted attempt streams carry a provable fusion inside a `block-end`, and `rolled-back` needs exactly that. Blind spot `BS-14` records it.
+- This release was published on 2026-11-12 and is the registry `latest` for both packages; `0.3.7` is the release before it.
+
 ## [0.3.7] - 2026-11-12
 ### Added
 - P-0010: the packaged `README.md` — the page npm renders — documented `scan` as `<session.jsonl> [--json] [--out <file>]` and the CLI's own usage said `<session.jsonl|session.v4.jsonl.zstd>` with the same missing flags, while the binary has accepted a directory, `--since` and `--max-files` since 0.3.3. Both strings now carry the identical line and `tests/unit/cli-usage.test.ts` fails if they ever differ again.

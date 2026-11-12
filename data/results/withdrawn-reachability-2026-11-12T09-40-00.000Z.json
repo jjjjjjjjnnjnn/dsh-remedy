@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/probe_withdrawn_reachability.mjs",
+  "generated_at": "2026-11-12T09:40:00.000Z",
+  "source": {
+    "path": "~/.dsh/sessions",
+    "files": 110,
+    "files_read": 110,
+    "unreadable": 0
+  },
+  "measured": {
+    "attempt_streams": 24329,
+    "streams_with_tool_call_chunks": 23832,
+    "streams_with_a_fused_tool_call_chunks_entry": 62,
+    "streams_with_tool_call_delta": 0,
+    "streams_with_a_fused_delta": 0,
+    "streams_with_a_block_end": 23920,
+    "streams_with_arguments_in_a_block_end": 23724,
+    "streams_with_a_fused_block_end": 0,
+    "streams_that_would_book_rolled_back": 0
+  },
+  "entry_types": [
+    {
+      "type": "chunk",
+      "count": 132957
+    },
+    {
+      "type": "tool-call-chunks",
+      "count": 25158
+    },
+    {
+      "type": "reasoning-chunks",
+      "count": 16749
+    },
+    {
+      "type": "text-chunks",
+      "count": 310
+    }
+  ],
+  "finish_kinds": [
+    {
+      "kind": "tool-calls",
+      "count": 23692
+    },
+    {
+      "kind": "error",
+      "count": 392
+    },
+    {
+      "kind": "stop",
+      "count": 147
+    },
+    {
+      "kind": "max-tokens",
+      "count": 89
+    }
+  ],
+  "examples": [],
+  "reading": "rolled-back needs a proven repair held in `pending`, and `pending` is only filled by the block-end path. Fused text on this host arrives in `tool-call-chunks` entries, which are repaired at `finish` and never held, so the held path is unreachable and `withdrawn` can only arise from consumer-abort. That is a property of this adapter, not of the patch."
+}

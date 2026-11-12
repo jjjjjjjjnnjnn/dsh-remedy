@@ -90,7 +90,16 @@ git -C .. log --oneline -3
   `journal_totals` 与 `counters` 交叉核对一致）；`P-0001` 的 evidence 加上这一份。
 - **真机没做到的**：`withdrawn` 仍然空缺。用「前一个调用合法、后一个调用故意写坏 JSON」的
   12 次尝试**一次都没有粘连**——relay 的粘连是间歇性的，而模型拒绝输出语法坏的参数对。
-  所以 P-0003 的 `withdrawn` 桶仍只有单测与夹具，事实包里已写明这一点。
+  所以 P-0003 的 `withdrawn` 桶仍只有单测与夹具。
+- **`withdrawn` 为什么造不出来（实测，不是猜）**：写了 `scripts/probe_withdrawn_reachability.mjs`
+  走遍本机 24 329 条 `assistant/attempt` 流：**62 条**带一个融合的 `tool-call-chunks` 条目、
+  **23 724 条**把参数放在 `block-end` 里、但 **0 条**的 `block-end` 里是**可证明的融合**。
+  机制上：`rolled-back` 需要一次已证明的修复先被 **hold** 进 `pending`，而 `pending` 只由
+  `block-end` 路径填；本机适配器把融合文本放在 `tool-call-chunks`（在 `finish` 处就修，从不 hold），
+  所以这条路上**真机永远走不到**。剩下唯一能移动 `withdrawn` 的是 `consumer-abort`（消费者中途停止），
+  脚本化的 headless 运行不会产生它。结论写进 `audit/blind_spots.json` 的 **BS-14**（`accepted`）与事实包，
+  产物 `data/results/withdrawn-reachability-2026-11-12T09-40-00.000Z.json`（sha256 `1a0084d5…`）。
+  **这条不是「没做到」，是「在本机上不可能」——两者必须分清，否则下一个 agent 会再花 12 次尝试去撞它。**
 - **台账**：`docs/patches/P-0010-cli-usage-truth.md`（Status `tested`、severity minor、
   surface `cli`、Depends on P-0004）；registry 加 P-0010（evidence 4 / guards 3 / limits 4）；
   `audit/patch_ledger.json` 加条目（`since: "0.3.7"`、无 `verified_at`）；
@@ -835,12 +844,13 @@ npm whoami          # 必须打印用户名；输出 E401 就先解决登录，�
 | `gates-2026-11-11T17-25-00.000Z.json` / `gates-mutate-2026-11-11T17-20-00.000Z.json` | 绿 | 历史门禁证据：P-0009 台账落地、双包 bump 0.3.6（16:40 那条红产物已删） |
 | `gates-2026-11-11T18-40-00.000Z.json` / `gates-mutate-2026-11-11T18-45-00.000Z.json` | 绿 | R17 中间一轮：census 重测 + 11 个对外文件首次重生成之后的门禁证据（192 tests） |
 | `gates-2026-11-11T20-10-00.000Z.json` / `gates-mutate-2026-11-11T20-15-00.000Z.json` | 绿 | R17 第二轮的门禁证据：事实包把测试数改成 193、全部对外文件再重生成一遍之后（192→193 tests） |
-| `gates-2026-11-12T09-00-00.000Z.json` / `gates-mutate-2026-11-12T09-05-00.000Z.json` | 绿 | **当前**门禁证据：P-0010 落地、双包 bump 0.3.7、11 个对外文件按「0.3.7 未发布」口径重生成、文档与台账全部对齐之后，`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，195 tests |
+| `gates-2026-11-12T10-00-00.000Z.json` / `gates-mutate-2026-11-12T10-05-00.000Z.json` | 绿 | **当前**门禁证据：P-0010 落地、双包 bump 0.3.7、11 个对外文件按「0.3.7 未发布」口径重生成、文档与台账全部对齐之后，`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，195 tests |
 | `live-2026-11-12T06-00-00.000Z.json` | 绿 | **0.3.6 真机**：60 流 / 1 修复 / `fused:1 repaired:1` / 合成 id 被派发并回答 / verdict `repaired`（P-0001 已引用） |
-| `patch-registry-2026-11-12T08-30-00.000Z.json` | 绿 | **当前**注册表快照（十补丁：P-0001/2/3 `verified`，P-0004…P-0010 `tested`；sha256 `d7062485…`） |
+| `patch-registry-2026-11-12T10-10-00.000Z.json` | 绿 | **当前**注册表快照（十补丁：P-0001/2/3 `verified`，P-0004…P-0010 `tested`；sha256 `d7062485…`） |
 | `scan-full-2026-11-11T18-15-00.000Z.json` | 绿 | 全目录 `scan --out` 产物：78 文件 / 393 attempts / 38 fused / 44 fusion failures / 293 turns |
 | `session-sample-2026-11-11T18-10-00.000Z.json` | 绿 | 本机 census 样本（`--until 2026-11-11T17:00:00.000Z`，两条 stamp 除 `generated_at` 外逐字节相同） |
 | `install-acceptance-2026-11-11T19-30-00.000Z.json` | 绿 | 0.3.6 空目录从 registry 单装 `OK 6 fixture(s)`（R17 首次把这个验收落成产物） |
+| `withdrawn-reachability-2026-11-12T09-40-00.000Z.json` | 绿 | **实测** `withdrawn` 在本机不可达：24 329 条流里 0 条的 `block-end` 带可证明融合（BS-14） |
 | `publish-2026-11-11T17-35-00.000Z.json` | 绿 | 0.3.6 发布：两包 `exact_ok` + `latest_ok` 全 true |
 | `publish-2026-11-09T20-00-00.000Z.json` | 绿 | 0.1.0 发布（core + plugin） |
 | `publish-2026-11-10T00-10-00.000Z.json` | **红（保留）** | 0.1.1 副本延迟，记录时还看不到 |

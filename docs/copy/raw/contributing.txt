@@ -3,7 +3,7 @@
 ## Before you start
 
 Issues and pull requests are managed through GitHub at https://github.com/jjjjjjjjnnjnn/dsh-remedy .
-Report vulnerabilities using GitHub private vulnerability reporting on the repository rather than public issues.
+Report vulnerabilities using GitHub private vulnerability reporting on the public repository rather than public issues.
 This repository maintains strict boundaries: one seam per patch, script-generated evidence, and verified negative controls.
 
 ## Development setup
@@ -51,8 +51,9 @@ Status distinctions:
 
 Worked examples:
 - P-0002 and P-0003 are the two worked examples of a patch that went all the way to `verified` with a live artifact: P-0002 has a run that repaired a real two-call fusion, and P-0003 has a run whose journal wrote a non-zero `refused`.
-- P-0005 is the worked example of a `tested` patch on the resident seam: 11 negative controls and 1 measured fixture, no host run yet.
-- P-0004, P-0006, P-0007, P-0008, P-0009 and P-0010 are worked examples of a `tested` patch that is honest about a different reason: P-0004, P-0006 and P-0009 move the offline session reader, so no journal can ever attest them; P-0007 moves the build-side copy channel that writes the outward files, so a broken channel cannot attest itself; P-0008 is a build-side gate; and P-0010 changes strings a user reads rather than the resident seam. Their evidence is end-to-end or unit tests plus a measured scan of one machine.
+- P-0005 is the worked example of a `tested` patch on the resident seam: eleven negative controls and one measured fixture, no host run yet.
+- P-0004, P-0006, P-0007, P-0008, P-0009 and P-0010 are the worked examples of a `tested` patch that is honest about a different reason: P-0004, P-0006 and P-0009 move the offline session reader, so no journal can ever attest them; P-0007 moves the build-side copy channel that writes the outward files, so a broken channel cannot attest itself; P-0008 is a build-side gate; and P-0010 changes strings a user reads rather than the resident seam. Their evidence is end-to-end or unit tests plus a measured scan of one machine.
+- Contrast all seven: a `drafted` entry is only a written symptom, and a `tested` entry is evidence without a host run.
 
 ## Pull requests
 
@@ -66,14 +67,14 @@ Worked examples:
 - Use TypeScript ESM across packages.
 - Relative imports end in `.js`.
 - The compiler flag `erasableSyntaxOnly` is on.
-- Scripts under `scripts/` use Node built-ins only.
+- Gates under `scripts/` use Node built-ins only.
 - The core package `dsh-remedy-core` has no runtime dependency.
 
 ## Evidence rules
 
 - Files in `data/results/` are written by scripts, not by hand.
 - Every artifact has `produced_by`, `generated_at`, `schema_version` and a `.sha256` sidecar.
-- Setting a patch to `verified` requires a `data/results/live-*` file.
+- Advancing a patch to `verified` requires a `data/results/live-*` file.
 - A patch that only moves an offline reader can never reach `verified`, so say `tested` and give the measured scan instead of inventing a host run.
 
 ## Scope

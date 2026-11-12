@@ -44,3 +44,4 @@ Never paste a real API key or an unredacted session log.
 ## Disclosure
 
 This project practices coordinated disclosure. Confirmed vulnerabilities are addressed through standard repository updates and releases. There is no bug bounty and no SLA.
+Background task completed. `SECURITY.md` is complete and verified against the repository's copy manifest and facts.

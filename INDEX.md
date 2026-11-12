@@ -90,6 +90,7 @@
 | `scripts/record_publish.mjs` | 发布后 registry 状态 → `publish-*` 产物 |
 | `scripts/record_session_sample.mjs` | 本机故障样本（必须带 `--until`） |
 | `scripts/record_install_acceptance.mjs` | 空目录从 registry 单装 → `install-acceptance-*` 产物 |
+| `scripts/probe_withdrawn_reachability.mjs` | 实测 `withdrawn` 在本机是否可达 → `withdrawn-reachability-*` 产物 |
 | `scripts/sync_fixtures.mjs` | `prepack`：夹具进包 |
 | `scripts/record_patch_registry.mjs` | 注册表快照 → `patch-registry-*` 产物 |
 | `audit/gate_ledger.json` | 门的清单与负对照 |

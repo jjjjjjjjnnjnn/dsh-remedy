@@ -12,7 +12,7 @@
 | 基线 | **201 tests / 6 gates / `--mutate` 6-6** |
 | 包体 | **已发布 0.3.6 = 29 445 B 压缩 / 29 文件 / 97 807 B 解包**（`dist/*.js` 67 997 / `dist/*.d.ts` 20 951 / fixtures 3 583 / 包根 5 276），core **0.3.6 = 19 247 B / 19 文件 / 63 408 B 解包**（`dist/*.js` 43 117 / `dist/*.d.ts` 16 994，shasum `76777609…`）：core 变大只因为多一条补丁记录。**已发布 0.3.5 = 29 448 B 压缩 / 29 文件 / 97 944 B 解包**（`dist/*.js` 67 908 / `dist/*.d.ts` 21 177 / fixtures 3 583 / 包根 5 276），core **0.3.5 = 18 723 B / 19 文件 / 61 553 B 解包**（`dist/*.js` 41 262 / `dist/*.d.ts` 16 994）：P-0008 只加 `scripts/gate_size.mjs`，`scripts/` 不进包，所以 plugin 的字节数与 0.3.4 相同、shasum 因 manifest 版本变了从 `5f20282e…` 到 `c1b1b431…`。**已发布 0.3.2 = 24 689 B 压缩 / 25 文件 / 81 904 B 解包**（`dist/*.js` 56 344 / `dist/*.d.ts` 16 701 / fixtures 3 583 / 包根 5 276）；core **0.3.2 = 15 864 B / 19 文件 / 52 828 B 解包**。**已发布 0.3.3 = 28 378 B 压缩 / 29 文件 / 94 769 B 解包**（`dist/*.js` 65 521 / `dist/*.d.ts` 20 389 / fixtures 3 583 / 包根 5 276），core **0.3.3 = 16 776 B / 19 文件 / 55 684 B 解包**。**已发布 0.3.4 = 29 448 B 压缩 / 29 文件 / 97 944 B 解包**（`dist/*.js` 67 908 / `dist/*.d.ts` 21 177 / fixtures 3 583 / 包根 5 276），core **0.3.4 = 18 202 B / 19 文件 / 59 864 B 解包**。两次拆接缝都是结构性修复不是省字节：0.3.2 把 `repair-stream.js` 28 955 → 27 925 而总量 +529；0.3.3 把 `cli.js` 16 640 → 8 503 而总量 64 539 → 65 521（+982） |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1` / `v0.3.2` / `v0.3.3` / `v0.3.4` / `v0.3.5` / **`v0.3.6`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release） |
-| 装机验收 | **0.3.7 已从 registry 单装到空目录验过 `OK 6 fixture(s)`，产物 `data/results/install-acceptance-2026-11-12T12-50-00.000Z.json`（`ok: true`、三条命令退出码 0/0/0）**；两个 profile 已换成 `.tmp/pack19/` 的 0.3.7（`.tmp/switch-profiles-037.mjs`，备份 `before-038`），desktop 与 remedy-live 内 `verify` 都回 `OK 6 fixture(s)`、两包都报 0.3.7。历史：0.3.2 / 0.3.3 / 0.3.4 / 0.3.5 各自从 registry 单装验过 `OK 6 fixture(s)`；0.2.0 / 0.3.0 / 0.3.1 只用本地双 tgz 验过 5/5；0.1.1 是 5/5 |
+| 装机验收 | **0.3.7 已从 registry 单装到空目录验过 `OK 6 fixture(s)`，产物 `data/results/install-acceptance-2026-11-12T12-50-00.000Z.json`（`ok: true`、三条命令退出码 0/0/0）；另在 `.tmp/verify-published-037/` 复核了一次：装出来的 `node_modules/dsh-remedy/README.md` 里 `scan` 那一行带目录形式与 `--since`，与 `--help` 输出一致**；两个 profile 已换成 `.tmp/pack19/` 的 0.3.7 （`.tmp/switch-profiles-037.mjs`，备份 `before-038`），desktop 与 remedy-live 内 `verify` 都回 `OK 6 fixture(s)`、两包都报 0.3.7。历史：0.3.6 有产物 `install-acceptance-2026-11-11T19-30-00.000Z.json`；0.3.2–0.3.5 各自从 registry 单装验过。 |
 | 下一件事 | **重启桌面 App**（两个 profile 已是 0.3.7、`verify` 6/6，但 App 自 0.3.5 起没重启过，所以运行时还加载着旧版本）。重启后按「下一位 agent 的第一件事」推进 P-0011，再考虑 P-0013 与包内 README 的覆盖。 |
 
 ## 五分钟检查
@@ -105,8 +105,8 @@ git -C .. log --oneline -3
   然后**一次**重生成 11 个对外文件 + release notes。
 - **实测**：`pnpm run verify` → **201 tests / 0 fail / 6 gates ALL GREEN**；
   `--mutate` → **6/6 CAUGHT**；`node packages/plugin/dist/cli.js verify` → `OK 6 fixture(s)`。
-  快照 `patch-registry-2026-11-12T13-10-00.000Z.json`（sha256 `cbd5f8ee…`），
-  门禁证据 `gates-2026-11-12T13-35-00.000Z.json` / `gates-mutate-2026-11-12T13-40-00.000Z.json`。
+  快照 `patch-registry-2026-11-12T14-10-00.000Z.json`（sha256 `cbd5f8ee…`），
+  门禁证据 `gates-2026-11-12T14-15-00.000Z.json` / `gates-mutate-2026-11-12T14-20-00.000Z.json`。
 - **仍未做**：桌面 App 仍未重启（两个 profile 装的是 0.3.6）；0.3.7 还没装进 profile；
   `withdrawn` 在本机仍不可达（已证明，不是没试）；`packages/*/README.md` 仍只有一条 scan 行的测试。
 
@@ -878,9 +878,9 @@ release `v0.3.7` 正文由 copy 通道生成、与仓库文件逐字节相同；
 | `gates-2026-11-11T17-25-00.000Z.json` / `gates-mutate-2026-11-11T17-20-00.000Z.json` | 绿 | 历史门禁证据：P-0009 台账落地、双包 bump 0.3.6（16:40 那条红产物已删） |
 | `gates-2026-11-11T18-40-00.000Z.json` / `gates-mutate-2026-11-11T18-45-00.000Z.json` | 绿 | R17 中间一轮：census 重测 + 11 个对外文件首次重生成之后的门禁证据（192 tests） |
 | `gates-2026-11-11T20-10-00.000Z.json` / `gates-mutate-2026-11-11T20-15-00.000Z.json` | 绿 | R17 第二轮的门禁证据：事实包把测试数改成 193、全部对外文件再重生成一遍之后（192→193 tests） |
-| `gates-2026-11-12T13-35-00.000Z.json` / `gates-mutate-2026-11-12T13-40-00.000Z.json` | 绿 | **当前**门禁证据：P-0010 落地、双包 bump 0.3.7、11 个对外文件按「0.3.7 未发布」口径重生成、文档与台账全部对齐之后，`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，195 tests |
+| `gates-2026-11-12T14-15-00.000Z.json` / `gates-mutate-2026-11-12T14-20-00.000Z.json` | 绿 | **当前**门禁证据：P-0010 落地、双包 bump 0.3.7、11 个对外文件按「0.3.7 未发布」口径重生成、文档与台账全部对齐之后，`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，195 tests |
 | `live-2026-11-12T06-00-00.000Z.json` | 绿 | **0.3.6 真机**：60 流 / 1 修复 / `fused:1 repaired:1` / 合成 id 被派发并回答 / verdict `repaired`（P-0001 已引用） |
-| `patch-registry-2026-11-12T13-10-00.000Z.json` | 绿 | **当前**注册表快照（十补丁：P-0001/2/3 `verified`，P-0004…P-0010 `tested`；sha256 `d7062485…`） |
+| `patch-registry-2026-11-12T14-10-00.000Z.json` | 绿 | **当前**注册表快照（十补丁：P-0001/2/3 `verified`，P-0004…P-0010 `tested`；sha256 `d7062485…`） |
 | `scan-full-2026-11-11T18-15-00.000Z.json` | 绿 | 全目录 `scan --out` 产物：78 文件 / 393 attempts / 38 fused / 44 fusion failures / 293 turns |
 | `session-sample-2026-11-11T18-10-00.000Z.json` | 绿 | 本机 census 样本（`--until 2026-11-11T17:00:00.000Z`，两条 stamp 除 `generated_at` 外逐字节相同） |
 | `install-acceptance-2026-11-11T19-30-00.000Z.json` | 绿 | 0.3.6 空目录从 registry 单装 `OK 6 fixture(s)`（R17 首次把这个验收落成产物） |

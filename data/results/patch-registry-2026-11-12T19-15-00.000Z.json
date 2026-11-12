@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "produced_by": "scripts/record_patch_registry.mjs",
-  "generated_at": "2026-11-12T18:50:00.000Z",
+  "generated_at": "2026-11-12T19:15:00.000Z",
   "source": {
-    "git_head": "e9c30b532ab61159737df54d8d4f8b9d04a76884",
+    "git_head": "0514772eb5e02c1a647a31371f8ef08236bbc250",
     "git_dirty": true
   },
   "patches": [

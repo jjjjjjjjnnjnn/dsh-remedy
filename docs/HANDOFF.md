@@ -11,9 +11,9 @@
 | 补丁 | **P-0001 `verified`**（headless + 桌面两次真机）· **P-0002 `verified`**（2026-11-10 headless 真机修好一次真实两调用粘连、合成 id 被派发执行）· **P-0003 `verified`**（2026-11-10 headless 真机 journal 第一次写出非零 `refused`：`too-many-calls` 拒绝而不是假装修好）· **P-0005 `tested`**（裸值 reseal；单测 + 负对照 + 一条实测夹具，无 live 产物）· **P-0004 `tested`**（scan 认 zstd + 目录 + `--since`，redaction 补三种路径形状；改的是离线读取器，live journal 永远证不了它）· **P-0006 `tested`**（scan 统计每一种 turn 结束方式并点名每个 error code；同样是离线读取器）· **P-0007 `tested`**（copy 通道：超过命令行上限的请求走 stdin、失败按原因命名；改的是构建侧，不动任何接缝）· **P-0009 `tested`**（窗口化扫描把每个会话的首行 `session` 头记录当成 unreadable：实测 78 文件 78 行；改为头记录用 `createdAt` 参与窗口；同样是离线读取器）· **P-0010 `tested`**（npm 页面与 CLI `USAGE` 都在用 0.3.3 之前的 `scan` 用法；两处改成同一条并加测试）· **P-0011 `tested`**（第二个接缝 `agent/request-error` 从 0.2.0 起零测试，且先 `next()` 再覆盖答案、预算 Map 不修剪；按上游契约重写并加 9 条测试）· **P-0012 `tested`**（一个字节上限描述两种加载路径；拆成 residency / cli / total，并用模块图测试堵掉「挪到便宜那一半」）· **P-0013 `tested`**（本机 37 次 `UNSUPPORTED_REASONING_EFFORT` 无人命名；按 `(step, code)` 命名一次 + 纯函数 preflight，**不偷偷降档**）（npm 页面与 CLI `USAGE` 都在用 0.3.3 之前的 `scan` 用法；两处改成同一条并加测试；改了发射字节所以付账方式是压缩四条命令说明）（窗口化扫描把每个会话的首行 `session` 头记录当成 unreadable：实测 78 文件 78 行；改为头记录用 `createdAt` 参与窗口；同样是离线读取器） |
 | 基线 | **228 tests / 6 gates / `--mutate` 6-6** |
 | 包体 | **已发布 0.3.8 = 35 898 B 压缩 / 35 文件 / 117 750 B 解包**（`dist/*.js` 81 740 / `dist/*.d.ts` 26 605 / fixtures 3 583 / 包根 5 822），core **0.3.8 = 26 551 B / 21 文件 / 83 461 B 解包**（`dist/*.js` 58 062 / `dist/*.d.ts` 22 102，shasum `0df993f8…`）：文件数从 29/19 涨到 35/21，因为 P-0011/P-0013 新增了 `failure-listener`、`monitor`、`preflight`、`explain-command` 四个模块。**已发布 0.3.7 = 29 462 B / 29 文件 / 98 001 B 解包**，core `0.3.7 = 20 000 B / 19 文件 / 65 961 B 解包`。**已发布 0.3.6 = 29 445 B 压缩 / 29 文件 / 97 807 B 解包**（`dist/*.js` 67 997 / `dist/*.d.ts` 20 951 / fixtures 3 583 / 包根 5 276），core **0.3.6 = 19 247 B / 19 文件 / 63 408 B 解包**（`dist/*.js` 43 117 / `dist/*.d.ts` 16 994，shasum `76777609…`）：core 变大只因为多一条补丁记录。**已发布 0.3.5 = 29 448 B 压缩 / 29 文件 / 97 944 B 解包**（`dist/*.js` 67 908 / `dist/*.d.ts` 21 177 / fixtures 3 583 / 包根 5 276），core **0.3.5 = 18 723 B / 19 文件 / 61 553 B 解包**（`dist/*.js` 41 262 / `dist/*.d.ts` 16 994）：P-0008 只加 `scripts/gate_size.mjs`，`scripts/` 不进包，所以 plugin 的字节数与 0.3.4 相同、shasum 因 manifest 版本变了从 `5f20282e…` 到 `c1b1b431…`。**已发布 0.3.2 = 24 689 B 压缩 / 25 文件 / 81 904 B 解包**（`dist/*.js` 56 344 / `dist/*.d.ts` 16 701 / fixtures 3 583 / 包根 5 276）；core **0.3.2 = 15 864 B / 19 文件 / 52 828 B 解包**。**已发布 0.3.3 = 28 378 B 压缩 / 29 文件 / 94 769 B 解包**（`dist/*.js` 65 521 / `dist/*.d.ts` 20 389 / fixtures 3 583 / 包根 5 276），core **0.3.3 = 16 776 B / 19 文件 / 55 684 B 解包**。**已发布 0.3.4 = 29 448 B 压缩 / 29 文件 / 97 944 B 解包**（`dist/*.js` 67 908 / `dist/*.d.ts` 21 177 / fixtures 3 583 / 包根 5 276），core **0.3.4 = 18 202 B / 19 文件 / 59 864 B 解包**。两次拆接缝都是结构性修复不是省字节：0.3.2 把 `repair-stream.js` 28 955 → 27 925 而总量 +529；0.3.3 把 `cli.js` 16 640 → 8 503 而总量 64 539 → 65 521（+982） |
-| 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1` / `v0.3.2` / `v0.3.3` / `v0.3.4` / `v0.3.5` / **`v0.3.6`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release） |
-| 装机验收 | **0.3.7 已从 registry 单装到空目录验过 `OK 6 fixture(s)`，产物 `data/results/install-acceptance-2026-11-12T12-50-00.000Z.json`（`ok: true`、三条命令退出码 0/0/0）；另在 `.tmp/verify-published-037/` 复核了一次：装出来的 `node_modules/dsh-remedy/README.md` 里 `scan` 那一行带目录形式与 `--since`，与 `--help` 输出一致**；两个 profile 已换成 `.tmp/pack19/` 的 0.3.7 （`.tmp/switch-profiles-037.mjs`，备份 `before-038`），desktop 与 remedy-live 内 `verify` 都回 `OK 6 fixture(s)`、两包都报 0.3.7。历史：0.3.6 有产物 `install-acceptance-2026-11-11T19-30-00.000Z.json`；0.3.2–0.3.5 各自从 registry 单装验过。 |
-| 下一件事 | **把两个 profile 换到 `.tmp/pack20` 的 0.3.8，然后重启桌面 App**（profile 现在装的是 0.3.7，App 自 0.3.5 起没重启过）。之后按「下一位 agent 的第一件事」推进：实测 `agent/pre-step` 的拒绝语义，或者把 `explain` 的覆盖表抬进 registry。 |
+| 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1` / `v0.3.2` / `v0.3.3` / `v0.3.4` / `v0.3.5` / `v0.3.6` / `v0.3.7` / **`v0.3.8`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release） |
+| 装机验收 | **0.3.8 已从 registry 单装到空目录验过 `OK 6 fixture(s)`，产物 `data/results/install-acceptance-2026-11-12T16-50-00.000Z.json`（`ok: true`、三条命令退出码 0/0/0）**；另在 `.tmp/verify-published-038/` 复核过一次，装出来的 `explain` 在本机能跑通并退出 0。两个 profile 已换成 `.tmp/pack20/` 的 0.3.8（`.tmp/switch-profiles-038.mjs`，备份 `before-038b`），desktop 与 remedy-live 内 `verify` 都回 `OK 6 fixture(s)`、两包都报 0.3.8。历史：0.3.7 有产物 `install-acceptance-2026-11-12T12-50-00.000Z.json`；0.3.2–0.3.6 各自从 registry 单装验过。 |
+| 下一件事 | **重启桌面 App**（两个 profile 已是 0.3.8、`verify` 6/6，但 App 自 0.3.5 起没重启过，运行时仍加载旧版本）。重启后按「下一位 agent 的第一件事」推进：实测 `agent/pre-step` 的拒绝语义，或把 `explain` 的覆盖表抬进 registry（P-0014）。 |
 
 ## 五分钟检查
 
@@ -24,7 +24,7 @@ pnpm install
 pnpm run verify                  # build → typecheck → test → gate
 node scripts/gate.mjs --mutate   # 6 门都必须红
 node packages/plugin/dist/cli.js verify   # OK 6 fixture(s)
-npm view dsh-remedy version      # 0.3.6（0.3.7 已 bump、未发布）
+npm view dsh-remedy version      # 0.3.8
 ```
 
 `git` 要注意：本目录不是 git 根。
@@ -94,8 +94,8 @@ git -C .. log --oneline -3
      `in-session`、字节必须没漂」。
 - **实测**：`pnpm run verify` → **228 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` → **6/6 CAUGHT**；
   `node packages/plugin/dist/cli.js verify` → `OK 6 fixture(s)`。
-  快照 `patch-registry-2026-11-12T18-50-00.000Z.json`（sha256 `900820ae…`，十三补丁），
-  门禁证据 `gates-2026-11-12T18-40-00.000Z.json` / `gates-mutate-2026-11-12T18-45-00.000Z.json`。
+  快照 `patch-registry-2026-11-12T19-15-00.000Z.json`（sha256 `900820ae…`，十三补丁），
+  门禁证据 `gates-2026-11-12T19-05-00.000Z.json` / `gates-mutate-2026-11-12T19-10-00.000Z.json`。
 - **仍未做**：两个 profile 装的是 0.3.7（要换 `.tmp/pack20` 的 0.3.8 并重启 App）；
   `agent/pre-step` 的拒绝语义仍未实测；`packages/*/README.md` 仍只有 `cli-usage.test.ts` 守一条 scan 行。
 
@@ -147,7 +147,7 @@ git -C .. log --oneline -3
   快照 `patch-registry-2026-11-12T16-20-00.000Z.json`（sha256 `3fcfce7e…`，十三补丁），
   门禁证据 `gates-2026-11-12T16-10-00.000Z.json` / `gates-mutate-2026-11-12T16-15-00.000Z.json`。
 - **版本**：两个包与根 `package.json` 都到 **0.3.8**（未发布）。emit 总值 81 740 / 83 000。
-- **仍未做**：0.3.8 未发布；`agent/pre-step` 的拒绝语义未实测；两个 profile 装的是 0.3.7；
+- **仍未做（R20 时点；R21 已完成 0.3.8 发布，见上一批）**：0.3.8 未发布；`agent/pre-step` 的拒绝语义未实测；两个 profile 装的是 0.3.7；
   桌面 App 仍未重启；`packages/*/README.md` 仍只有一条 scan 行的测试（BS-13）。
 
 ## 当前批次（R19 → R1）

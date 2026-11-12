@@ -814,21 +814,21 @@ npm whoami          # 必须打印用户名；输出 E401 就先解决登录，�
 | `patch-registry-2026-11-10T16-45-00.000Z.json` | 绿 | 历史快照（P-0001 + P-0002 + P-0003 全 `verified`，P-0004 / P-0005 尚未登记） |
 | `live-2026-11-10T16-30-00.000Z.json` | 绿 | 0.3.0 headless 真机拒绝：5 流 / `too-many-calls` / `fused:1 refused:1 unrepaired:1` / verdict `degraded` / 会话 `turn_end=error` / 无合成 id |
 | `patch-registry-2026-11-10T22-30-00.000Z.json` | 绿 | 历史快照（五个补丁：P-0001/2/3 `verified`，P-0004/5 `tested`） |
-| `patch-registry-2026-11-11T10-30-00.000Z.json` | 绿 | 历史快照（六个补丁；sha256 `c484300c…`） |
-| `patch-registry-2026-11-11T11-20-00.000Z.json` | 绿 | 历史快照（七个补丁：P-0001/2/3 `verified`，P-0004/5/6/7 `tested`；sha256 `b272ddfe…`） |
+| `patch-registry-2026-11-11T10-30-00.000Z.json` | （已删） | 历史快照（六个补丁；sha256 `c484300c…`） |
+| `patch-registry-2026-11-11T11-20-00.000Z.json` | （已删） | 历史快照（七个补丁：P-0001/2/3 `verified`，P-0004/5/6/7 `tested`；sha256 `b272ddfe…`） |
 | `patch-registry-2026-11-11T13-50-00.000Z.json` | 绿 | 历史快照（八个补丁：P-0001/2/3 `verified`，P-0004/5/6/7/8 `tested`；sha256 `4ed8ae3a…`） |
 | `patch-registry-2026-11-11T16-30-00.000Z.json` | 绿 | **当前**注册表快照（九个补丁：P-0001/2/3 `verified`，P-0004/5/6/7/8/9 `tested`；sha256 `5218a55d…`） |
 | `gates-2026-11-10T22-25-00.000Z.json` / `gates-mutate-2026-11-10T22-20-00.000Z.json` | 绿 | P-0004 批次的门禁证据（`ALL GREEN · 5 gates` 与 `5/5 CAUGHT`） |
 | `gates-2026-11-11T09-45-00.000Z.json` / `gates-mutate-2026-11-11T09-40-00.000Z.json` | 绿 | 0.3.3 发布后的门禁证据（事实包改成"已发布"口径、8 个对外文件重生成之后） |
 | `gates-2026-11-11T10-40-00.000Z.json` / `gates-mutate-2026-11-11T10-45-00.000Z.json` | 绿 | 历史门禁证据（P-0006 批次，175 tests） |
 | `gates-2026-11-11T11-30-00.000Z.json` / `gates-mutate-2026-11-11T11-25-00.000Z.json` | 绿 | P-0007 台账批次的门禁证据（对外文件重生成之前） |
-| `gates-2026-11-11T13-15-00.000Z.json` / `gates-mutate-2026-11-11T13-10-00.000Z.json` | 绿 | 0.3.4 发布后的门禁证据（`ALL GREEN · 5 gates` 与 `5/5 CAUGHT`，189 tests） |
+| `gates-2026-11-11T13-15-00.000Z.json` / `gates-mutate-2026-11-11T13-10-00.000Z.json` | （已删） | 0.3.4 发布后的门禁证据（`ALL GREEN · 5 gates` 与 `5/5 CAUGHT`，189 tests） |
 | `gates-2026-11-11T14-35-00.000Z.json` / `gates-mutate-2026-11-11T14-30-00.000Z.json` | （已删） | 0.3.5 台账落地时的一次门禁证据，已被 15:45 的重跑取代 |
 | `gates-2026-11-11T15-45-00.000Z.json` / `gates-mutate-2026-11-11T15-40-00.000Z.json` | 绿 | 0.3.5 发布后的门禁证据（`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，189 tests） |
 | `gates-2026-11-11T17-25-00.000Z.json` / `gates-mutate-2026-11-11T17-20-00.000Z.json` | 绿 | 历史门禁证据：P-0009 台账落地、双包 bump 0.3.6（16:40 那条红产物已删） |
 | `gates-2026-11-11T18-40-00.000Z.json` / `gates-mutate-2026-11-11T18-45-00.000Z.json` | 绿 | R17 中间一轮：census 重测 + 11 个对外文件首次重生成之后的门禁证据（192 tests） |
 | `gates-2026-11-11T20-10-00.000Z.json` / `gates-mutate-2026-11-11T20-15-00.000Z.json` | 绿 | R17 第二轮的门禁证据：事实包把测试数改成 193、全部对外文件再重生成一遍之后（192→193 tests） |
-| `gates-2026-11-12T08-35-00.000Z.json` / `gates-mutate-2026-11-12T08-40-00.000Z.json` | 绿 | **当前**门禁证据：P-0010 落地、双包 bump 0.3.7、11 个对外文件按「0.3.7 未发布」口径重生成、文档与台账全部对齐之后，`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，195 tests |
+| `gates-2026-11-12T09-00-00.000Z.json` / `gates-mutate-2026-11-12T09-05-00.000Z.json` | 绿 | **当前**门禁证据：P-0010 落地、双包 bump 0.3.7、11 个对外文件按「0.3.7 未发布」口径重生成、文档与台账全部对齐之后，`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，195 tests |
 | `live-2026-11-12T06-00-00.000Z.json` | 绿 | **0.3.6 真机**：60 流 / 1 修复 / `fused:1 repaired:1` / 合成 id 被派发并回答 / verdict `repaired`（P-0001 已引用） |
 | `patch-registry-2026-11-12T08-30-00.000Z.json` | 绿 | **当前**注册表快照（十补丁：P-0001/2/3 `verified`，P-0004…P-0010 `tested`；sha256 `d7062485…`） |
 | `scan-full-2026-11-11T18-15-00.000Z.json` | 绿 | 全目录 `scan --out` 产物：78 文件 / 393 attempts / 38 fused / 44 fusion failures / 293 turns |
@@ -845,6 +845,10 @@ npm whoami          # 必须打印用户名；输出 E401 就先解决登录，�
 | `publish-2026-11-11T15-05-00.000Z.json` | 绿 | 0.3.5 发布，两包 `exact_ok` 与 `latest_ok` 均为 true（plugin shasum `c1b1b431…` / core `cc9895f8…`）；14:55 那次因副本延迟记成 `ok: false`，已删 |
 
 每个 `.json` 都有同名 `.sha256`。红产物不编辑，用新 stamp 重记。
+
+**索引口径**：标着「（已删）」的四行是 R15/R16 拆包时留下的历史产物，文件确实不在了；
+它们不是当前证据，只是那次批次的记录，所以没有补造。引用不存在的产物会被
+`.tmp/audit-citations.mjs` 这类检查点名，别再往索引里加一条指向空洞的行。
 
 ## 台账
 

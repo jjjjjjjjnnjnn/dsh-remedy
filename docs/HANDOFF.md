@@ -94,8 +94,8 @@ git -C .. log --oneline -3
      `in-session`、字节必须没漂」。
 - **实测**：`pnpm run verify` → **228 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` → **6/6 CAUGHT**；
   `node packages/plugin/dist/cli.js verify` → `OK 6 fixture(s)`。
-  快照 `patch-registry-2026-11-12T19-15-00.000Z.json`（sha256 `900820ae…`，十三补丁），
-  门禁证据 `gates-2026-11-12T19-05-00.000Z.json` / `gates-mutate-2026-11-12T19-10-00.000Z.json`。
+  快照 `patch-registry-2026-11-12T19-35-00.000Z.json`（sha256 `900820ae…`，十三补丁），
+  门禁证据 `gates-2026-11-12T19-25-00.000Z.json` / `gates-mutate-2026-11-12T19-30-00.000Z.json`。
 - **仍未做**：两个 profile 装的是 0.3.7（要换 `.tmp/pack20` 的 0.3.8 并重启 App）；
   `agent/pre-step` 的拒绝语义仍未实测；`packages/*/README.md` 仍只有 `cli-usage.test.ts` 守一条 scan 行。
 
@@ -922,10 +922,10 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 - `metadata.json` 的 `description` 有 **160 字符上限**，改它要同时改两个 `package.json` 的 description。
 
 **下一个必须做的，按顺序：**
-1. **两个 profile 换到 `.tmp/pack20` 的 0.3.8，然后重启桌面 App**
-   （profile 现在装的是 0.3.7，App 自 0.3.5 起没重启过）。
-   照 `.tmp/switch-profiles-037.mjs` 写一个 `switch-profiles-038.mjs`，改两个 `package.json`
-   与 `pnpm-workspace.yaml` 的 overrides，然后 `pnpm install --no-frozen-lockfile`。
+1. **重启桌面 App**（已完成的部分：两个 profile 均已换成 `.tmp/pack20/` 的 0.3.8，
+   `.tmp/switch-profiles-038.mjs`，备份后缀 `before-038b`；两个 profile 内 `verify` 都回
+   `OK 6 fixture(s)`、两包都报 0.3.8，desktop 内 `explain` 退出 0。
+   **唯一没做的是重启 App**，所以运行时仍加载旧版本；这一件必须由人来点）。
 2. **实测 `agent/pre-step` 的拒绝语义**：用一次性 profile 挂一个永远 `reject` 的 listener，
    看用户看到的是「被拦下」还是「被取消」。测出来才谈把 preflight 接上去；测不出来就永远不要接。
 3. **P-0014**（把 `explain` 的覆盖表从 `explain-command.ts` 的常量抬进 registry 的

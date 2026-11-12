@@ -103,6 +103,13 @@ git -C .. log --oneline -3
   shasum `700169fc…`、sha256 `f6931f2b…`。**0.3.7 未发布**，registry 上两包仍是 `0.3.6`。
   **踩坑**：`--dry-run` 会把包重打一次，tar header 的时间戳跟着变，所以它的 shasum
   （core 那次是 `41bad154…`）**不是**你要发布的那份字节；凭证是 `.tmp/pack19/` 里实际文件的 shasum。
+- **本地装机验收（双 tgz）**：空目录 `.tmp/verify-037/` 先装 core 再装 plugin（两个都从
+  `.tmp/pack19/`），`npx dsh-remedy verify` 回 `OK 6 fixture(s)`，两个包都报 0.3.7；
+  装出来的 `node_modules/dsh-remedy/README.md` 里 `scan` 那一行与 `--help` 打印的用法
+  按空白归一后**逐字符相同** —— 这是 P-0010 想守的东西在**发布物**上也被验证了一次，
+  不只是源码树。**registry 单装验收还做不了**：0.3.7 未发布，
+  `record_install_acceptance.mjs --version 0.3.7` 会在 `npm install` 那一步
+  `ETARGET`（plugin 与 core 都还没有 0.3.7），所以这一步必须等发布之后。
 - **对外文字**：事实包加 `## The CLI documentation (P-0010)` 段 6 条；`## Live verification`
   加 0.3.6 真机三条 + 一条 `withdrawn` 仍未测；`Tests: 195`；P-0003 段加一条
   「live 只证了预算拒绝与干净修复，没证中途撤回」；字节预算段补 P-0010 的付账方式。

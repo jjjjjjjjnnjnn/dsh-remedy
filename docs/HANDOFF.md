@@ -96,8 +96,13 @@ git -C .. log --oneline -3
   `audit/patch_ledger.json` 加条目（`since: "0.3.7"`、无 `verified_at`）；
   `audit/step_reviews.json` 加 **S18**（gate `copy`，五轴齐）；披露日志加 R18 一行。
 - **版本**：两个包与根 `package.json` bump 到 **0.3.7**（P-0010 改了发射字节，必须重新打包）。
-  `--dry-run` 实测 exit 0：plugin `29.5 kB / 98.0 kB / 29 files / shasum 69087301…`、
-  core `19.9 kB / 65.6 kB / shasum 41bad154…`。**0.3.7 未发布**，registry 上两包仍是 `0.3.6`。
+  实打实的 tarball 在 `.tmp/pack19/`（`pnpm pack` 直接产物，不是 dry-run 的重打）：
+  plugin **29 462 B / 29 文件 / 98 001 B 解包**（`dist/*.js` 67 883 / `dist/*.d.ts` 20 835 /
+  fixtures 3 583 / 包根 5 700），shasum `69087301…`、sha256 `38f58447…`；
+  core **19 951 B / 19 文件 / 65 676 B 解包**（`dist/*.js` 45 385 / `dist/*.d.ts` 16 994），
+  shasum `700169fc…`、sha256 `f6931f2b…`。**0.3.7 未发布**，registry 上两包仍是 `0.3.6`。
+  **踩坑**：`--dry-run` 会把包重打一次，tar header 的时间戳跟着变，所以它的 shasum
+  （core 那次是 `41bad154…`）**不是**你要发布的那份字节；凭证是 `.tmp/pack19/` 里实际文件的 shasum。
 - **对外文字**：事实包加 `## The CLI documentation (P-0010)` 段 6 条；`## Live verification`
   加 0.3.6 真机三条 + 一条 `withdrawn` 仍未测；`Tests: 195`；P-0003 段加一条
   「live 只证了预算拒绝与干净修复，没证中途撤回」；字节预算段补 P-0010 的付账方式。

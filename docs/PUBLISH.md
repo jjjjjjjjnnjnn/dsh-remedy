@@ -265,12 +265,17 @@ and the plugin total to 67883 — no cap was raised.
 
 Baseline after the change: **195 tests, 0 failing. 6 gates. `--mutate` catches 6 of 6.**
 
-Measured with `pnpm pack` through the publish script's `--dry-run`:
+Measured by packing into `.tmp/pack19/` and reading the tarballs back (a dry-run
+repack produces different bytes, because the tar headers carry their own
+timestamps — quote the numbers of the tarballs you will actually publish):
 
-- `dsh-remedy@0.3.7`: 29.5 kB compressed, 98.0 kB unpacked, 29 files, shasum
-  `69087301f5ff802e387061af61756b65b883b11d`.
-- `dsh-remedy-core@0.3.7`: 19.9 kB compressed, 65.6 kB unpacked, 19 files, shasum
-  `41bad1549c8867b4a6cf045193abe287aff9b664`.
+- `dsh-remedy@0.3.7`: 29 462 bytes compressed, 29 files, 98 001 bytes unpacked
+  (67 883 bytes of `dist/*.js`, 20 835 of `dist/*.d.ts`, 3 583 of `fixtures/`,
+  5 700 of package-root files), shasum `69087301f5ff802e387061af61756b65b883b11d`.
+- `dsh-remedy-core@0.3.7`: 19 951 bytes compressed, 19 files, 65 676 bytes unpacked
+  (45 385 bytes of `dist/*.js`, 16 994 of `dist/*.d.ts`), shasum
+  `700169fc96d64b8c47b7c265e435355075837719`. It grew by one patch record and the
+  P-0010 registry entry.
 
 To publish it:
 

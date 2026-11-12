@@ -5,13 +5,13 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
-## [0.3.7] - unreleased
+## [0.3.7] - 2026-11-12
 ### Added
 - P-0010: the packaged `README.md` — the page npm renders — documented `scan` as `<session.jsonl> [--json] [--out <file>]` and the CLI's own usage said `<session.jsonl|session.v4.jsonl.zstd>` with the same missing flags, while the binary has accepted a directory, `--since` and `--max-files` since 0.3.3. Both strings now carry the identical line and `tests/unit/cli-usage.test.ts` fails if they ever differ again.
 ### Changed
 - The four per-command descriptions were condensed to one line each, which took the emitted `cli-args.js` from 3086 to 2972 bytes and the plugin total from 67997 to 67883, so the byte ceiling with three bytes of headroom became a ceiling with 117.
 ### Notes
-- P-0010 is `tested` and not `verified`, because a usage string is not a resident seam, and that `0.3.6` remains the `latest` while `0.3.5` is the release before it.
+- P-0010 is `tested` and not `verified`, because a usage string is not a resident seam, and that `0.3.7` is the registry `latest` while `0.3.6` is the release before it. The whole `MALFORMED_RESPONSE` corpus on one host was replayed through the built engine (47 turns, 39 repaired, 8 refused, none unparsable) and a 300000-case generated stress pass found no unparsable dispatch, no duplicate id and no lost tool name.
 
 ## [0.3.6] - 2026-11-11
 ### Added

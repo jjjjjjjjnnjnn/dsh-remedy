@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_install_acceptance.mjs",
+  "generated_at": "2026-11-12T12:50:00.000Z",
+  "source": {
+    "registry": "https://registry.npmjs.org",
+    "package": "dsh-remedy",
+    "version": "0.3.7",
+    "cold_directory": true,
+    "workspace_plugin_version": "0.3.7"
+  },
+  "claimed": {
+    "command": "npm install dsh-remedy@0.3.7 && dsh-remedy verify",
+    "expected": "OK 6 fixture(s)"
+  },
+  "steps": [
+    {
+      "args": [
+        "init",
+        "-y"
+      ],
+      "status": 0,
+      "stdout_tail": "  \"license\": \"ISC\",\n  \"type\": \"commonjs\"\n}",
+      "stderr_tail": "",
+      "error": null
+    },
+    {
+      "args": [
+        "install",
+        "dsh-remedy@0.3.7"
+      ],
+      "status": 0,
+      "stdout_tail": "added 2 packages, and audited 3 packages in 687ms\n\nfound 0 vulnerabilities",
+      "stderr_tail": "",
+      "error": null
+    },
+    {
+      "args": [
+        "exec",
+        "--",
+        "dsh-remedy",
+        "verify"
+      ],
+      "status": 0,
+      "stdout_tail": "PASS  truncated.json — rejected\nPASS  valid-two-calls.json — unchanged\nOK  6 fixture(s)",
+      "stderr_tail": "",
+      "error": null
+    }
+  ],
+  "verify_output": "PASS  bare-code-value.json — repaired\nPASS  braces-in-string.json — repaired\nPASS  session-9045e2ec-seq-526.json — repaired\nPASS  single-broken.json — rejected\nPASS  truncated.json — rejected\nPASS  valid-two-calls.json — unchanged\nOK  6 fixture(s)",
+  "installed_version": "0.3.7",
+  "ok": true,
+  "blocked": null
+}

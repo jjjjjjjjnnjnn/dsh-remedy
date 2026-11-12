@@ -65,7 +65,7 @@ Rules:
   finding，退出码仍只看 `fused_calls` 与 `fusion_failures`。
 - "它不做什么": a table, one row per limit.
 - "自己验证": commands plus the real artifact path.
-- "状态": 从 FACTS 取发布状态：`0.3.6` 是两个包已发布的 `latest`，`0.3.5` 是上一个
+- "状态": 从 FACTS 取发布状态：`0.3.7` 是两个包已发布的 `latest`，`0.3.6` 是上一个
   版本，就照 FACTS 这么写，不要把任何已发布版本说成待发布或已准备未发布；plugin 的 0.3.0 是坏发布。
   P-0001、P-0002 与 P-0003 都为 `verified`（P-0001 在
   headless profile 与桌面 App；P-0002 在 2026-11-10 的 headless 真机运行里修好了一次

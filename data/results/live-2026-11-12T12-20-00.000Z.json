@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_live_mount.mjs",
+  "generated_at": "2026-11-12T12:20:00.000Z",
+  "profile": {
+    "name": "remedy-live",
+    "dsh_version": "0.2.2-rc.1",
+    "install": "dsh plugin --profile remedy-live add <tarball>",
+    "package": "dsh-remedy@0.3.7",
+    "tarball": ".tmp/pack19/dsh-remedy-0.3.7.tgz",
+    "tarball_sha256": "38f584475956d6edd34cff759fe0711e226e5fbb17adcca123d32367ed40d63f",
+    "bundle_row": "remedy-stream",
+    "surface": "llm/stream"
+  },
+  "journal": {
+    "file": ".tmp/live-r18/journal.jsonl",
+    "events": 4,
+    "stream_events": 3,
+    "repaired_events": 1,
+    "rejected_events": 0
+  },
+  "counters": {
+    "streams": 3,
+    "fused": 1,
+    "repaired": 1,
+    "unrepaired": 0,
+    "truncated": 0,
+    "errors": 0,
+    "refused": 0,
+    "withdrawn": 0
+  },
+  "cross_check": {
+    "match": true,
+    "from": "journal",
+    "mode": "desktop-session (one long-lived process)",
+    "journal_totals": {
+      "streams": 3,
+      "fused": 1,
+      "repaired": 1,
+      "unrepaired": 0,
+      "truncated": 0,
+      "errors": 0,
+      "refused": 0,
+      "withdrawn": 0
+    },
+    "journal_groups": 1
+  },
+  "verdict": {
+    "state": "repaired",
+    "headline": "defect seen and repaired",
+    "reasons": [
+      "1/1 fused call(s) split into valid calls"
+    ]
+  },
+  "attempts": [],
+  "session": {
+    "file": "<home>/.dsh/sessions/--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--/session-baff8f60-05f7-4f93-bd2d-2cf1a58263d0/session.v4.jsonl.zstd",
+    "sha256": "72d554b16cba6022b6c03db9cb31b47e3b02adb28234863575788155efabc302",
+    "events": 28,
+    "turn_end": "completed",
+    "tool_calls": 2,
+    "tool_results": 2,
+    "fused_calls": 0,
+    "fusion_failures": 0,
+    "repairable_failures": 0,
+    "attempt_events": 0,
+    "attempt_logs": false,
+    "note": "this profile does not persist assistant/attempt streams; the fusion is evidenced by the journal and the synthetic id",
+    "synthetic_ids": [
+      "call_00_b3fj2kuahvwb75af3a5o6u7x#remedy-1"
+    ],
+    "repaired_step": {
+      "turn": 1,
+      "step": 1,
+      "calls": [
+        {
+          "callId": "call_00_b3fj2kuahvwb75af3a5o6u7x",
+          "name": "read"
+        },
+        {
+          "callId": "call_00_b3fj2kuahvwb75af3a5o6u7x#remedy-1",
+          "name": "read"
+        }
+      ]
+    },
+    "journal_scope": "journal and session agree on the repaired count",
+    "turn_note": "",
+    "assistant_tail": "两份文件都已读取：manifest.json 记录了 11 个对外文件的 SHA-256 与事实包哈希，public-repo-facts.md 是这些数字的唯一来源，因此二者必须彼此一致，否则 copy 门禁就会变红。",
+    "answer_after_repair": "两份文件都已读取：manifest.json 记录了 11 个对外文件的 SHA-256 与事实包哈希，public-repo-facts.md 是这些数字的唯一来源，因此二者必须彼此一致，否则 copy 门禁就会变红。"
+  },
+  "task": "Two independent reads requested in one message; the model emitted them as parallel tool calls, which is the shape that fuses at the relay.",
+  "limits": [
+    "one machine, one provider route, one profile; not a population estimate",
+    "the live profile is a headless profile with the desktop provider block copied; the desktop UI was not restarted",
+    "the plugin build is the tarball named above; its sha256 is recorded, not inferred"
+  ],
+  "redaction": {
+    "replacements": 2,
+    "kinds": [
+      "encoded-home",
+      "windows-home"
+    ]
+  }
+}

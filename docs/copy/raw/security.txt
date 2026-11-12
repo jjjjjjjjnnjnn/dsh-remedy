@@ -7,12 +7,14 @@
 | 0.3.x | Yes |
 | Older or unlisted | No |
 
+Older or unlisted versions are not supported.
+
 ## Reporting a vulnerability
 
-GitHub private vulnerability reporting is enabled on the public repository:
+Report vulnerabilities through GitHub private vulnerability reporting on the public repository:
 https://github.com/jjjjjjjjnnjnn/dsh-remedy
 
-Submit vulnerability reports through the repository security tab. Do not file public issues or pull requests for security vulnerabilities.
+Do not open a public issue for security reports.
 
 ## What is in scope
 
@@ -30,8 +32,7 @@ Submit vulnerability reports through the repository security tab. Do not file pu
 
 ## What to include
 
-Reports should include:
-
+Include the following details when submitting a report:
 - Plugin version
 - DSH version
 - OS
@@ -43,5 +44,4 @@ Never paste a real API key or an unredacted session log.
 
 ## Disclosure
 
-This project practices coordinated disclosure. Confirmed vulnerabilities are addressed through standard repository updates and releases. There is no bug bounty and no SLA.
-Background task completed. `SECURITY.md` is complete and verified against the repository's copy manifest and facts.
+This project practices coordinated disclosure. Reports are handled privately until a fix is released. There is no bounty program and no SLA.

@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "produced_by": "scripts/record_patch_registry.mjs",
-  "generated_at": "2026-11-12T10:10:00.000Z",
+  "generated_at": "2026-11-12T13:10:00.000Z",
   "source": {
-    "git_head": "56e497ebcced36d5623036c18996f39ed4d24080",
+    "git_head": "91a704c18b376afea2ebd3bfaf1984397036b397",
     "git_dirty": true
   },
   "patches": [
@@ -21,7 +21,10 @@
         "data/results/live-2026-11-09T17-00-00.000Z.json",
         "data/results/live-desktop-2026-11-09T19-10-00.000Z.json",
         "data/results/live-2026-11-12T06-00-00.000Z.json",
-        "data/results/patch-registry-2026-11-09T16-40-00.000Z.json"
+        "data/results/patch-registry-2026-11-09T16-40-00.000Z.json",
+        "data/results/live-2026-11-12T12-20-00.000Z.json",
+        "data/results/malformed-replay-2026-11-12T11-30-00.000Z.json",
+        "data/results/stress-repair-2026-11-12T12-10-00.000Z.json"
       ],
       "guards": [
         "tests/unit/json-split.test.ts",
@@ -105,6 +108,7 @@
       "evidence": [
         "docs/patches/P-0005-bare-value-reseal.md",
         "data/fixtures/toolcall-fusion/bare-code-value.json",
+        "data/results/malformed-replay-2026-11-12T11-30-00.000Z.json",
         "tests/unit/reseal.test.ts",
         "tests/unit/toolcall-repair.test.ts"
       ],

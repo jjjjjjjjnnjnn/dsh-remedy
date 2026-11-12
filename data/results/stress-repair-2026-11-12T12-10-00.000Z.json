@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/stress_repair.mjs",
+  "generated_at": "2026-11-12T12:10:00.000Z",
+  "engine": "packages/core/dist/index.js (the built package, not src)",
+  "input": {
+    "cases": 300000,
+    "seed": 1592594996,
+    "shapes": 20,
+    "tools": 7
+  },
+  "totals": {
+    "accepted": 104795,
+    "unchanged": 105133,
+    "rejected": 90072,
+    "repaired_that_dispatch_an_unparsable_call": 0,
+    "repaired_that_dispatch_nothing": 0,
+    "duplicate_ids": 0,
+    "lost_tool_names": 0
+  },
+  "decisions": [
+    {
+      "code": "unchanged",
+      "count": 105133
+    },
+    {
+      "code": "repaired:split",
+      "count": 104795
+    },
+    {
+      "code": "rejected:not-an-object-sequence",
+      "count": 60009
+    },
+    {
+      "code": "rejected:single-object",
+      "count": 30063
+    }
+  ],
+  "refusals": [
+    {
+      "code": "not-an-object-sequence",
+      "count": 60009
+    },
+    {
+      "code": "single-object",
+      "count": 30063
+    }
+  ],
+  "invariant": "every accepted case dispatches at least one call, each with a parseable plain-object argument, its own tool name and a unique id",
+  "counter_example": null,
+  "ok": true
+}

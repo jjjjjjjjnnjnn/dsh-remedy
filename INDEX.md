@@ -68,6 +68,7 @@
 | `docs/copy/facts/` | 事实包：唯一数字来源 |
 | `docs/copy/prompts/` / `raw/` / `manifest.json` | 提示词、原始输出、provenance |
 | `docs/copy/repo-metadata.json` | GitHub 描述 / topics / 发布文案 / npm 描述 |
+| `docs/copy/release-notes/` | GitHub release 正文（同一 copy 通道；条目带 `frozen_at`，不随事实包漂移） |
 | `docs/PUBLISH.md` | `git subtree split` 与首次发布步骤 |
 
 ## 门禁与台账
@@ -90,6 +91,8 @@
 | `scripts/record_publish.mjs` | 发布后 registry 状态 → `publish-*` 产物 |
 | `scripts/record_session_sample.mjs` | 本机故障样本（必须带 `--until`） |
 | `scripts/record_install_acceptance.mjs` | 空目录从 registry 单装 → `install-acceptance-*` 产物 |
+| `scripts/replay_malformed_corpus.mjs` | 全部真实 `MALFORMED_RESPONSE` 回放 → `malformed-replay-*` |
+| `scripts/stress_repair.mjs` | 生成式压力（固定 seed）→ `stress-repair-*` |
 | `scripts/probe_withdrawn_reachability.mjs` | 实测 `withdrawn` 在本机是否可达 → `withdrawn-reachability-*` 产物 |
 | `scripts/sync_fixtures.mjs` | `prepack`：夹具进包 |
 | `scripts/record_patch_registry.mjs` | 注册表快照 → `patch-registry-*` 产物 |
@@ -117,6 +120,8 @@
 | `tests/unit/package-files.test.ts` | 包里必须带哪些文件（fixtures 进包） |
 | `tests/unit/publish.test.ts` | 发布 preflight：登录、404/401/403、OTP、manifest 协议 |
 | `tests/unit/cli-usage.test.ts` | 包内 README 与 CLI `USAGE` 的 `scan` 行必须一致（P-0010） |
+| `tests/unit/fuzz-invariants.test.ts` | 属性测试：任何被接受的调用，其参数必须各自能 parse |
+| `tests/governance/manifest-targets.test.ts` | manifest 条目必须指向仓库内存在的文件（不得指向 `.tmp/`） |
 | `tests/unit/agy-channel.test.ts` | 传输边界 / 失败命名 / 最后一条 `result` 胜出 |
 | `tests/governance/ledgers.test.ts` | 台账 / 六格披露行 / 唯一 SessionID / 快照一致 |
 | `tests/governance/public-copy.test.ts` | 对外文件 / 事实包 / 模板 / 元数据 |

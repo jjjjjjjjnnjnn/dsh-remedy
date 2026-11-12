@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/replay_malformed_corpus.mjs",
+  "generated_at": "2026-11-12T11:30:00.000Z",
+  "source": {
+    "path": "~/.dsh/sessions",
+    "files": 110,
+    "files_read": 110,
+    "unreadable": 0
+  },
+  "corpus": {
+    "malformed_turns": 47,
+    "turns_without_captured_text": 0,
+    "replayed_cases": 47,
+    "bytes_total": 23269,
+    "tools": [
+      {
+        "tool": "ops_bash",
+        "count": 13
+      },
+      {
+        "tool": "read_page",
+        "count": 8
+      },
+      {
+        "tool": "ops_inspect_local_file",
+        "count": 4
+      },
+      {
+        "tool": "read",
+        "count": 4
+      },
+      {
+        "tool": "list_agents",
+        "count": 3
+      },
+      {
+        "tool": "ops_read_files",
+        "count": 3
+      },
+      {
+        "tool": "send_message",
+        "count": 3
+      },
+      {
+        "tool": "run_code",
+        "count": 3
+      },
+      {
+        "tool": "ops_grep",
+        "count": 2
+      },
+      {
+        "tool": "web_search",
+        "count": 2
+      },
+      {
+        "tool": "spawn_teammate",
+        "count": 1
+      },
+      {
+        "tool": "edit",
+        "count": 1
+      }
+    ]
+  },
+  "decisions": [
+    {
+      "code": "repaired:split",
+      "count": 38
+    },
+    {
+      "code": "rejected:not-an-object-sequence",
+      "count": 7
+    },
+    {
+      "code": "repaired:resealed",
+      "count": 1
+    },
+    {
+      "code": "rejected:single-object",
+      "count": 1
+    }
+  ],
+  "totals": {
+    "repaired": 39,
+    "rejected": 8,
+    "repaired_that_would_dispatch_an_unparsable_call": 0,
+    "repaired_that_dispatch_nothing_at_all": 0
+  },
+  "invariant": "every repaired case must emit at least one call whose arguments parse to a plain object; a repair that dispatches an unparsable call, or nothing at all, is the failure this patch exists to prevent",
+  "examples": [
+    {
+      "file": "718d9331-d239-407a-923f-680eb10b00d9",
+      "seq": 147,
+      "tool": "ops_inspect_local_file",
+      "bytes": 159,
+      "decision": "repaired:split",
+      "slices": 2,
+      "detail": ""
+    },
+    {
+      "file": "718d9331-d239-407a-923f-680eb10b00d9",
+      "seq": 641,
+      "tool": "list_agents",
+      "bytes": 48,
+      "decision": "repaired:split",
+      "slices": 2,
+      "detail": ""
+    },
+    {
+      "file": "session-3e4982b8-7c06-4988-9fac-bdccf78a3858",
+      "seq": 1415,
+      "tool": "ops_bash",
+      "bytes": 186,
+      "decision": "rejected:not-an-object-sequence",
+      "slices": 0,
+      "detail": "unbalanced: input ends at depth 1"
+    },
+    {
+      "file": "b38129b1-8b6f-4ed8-8571-d0042768a849",
+      "seq": 238,
+      "tool": "ops_bash",
+      "bytes": 662,
+      "decision": "repaired:split",
+      "slices": 2,
+      "detail": ""
+    },
+    {
+      "file": "b2e812e0-172d-4919-8dec-9afe03930d87",
+      "seq": 20,
+      "tool": "ops_bash",
+      "bytes": 439,
+      "decision": "repaired:split",
+      "slices": 2,
+      "detail": ""
+    },
+    {
+      "file": "532cad75-db15-4e64-9d88-92581fe8cc56",
+      "seq": 46,
+      "tool": "ops_inspect_local_file",
+      "bytes": 148,
+      "decision": "repaired:split",
+      "slices": 2,
+      "detail": ""
+    },
+    {
+      "file": "86bc2200-43b5-46dd-b3a7-1cbb48fca5bb",
+      "seq": 81,
+      "tool": "ops_bash",
+      "bytes": 227,
+      "decision": "repaired:split",
+      "slices": 2,
+      "detail": ""
+    },
+    {
+      "file": "d4307dc0-1e89-44ee-9ab7-42fa4e99a2aa",
+      "seq": 125,
+      "tool": "read_page",
+      "bytes": 255,
+      "decision": "repaired:split",
+      "slices": 2,
+      "detail": ""
+    },
+    {
+      "file": "d4307dc0-1e89-44ee-9ab7-42fa4e99a2aa",
+      "seq": 662,
+      "tool": "read_page",
+      "bytes": 266,
+      "decision": "repaired:split",
+      "slices": 2,
+      "detail": ""
+    },
+    {
+      "file": "a7be1843-121c-437f-ab59-760525394910",
+      "seq": 192,
+      "tool": "read_page",
+      "bytes": 136,
+      "decision": "repaired:split",
+      "slices": 2,
+      "detail": ""
+    },
+    {
+      "file": "f125e3b9-953a-473f-9c50-0b53395fc2ac",
+      "seq": 469,
+      "tool": "read_page",
+      "bytes": 236,
+      "decision": "repaired:split",
+      "slices": 2,
+      "detail": ""
+    },
+    {
+      "file": "f24f889c-86bf-473c-80c5-5653f6fa08cf",
+      "seq": 209,
+      "tool": "read_page",
+      "bytes": 123,
+      "decision": "repaired:split",
+      "slices": 2,
+      "detail": ""
+    }
+  ]
+}

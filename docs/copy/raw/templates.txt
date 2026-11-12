@@ -69,6 +69,7 @@ body:
       options:
         - label: I confirm that no API key or unredacted session was pasted.
           required: true
+
 <<<FILE: .github/ISSUE_TEMPLATE/feature_request.yml>>>
 name: Feature request
 description: Suggest an idea or improvement for dsh-remedy.
@@ -101,12 +102,14 @@ body:
       options:
         - label: 'I confirm this proposal follows the project rule "one seam per patch".'
           required: true
+
 <<<FILE: .github/ISSUE_TEMPLATE/config.yml>>>
 blank_issues_enabled: false
 contact_links:
   - name: Security policy
     url: https://github.com/jjjjjjjjnnjnn/dsh-remedy/security/policy
     about: Read our security policy and report vulnerabilities privately.
+
 <<<FILE: .github/PULL_REQUEST_TEMPLATE.md>>>
 ## What changed
 

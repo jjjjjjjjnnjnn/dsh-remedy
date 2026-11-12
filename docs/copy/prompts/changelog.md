@@ -12,7 +12,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
-## [0.3.7] - unreleased
+## [0.3.7] - 2026-11-12
 ### Added
 ### Changed
 ### Notes
@@ -67,9 +67,9 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 Rules:
 
-- The newest section is `0.3.7` and it is **unreleased**: nothing may claim it
-  has shipped, and the release status still reads `0.3.6` as the registry
-  `latest`. Its Added entry is P-0010: the packaged `README.md` - the page npm
+- The newest section is `0.3.7` and it is **the shipped one**: `0.3.7` is
+  published and is the registry `latest` for both packages, so nothing may call
+  it pending, and `0.3.6` is the release before it. Its Added entry is P-0010: the packaged `README.md` - the page npm
   renders - documented `scan` as `<session.jsonl> [--json] [--out <file>]` and
   the CLI's own usage said `<session.jsonl|session.v4.jsonl.zstd>` with the same
   missing flags, while the binary has accepted a directory, `--since` and
@@ -80,7 +80,11 @@ Rules:
   plugin total from 67997 to 67883, so the byte ceiling with three bytes of
   headroom became a ceiling with 117. Its Notes entry is that P-0010 is `tested`
   and not `verified`, because a usage string is not a resident seam, and that
-  `0.3.6` remains the `latest` while `0.3.5` is the release before it.
+  `0.3.7` is the registry `latest` while `0.3.6` is the release before it. Also
+  record that the whole `MALFORMED_RESPONSE` corpus on one host was replayed
+  through the built engine (47 turns, 39 repaired, 8 refused, none unparsable) and
+  that a 300000-case generated stress pass found no unparsable dispatch, no
+  duplicate id and no lost tool name.
 - Keep the `0.3.6` section below it as the shipped one, with only `Added`,
   `Changed` and `Notes` subsections. Its Added entry is P-0009: a windowed
   `scan --since` over a real session directory reported `unreadable_lines=78`

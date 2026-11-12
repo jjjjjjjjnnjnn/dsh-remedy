@@ -271,11 +271,13 @@ timestamps — quote the numbers of the tarballs you will actually publish):
 
 - `dsh-remedy@0.3.7`: 29 462 bytes compressed, 29 files, 98 001 bytes unpacked
   (67 883 bytes of `dist/*.js`, 20 835 of `dist/*.d.ts`, 3 583 of `fixtures/`,
-  5 700 of package-root files), shasum `69087301f5ff802e387061af61756b65b883b11d`.
-- `dsh-remedy-core@0.3.7`: 19 951 bytes compressed, 19 files, 65 676 bytes unpacked
-  (45 385 bytes of `dist/*.js`, 16 994 of `dist/*.d.ts`), shasum
-  `700169fc96d64b8c47b7c265e435355075837719`. It grew by one patch record and the
-  P-0010 registry entry.
+  5 700 of package-root files), shasum `69087301f5ff802e387061af61756b65b883b11d`,
+  sha256 `38f584475956d6edd34cff759fe0711e226e5fbb17adcca123d32367ed40d63f`.
+- `dsh-remedy-core@0.3.7`: 20 000 bytes compressed, 19 files, 65 961 bytes unpacked
+  (45 670 bytes of `dist/*.js`, 16 994 of `dist/*.d.ts`), shasum
+  `33eaaf0320eb474d5d7c5ce2761f10de79d17d21`, sha256
+  `d5e3ceb81f7e282a9405fefc4af07283e9c181222b654dbba28da525bc5852d5`. It grew by the
+  P-0010 registry entry and the corpus evidence cited under P-0001 and P-0005.
 
 To publish it:
 

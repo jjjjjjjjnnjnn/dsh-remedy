@@ -46,10 +46,15 @@ await runGate('copy', async ({ checks, mutate }) => {
     const actual = sha256(text)
     const expected = mutate ? `${actual.slice(0, -1)}0` : entry.output_sha256
     checks.add(`bytes:${entry.name}`, actual === expected, `${String(expected).slice(0, 12)}… vs ${actual.slice(0, 12)}…`)
+    // A frozen entry is a record of one published release (the GitHub release
+    // notes), not a description of the current pack. It must still match its
+    // own bytes, but it cannot be required to track a fact pack that has moved
+    // on: that would mean silently rewriting a page that is already public.
+    const frozen = typeof entry.frozen_at === 'string'
     checks.add(
       `facts-current:${entry.name}`,
-      entry.facts_sha256 === factsHash,
-      entry.facts_sha256 === factsHash ? '' : 'fact pack changed; regenerate this artifact',
+      frozen || entry.facts_sha256 === factsHash,
+      frozen ? 'frozen release record' : entry.facts_sha256 === factsHash ? '' : 'fact pack changed; regenerate this artifact',
     )
     checks.add(`model:${entry.name}`, entry.model === MODEL, String(entry.model))
 
@@ -79,5 +84,10 @@ await runGate('copy', async ({ checks, mutate }) => {
   checks.add('core-description', corePkg.description === metadata.core_description, 'package.json must carry the generated description')
 
   // The manifest itself must not be a stale artifact of a different fact pack.
-  checks.add('manifest-facts', entries.every((entry) => entry.facts_sha256 === factsHash), 'every entry must cite the current fact pack')
+  // Frozen release records are exempt for the reason stated above.
+  checks.add(
+    'manifest-facts',
+    entries.every((entry) => typeof entry.frozen_at === 'string' || entry.facts_sha256 === factsHash),
+    'every live entry must cite the current fact pack',
+  )
 })

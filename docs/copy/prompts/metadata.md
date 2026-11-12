@@ -15,8 +15,8 @@ Keys:
   `deepseek-harness` is already present.
 - `release_blurb`: a short Markdown section for the current release. Do not
   hardcode a version number; take the release status from FACTS, which names
-  `0.3.6` as published and as the `latest` release of both packages, with
-  `0.3.5` as the previous release. Describe `0.3.6` as shipped, never as
+  `0.3.7` as published and as the `latest` release of both packages, with
+  `0.3.6` as the previous release. Describe `0.3.7` as shipped, never as
   prepared or pending. It must
   say that plugin 0.3.0 carries a literal `workspace:*` dependency and cannot be
   installed from the registry, that 0.3.1 was superseded before it reached the

@@ -32,6 +32,9 @@ export const PATCHES: readonly PatchRecord[] = [
       'data/results/live-desktop-2026-11-09T19-10-00.000Z.json',
       'data/results/live-2026-11-12T06-00-00.000Z.json',
       'data/results/patch-registry-2026-11-09T16-40-00.000Z.json',
+      'data/results/live-2026-11-12T12-20-00.000Z.json',
+      'data/results/malformed-replay-2026-11-12T11-30-00.000Z.json',
+      'data/results/stress-repair-2026-11-12T12-10-00.000Z.json',
     ],
     guards: [
       'tests/unit/json-split.test.ts',
@@ -121,6 +124,7 @@ export const PATCHES: readonly PatchRecord[] = [
     evidence: [
       'docs/patches/P-0005-bare-value-reseal.md',
       'data/fixtures/toolcall-fusion/bare-code-value.json',
+      'data/results/malformed-replay-2026-11-12T11-30-00.000Z.json',
       'tests/unit/reseal.test.ts',
       'tests/unit/toolcall-repair.test.ts',
     ],

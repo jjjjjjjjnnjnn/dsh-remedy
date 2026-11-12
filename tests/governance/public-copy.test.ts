@@ -38,11 +38,19 @@ test('every public file has a manifest entry, produced by the pinned copy model'
   }
 })
 
-test('the fact pack is current for every entry', () => {
+test('the fact pack is current for every live entry', () => {
+  // A frozen entry is a published record (the GitHub release notes), not a
+  // description of the current pack: rewriting it after the pack moves on would
+  // silently change a page that is already public. Live entries must track it.
   const factsHash = sha256(read('docs/copy/facts/public-repo-facts.md'))
+  const frozen = new Set(
+    manifest.entries.filter((entry) => typeof (entry as { frozen_at?: string }).frozen_at === 'string').map((entry) => entry.name),
+  )
   for (const entry of manifest.entries) {
+    if (frozen.has(entry.name)) continue
     assert.equal(entry.facts_sha256, factsHash, `${entry.target} cites a stale fact pack`)
   }
+  assert.ok(frozen.size > 0, 'the release notes must be recorded as frozen')
 })
 
 test('the English README carries every required section', () => {

@@ -194,7 +194,16 @@
       "facts_sha256": "29b3c7f11a8239bcd6077b0e0ea713caa5b5bdf4d4427cdac911a5dc0d18ce18",
       "draft_sha256": "327e0118a860a58419e8ea2445c65d53d145352d561b00f2cda5a12e872a6dd6",
       "output_sha256": "f24428fb646baf4ad6db682e31289ed3567865e82604bb730c8c0b8a1c24f94d"
+    },
+    {
+      "name": "package-readme-plugin-zh",
+      "target": "packages/plugin/README.zh.md",
+      "model": "in-session",
+      "generated_at": "2026-11-13T20:42:20.944Z",
+      "facts_sha256": "29b3c7f11a8239bcd6077b0e0ea713caa5b5bdf4d4427cdac911a5dc0d18ce18",
+      "draft_sha256": "7ba8c48f7cee29c6dfd27a79a55674553c42dbf65b19d543dc6996717aa5593e",
+      "output_sha256": "7ba8c48f7cee29c6dfd27a79a55674553c42dbf65b19d543dc6996717aa5593e"
     }
   ],
-  "updated_at": "2026-11-13T19:35:05.499Z"
+  "updated_at": "2026-11-13T20:42:20.948Z"
 }

@@ -34,8 +34,8 @@
         "zh": "dsh-remedy"
       },
       "description": {
-        "en": "Repairs fused tool-call arguments at the llm/stream seam and re-throws whatever it cannot prove, names the deterministic refusals it will not retry at agent/request-error, and answers per failure class which patch covers it and whether that patch is switched on here.",
-        "zh": "在 llm/stream 接缝上修复粘连的工具调用参数，证不出来的原样抛回；在 agent/request-error 上命名它不重试的确定性拒绝；并按失败类回答哪个补丁覆盖它、以及它在本 profile 里是否启用。"
+        "en": "Stop losing a whole turn to one fused tool call: split the glued JSON at the stream seam, re-throw whatever cannot be proven, and never fake a fix.",
+        "zh": "别再因为一次粘连丢掉整个 turn：在流接缝上把粘连的 JSON 拆开，证不出来的原样抛回，绝不假装修好。"
       },
       "author": "jjjjjjjjnnjnn",
       "homepage": "https://github.com/jjjjjjjjnnjnn/dsh-remedy",

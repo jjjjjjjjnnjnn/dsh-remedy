@@ -28,7 +28,8 @@
     "!dist/**/*.map",
     "fixtures",
     "cordis.patch.yml",
-    "README.md"
+    "README.md",
+    "README.zh.md"
   ],
   "license": "MIT",
   "publishConfig": {

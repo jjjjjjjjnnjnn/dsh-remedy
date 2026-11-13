@@ -14,6 +14,6 @@ dsh-remedy is a patch set rather than one wrapper. Each patch names one defect, 
 
 `agent/pre-step` is measured but deliberately not mounted: a rejection closes the turn as `blocked` and the window reports it as completed, so the only candidate is rewriting the message with `{kind:'enter'}`, and that path is still unmeasured.
 
-**Screenshot**: (pending — the plugin list with `dsh-remedy` mounted, or `dsh-remedy explain` output)
+![dsh-remedy explain on this host](https://raw.githubusercontent.com/jjjjjjjjnnjnn/dsh-remedy/main/docs/distribution/explain-0.4.1.png)
 
 **Integration**: install into a profile, then run `dsh-remedy status`, `dsh-remedy explain --profile-file <cordis.patch.yml> --sessions <session dir>` and `dsh-remedy verify`.

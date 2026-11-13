@@ -7,8 +7,8 @@
 
 | 渠道 | 形式 | URL | 状态 |
 |---|---|---|---|
-| [imsai-sh/awesome-deepseek-harness-plugins](https://github.com/imsai-sh/awesome-deepseek-harness-plugins) | PR，一个 `catalog/plugins/*.json` | [#928](https://github.com/imsai-sh/awesome-deepseek-harness-plugins/pull/928) | ✅ **已合并**（`github-actions[bot]` 09:12:12Z 自动 squash；静态检查全过、Codex 复查 0 findings）。条目已在 `main` 上。**渲染成「仅浏览」**：它的商店只从 npm 装，`dsh-remedy` 虽然已发布，但它判定「直到带 `dsh.bundle` 的包发到 npm 才显示安装命令」 |
-| [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) | PR，一个 `data/plugins/*.yml` | [#14942](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/14942) | `open` / `MERGEABLE` / `UNSTABLE`（`check` 在跑）/ `+7 -0` / **changed_files 1** |
+| [imsai-sh/awesome-deepseek-harness-plugins](https://github.com/imsai-sh/awesome-deepseek-harness-plugins) | PR，一个 `catalog/plugins/*.json` | [#928](https://github.com/imsai-sh/awesome-deepseek-harness-plugins/pull/928) | ✅ **已合并**（`github-actions[bot]` 09:12:12Z 自动 squash；静态检查全过、Codex 复查 0 findings）。条目已在 `main` 上。**0.4.0 发布后应转为「可安装」**：它的商店只从 npm 装，而 0.4.0 已上线、manifest 带 `dsh.bundle`（它自己说「发布后自动检测，不需要再提 PR」） |
+| [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) | PR，一个 `data/plugins/*.yml` | [#14942](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/14942) | `open` / **`CLEAN`**（`check` 与 `Submission gate` 两个 check 全绿）/ `+7 -0` / **changed_files 1** |
 | [polang233/dsh-plugin-index](https://github.com/polang233/dsh-plugin-index)（dshopen） | issue 模板 | [#472](https://github.com/polang233/dsh-plugin-index/issues/472) | open（人工审） |
 | [alldsh/submissions](https://github.com/alldsh/submissions) | issue 模板 | [#3](https://github.com/alldsh/submissions/issues/3) | open（人工审） |
 
@@ -47,9 +47,28 @@
 `docs/market-index.json` 的 `publishTimestamp` 是**实测值**（`npm view dsh-remedy time` 读到
 0.3.8 在 `2026-11-12T17:40:02.359Z` 落地 → `1794505202`），不是占位符。
 
-## 5. 下一步的顺序（发布优先于铺渠道）
+## 5. 发布已经发生，落差消失了（2026-11-13）
 
-从列表点进来的人会读到「十九个补丁」的 README（仓库是新的），却装到只带十三个补丁的
-`0.3.8`（registry 是旧的）。README 已明写这件事（「P-0014…P-0019 未发布」），所以不算说假话；
-但把版本发出去之后再铺渠道，这个落差就不存在了 —— 而 **imsai 那条正是要等 npm 上的包才算
-「可安装」**，所以发布本身就是让那条从「仅浏览」变成「可安装」的唯一方式。
+上一版这里写的是「先发版再铺渠道」，现在它是既成事实：**0.4.0 已发布**（两包 `latest`），
+从列表点进来的人读到的「二十个补丁」和他装到的 `0.4.0` 是同一份东西。
+
+- **imsai**：它的 bot 在合并时说得很清楚 —— 商店只从 npm 装，包发到 npm 才显示安装命令。0.4.0 上线后，
+  那条条目应当自动从「仅浏览」变成「可安装」（它自己声明「发布后自动检测，不需要再提 PR」）。
+- **awesome-dsh-plugin** #14942：两个 check 现在都绿（`check` 与 `Submission gate` → `SUCCESS`），
+  `mergeStateStatus` 从 `UNSTABLE` 变 **`CLEAN`**。CI 绿是前置条件，收录仍要维护者读代码。
+- **dshopen** #472 与 **AllDSH** #3 仍是 open / 0 评论，等人工审。
+
+## 6. 还没做的两件事
+
+两件都不需要再打补丁号：
+
+1. **驱动一次桌面窗口看 `blocked` 的渲染**（`BS-17`）。R23 只证了 headless：拒绝写 `turn/end blocked`、
+   不开 step、丢掉被 claim 的输入、退出码 1。桌面 UI 会把这画成什么，没有任何产物能回答，而这件事只能由人在窗口里点。
+   测出来之前，任何用到 `agent/pre-step` 的补丁都**不许**上桌面 profile。
+2. **`dsh.so` 的站上表单**（人工动作）。那个仓库自 2026-09-08 后没有 push，也没有 issue 模板。
+
+## 7. 渠道描述会长期被扫，所以承诺是硬的
+
+awesome-dsh-plugin 与 imsai 都会定期扫：仓库消失 / 归档 / 长停更会被移除，**描述与代码不符会被打回**。
+我们这边的对应动作：每次改 `packages/plugin/package.json` 或命令行为，都要回头核那一行描述；
+`tests/governance/distribution-entry.test.ts` 把条目形状（指向子目录、描述无数字、索引来源类型）钉住。

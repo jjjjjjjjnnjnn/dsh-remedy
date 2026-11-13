@@ -5,6 +5,16 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-11-13
+### Fixed
+- The package no longer advertises `./retry-listener`. No `src/retry-listener.ts` has ever existed, so importing that subpath failed with `ERR_MODULE_NOT_FOUND` while the manifest said it was supported; the listener is still exported from the main entry. Every export target now has to have a source module, with a negative control that keeps the check from passing on an empty input.
+- The fixture drift test no longer repairs the drift it claims to detect. It used to run `sync_fixtures.mjs` in write mode and then compare the copy, so the copy step overwrote any drift before the assertion; it now runs `--check` first and seeds only a missing copy, and a copy with one changed byte must be reported.
+### Added
+- `gate_registry` now requires a `docs/patches/P-NNNN-*.md` for every registered patch. It found P-0016, which had shipped without one; the doc is written from the recorded round and the index range is corrected.
+### Notes
+- All three patches are `tested`, not `verified`: they touch a manifest, a test and a governance gate, and no resident seam can witness them.
+- This release carries 23 patches: the 20 that 0.4.0 shipped plus P-0021 through P-0023.
+
 ## [0.4.0] - 2026-11-13
 ### Added
 - `dsh-remedy explain` answers a second question the registry alone could not: which patch covers a failure class your machine actually hits, and whether that patch is switched on in the profile you point it at. Coverage now lives on the patch itself (`failureClasses`, `switchKey`), so a patch added tomorrow is answered the same day instead of waiting for a command to be edited.

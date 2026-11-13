@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_prestep_ui.mjs",
+  "generated_at": "2026-11-13T12:15:00.000Z",
+  "question": "When an agent/pre-step listener returns {kind:\"reject\"}, what does the harness UI draw for that turn? BS-17 asked this after R23 measured only the headless profile.",
+  "probe": {
+    "home": ".tmp/prestep-web-home (DSH_HOME, isolated: nothing under ~/.dsh is written)",
+    "profiles": {
+      "reject": "probe-web-reject",
+      "control": "probe-web-ok"
+    },
+    "bundle": ".tmp/prestep-probe (one inserted row, id probe-pre-step, name prestep-probe)",
+    "renderer": "the @deepseek-ai/dsh-web-app bundle the desktop shell loads, served by `dsh web` and driven through the Chrome DevTools Protocol in a headless Chrome",
+    "command": "dsh --profile <profile> --no-open --host 127.0.0.1 --port 0",
+    "prompt": "Reply with exactly: OK"
+  },
+  "runs": {
+    "reject": {
+      "session_file": ".tmp\\prestep-web-home\\sessions\\--<home-encoded>-Documents-deepseek-harness-default-workspace--\\session-674369fc-d052-42f3-b73e-5431c599ac54\\session.v4.jsonl.zstd",
+      "session_sha256": "d9759ae3c7ea1ba4d9f39b88a8dbd9168477638851ec39484153f3564cfed959",
+      "events": 8,
+      "event_types": [
+        "agent/inbox/spliced",
+        "approval/policy",
+        "permission/preset",
+        "sandbox/mode",
+        "session",
+        "turn/end",
+        "turn/start"
+      ],
+      "turn_end_reason": {
+        "kind": "blocked"
+      },
+      "step_starts": 0,
+      "user_messages": 0,
+      "assistant_messages": 0,
+      "assistant_text": [],
+      "claims_without_insert": 1,
+      "screenshot": {
+        "file": "data/results/prestep-ui-2026-11-13T12-15-00.000Z-reject.png",
+        "sha256": "8e73f91a469796ab0bc95210beafea427dfb206e819c9f185e570ecdae296458"
+      },
+      "observed_rendering": "one line: \"已完成，用时 1秒\" (completed, 1s). No user bubble, no assistant bubble, no error, no reason. The typed message is not shown because the claim was consumed."
+    },
+    "control": {
+      "session_file": ".tmp\\prestep-web-home\\sessions\\--<home-encoded>-Documents-deepseek-harness-default-workspace--\\session-08bb2ba8-2c47-4cb4-95c3-ff76fdd35ab0\\session.v4.jsonl.zstd",
+      "session_sha256": "0a1a2e93c976f0dc112760b5a625ffce49d9647f8eebd3be4a697fcd41ca81b2",
+      "events": 21,
+      "event_types": [
+        "agent/inbox/spliced",
+        "approval/policy",
+        "assistant/message",
+        "permission/preset",
+        "request/context",
+        "request/header",
+        "sandbox/mode",
+        "session",
+        "session/title",
+        "session/title-llm-request",
+        "step/end",
+        "step/start",
+        "system/message",
+        "turn/end",
+        "turn/start",
+        "user/message"
+      ],
+      "turn_end_reason": {
+        "kind": "completed"
+      },
+      "step_starts": 1,
+      "user_messages": 4,
+      "assistant_messages": 1,
+      "assistant_text": [
+        "OK"
+      ],
+      "claims_without_insert": 1,
+      "screenshot": {
+        "file": "data/results/prestep-ui-2026-11-13T12-15-00.000Z-control.png",
+        "sha256": "fb23af33ae20f011311efb5bf3110674c2a328f4c4180df71ee70d852b6a7844"
+      },
+      "observed_rendering": "the user bubble \"Reply with exactly: OK\", then \"已完成，用时 7秒\", then the assistant bubble \"OK\"."
+    },
+    "passthrough": {
+      "session_file": ".tmp\\prestep-web-home\\sessions\\--<home-encoded>-Documents-deepseek-harness-default-workspace--\\session-5304bb96-a8c0-4f75-83c7-72cb3ff11717\\session.v4.jsonl.zstd",
+      "session_sha256": "d49346e82d0b2b47e609b605c3488880abe0894e4b19b45068c0cd91156adf0f",
+      "events": 21,
+      "event_types": [
+        "agent/inbox/spliced",
+        "approval/policy",
+        "assistant/message",
+        "permission/preset",
+        "request/context",
+        "request/header",
+        "sandbox/mode",
+        "session",
+        "session/title",
+        "session/title-llm-request",
+        "step/end",
+        "step/start",
+        "system/message",
+        "turn/end",
+        "turn/start",
+        "user/message"
+      ],
+      "turn_end_reason": {
+        "kind": "error",
+        "error": {
+          "message": "next is not a function",
+          "code": "UNKNOWN"
+        }
+      },
+      "step_starts": 1,
+      "user_messages": 4,
+      "assistant_messages": 1,
+      "assistant_text": [
+        "OK"
+      ],
+      "claims_without_insert": 1,
+      "observed_rendering": "the user bubble and the assistant \"OK\" are drawn, then the turn ends with \"处理失败 / 本轮运行失败 next is not a function / UNKNOWN\"."
+    }
+  },
+  "findings": [
+    "The desktop renderer draws a rejected turn as a completed turn. \"已完成，用时 1秒\" is the same completion line the control run prints after a real answer; the only difference is that the rejection has no user bubble and no assistant bubble.",
+    "The user input is gone from the window: the reject run has removedCount 1 with no inserted message and no user/message afterwards, and the UI has nothing to show for it. A person cannot tell whether the turn did anything or failed.",
+    "A listener that wants to pass through cannot simply `return next()` on this seam in this host build: the passthrough run answered OK and then ended with turn/end reason kind \"error\", message \"next is not a function\", code UNKNOWN. The reject path never calls next(), which is why R23 did not see this."
+  ],
+  "not_proven": [
+    "The Electron shell itself was not driven: the measurement uses the web app bundle the desktop shell loads, served by `dsh web`, so window chrome and native menus are outside it.",
+    "One provider route (opendesign / deepseek-v4.1-flash-eco), one prompt, one turn per run.",
+    "A rejection inside a multi-step turn, and a rejection after a tool call, were not exercised."
+  ],
+  "verdict": {
+    "safe_to_present": false,
+    "because": "the window reports the rejected turn as completed while showing nothing that happened, and the pass-through contract of the seam is not `return next()` in this build",
+    "usable_for": "rewriting the message with {kind:\"enter\"} only, and only after that path is measured"
+  },
+  "redaction": {
+    "replacements": 0,
+    "kinds": []
+  }
+}

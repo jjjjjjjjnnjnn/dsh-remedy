@@ -29,6 +29,18 @@ await runGate('registry', async ({ checks, mutate }) => {
     }
   }
 
+  // AGENTS.md's first step is "write the symptom, mechanism, counter-evidence and
+  // limits in docs/patches/ before touching code", and nothing read that sentence:
+  // P-0016 shipped without a doc while every other patch had one (P-0023). The
+  // registry is the list of patches, so the registry gate is where the doc belongs.
+  const patchDocs = listDir('docs/patches')
+    .filter((entry) => entry.isFile && /^P-\d{4}-.+\.md$/.test(entry.name))
+    .map((entry) => entry.name)
+  for (const patch of patches) {
+    const doc = patchDocs.find((name) => name.startsWith(`${patch.id}-`))
+    checks.add(`doc:${patch.id}`, doc !== undefined, doc ?? `docs/patches/${patch.id}-*.md is missing`)
+  }
+
   const ledger = readJson('audit/patch_ledger.json')
   const ledgerPatches = Array.isArray(ledger.patches) ? ledger.patches : []
   const ledgerIds = ledgerPatches.map((item) => item.id).sort()

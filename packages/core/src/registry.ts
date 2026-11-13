@@ -597,6 +597,78 @@ export const PATCHES: readonly PatchRecord[] = [
     ],
     failureClasses: [],
   },
+  {
+    id: 'P-0021',
+    title: 'The published package advertised a subpath that never had a module',
+    symptom:
+      'packages/plugin/package.json exported "./retry-listener" -> ./dist/retry-listener.js, but no src/retry-listener.ts has ever existed: the second seam module is failure-listener.ts, already re-exported from the main entry. import "dsh-remedy/retry-listener" fails with ERR_MODULE_NOT_FOUND while the manifest says it is supported. The dead subpath shipped in 0.3.8 and 0.4.0',
+    rootCause:
+      'tests/unit/package-files.test.ts checked the target string against a regex, not the file behind it: ./dist/retry-listener.js matches the pattern exactly as well as ./dist/repair-stream.js does. The exports map was written by hand when the second seam landed, and nothing compared it with src/. This is the same family as P-0010, P-0014, P-0016 and P-0020: the guard reads the form of the promise, not whether it can be kept',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'docs/patches/P-0021-dead-export.md',
+      'packages/plugin/package.json',
+      'tests/unit/package-files.test.ts',
+    ],
+    guards: ['tests/unit/package-files.test.ts', 'packages/plugin/package.json'],
+    limits: [
+      'it checks the source tree, not the packed tarball: a module that exists in src/ but is excluded by files would still pass',
+      'it does not check main or bin against src/, although both are pinned by the same test file',
+      'it does not check that an exported subpath is documented, or that a documented subpath is exported',
+      'no live artifact is possible: this is a manifest, not a resident seam',
+    ],
+    failureClasses: [],
+  },
+  {
+    id: 'P-0022',
+    title: 'The drift test repaired the drift before it looked for it',
+    symptom:
+      'tests/unit/fixtures-sync.test.ts ran sync_fixtures.mjs in write mode and then compared the generated copy with the canonical fixtures. The copy step overwrote any drift before the assertion ran, so the test could only fail if the copy step itself failed; the read-only --check mode existed but neither consumer used it',
+    rootCause:
+      'the test was written as setup plus assertion, and the setup happened to be the same operation the test claimed to verify. A checker that can only be pointed at the generated directory cannot be tested against a known-bad copy, so the negative control had nowhere to run',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'docs/patches/P-0022-fixture-check-read-only.md',
+      'scripts/sync_fixtures.mjs',
+      'tests/unit/fixtures-sync.test.ts',
+    ],
+    guards: ['tests/unit/fixtures-sync.test.ts', 'scripts/sync_fixtures.mjs'],
+    limits: [
+      'prepack still runs write mode, because packing has to create the copy; only the test is read-only first',
+      'the negative control corrupts one fixture; a drift that changes the set of files is handled by --check but not exercised by the control',
+      'the --source/--target/--checksums flags are a test seam in a build script, and nothing pins them beyond this test file',
+      'no live artifact is possible: this is a build-side test, not a resident seam',
+    ],
+    failureClasses: [],
+  },
+  {
+    id: 'P-0023',
+    title: 'The workflow first step was a sentence nobody read',
+    symptom:
+      'AGENTS.md says every patch starts with a doc in docs/patches/, but gate_registry resolved only evidence and guards. At the start of R31 the registry held twenty-one patches and docs/patches held nineteen: P-0016 shipped in R24 without a doc while every check stayed green, and INDEX.md still ended its range at P-0015',
+    rootCause:
+      'the doc was treated as prose about the patch rather than as part of it. Evidence and guards are paths the registry resolves; a doc was in neither list, so it could be missing with no check noticing. This is the same family as P-0014 and P-0020: a claim about the repository with no reader',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'docs/patches/P-0023-patch-doc-mechanism.md',
+      'docs/patches/P-0016-coverage-single-source.md',
+      'scripts/gate_registry.mjs',
+    ],
+    guards: ['scripts/gate_registry.mjs', 'docs/patches/P-0016-coverage-single-source.md'],
+    limits: [
+      'it checks that a doc exists, not that it is true: a doc can still describe behaviour the code does not have',
+      'it matches by id prefix, which is safe only because registryProblems keeps ids at P-NNNN',
+      'an orphan doc with no registry entry is not reported, because the gate iterates the registry rather than the directory',
+      'no live artifact is possible: this is a governance gate',
+    ],
+    failureClasses: [],
+  },
 ]
 
 /** Look up one patch by id. */

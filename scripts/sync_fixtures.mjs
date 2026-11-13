@@ -19,10 +19,20 @@ import { join } from 'node:path'
 import { abs } from './lib/kit.mjs'
 
 const CHECK = process.argv.includes('--check')
-const SOURCE_LABEL = 'data/fixtures/toolcall-fusion'
+const flag = (name, fallback) => {
+  const index = process.argv.indexOf(`--${name}`)
+  return index === -1 ? fallback : (process.argv[index + 1] ?? fallback)
+}
+// The defaults are what `prepack` uses. The three overrides exist so the drift
+// test can build a copy in `.tmp` and corrupt it without touching the real one
+// (P-0022): a checker that can only be pointed at the generated directory cannot
+// be tested against a known-bad copy.
+const SOURCE_LABEL = flag('source', 'data/fixtures/toolcall-fusion')
 const source = abs(SOURCE_LABEL)
-const target = abs('packages/plugin/fixtures/toolcall-fusion')
-const checksumsPath = abs('packages/plugin/fixtures/checksums.json')
+const TARGET_LABEL = flag('target', 'packages/plugin/fixtures/toolcall-fusion')
+const target = abs(TARGET_LABEL)
+const CHECKSUMS_LABEL = flag('checksums', 'packages/plugin/fixtures/checksums.json')
+const checksumsPath = abs(CHECKSUMS_LABEL)
 
 const sha256 = (path) => createHash('sha256').update(readFileSync(path)).digest('hex')
 
@@ -42,7 +52,7 @@ if (CHECK) {
     const canonical = join(source, name)
     const copy = join(target, name)
     if (!packed.includes(name)) {
-      drift.push(`missing from packages/plugin/fixtures/toolcall-fusion: ${name}`)
+      drift.push(`missing from ${TARGET_LABEL}: ${name}`)
       continue
     }
     if (!readFileSync(copy).equals(readFileSync(canonical))) {
@@ -54,13 +64,13 @@ if (CHECK) {
   }
 
   if (!existsSync(checksumsPath)) {
-    drift.push('missing: packages/plugin/fixtures/checksums.json')
+    drift.push(`missing: ${CHECKSUMS_LABEL}`)
   } else {
     let manifest
     try {
       manifest = JSON.parse(readFileSync(checksumsPath, 'utf8'))
     } catch (error) {
-      drift.push(`unreadable: packages/plugin/fixtures/checksums.json (${error instanceof Error ? error.message : String(error)})`)
+      drift.push(`unreadable: ${CHECKSUMS_LABEL} (${error instanceof Error ? error.message : String(error)})`)
     }
     const sums = manifest?.files ?? {}
     if (manifest !== undefined) {
@@ -100,4 +110,4 @@ for (const name of files) {
 
 mkdirSync(abs('packages/plugin/fixtures'), { recursive: true })
 writeFileSync(checksumsPath, `${JSON.stringify({ source: SOURCE_LABEL, files: checksums }, null, 2)}\n`, 'utf8')
-process.stdout.write(`sync_fixtures: ${files.length} fixture(s) -> packages/plugin/fixtures/toolcall-fusion\n`)
+process.stdout.write(`sync_fixtures: ${files.length} fixture(s) -> ${TARGET_LABEL}\n`)

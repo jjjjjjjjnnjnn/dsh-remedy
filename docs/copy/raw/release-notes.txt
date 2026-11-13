@@ -1,27 +1,19 @@
-## dsh-remedy 0.3.7
+## dsh-remedy 0.4.1
+
+Three defects that all had the same shape: a claim about this repository that nothing read.
 
 ### Added
-
-- P-0010: The packaged `README.md` (the page npm renders) documented `scan` as `<session.jsonl> [--json] [--out <file>]` and the CLI usage output said `<session.jsonl|session.v4.jsonl.zstd>`, while the binary has accepted a directory, `--since` and `--max-files` since 0.3.3. Both strings now carry the identical line: `<session.jsonl|directory> [--since <iso>] [--max-files <n>] [--json] [--out <file>]`.
-- `tests/unit/cli-usage.test.ts` fails if the two usage strings ever diverge again or if the one-file-only shape returns.
+- `gate_registry` now requires a `docs/patches/P-NNNN-*.md` for every registered patch. It found P-0016, which had shipped without one; the doc is written from the recorded round and the index range is corrected.
 
 ### Changed
-
-- The four per-command descriptions in CLI usage were condensed to one line each so the longer flag list paid for itself under an unchanged 68000 byte ceiling. Emitted `cli-args.js` fell from 3086 to 2972 bytes, and total emitted plugin code fell from 67997 to 67883 bytes.
+- The fixture drift test no longer repairs the drift it claims to detect. It used to run `sync_fixtures.mjs` in write mode and then compare the copy, so the copy step overwrote any drift before the assertion; it now runs `--check` first and seeds only a missing copy, and a copy with one changed byte must be reported.
 
 ### Fixed
-
-- The `scan` documentation on the package `README.md` and CLI usage no longer describes a CLI that has not existed since 0.3.3, on the page strangers read first.
+- The package no longer advertises `./retry-listener`. No `src/retry-listener.ts` has ever existed, so importing that subpath failed with `ERR_MODULE_NOT_FOUND` while the manifest said it was supported; the listener is still exported from the main entry. Every export target now has to have a source module, with a negative control that keeps the check from passing on an empty input.
 
 ### Package size
-
-- `dsh-remedy@0.3.7` (plugin): 29462 bytes compressed, 29 files, 98001 bytes unpacked (67883 bytes of `dist/*.js`, 20835 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, 5700 bytes of package-root files), shasum `69087301f5ff802e387061af61756b65b883b11d`, sha256 `38f584475956d6edd34cff759fe0711e226e5fbb17adcca123d32367ed40d63f`.
-- `dsh-remedy-core@0.3.7` (core): 20000 bytes compressed, 19 files, 65961 bytes unpacked (45670 bytes of `dist/*.js`, 16994 bytes of `dist/*.d.ts`), shasum `33eaaf0320eb474d5d7c5ce2761f10de79d17d21`.
+- The plugin tarball is 36906 bytes compressed; the core tarball is 33091 bytes compressed. The plugin shrank by 22 bytes because the dead export is gone; the core grew by 1318 bytes because the registry carries three more patch records.
 
 ### Notes
-
-- P-0010 is `tested` and not `verified`, as a usage string is not a resident seam.
-- The 0.3.7 live run (2026-11-12): the packed 0.3.7 tarball was installed into `remedy-live` and asked once to issue two `read` calls in one message. It fused on the first request and the shipped 0.3.7 build repaired it. The journal holds 3 `stream` events plus 1 `repaired` event (`fused=1, repaired=1, unrepaired=0, truncated=0, errors=0, refused=0, withdrawn=0`). Session `session-baff8f60` shows seq 18 `call_00_b3fj2kuahvwb75af3a5o6u7x` reading `docs/copy/manifest.json`, seq 19 `call_00_b3fj2kuahvwb75af3a5o6u7x#remedy-1` reading `docs/copy/facts/public-repo-facts.md`, matching tool results, and `turn/end` `kind=completed` (`data/results/live-2026-11-12T12-20-00.000Z.json`).
-- Corpus replay: Every `MALFORMED_RESPONSE` turn on this host (47 turns, 23269 bytes of captured argument text) was replayed through `repairToolCallArguments` in the built engine. 39 were repaired (38 splits and one reseal), 8 were refused, and zero repaired cases dispatched a call whose arguments failed to parse (`data/results/malformed-replay-2026-11-12T11-30-00.000Z.json`).
-- Generated stress pass: 300000 generated argument texts replayed through the built engine yielded 104795 accepted, 105133 already valid, 90072 refused, zero unparsable dispatches, zero duplicate ids, and zero lost tool names (`data/results/stress-repair-2026-11-12T12-10-00.000Z.json`).
-- The `withdrawn` counter cannot move on this host, which is measured rather than assumed. A `rolled-back` outcome requires a proven repair held in `pending`, and `pending` is only filled by the `block-end` path. On this host, fused argument text arrives in `tool-call-chunks` entries, which are repaired at `finish` and never held. Walking 24 329 persisted attempt streams via `scripts/probe_withdrawn_reachability.mjs` identified 62 streams carrying a fused `tool-call-chunks` entry, 23 724 carrying arguments inside a `block-end`, and 0 carrying a provable fusion inside a `block-end`. A live `withdrawn` therefore requires `consumer-abort` (a consumer stopping reading mid-stream), which a scripted headless run does not do.
+- All three patches are `tested`, not `verified`: they touch a manifest, a test and a governance gate, and no resident seam can witness them.
+- It carries 23 patches: the 20 that 0.4.0 shipped plus P-0021 through P-0023.

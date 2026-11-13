@@ -347,6 +347,51 @@
         "tests/governance/distribution-entry.test.ts",
         "docs/market-index.json"
       ]
+    },
+    {
+      "id": "P-0021",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.1",
+      "evidence": [
+        "docs/patches/P-0021-dead-export.md",
+        "packages/plugin/package.json",
+        "tests/unit/package-files.test.ts"
+      ],
+      "guards": [
+        "tests/unit/package-files.test.ts",
+        "packages/plugin/package.json"
+      ]
+    },
+    {
+      "id": "P-0022",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.1",
+      "evidence": [
+        "docs/patches/P-0022-fixture-check-read-only.md",
+        "scripts/sync_fixtures.mjs",
+        "tests/unit/fixtures-sync.test.ts"
+      ],
+      "guards": [
+        "tests/unit/fixtures-sync.test.ts",
+        "scripts/sync_fixtures.mjs"
+      ]
+    },
+    {
+      "id": "P-0023",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.1",
+      "evidence": [
+        "docs/patches/P-0023-patch-doc-mechanism.md",
+        "docs/patches/P-0016-coverage-single-source.md",
+        "scripts/gate_registry.mjs"
+      ],
+      "guards": [
+        "scripts/gate_registry.mjs",
+        "docs/patches/P-0016-coverage-single-source.md"
+      ]
     }
   ]
 }

@@ -83,9 +83,9 @@
     },
     {
       "id": "BS-17",
-      "status": "open",
-      "note": "A rejected agent/pre-step turn ends with reason.kind \"blocked\", and that is measured (data/results/prestep-probe-2026-11-13T07-45-00.000Z.json). What is NOT measured is how the desktop UI renders that ending: the conversation definitions shipped in this install contain no match on the \"blocked\" reason, so the probe ran only on a headless profile and cannot say what the window draws. Until someone drives the desktop with a rejecting listener, agent/pre-step is usable but must not be presented: a user could see an empty or unexplained turn. The second unmeasured half is the cost: a rejection discards the claimed input, so a patch that uses this seam should rewrite the message via {kind:\"enter\"} rather than refuse."
+      "status": "closed",
+      "note": "Closed 2026-11-13 by R30 (data/results/prestep-ui-2026-11-13T12-15-00.000Z.json). The renderer the desktop shell loads was served by `dsh web` from an isolated DSH_HOME and driven through CDP, with a rejecting listener and a control turn. The rejection draws one line, \"已完成，用时 1秒\" — the same completion line a real turn prints — and nothing else: no user bubble, no assistant bubble, no error, no reason; the control draws the user bubble, the assistant \"OK\" and the same completion line. So the window reports a rejected turn as completed and shows nothing that happened, and a reject must not be used on the desktop profile. The same run measured the pass-through path: `return next()` answers the step and then ends the turn with reason.kind \"error\", message \"next is not a function\", code UNKNOWN, so the seam's chain is not the request-error chain. What remains narrower: the Electron shell itself was not driven (only the web app bundle it loads), a rejection inside a multi-step turn was not exercised, and the {kind:\"enter\"} rewrite — the only candidate left — is still unmeasured."
     }
   ],
-  "updated_at": "2026-11-13T09:00:00.000Z"
+  "updated_at": "2026-11-13T12:20:00.000Z"
 }

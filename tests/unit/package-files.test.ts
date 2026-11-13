@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { test } from 'node:test'
 
 const root = new URL('../../', import.meta.url)
@@ -49,6 +49,43 @@ test('the shipped entry points still resolve to files inside dist', () => {
   const core = readJson<{ main: string; types: string }>('packages/core/package.json')
   assert.equal(core.main, './dist/index.js')
   assert.equal(core.types, './dist/index.d.ts')
+})
+
+/**
+ * The exports map is a promise that a subpath can be imported. Checking that the
+ * target string looks like `./dist/x.js` is not checking that `x` exists: the
+ * package advertised `./retry-listener` for two releases while no
+ * `src/retry-listener.ts` had ever existed (P-0021). This maps every target back
+ * to the source module that would have to exist for the promise to hold.
+ */
+function deadExports(
+  exportsMap: Record<string, unknown>,
+  exists: (path: string) => boolean,
+): string[] {
+  const dead: string[] = []
+  for (const [subpath, value] of Object.entries(exportsMap)) {
+    if (subpath === './package.json') continue
+    const target = value as { types?: string; default?: string }
+    const module = String(target.default ?? '').replace(/^\.\/dist\//, '').replace(/\.js$/, '')
+    if (module === '' || !exists(`packages/plugin/src/${module}.ts`)) dead.push(subpath)
+  }
+  return dead
+}
+
+test('every exported subpath has a source module behind it', () => {
+  const plugin = readJson<{ exports: Record<string, unknown> }>('packages/plugin/package.json')
+  const dead = deadExports(plugin.exports, (path) => existsSync(new URL(path, root)))
+  assert.deepEqual(dead, [], `the package advertises subpaths with no module: ${dead.join(', ')}`)
+})
+
+test('the dead-export checker is not vacuous', () => {
+  // Negative control: a map with a ghost module must be reported, and a real one
+  // must not. Without this, a checker that returns [] for every input would pass
+  // the test above and hide the next dead subpath.
+  const ghost = { './ghost': { types: './dist/ghost.d.ts', default: './dist/ghost.js' } }
+  assert.deepEqual(deadExports(ghost, () => false), ['./ghost'])
+  const real = { './repair-stream': { types: './dist/repair-stream.d.ts', default: './dist/repair-stream.js' } }
+  assert.deepEqual(deadExports(real, (path) => path === 'packages/plugin/src/repair-stream.ts'), [])
 })
 
 test('declarations stay on so the negation cannot break the types', () => {

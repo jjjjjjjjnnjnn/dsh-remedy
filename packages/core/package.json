@@ -1,6 +1,6 @@
 {
   "name": "dsh-remedy-core",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Pure repair and redaction engine for the dsh-remedy patch set. Nothing unproven is ever emitted; a failure it cannot split is re-thrown unchanged.",
   "type": "module",
   "main": "./dist/index.js",

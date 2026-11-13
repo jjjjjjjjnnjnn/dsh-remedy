@@ -37,10 +37,10 @@ The registry is the single source: `packages/core/src/registry.ts` for the claim
 | `llm/stream` (resident) | P-0001, P-0002, P-0003, P-0005 | split a proven fusion; a rescue must be provable, attributable and atomic; a refusal must be observable; reseal a bare member value or refuse it |
 | `agent/request-error` (resident) | P-0011, P-0013 | the contract for who owns the decision, with a bounded retry budget; name the deterministic refusals instead of retrying them |
 | CLI | P-0004, P-0006, P-0009, P-0010, P-0016 | scan fidelity and redaction shapes; the turn census; a session header is dated by `createdAt`; the usage text must match the binary; coverage is declared by the patch, not restated by the command |
-| build side | P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019, P-0020 | a copy channel that can name its failures; a byte budget a script checks; one cap per load path; the project's own description must be true; the two npm pages; a Windows exit code is not a registry answer; the outward pages described a project that had stopped existing; a listing that pins git bytes while advertising a registry version |
+| build side | P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019, P-0020, P-0021, P-0022, P-0023 | a copy channel that can name its failures; a byte budget a script checks; one cap per load path; the project's own description must be true; the two npm pages; a Windows exit code is not a registry answer; the outward pages described a project that had stopped existing; a listing that pins git bytes while advertising a registry version; an export that named a module that never existed; a drift test that repaired the drift; a doc rule no gate read |
 | measured, not mounted | P-0015 | what a rejected `agent/pre-step` decision does, so a later patch can use that seam on measured ground |
 
-Three patches are `verified`: a real host ran them and left a `data/results/live-*` artifact. The other seventeen are `tested`: unit tests, a negative control and a measured fixture, scan or corpus, but nothing a resident journal can witness. The status section below names which is which.
+Three patches are `verified`: a real host ran them and left a `data/results/live-*` artifact. The other twenty are `tested`: unit tests, a negative control and a measured fixture, scan or corpus, but nothing a resident journal can witness. The status section below names which is which.
 
 ## Install
 
@@ -197,17 +197,19 @@ The whole `MALFORMED_RESPONSE` corpus on one machine was replayed through the bu
 
 Three patches are `verified` on a real host: P-0001 on a headless profile and on the desktop app, P-0002 on a 2026-11-10 headless run that repaired a real two-call fusion and saw the synthesized call dispatched, and P-0003 on a 2026-11-10 headless run whose journal wrote a non-zero `refused` after the code declined to repair a budget refusal.
 
-The other seventeen are `tested`, not `verified`. Each carries unit tests, a negative control and a measured artifact where one exists: P-0004, P-0006 and P-0009 change an offline reader; P-0005 has no live bare-value shape yet; P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019 and P-0020 are build-side; P-0010 and P-0016 change text a command prints; P-0011 and P-0013 sit on a seam a live journal witnesses only when a turn fails in a class this plugin retries, which the default budget of 0 never triggers; and P-0015 is a measurement on an isolated profile rather than a mount.
-Release status: `0.4.0` is published and is the registry `latest` for both `dsh-remedy` and `dsh-remedy-core`; it carries twenty patches — the thirteen `0.3.8` shipped plus P-0014 through P-0020. A cold directory installed it from the registry and `dsh-remedy verify` printed `OK 6 fixture(s)`. The previous release is `0.3.8`, and `0.3.7` the one before it.
+The other twenty are `tested`, not `verified`. Each carries unit tests, a negative control and a measured artifact where one exists: P-0004, P-0006 and P-0009 change an offline reader; P-0005 has no live bare-value shape yet; P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019 and P-0020 are build-side; P-0010 and P-0016 change text a command prints; P-0011 and P-0013 sit on a seam a live journal witnesses only when a turn fails in a class this plugin retries, which the default budget of 0 never triggers; and P-0015 is a measurement on an isolated profile rather than a mount.
+Release status: `0.4.1` is published and is the registry `latest` for both `dsh-remedy` and `dsh-remedy-core`; it carries twenty-three patches — the twenty `0.4.0` shipped plus P-0021 through P-0023. A cold directory installed it from the registry and `dsh-remedy verify` printed `OK 6 fixture(s)`. The previous release is `0.4.0`, and `0.3.8` the one before it.
 
 Package sizes:
 
+- 0.4.1 plugin: 36906 bytes compressed, 35 files, 119744 bytes unpacked, shasum `dac640ea140aadf9249685ebcc98964db8a3adbf`.
+- 0.4.1 core: 33091 bytes compressed, 21 files, 105353 bytes unpacked, shasum `c9a081bf4e5f8c7ae82973e2a56d0bd93244e727`.
 - 0.4.0 plugin: 36928 bytes compressed, 35 files, 119866 bytes unpacked, shasum `dd3b764dd57d09d4cf85e312867da23360a4e06f`.
 - 0.4.0 core: 31773 bytes compressed, 21 files, 100304 bytes unpacked, shasum `48d449b75bb7fa06f4bc16181433e617d2ca5a66`.
 - 0.3.8 plugin: 35898 bytes compressed, 35 files, 117750 bytes unpacked, shasum `3bc47df12f21fe7d68336f595d397ff868b3d4d7`; core: 26551 bytes compressed, 21 files, 83461 bytes unpacked, shasum `0df993f85589e101b15b830fa105e7ef8c66c5d5`.
 - No sourcemaps are shipped; that removal is worth 41926 bytes of unpacked payload.
 
-The emitted plugin budget is three checks: residency 41143 of 44000 bytes (the modules a mounted plugin loads), cli 40845 of 42000 bytes (the modules only a command loads), and a total of 81988 of 83000 bytes. Per-file caps: `repair-stream.js` 28000, `session-scan.js` 14000, `cli.js` 12000. A patch that crosses a per-file number splits that file instead of absorbing it. These three are measured on the working tree, whose emitted comments changed after the 0.3.8 tarball was packed: that shipped tarball is 81740 of those bytes, so a reader checking the published package will see the smaller figure.
+The emitted plugin budget is three checks: residency 41143 of 44000 bytes (the modules a mounted plugin loads), cli 40845 of 42000 bytes (the modules only a command loads), and a total of 81988 of 83000 bytes. Per-file caps: `repair-stream.js` 28000, `session-scan.js` 14000, `cli.js` 12000. A patch that crosses a per-file number splits that file instead of absorbing it. These three are measured on the working tree and the 0.4.1 tarball ships 81988 of those bytes, so a reader checking the published package sees the same figure.
 
 ## Development
 

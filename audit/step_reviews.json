@@ -565,6 +565,57 @@
         "tests/governance/distribution-entry.test.ts",
         "docs/patches/P-0020-market-source-truth.md"
       ]
+    },
+    {
+      "id": "S32",
+      "gate": "registry",
+      "title": "A subpath is a promise, and the guard was reading the spelling of the promise",
+      "axes": {
+        "correctness": "The manifest no longer advertises a module that never existed. ./retry-listener is gone; makeFailureListener and RETRY_CACHE_LIMIT remain reachable through the main entry, which is where index.ts already re-exported them, so no consumer loses a working import and no runtime path changes.",
+        "reproducibility": "The new test fails on the pre-patch manifest with exactly [\"./retry-listener\"], which is the measured symptom; the negative control feeds a ghost map and requires it to be reported, so a checker that always returns [] cannot pass. The evidence is the registry manifest itself: npm view dsh-remedy@0.3.8 exports and the 0.3.8 tarball listing show the dead name and the real failure-listener.js.",
+        "compliance": "The dead name is removed rather than aliased: no README, test or document ever referenced it, and keeping an alias would preserve a name that was never true. The patch is recorded tested, not verified, because a manifest cannot produce a live artifact.",
+        "ssot": "The registry entry, the ledger row, the patch doc and the test name the same three paths; the snapshot is re-recorded after the registry change, and the ledger since is 0.4.1 because that is the release this patch is planned to ship in.",
+        "adversarial": "The attack this guard has to survive is a future export whose target matches the regex but has no source file, which is exactly what ./retry-listener was. The ghost-map control is the same attack in miniature, and the filesystem check turns it from a string match into an existence check."
+      },
+      "evidence": [
+        "docs/patches/P-0021-dead-export.md",
+        "packages/plugin/package.json",
+        "tests/unit/package-files.test.ts"
+      ]
+    },
+    {
+      "id": "S33",
+      "gate": "registry",
+      "title": "A test whose setup is the thing it verifies cannot fail for the reason it names",
+      "axes": {
+        "correctness": "The drift test now reads before it writes. On a clean checkout it seeds the copy once, and only when every reported problem is \"missing\"; a drifted byte is a failure instead of a reason to regenerate. The generated copy that prepack owns is unchanged by the test.",
+        "reproducibility": "The negative control builds its own copy under .tmp/fixture-drift-<pid> through the new --source/--target/--checksums flags, appends one byte, and requires exit 1 with \"bytes drifted: valid-two-calls.json\". Making the --check branch exit 0 turns that test red, and restoring it turns the file green, which is the red-green evidence for this patch.",
+        "compliance": "prepack keeps write mode because packing must create the copy; the patch changes the test, not the shipping path. The three flags default to the shipped paths, so no caller changes.",
+        "ssot": "The registry entry, the ledger row, the patch doc and the test name the same two code paths plus the doc; the snapshot is re-recorded after the registry change.",
+        "adversarial": "The old test is the adversary: it was green on a corrupted copy by construction. The new control is the same corruption, applied where the checker can see it, and the checker is the same script prepack uses rather than a second implementation."
+      },
+      "evidence": [
+        "docs/patches/P-0022-fixture-check-read-only.md",
+        "scripts/sync_fixtures.mjs",
+        "tests/unit/fixtures-sync.test.ts"
+      ]
+    },
+    {
+      "id": "S34",
+      "gate": "registry",
+      "title": "A doc that no check reads is a doc that can be missing while everything is green",
+      "axes": {
+        "correctness": "Every registry patch now has a docs/patches/P-NNNN-*.md. P-0016, the one that shipped without a doc, is written from the R24 record and checked against the code that shipped: the optional failureClasses and switchKey, the two governance tests, and the identical explain output. INDEX.md now names the real range instead of stopping at P-0015.",
+        "reproducibility": "The check was added before the missing doc was written and failed on the real state: FAIL registry/doc:P-0016. Writing the doc turns it green, and deleting the doc turns it red again; no fixture is needed because the repository already contained the failing case.",
+        "compliance": "The recovered doc follows the project format (symptom, measured, changed, limits, reproduction) and says it was written a round late rather than pretending it shipped with the patch. P-0023 is recorded tested, not verified, because a governance gate has no live artifact.",
+        "ssot": "The registry entry, the ledger row, the patch doc and the gate name the same paths; the snapshot is re-recorded after the registry change, and the ledger since is 0.4.1.",
+        "adversarial": "The adversary is the state that existed for five rounds: a patch in the registry with no doc, and a gate that only looked at evidence and guards. The check reads the filesystem per id, so an added patch without a doc is red on the next run rather than on the next audit."
+      },
+      "evidence": [
+        "docs/patches/P-0023-patch-doc-mechanism.md",
+        "docs/patches/P-0016-coverage-single-source.md",
+        "scripts/gate_registry.mjs"
+      ]
     }
   ],
   "updated_at": "2026-11-13T11:20:00.000Z"

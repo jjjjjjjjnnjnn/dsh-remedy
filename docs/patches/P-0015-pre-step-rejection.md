@@ -69,16 +69,25 @@ That is the answer, and it is precise:
 
 ## What this does NOT prove
 
-- **The desktop UI's render of `kind:"blocked"` was not measured.** The headless
-  profile writes the log above, and the UI bundle in this install contains no
-  `blocked` match in its conversation definitions, so what the desktop window
-  draws for that turn is still unknown. The seam is safe to *use* (it does not
-  pretend to succeed and it does not corrupt a step), but **not yet safe to
-  present** as a finished user experience.
+- **The desktop UI's render of `kind:"blocked"` was not measured in R23.** That
+  half is now measured (R30, `data/results/prestep-ui-2026-11-13T12-15-00.000Z.json`):
+  the renderer the desktop shell loads draws the rejected turn as
+  **"已完成，用时 1秒"** — the same completion line a real turn prints — with no
+  user bubble, no assistant bubble, no error and no reason. The control turn in
+  the same artifact prints the user bubble, the assistant "OK" and the completion
+  line. So a person cannot tell a rejection from an empty completion. **A reject
+  must not be used on the desktop profile.**
+- The same artifact measured the pass-through path and found it broken: a
+  listener that does `return next()` on this seam answers the step and then ends
+  the turn with `reason.kind = "error"`, `message = "next is not a function"`,
+  `code = "UNKNOWN"`. R23 never saw this because the reject path does not call
+  `next()`. The `{kind:'enter'}` rewrite is therefore the only candidate, and
+  **that path is still unmeasured**.
 - Consequently P-0013's preflight is still not wired to `agent/pre-step`. This
   patch measures the seam; it does not mount a product on it.
 - One profile, one provider, one prompt. A rejection inside a multi-step turn
-  (steering, `next-step` inbox) was not exercised.
+  (steering, `next-step` inbox) was not exercised, and the Electron shell itself
+  was not driven — the measurement uses the web app bundle the shell loads.
 
 ## The decision this enables
 
@@ -90,8 +99,11 @@ constraints, all measured:
 - prefer `{kind:'enter'}` with a rewritten message over `{kind:'reject'}` whenever
   the goal is "say something useful" rather than "stop", because only the former
   keeps the input alive;
-- the desktop rendering of `blocked` must be measured before this ships to the
-  desktop profile.
+- **never reject on the desktop profile**: the window reports it as completed
+  (measured R30), so a rejection there is a silent success claim;
+- do not `return next()` on this seam either: the measured result is
+  `next is not a function` (R30), so a pass-through must be expressed as a
+  decision, not as a chain.
 
 ## Reproduction
 

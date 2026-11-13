@@ -3,17 +3,17 @@
 > **下一会话从 `dsh-remedy/` 开始。** 读本文件 → `PROJECT_RULES.md` → `AGENTS.md` 即可开工。
 > 本目录是**公开仓库根**；`dsh-triage/` 在父目录，是另一个项目，不属于本仓库。
 
-## 三十秒状态（2026-11-13 · R29）
+## 三十秒状态（2026-11-13 · R30）
 
 | 项 | 值 |
 |---|---|
-| 版本 | **`0.4.0` 已发布**，两包 `latest = 0.4.0`（**二十补丁全部随它出去**；`record_publish` 记 `ok: true`、两包 `exact_ok` + `latest_ok`、空目录从 registry 单装 `OK 6 fixture(s)`）。**上一个发布是 0.3.8**（十三补丁），再上一个是 0.3.7。发布产物 `data/results/publish-2026-11-13T09-45-00.000Z.json`，装机验收 `install-acceptance-2026-11-13T09-50-00.000Z.json`。 |
-| 补丁 | **P-0001 `verified`**（headless + 桌面两次真机）· **P-0002 `verified`**（2026-11-10 headless 真机修好一次真实两调用粘连、合成 id 被派发执行）· **P-0003 `verified`**（2026-11-10 headless 真机 journal 第一次写出非零 `refused`：`too-many-calls` 拒绝而不是假装修好）· **P-0005 `tested`**（裸值 reseal；单测 + 负对照 + 一条实测夹具，无 live 产物）· **P-0004 `tested`**（scan 认 zstd + 目录 + `--since`，redaction 补三种路径形状；改的是离线读取器，live journal 永远证不了它）· **P-0006 `tested`**（scan 统计每一种 turn 结束方式并点名每个 error code；同样是离线读取器）· **P-0007 `tested`**（copy 通道：超过命令行上限的请求走 stdin、失败按原因命名；改的是构建侧，不动任何接缝）· **P-0009 `tested`**（窗口化扫描把每个会话的首行 `session` 头记录当成 unreadable：实测 78 文件 78 行；改为头记录用 `createdAt` 参与窗口；同样是离线读取器）· **P-0010 `tested`**（npm 页面与 CLI `USAGE` 都在用 0.3.3 之前的 `scan` 用法；两处改成同一条并加测试）· **P-0011 `tested`**（第二个接缝 `agent/request-error` 从 0.2.0 起零测试，且先 `next()` 再覆盖答案、预算 Map 不修剪；按上游契约重写并加 9 条测试）· **P-0012 `tested`**（一个字节上限描述两种加载路径；拆成 residency / cli / total，并用模块图测试堵掉「挪到便宜那一半」）· **P-0013 `tested`**（本机 37 次 `UNSUPPORTED_REASONING_EFFORT` 无人命名；按 `(step, code)` 命名一次 + 纯函数 preflight，**不偷偷降档**）· **P-0014 `tested`**（R22：事实包 / HANDOFF / 包内 README 三处自我描述没人校验；新增 `facts-truth` + `handoff-truth` 两个治理测试，以及「包内 README 的用法块必须逐行等于 USAGE」）· **P-0015 `tested`**（R23：`agent/pre-step` 拒绝语义实测——`turn/end blocked`、无 step、丢输入、退出码 1）· **P-0016 `tested`**（R24：`explain` 的覆盖表搬进 registry 的 `failureClasses`/`switchKey`，两个新治理测试钉住单源与词表）· **P-0017 `tested`**（R25：两个包内 README 没有任何机制；实测 2331 B 里散文数字为 0，改为钉住「不许有散文数字」+「围栏里的命令必须真能 dispatch」）· **P-0018 `tested`**（R26：`publish_packages.mjs` 把 Windows `0xC0000409` 打印成裸数字并配上 HTTP 式建议；现在按异常命名并指向直调 `npm publish <tarball>`）· **P-0019 `tested`**（R27：两份根 README 还在说「单接缝包装器」，并且仍写着「`agent/pre-step` 没挂是因为没人测过拒绝」——R23 已测；整页按补丁集重写，并首次解释两包拆分）· **P-0020 `tested`**（R28：市场索引同时声称「0.3.8」与一个 git 提交，而那个提交里是十九个未发布补丁；`source` 现在按产物类型说明字节来自哪里）（npm 页面与 CLI `USAGE` 都在用 0.3.3 之前的 `scan` 用法；两处改成同一条并加测试；改了发射字节所以付账方式是压缩四条命令说明）（窗口化扫描把每个会话的首行 `session` 头记录当成 unreadable：实测 78 文件 78 行；改为头记录用 `createdAt` 参与窗口；同样是离线读取器） |
-| 基线 | **255 tests / 6 gates / `--mutate` 6-6** |
-| 包体 | **已发布 0.3.8 = 35 898 B 压缩 / 35 文件 / 117 750 B 解包**（`dist/*.js` 81 740 / `dist/*.d.ts` 26 605 / fixtures 3 583 / 包根 5 822），core **0.3.8 = 26 551 B / 21 文件 / 83 461 B 解包**（`dist/*.js` 58 062 / `dist/*.d.ts` 22 102，shasum `0df993f8…`）：文件数从 29/19 涨到 35/21，因为 P-0011/P-0013 新增了 `failure-listener`、`monitor`、`preflight`、`explain-command` 四个模块。**已发布 0.3.7 = 29 462 B / 29 文件 / 98 001 B 解包**，core `0.3.7 = 20 000 B / 19 文件 / 65 961 B 解包`。**已发布 0.3.6 = 29 445 B 压缩 / 29 文件 / 97 807 B 解包**（`dist/*.js` 67 997 / `dist/*.d.ts` 20 951 / fixtures 3 583 / 包根 5 276），core **0.3.6 = 19 247 B / 19 文件 / 63 408 B 解包**（`dist/*.js` 43 117 / `dist/*.d.ts` 16 994，shasum `76777609…`）：core 变大只因为多一条补丁记录。**已发布 0.3.5 = 29 448 B 压缩 / 29 文件 / 97 944 B 解包**（`dist/*.js` 67 908 / `dist/*.d.ts` 21 177 / fixtures 3 583 / 包根 5 276），core **0.3.5 = 18 723 B / 19 文件 / 61 553 B 解包**（`dist/*.js` 41 262 / `dist/*.d.ts` 16 994）：P-0008 只加 `scripts/gate_size.mjs`，`scripts/` 不进包，所以 plugin 的字节数与 0.3.4 相同、shasum 因 manifest 版本变了从 `5f20282e…` 到 `c1b1b431…`。**已发布 0.3.2 = 24 689 B 压缩 / 25 文件 / 81 904 B 解包**（`dist/*.js` 56 344 / `dist/*.d.ts` 16 701 / fixtures 3 583 / 包根 5 276）；core **0.3.2 = 15 864 B / 19 文件 / 52 828 B 解包**。**已发布 0.3.3 = 28 378 B 压缩 / 29 文件 / 94 769 B 解包**（`dist/*.js` 65 521 / `dist/*.d.ts` 20 389 / fixtures 3 583 / 包根 5 276），core **0.3.3 = 16 776 B / 19 文件 / 55 684 B 解包**。**已发布 0.3.4 = 29 448 B 压缩 / 29 文件 / 97 944 B 解包**（`dist/*.js` 67 908 / `dist/*.d.ts` 21 177 / fixtures 3 583 / 包根 5 276），core **0.3.4 = 18 202 B / 19 文件 / 59 864 B 解包**。两次拆接缝都是结构性修复不是省字节：0.3.2 把 `repair-stream.js` 28 955 → 27 925 而总量 +529；0.3.3 把 `cli.js` 16 640 → 8 503 而总量 64 539 → 65 521（+982） |
+| 版本 | **`0.4.1` 已发布**，两包 `latest = 0.4.1`（**二十三补丁全部随它出去**；`record_publish` 记 `ok: true`、两包 `exact_ok` + `latest_ok`、空目录从 registry 单装 `OK 6 fixture(s)`）。**上一个发布是 0.4.0**（二十补丁），再上一个是 0.3.8（十三补丁）。发布产物 `data/results/publish-2026-11-13T13-10-00.000Z.json`，装机验收 `install-acceptance-2026-11-13T13-15-00.000Z.json`。 |
+| 补丁 | **P-0001 `verified`**（headless + 桌面两次真机）· **P-0002 `verified`**（2026-11-10 headless 真机修好一次真实两调用粘连、合成 id 被派发执行）· **P-0003 `verified`**（2026-11-10 headless 真机 journal 第一次写出非零 `refused`：`too-many-calls` 拒绝而不是假装修好）· **P-0005 `tested`**（裸值 reseal；单测 + 负对照 + 一条实测夹具，无 live 产物）· **P-0004 `tested`**（scan 认 zstd + 目录 + `--since`，redaction 补三种路径形状；改的是离线读取器，live journal 永远证不了它）· **P-0006 `tested`**（scan 统计每一种 turn 结束方式并点名每个 error code；同样是离线读取器）· **P-0007 `tested`**（copy 通道：超过命令行上限的请求走 stdin、失败按原因命名；改的是构建侧，不动任何接缝）· **P-0009 `tested`**（窗口化扫描把每个会话的首行 `session` 头记录当成 unreadable：实测 78 文件 78 行；改为头记录用 `createdAt` 参与窗口；同样是离线读取器）· **P-0010 `tested`**（npm 页面与 CLI `USAGE` 都在用 0.3.3 之前的 `scan` 用法；两处改成同一条并加测试）· **P-0011 `tested`**（第二个接缝 `agent/request-error` 从 0.2.0 起零测试，且先 `next()` 再覆盖答案、预算 Map 不修剪；按上游契约重写并加 9 条测试）· **P-0012 `tested`**（一个字节上限描述两种加载路径；拆成 residency / cli / total，并用模块图测试堵掉「挪到便宜那一半」）· **P-0013 `tested`**（本机 37 次 `UNSUPPORTED_REASONING_EFFORT` 无人命名；按 `(step, code)` 命名一次 + 纯函数 preflight，**不偷偷降档**）· **P-0014 `tested`**（R22：事实包 / HANDOFF / 包内 README 三处自我描述没人校验；新增 `facts-truth` + `handoff-truth` 两个治理测试，以及「包内 README 的用法块必须逐行等于 USAGE」）· **P-0015 `tested`**（R23：`agent/pre-step` 拒绝语义实测——`turn/end blocked`、无 step、丢输入、退出码 1）· **P-0016 `tested`**（R24：`explain` 的覆盖表搬进 registry 的 `failureClasses`/`switchKey`，两个新治理测试钉住单源与词表）· **P-0017 `tested`**（R25：两个包内 README 没有任何机制；实测 2331 B 里散文数字为 0，改为钉住「不许有散文数字」+「围栏里的命令必须真能 dispatch」）· **P-0018 `tested`**（R26：`publish_packages.mjs` 把 Windows `0xC0000409` 打印成裸数字并配上 HTTP 式建议；现在按异常命名并指向直调 `npm publish <tarball>`）· **P-0019 `tested`**（R27：两份根 README 还在说「单接缝包装器」，并且仍写着「`agent/pre-step` 没挂是因为没人测过拒绝」——R23 已测；整页按补丁集重写，并首次解释两包拆分）· **P-0020 `tested`**（R28：市场索引同时声称「0.3.8」与一个 git 提交，而那个提交里是十九个未发布补丁；`source` 现在按产物类型说明字节来自哪里）（npm 页面与 CLI `USAGE` 都在用 0.3.3 之前的 `scan` 用法；两处改成同一条并加测试；改了发射字节所以付账方式是压缩四条命令说明）（窗口化扫描把每个会话的首行 `session` 头记录当成 unreadable：实测 78 文件 78 行；改为头记录用 `createdAt` 参与窗口；同样是离线读取器）· **P-0021 `tested`**（R31：公开包导出 `./retry-listener` 指向一个从未存在的模块，0.3.8 与 0.4.0 都带着它；删掉死出口，并让「每个 export 目标必须有 `src/<name>.ts`」成为判据）· **P-0022 `tested`**（R31：漂移测试先用写模式跑 `sync_fixtures` 再比较，等于自己把漂移修掉；改成先 `--check`，负对照在 `.tmp` 副本上改一个字节）· **P-0023 `tested`**（R31：AGENTS.md 的「每个补丁先写文档」没有机制，P-0016 就没写；`gate_registry` 现在按 id 查文档，P-0016 文档补写，`INDEX.md` 区间修对） |
+| 基线 | **258 tests / 6 gates / `--mutate` 6-6** |
+| 包体 | **已发布 0.4.1 = 36 906 B 压缩 / 35 文件 / 119 744 B 解包**，core **0.4.1 = 33 091 B / 21 文件 / 105 353 B 解包**（两包 shasum `dac640ea…` / `c9a081bf…`；plugin 少 22 B 因为死出口删掉，core 多 1 318 B 因为 registry 多了三条补丁记录）。上一个发布 **0.4.0 = 36 928 B 压缩 / 35 文件 / 119 866 B 解包**，core **0.4.0 = 31 773 B / 21 文件 / 100 304 B 解包**（shasum `dd3b764d…` / `48d449b7…`）。再上一个 **0.3.8 = 35 898 B 压缩 / 35 文件 / 117 750 B 解包**（`dist/*.js` 81 740 / `dist/*.d.ts` 26 605 / fixtures 3 583 / 包根 5 822），core **0.3.8 = 26 551 B / 21 文件 / 83 461 B 解包**（`dist/*.js` 58 062 / `dist/*.d.ts` 22 102，shasum `0df993f8…`）：文件数从 29/19 涨到 35/21，因为 P-0011/P-0013 新增了 `failure-listener`、`monitor`、`preflight`、`explain-command` 四个模块。**已发布 0.3.7 = 29 462 B / 29 文件 / 98 001 B 解包**，core `0.3.7 = 20 000 B / 19 文件 / 65 961 B 解包`。**已发布 0.3.6 = 29 445 B 压缩 / 29 文件 / 97 807 B 解包**（`dist/*.js` 67 997 / `dist/*.d.ts` 20 951 / fixtures 3 583 / 包根 5 276），core **0.3.6 = 19 247 B / 19 文件 / 63 408 B 解包**（`dist/*.js` 43 117 / `dist/*.d.ts` 16 994，shasum `76777609…`）：core 变大只因为多一条补丁记录。**已发布 0.3.5 = 29 448 B 压缩 / 29 文件 / 97 944 B 解包**（`dist/*.js` 67 908 / `dist/*.d.ts` 21 177 / fixtures 3 583 / 包根 5 276），core **0.3.5 = 18 723 B / 19 文件 / 61 553 B 解包**（`dist/*.js` 41 262 / `dist/*.d.ts` 16 994）：P-0008 只加 `scripts/gate_size.mjs`，`scripts/` 不进包，所以 plugin 的字节数与 0.3.4 相同、shasum 因 manifest 版本变了从 `5f20282e…` 到 `c1b1b431…`。**已发布 0.3.2 = 24 689 B 压缩 / 25 文件 / 81 904 B 解包**（`dist/*.js` 56 344 / `dist/*.d.ts` 16 701 / fixtures 3 583 / 包根 5 276）；core **0.3.2 = 15 864 B / 19 文件 / 52 828 B 解包**。**已发布 0.3.3 = 28 378 B 压缩 / 29 文件 / 94 769 B 解包**（`dist/*.js` 65 521 / `dist/*.d.ts` 20 389 / fixtures 3 583 / 包根 5 276），core **0.3.3 = 16 776 B / 19 文件 / 55 684 B 解包**。**已发布 0.3.4 = 29 448 B 压缩 / 29 文件 / 97 944 B 解包**（`dist/*.js` 67 908 / `dist/*.d.ts` 21 177 / fixtures 3 583 / 包根 5 276），core **0.3.4 = 18 202 B / 19 文件 / 59 864 B 解包**。两次拆接缝都是结构性修复不是省字节：0.3.2 把 `repair-stream.js` 28 955 → 27 925 而总量 +529；0.3.3 把 `cli.js` 16 640 → 8 503 而总量 64 539 → 65 521（+982） |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1` / `v0.3.2` / `v0.3.3` / `v0.3.4` / `v0.3.5` / `v0.3.6` / `v0.3.7` / **`v0.3.8`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release） |
-| 装机验收 | **0.3.8 已从 registry 单装到空目录验过 `OK 6 fixture(s)`，产物 `data/results/install-acceptance-2026-11-12T16-50-00.000Z.json`（`ok: true`、三条命令退出码 0/0/0）**；另在 `.tmp/verify-published-038/` 复核过一次，装出来的 `explain` 在本机能跑通并退出 0。两个 profile 已换成 `.tmp/pack20/` 的 0.3.8（`.tmp/switch-profiles-038.mjs`，备份 `before-038b`），desktop 与 remedy-live 内 `verify` 都回 `OK 6 fixture(s)`、两包都报 0.3.8。历史：0.3.7 有产物 `install-acceptance-2026-11-12T12-50-00.000Z.json`；0.3.2–0.3.6 各自从 registry 单装验过。 |
-| 下一件事 | **两件，都不需要新补丁号**：(1) 驱动一次桌面窗口看 `blocked` 的渲染（`BS-17`）—— R23 只证了 headless，桌面 UI 会把这画成什么没有任何产物能回答，测出来之前任何用到 `agent/pre-step` 的补丁不许上桌面 profile；(2) `dsh.so` 的站上表单（人工动作，那个仓库自 2026-09-08 后没有 push）。其余渠道都已在 `docs/distribution/README.md` 台账里，`awesome-dsh-plugin` #14942 两个 check 全绿（`CLEAN`），等维护者读代码。 |
+| 装机验收 | **0.4.1 已从 registry 单装到空目录验过 `OK 6 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-13T13-15-00.000Z.json`（`ok: true`、三条命令退出码 0/0/0）。**R32 把两个 profile 切到 registry 的 0.4.1**：`.tmp/pack041/` 的两个 tarball 的 sha1/sha512 与 registry 一致（plugin `dac640ea…` / core `c9a081bf…`），desktop 与 remedy-live 两包都报 **0.4.1**，两边 `verify` 都回 `OK 6 fixture(s)`；App 于 **12:49:49** 重启，`dsh plugin --profile desktop list` 列出 `dsh-remedy@0.4.1`。历史（R30）：**0.4.0 从 registry 单装**（产物 `install-acceptance-2026-11-13T09-50-00.000Z.json`）。**R30 把两个 profile 切到 registry 的 0.4.0**：`.tmp/pack040/` 的两个 tarball 先用 sha512 对上 registry 的 `integrity`（plugin `dd3b764d…` / core `48d449b7…`），再用 `.tmp/switch-profiles-040.mjs` 写入，desktop 与 remedy-live 的 `node_modules` 两包都报 **0.4.0**，两边 `verify` 都回 `OK 6 fixture(s)`；桌面 App 于 **12:22:42** 重启（晚于安装；本轮第一次是 12:09:54），`dsh plugin --profile desktop list` 列出 `dsh-remedy@0.4.0`。历史：0.3.8 / 0.3.7 各有 `install-acceptance-*` 产物；0.3.2–0.3.6 各自从 registry 单装验过。 |
+| 下一件事 | **0.4.1 已发布，A/B 两轨都做完了**：二十三个补丁在 registry 上，两个 profile 在 0.4.1，`BS-17` 已用 `data/results/prestep-ui-2026-11-13T12-15-00.000Z.json` 关闭（桌面把 `blocked` 画成「已完成」且无内容，`return next()` 以 `next is not a function` 结束，所以 `agent/pre-step` 只能走 `{kind:'enter'}` 且那条路仍未测）。**接下来是 C 轨（人工/外部）**：把容器 `main` 推到公开仓库并建 GitHub release `v0.4.1`（正文用 `docs/copy/release-notes/v0.4.1.md`，上传后逐字节读回）；`dsh.so` 站上表单；DeepSeek Discussions 发帖；`awesome-dsh-plugin` #14942 两个 check 全绿（`CLEAN`），等维护者读代码。可选：把 `packages/*/README.md` 收进 copy 通道（BS-13 的剩余部分）。 |
 
 ## 五分钟检查
 
@@ -24,7 +24,7 @@ pnpm install
 pnpm run verify                  # build → typecheck → test → gate
 node scripts/gate.mjs --mutate   # 6 门都必须红
 node packages/plugin/dist/cli.js verify   # OK 6 fixture(s)
-npm view dsh-remedy version      # 0.3.8
+npm view dsh-remedy version      # 0.4.0
 ```
 
 `git` 要注意：本目录不是 git 根。
@@ -55,6 +55,82 @@ git -C .. log --oneline -3
 
 - 容器 `main` **没有**推到 `dsh-triage` 远端（推上去会破坏那个仓库的根布局）。不要顺手推。
 - `dsh-triage/` 只是同级项目，规则以它自己的 `AGENTS.md` 为准。
+
+## 当前批次（R32 → R1）
+
+**R32（2026-11-13）· 0.4.1 发出去：三个「断言没有机制」的补丁第一次上线。**
+
+> 触发：R31 的三件补丁合并后，按 A 轨发版。
+
+**A. 发布**
+
+- 两包与根 bump 0.4.1；`pnpm pack` 的两个 tarball 是 plugin 36906 B / 35 文件 / 119744 B 解包（sha1 `dac640ea…`），core 33091 B / 21 文件 / 105353 B 解包（sha1 `c9a081bf…`）。
+- `node scripts/publish_packages.mjs` 一次成功：两包 `PUT 202`；`record_publish --stamp 13:10` 记 `ok: true`、两包 `exact_ok` + `latest_ok`。core 的 packument 副本晚了约三分钟（11:44Z 发布，11:47Z 才 `npm view` 到 0.4.1），不是失败，没有重发。
+- 空目录从 registry 单装 `dsh-remedy@0.4.1` → `OK 6 fixture(s)`，产物 `install-acceptance-2026-11-13T13-15-00.000Z.json`（`ok: true`、三条命令 0/0/0）。
+- 两个 profile 切到 `.tmp/pack041` 的 registry 字节（sha1/sha512 已对），desktop 与 remedy-live 都报 0.4.1，App 12:49:49 重启。
+
+**B. 对外文字**
+
+- 事实包：Version 0.4.1 / pin 0.4.1 / 上一版 0.4.0 / 23 补丁；加 P-0021/22/23 三段与 0.4.1 的 tarball 行（36906 / 33091 / 119744 / 105353 / 81988 / 26665 / 3583 / 7508 / 78449 / 23092 / 22 / 1318）。
+- 两个 README、CHANGELOG、release notes 全部走 copy 通道；0.4.0 的 release notes 用 `--freeze` 冻成 `release-notes-040-frozen`，新的一份登记为 `release-notes`。
+- 全部 live 条目（11 个）一次性重登记，`gate_copy` OK。
+
+**实测**：`pnpm run verify` → **258 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` → **6/6 CAUGHT**；门禁证据 `gates-2026-11-13T13-20-00.000Z.json` / `gates-mutate-2026-11-13T13-25-00.000Z.json`；快照仍是 `patch-registry-2026-11-13T12-50-00.000Z.json`（二十三补丁）。
+
+**仍未做**：推公开仓库 + GitHub release `v0.4.1`；C 轨人工动作。
+
+## 当前批次（R31 → R1）
+
+**R31（2026-11-13）· 三个「断言没有机制」收口：死出口、自修复的测试、没人读的文档规则。**
+
+> 触发：R30 交接的 A 轨。三件都不动运行时接缝，所以全部是 `tested`。
+
+**A. P-0021 · 公开包里的死出口**
+
+- 症状：`packages/plugin/package.json` 导出 `./retry-listener` → `dist/retry-listener.js`，而 `src/retry-listener.ts` 从未存在；真正的模块是 `failure-listener.ts`，且已从主入口导出。`npm view` 的 0.3.8 与 0.4.0 清单都带着它，0.3.8 tarball 里只有 `failure-listener.js`。
+- 旧判据只查目标字符串的形状（`tests/unit/package-files.test.ts:46-47`）。
+- 修法：删掉死出口；新增 `deadExports(exportsMap, exists)`，要求每个 export 目标都有 `src/<name>.ts`；负对照用一张 ghost map，证明检查器不是恒返回 `[]`。
+- 先红：pre-patch 清单下测试报 `["./retry-listener"]`。
+
+**B. P-0022 · 会自修复的漂移测试**
+
+- 症状：`tests/unit/fixtures-sync.test.ts` 先用写模式跑 `sync_fixtures.mjs`，再断言副本与 canonical 相等——写模式已经把漂移覆盖掉了。`--check` 早就存在，但两个消费者都没用。
+- 修法：测试先跑 `--check`；只有「全部问题都是 missing」（干净检出）才允许 seed 一次，漂移一律失败。`sync_fixtures.mjs` 新增 `--source/--target/--checksums`（默认不变），负对照在 `.tmp/fixture-drift-<pid>` 里改一个字节，要求 exit 1 并点名 `bytes drifted: valid-two-calls.json`。
+- 红证据：把 `--check` 分支的 `exit(1)` 改成 `exit(0)`，负对照立刻红；改回来绿。
+
+**C. P-0023 · 「每个补丁先写文档」没有机制**
+
+- 症状：registry 21 条、`docs/patches/` 19 个文件，P-0016 没写；`gate_registry` 只查 evidence/guards；`INDEX.md` 停在 P-0015。
+- 修法：`gate_registry` 按 id 查 `docs/patches/P-NNNN-*.md`；补写 P-0016 的文档（从 R24 记录 + 实际代码核对）；INDEX 区间改到 P-0023。
+- 先红：加检查后门禁报 `FAIL registry/doc:P-0016 — docs/patches/P-0016-*.md is missing`。
+
+**实测**：`pnpm run verify` → **258 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` → **6/6 CAUGHT**；快照 `patch-registry-2026-11-13T12-50-00.000Z.json`（sha256 `47007414…`，二十三补丁 / 3 verified）。
+
+**仍未做**：0.4.1 发布（三个补丁 + 事实包/CHANGELOG/README/release notes 翻口径 + 空目录装机验收）；C 轨人工动作。
+
+## 当前批次（R30 → R1）
+
+**R30（2026-11-13）· 两个 profile 抬到 0.4.0，并把悬了五轮的桌面 `blocked` 渲染测了。**
+
+> 触发：用户交接后要求 B → A → C 依次进行，并授权关 App、切 profile、重启。
+
+**A. 两个 profile 现在装的是 registry 的 0.4.0**
+
+- `npm pack dsh-remedy@0.4.0` / `dsh-remedy-core@0.4.0` 到 `.tmp/pack040/`，两个 tarball 的 sha1 与 sha512 都等于 registry 的 `dist.shasum` / `dist.integrity`（plugin `dd3b764d…` / core `48d449b7…`），所以 profile 装的是陌生人装到的那一份，不是本地重新构建的。
+- 关 App（6 个进程），`.tmp/switch-profiles-040.mjs` 备份并改写两个 profile 的 `package.json` + `pnpm-workspace.yaml`（备份后缀 `before-040`），用 App 自带的 pnpm 11.28.5 安装。
+- 验收：两个 profile 的 `node_modules/dsh-remedy` 与 `dsh-remedy-core` 都报 **0.4.0**；两边 `node .../dist/cli.js verify` 都 `OK 6 fixture(s)`；App 于 **12:09:54** 重启（本轮收尾又在 **12:22:42** 重启一次），`dsh plugin --profile desktop list` 列出 `dsh-remedy@0.4.0`。
+
+**B. BS-17 测完了：桌面把拒绝画成「已完成」**
+
+- 隔离 `DSH_HOME`（`.tmp/prestep-web-home`，credentials 是复制）+ 两个 profile：`probe-web-reject`（挂 `.tmp/prestep-probe`，拒绝每一步）与 `probe-web-ok`（同栈但不挂探针，作为对照）。
+- 渲染器用 `dsh web` 起，`@deepseek-ai/dsh-web-app` 正是桌面壳加载的那一份；用 CDP 驱动无头 Chrome，输入 `Reply with exactly: OK`。
+- **拒绝**：会话仍是 R23 的八条事件（`turn/end blocked`、无 step、`removedCount:1`），窗口只画一行 **「已完成，用时 1秒」**，没有用户气泡、没有助手气泡、没有错误、没有原因。**对照**：用户气泡 + 「已完成，用时 7秒」+ 助手「OK」。
+- **顺带测出的第二件事**：探针的 `reject:false` 分支 `return next()` 会让 turn 以 `reason.kind:"error"`、`message:"next is not a function"`、`code:"UNKNOWN"` 结束——这个接缝不是 `agent/request-error` 那条可链式的水位。
+- 产物 `data/results/prestep-ui-2026-11-13T12-15-00.000Z.json`（sha256 `cc71b46b…`，含三份会话与两张截图的哈希），recorder `scripts/record_prestep_ui.mjs`。`BS-17` 关闭；P-0015 的 limits 与「能用但怎么用」同时改写。
+
+**实测**：`pnpm run verify` → 255 tests / 6 gates；`--mutate` 6/6。
+
+**仍未做**：A 轨（P-0021/22/23 → 0.4.1）；C 轨（dsh.so 表单、Discussions 发帖、等 #14942 维护者）。
 
 ## 当前批次（R29 → R1）
 
@@ -1296,10 +1372,10 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 
 ## 下一位 agent 的第一件事
 
-**A. 主线：0.3.8 已发布，对外文字按「本会话直写 + 事实包判据」重写完毕；R22 把描述本身变成断言。**
-十八补丁（P-0001 / P-0002 / P-0003 `verified`，其余 `tested`；P-0014…P-0018 未发布），基线
-**255 tests / 6 gates / `--mutate` 6-6**，emit 总量 81 988 / 83 000
-（常驻 41 143 / 44 000，CLI 40 845 / 42 000；新增字节来自 P-0014 的注释与 P-0016 的 regisry 读取，尚无版本发布）。
+**A. 主线：0.4.0 已发布，两个 profile 在 0.4.0，BS-17 已关闭；R31 的三个补丁已合并、未发布。**
+二十三补丁（P-0001 / P-0002 / P-0003 `verified`，其余 `tested`），基线
+**258 tests / 6 gates / `--mutate` 6-6**，emit 总量 81 988 / 83 000
+（常驻 41 143 / 44 000，CLI 40 845 / 42 000）。下一步是发 0.4.1，见下面「下一个必须做的」。
 
 **三道新判据（R22，别再退化）：**
 
@@ -1329,18 +1405,22 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 3. ~~把 `explain` 的覆盖表抬进 registry~~ **R24 已完成（P-0016）**。
 4. ~~包内 README 正文~~ **R25 已完成（P-0017）**。
 5. ~~`publish_packages.mjs` 对 3221226505 命名~~ **R26 已完成（P-0018）**。
+6. ~~发 0.4.0，把二十个补丁一起带出去~~ **R29 已完成**。
+7. ~~两个 profile 切到 0.4.0 + 桌面 `blocked` 渲染~~ **R30 已完成（BS-17 关闭）**。
+8. ~~P-0021 死出口 / P-0022 自修复测试 / P-0023 文档机制~~ **R31 已完成**。
 
-**编号补丁到这里是清零的。剩下三件事，都不需要新号：**
+**下一个必须做的：发 0.4.1**（三个补丁一起出去，仍然不需要真人）：
 
-- **A. 驱动桌面窗口看一次 `blocked` 的渲染**（BS-17）。R23 只证了 headless：
-  拒绝写出 `turn/end {"reason":{"kind":"blocked"}}`、无 step、输入被 claim 掉、退出码 1。
-  桌面 UI 会把这画成什么，没有任何产物能回答，而这件事只能由人在窗口里点。
-  测出来之前，任何用到 `agent/pre-step` 的补丁都**不许**上桌面 profile。
-- **B. 发一个版本，把 P-0014…P-0018 一起带出去**（registry 上仍是 0.3.8）。
-  发布时必须**同一次**做完三件事：bump 两包 → `pnpm pack` 得到真 tarball →
-  翻事实包的「published」段并重登记全部 live 对外文件（R17 那条教训：翻口径与重登记隔一轮就红三小时）。
-- **C. 可选**：把 `packages/*/README.md` 收进 copy 通道（BS-13 的剩余部分）。
-  R25 已证明它们没有散文数字，所以这只是"让 npm 页面也由通道生成"的产品决定，不是安全洞。
+- bump 两包与根到 `0.4.1`（core 必须一起 bump，否则 plugin 的精确 pin 会指向 0.4.0）；
+- 事实包把「published」段从 0.4.0 翻到 0.4.1，并加 P-0021/22/23 的段落；
+- `CHANGELOG.md`、两个根 README、`docs/copy/release-notes/v0.4.1.md` 走 `copy_record`；
+- `pnpm pack` → `npm publish` → `record_publish` → 空目录装机验收 → registry 快照 → `--mutate`。
+
+**B 轨已完成**：两个 profile 在 0.4.0（registry 字节），App 12:09:54 重启，BS-17 有产物。
+
+**C 轨（人工/外部）**：`dsh.so` 站上表单、DeepSeek Discussions 发帖；`awesome-dsh-plugin`
+#14942 两个 check 全绿（`CLEAN`），等维护者读代码。**可选**：把 `packages/*/README.md`
+收进 copy 通道（BS-13 的剩余部分）——R25 已证明它们没有散文数字，所以这只是产品决定。
 
 **接缝利用率（别重新论证一遍）：**
 
@@ -1348,7 +1428,7 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 |---|---|---|---|
 | `llm/stream` | 同步 waterfall，listener 必须立即返回流 | 拆粘连 / reseal | ✅ 生产 |
 | `agent/request-error` | handler 返回 `{kind:'retry'}` 时**不调 `next()`**；不拥有决定必须 `next()` | 有界重试 + 命名诊断 | ✅ 生产（默认不重试） |
-| `agent/pre-step` | `{kind:'reject'}` 或 `{kind:'enter', messages, …}`；被拒不开启 step | preflight 拒绝 | ⚠️ **已测（P-0015）但不挂**：拒绝写 `turn/end blocked`、丢输入、退出码 1；桌面渲染 `blocked` 未测（BS-17） |
+| `agent/pre-step` | `{kind:'reject'}` 或 `{kind:'enter', messages, …}`；被拒不开启 step | preflight 改写消息（尚未挂） | ⚠️ **不挂**：拒绝写 `turn/end blocked`、丢输入、退出码 1；桌面把 `blocked` 画成「已完成」且无内容（R30，BS-17 已关）；`return next()` 以 `next is not a function` 结束；只剩 `{kind:'enter'}` 未测 |
 | `agent/request` | **已 deprecated**，不能改 messages | — | ⛔ 不碰 |
 | `agent/assistant-stream` | 每 attempt 的 start/chunk/end | 观测 | ⛔ 价值低于成本 |
 | `tools/pre-execute` / `guard()` | guard 同步；要 await 就 `ask` | 拦工具参数 | ⛔ 另一族缺陷 |
@@ -1401,6 +1481,8 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | `publish-2026-11-12T16-45-00.000Z.json` | 绿 | 0.3.8 发布：两包 `exact_ok` + `latest_ok` 全 true（`git_head` `632f890…`） |
 | `publish-2026-11-13T09-45-00.000Z.json` | 绿 | **0.4.0 发布**：两包 `exact_ok` + `latest_ok` 全 true（二十补丁） |
 | `install-acceptance-2026-11-13T09-50-00.000Z.json` | 绿 | **0.4.0 空目录从 registry 单装** `OK 6 fixture(s)`（`ok: true`、三条命令退出码 0/0/0） |
+| `publish-2026-11-13T13-10-00.000Z.json` | 绿 | **0.4.1 发布**：两包 `exact_ok` + `latest_ok` 全 true（二十三补丁） |
+| `install-acceptance-2026-11-13T13-15-00.000Z.json` | 绿 | **0.4.1 空目录从 registry 单装** `OK 6 fixture(s)`（`ok: true`、三条命令 0/0/0） |
 | `install-acceptance-2026-11-12T16-50-00.000Z.json` | 绿 | 0.3.8 空目录从 registry 单装 `OK 6 fixture(s)`（`ok: true`、三条命令退出码 0/0/0） |
 | `patch-registry-2026-11-13T06-20-00.000Z.json` | 绿 | R22 快照（十四补丁；sha256 `1adaa5b7…`） |
 | `patch-registry-2026-11-13T07-55-00.000Z.json` | 绿 | R23 快照（十五补丁；sha256 `7fe8b5b3…`） |
@@ -1409,13 +1491,19 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | `patch-registry-2026-11-13T09-55-00.000Z.json` | 绿 | R26 快照（十八补丁；sha256 `cbad635e…`，已被 10-05 取代） |
 | `patch-registry-2026-11-13T10-05-00.000Z.json` | 绿 | R26 快照（十八补丁；sha256 `e79966ca…`，已被 11-30 取代） |
 | `patch-registry-2026-11-13T10-00-00.000Z.json`；11-30 之后有更新的快照 | 绿 | 一次注册表快照（二十补丁：3 `verified` + 17 `tested`；sha256 `bde08a56…`） |
-| `gates-2026-11-13T12-10-00.000Z.json` / `gates-mutate-2026-11-13T12-15-00.000Z.json` | 绿 | **当前**门禁证据：R29 发布轮（0.4.0 已发、事实包翻口径、全部对外文件重登记之后） |
+| `patch-registry-2026-11-13T12-45-00.000Z.json` | 绿 | R31 中间快照（二十一补丁：P-0021 加入；sha256 `5243759e…`，已被 12-50 取代） |
+| `patch-registry-2026-11-13T12-50-00.000Z.json` | 绿 | **当前**快照（二十三补丁：P-0021/22/23 加入，3 `verified` + 20 `tested`；sha256 `47007414…`） |
+| `gates-2026-11-13T12-10-00.000Z.json` / `gates-mutate-2026-11-13T12-15-00.000Z.json` | 绿 | R29 发布轮的门禁证据（0.4.0 已发、事实包翻口径、全部对外文件重登记之后） |
+| `gates-2026-11-13T12-30-00.000Z.json` / `gates-mutate-2026-11-13T12-35-00.000Z.json` | 绿 | R30 的门禁证据（profile 切到 0.4.0 + BS-17 桌面实测之后），255 tests |
+| `gates-2026-11-13T12-55-00.000Z.json` / `gates-mutate-2026-11-13T13-00-00.000Z.json` | 绿 | R31 的门禁证据（P-0021/22/23 落地之后），258 tests |
+| `gates-2026-11-13T13-20-00.000Z.json` / `gates-mutate-2026-11-13T13-25-00.000Z.json` | 绿 | **当前**门禁证据：R32（0.4.1 发布 + 对外文字重登记之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，258 tests |
 | `gates-2026-11-13T08-10-00.000Z` / `gates-mutate-2026-11-13T08-15-00.000Z` | 绿 | 门禁证据：R23 收尾（P-0015 台账 + 事实包加段 + 对外文件重登记） |
 | `gates-2026-11-13T09-30-00.000Z` / `gates-mutate-2026-11-13T09-35-00.000Z` | 绿 | 门禁证据：R25 收尾（P-0017 台账 + 事实包加段 + 全部对外文件重登记） |
 | `gates-2026-11-13T10-15-00.000Z` / `gates-mutate-2026-11-13T10-20-00.000Z` | 绿 | 门禁证据：R26 收尾（P-0018：Windows 退出码按异常命名） |
 | `gates-2026-11-13T11-05-00.000Z` / `gates-mutate-2026-11-13T11-10-00.000Z` | 绿 | 门禁证据：R27 收尾（P-0019 台账 + 对外页面整页重写） |
 | `gates-2026-11-13T11-40-00.000Z.json` / `gates-mutate-2026-11-13T11-45-00.000Z.json` | 绿 | 门禁证据：R28 收尾（P-0020 市场来源修正 + 分发台账），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT` |
 | `prestep-probe-2026-11-13T07-45-00.000Z.json` | 绿 | **`agent/pre-step` 拒绝语义实测**：八条事件、`turn/end` 的 `reason.kind` 是 `"blocked"`、无 step、输入被 claim 掉、退出码 1（P-0015） |
+| `prestep-ui-2026-11-13T12-15-00.000Z.json` | 绿 | **桌面 `blocked` 渲染实测（R30，BS-17 关闭）**：拒绝只画「已完成，用时 1秒」、无用户/助手气泡；对照画用户气泡 + 「OK」；`return next()` 以 `next is not a function` 结束；sha256 `cc71b46b…` |
 | `session-sample-2026-11-11T18-10-00.000Z.json` | 绿 | 本机 census 样本（`--until 2026-11-11T17:00:00.000Z`，两条 stamp 除 `generated_at` 外逐字节相同） |
 | `install-acceptance-2026-11-11T19-30-00.000Z.json` | 绿 | 0.3.6 空目录从 registry 单装 `OK 6 fixture(s)`（R17 首次把这个验收落成产物） |
 | `withdrawn-reachability-2026-11-12T09-40-00.000Z.json` | 绿 | **实测** `withdrawn` 在本机不可达：24 329 条流里 0 条的 `block-end` 带可证明融合（BS-14） |

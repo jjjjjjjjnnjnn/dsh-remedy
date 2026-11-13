@@ -1,6 +1,6 @@
 {
   "name": "dsh-remedy",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "DeepSeek Harness patch set that intercepts MALFORMED_RESPONSE streams, splits fused tool-call arguments, re-throws unprovable buffers, and names the deterministic refusals it does not retry.",
   "type": "module",
   "bin": {
@@ -21,11 +21,7 @@
       "types": "./dist/session-scan.d.ts",
       "default": "./dist/session-scan.js"
     },
-    "./package.json": "./package.json",
-    "./retry-listener": {
-      "types": "./dist/retry-listener.d.ts",
-      "default": "./dist/retry-listener.js"
-    }
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",

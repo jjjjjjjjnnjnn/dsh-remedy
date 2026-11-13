@@ -1407,10 +1407,10 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 
 ## 下一位 agent 的第一件事
 
-**A. 主线：0.4.0 已发布，两个 profile 在 0.4.0，BS-17 已关闭；R31 的三个补丁已合并、未发布。**
-二十三补丁（P-0001 / P-0002 / P-0003 `verified`，其余 `tested`），基线
+**A. 主线：0.4.1 已发布，两个 profile 在 0.4.1，BS-17 已关闭；P-0024（BS-13）已合并、未发布。**
+二十四补丁（P-0001 / P-0002 / P-0003 `verified`，其余 21 个 `tested`），基线
 **258 tests / 6 gates / `--mutate` 6-6**，emit 总量 81 988 / 83 000
-（常驻 41 143 / 44 000，CLI 40 845 / 42 000）。下一步是发 0.4.1，见下面「下一个必须做的」。
+（常驻 41 143 / 44 000，CLI 40 845 / 42 000）。下一步是发 0.4.2（P-0024 随它出去），见下面「下一个必须做的」。
 
 **三道新判据（R22，别再退化）：**
 
@@ -1433,7 +1433,7 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
   例外只有 `RESERVED_DIGITS` 那几条，且必须在 `copy-policy.mjs` 里写明理由。
 - `metadata.json` 的 `description` 有 **160 字符上限**，改它要同时改两个 `package.json` 的 description。
 
-**下一个必须做的，按顺序：**
+**已完成（不要重做）：**
 
 1. ~~重启桌面 App~~ **R23 已完成**。
 2. ~~实测 `agent/pre-step` 的拒绝语义~~ **R23 已完成（P-0015）**。
@@ -1443,19 +1443,18 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 6. ~~发 0.4.0，把二十个补丁一起带出去~~ **R29 已完成**。
 7. ~~两个 profile 切到 0.4.0 + 桌面 `blocked` 渲染~~ **R30 已完成（BS-17 关闭）**。
 8. ~~P-0021 死出口 / P-0022 自修复测试 / P-0023 文档机制~~ **R31 已完成**。
+9. ~~发 0.4.1~~ **R32 已完成**。
+10. ~~C 轨：Discussions 发帖 + dsh.so 表单~~ **R33 已完成**。
+11. ~~BS-13：两个包内 README 进 copy 通道~~ **R34 已完成（P-0024）**。
 
-**下一个必须做的：发 0.4.1**（三个补丁一起出去，仍然不需要真人）：
+**下一个必须做的：发 0.4.2**（P-0024 是构建侧，tarball 字节不变；发版是为了让 npm 页面继续由通道生成）：
 
-- bump 两包与根到 `0.4.1`（core 必须一起 bump，否则 plugin 的精确 pin 会指向 0.4.0）；
-- 事实包把「published」段从 0.4.0 翻到 0.4.1，并加 P-0021/22/23 的段落；
-- `CHANGELOG.md`、两个根 README、`docs/copy/release-notes/v0.4.1.md` 走 `copy_record`；
-- `pnpm pack` → `npm publish` → `record_publish` → 空目录装机验收 → registry 快照 → `--mutate`。
+- bump 两包与根到 `0.4.2`；事实包 Version / pin / 上一版；CHANGELOG 与 release notes 走 `copy_record`；
+- `pnpm pack` → `npm publish` → `record_publish` → 空目录装机验收 → registry 快照 → `--mutate`；
+- 不想发版也可以：P-0024 停在 `tested`，它不改运行时行为。
 
-**B 轨已完成**：两个 profile 在 0.4.0（registry 字节），App 12:09:54 重启，BS-17 有产物。
-
-**C 轨（人工/外部）**：`dsh.so` 站上表单、DeepSeek Discussions 发帖；`awesome-dsh-plugin`
-#14942 两个 check 全绿（`CLEAN`），等维护者读代码。**可选**：把 `packages/*/README.md`
-收进 copy 通道（BS-13 的剩余部分）——R25 已证明它们没有散文数字，所以这只是产品决定。
+**外部等待（不是待办）**：imsai catalog 巡检恢复（它自己的 #19）；dsh.so 维护者合并今天的提交；
+`awesome-dsh-plugin` #14942、dshopen #472、AllDSH #3 人工审。
 
 **接缝利用率（别重新论证一遍）：**
 

@@ -157,6 +157,14 @@
 - The guards: `tests/governance/package-readme-prose.test.ts` reuses `proseNumbers` from the copy channel instead of restating the stripping rule, requires zero prose numbers on both pages, and requires every `dsh-remedy <command>` inside a fence to be one `cli.ts` actually dispatches; the engine page must not document a CLI at all.
 - What is still open: the pages are not in the copy channel, so layout and behavioural prose stay hand-written (BS-13 stays open, narrowed). The number rule is the channel criterion, not a truth test.
 
+## The Windows exit code (P-0018)
+
+- Status `tested`. Surface `scripts`. It changes advice printed by a build script, not a seam.
+- What it fixes: `node scripts/publish_packages.mjs` printed `npm exited 3221226505 in packages/core` and then offered advice shaped like an HTTP answer. `3221226505` is Windows `0xC0000409`, and both npm debug logs for the 0.3.6 attempt stop right after the tarball notice with **no HTTP request**, so nothing was sent and every branch of that advice was about the wrong cause.
+- What changed: `windowsStatusAdvice(status)` names `3221226505` as `0xC0000409` and `3221225477` as `0xC0000005`, says the process died before answering the registry, and points at the direct `npm publish <tarball> --access public` call, which is what succeeded twice on 2026-11-12. The call site checks it before the OTP and HTTP advice.
+- The guard: `tests/unit/publish.test.ts` grew two tests — one pins that both codes produce advice naming the exception, the other is the negative control that `0`, `1`, `402`, `403`, `404`, `429`, `null` and `undefined` do **not** take that branch, so a real 404 keeps its real advice.
+- Still unmeasured: only the two codes this machine produced are named; a third Windows exception still prints its raw number. The patch also does not retry the publish, because publishing is the operator's decision.
+
 ## The windowed scan and the session header (P-0009)
 
 - Status `tested`. Surface `cli`. Like P-0004 it changes an offline reader, so no resident journal can attest it.

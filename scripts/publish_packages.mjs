@@ -147,6 +147,34 @@ export function otpAdvice(status, stderr) {
 }
 
 /**
+ * The Windows status codes that are not answers from npm at all.
+ *
+ * The 0.3.6 publish is the reason this exists. `spawnSync` reported status
+ * `3221226505` from `packages/core`, and both npm debug logs for that attempt
+ * stop right after the tarball notice with **no HTTP request**: nothing was ever
+ * sent. `3221226505` is `0xC0000409`, a Windows `STATUS_STACK_BUFFER_OVERRUN`
+ * raised by the runtime, so the honest reading is "npm died before it spoke to
+ * the registry". Printing that number alone sent one publish attempt looking for
+ * a permissions problem that did not exist.
+ *
+ * Kept pure so a test can pin every branch without running npm.
+ */
+export function windowsStatusAdvice(status) {
+  if (typeof status !== 'number') return []
+  const asException = (code) => [
+    `The 'npm' process was killed before it answered the registry: exit ${status} is Windows 0x${code}.`,
+    '  This is not a registry answer and not a credentials problem. Both npm debug logs',
+    '  for that attempt stop after the tarball notice with no HTTP request.',
+    '  Re-run `npm publish <tarball> --access public` in the package directory; the',
+    '  identical direct call is what succeeded on 2026-11-11.',
+  ]
+  // 0xC0000409: STATUS_STACK_BUFFER_OVERRUN. 0xC0000005: access violation.
+  if (status === 3221226505) return asException('C0000409')
+  if (status === 3221225477) return asException('C0000005')
+  return []
+}
+
+/**
  * Read `package/package.json` out of a packed `.tgz` without a dependency on tar.
  *
  * The point is not to validate the archive format in general: it is to look at
@@ -276,8 +304,11 @@ function main() {
       if (result.status !== 0) {
         if (result.error !== undefined) console.error(`\nspawn error: ${result.error.message}`)
         console.error(`\nstopped: npm exited ${result.status ?? 'without a status'} in ${relative}`)
+        const crashed = windowsStatusAdvice(result.status)
         const twoFactor = otpAdvice(result.status, result.stderr)
-        for (const line of twoFactor.length > 0 ? twoFactor : npmFailureAdvice(result.status)) console.error(line)
+        for (const line of crashed.length > 0 ? crashed : twoFactor.length > 0 ? twoFactor : npmFailureAdvice(result.status)) {
+          console.error(line)
+        }
         return result.status ?? 1
       }
     }

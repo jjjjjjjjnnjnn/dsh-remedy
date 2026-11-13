@@ -513,7 +513,24 @@
         "tests/governance/package-readme-prose.test.ts",
         "docs/patches/P-0017-package-readme-prose.md"
       ]
+    },
+    {
+      "id": "S29",
+      "gate": "registry",
+      "title": "A status code that is not an answer was reported as if it were one",
+      "axes": {
+        "correctness": "windowsStatusAdvice names 3221226505 as 0xC0000409 and 3221225477 as 0xC0000005, and says the process died before answering the registry. The call site checks it before otpAdvice and npmFailureAdvice, so an HTTP-shaped reading can no longer be applied to a process that never made a request.",
+        "reproducibility": "tests/unit/publish.test.ts pins every branch without running npm: the two Windows codes produce advice, an HTTP status produces none, and a null status produces none. The measurement behind the branch is quoted from the 0.3.6 attempt: both debug logs stop after the tarball notice with no HTTP request, and the two direct npm publish calls answered exit 0.",
+        "compliance": "the advice points at the action that actually worked on 2026-11-11 rather than at a speculative fix, and it does not retry on its own: publishing is a decision the operator makes, which is the same rule the OTP path already follows.",
+        "ssot": "the fact pack carries the 0.3.6 measurement this patch relies on, the registry entry names the script and the test, and the ledger row matches the registry status.",
+        "adversarial": "the failure this replaces is advice that is confidently wrong: every branch of npmFailureAdvice assumed the registry had answered. The negative control is the old call site, where a killed process fell through to \"if npm asked for a one-time password\" — advice about a password for a process that never asked."
+      },
+      "evidence": [
+        "scripts/publish_packages.mjs",
+        "tests/unit/publish.test.ts",
+        "docs/patches/P-0018-windows-exit-code.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-13T09:10:00.000Z"
+  "updated_at": "2026-11-13T09:50:00.000Z"
 }

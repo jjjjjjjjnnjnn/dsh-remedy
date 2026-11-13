@@ -518,6 +518,30 @@ export const PATCHES: readonly PatchRecord[] = [
     ],
     failureClasses: [],
   },
+  {
+    id: 'P-0018',
+    title: 'A Windows exit code printed as a bare number sent an operator hunting the wrong cause',
+    symptom:
+      'the publish wrapper printed "npm exited 3221226505 in packages/core" and stopped. That number is Windows 0xC0000409, raised before npm spoke to the registry at all, so the operator went looking for a credentials or permissions problem that did not exist while the real answer was "run npm publish <tarball> directly"',
+    rootCause:
+      'the failure path printed result.status and then fell through to npmFailureAdvice, which only understands HTTP-shaped answers (401, 403, 404, 402, 429). A process killed by the Windows runtime has no HTTP answer, so every branch of that advice was wrong. The 0.3.6 publish is the measurement: both npm debug logs for that attempt stop right after the tarball notice with no HTTP request, and the two identical direct calls then answered exit 0',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'scripts/publish_packages.mjs',
+      'tests/unit/publish.test.ts',
+      'docs/patches/P-0018-windows-exit-code.md',
+    ],
+    guards: ['tests/unit/publish.test.ts', 'scripts/publish_packages.mjs'],
+    limits: [
+      'it names two codes, 3221226505 (0xC0000409) and 3221225477 (0xC0000005), because those are the two this machine produced; another Windows exception still prints its raw number',
+      'it does not retry the publish: the advice tells the operator to run the direct call, which is a decision about the registry rather than about npm crashing',
+      'it cannot prove the crash was the runtime rather than npm itself; what it proves is that no HTTP request was logged, which is why the advice says "before it answered the registry"',
+      'no live artifact is possible: this is advice printed by a build script',
+    ],
+    failureClasses: [],
+  },
 ]
 
 /** Look up one patch by id. */

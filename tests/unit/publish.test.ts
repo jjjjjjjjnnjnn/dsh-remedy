@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
-import { npmFailureAdvice, otpAdvice, packedManifest, publishAuthProblems, publishProblems, unpublishableDependencies } from '../../scripts/publish_packages.mjs'
+import { npmFailureAdvice, otpAdvice, packedManifest, publishAuthProblems, publishProblems, unpublishableDependencies, windowsStatusAdvice } from '../../scripts/publish_packages.mjs'
 
 const manifestOf = (path: string) => JSON.parse(readFileSync(path, 'utf8')) as { version: string }
 const version = manifestOf('packages/plugin/package.json').version
@@ -182,4 +182,30 @@ test('a failure that is not a password challenge gets no OTP advice', () => {
   assert.deepEqual(otpAdvice(1, 'npm error code E404\nnpm error 404 Not Found - PUT\n'), [])
   assert.deepEqual(otpAdvice(0, ''), [])
   assert.deepEqual(otpAdvice(null, 'npm error code EOTP\n'), [])
+})
+
+// The 0.3.6 publish: spawnSync reported 3221226505 from packages/core, both npm
+// debug logs stop after the tarball notice with no HTTP request, and the two
+// identical direct calls then answered exit 0. That number is 0xC0000409, raised
+// by the Windows runtime before npm spoke to the registry — so any advice shaped
+// like an HTTP answer was advice about the wrong cause.
+test('a Windows exception exit is named for what it is, not printed as a bare number', () => {
+  const overrun = windowsStatusAdvice(3221226505)
+  assert.ok(overrun.length > 0, '0xC0000409 must produce advice')
+  assert.match(String(overrun[0]), /0xC0000409/)
+  assert.match(String(overrun[0]), /before it answered the registry/)
+
+  const access = windowsStatusAdvice(3221225477)
+  assert.ok(access.length > 0, '0xC0000005 must produce advice')
+  assert.match(String(access[0]), /0xC0000005/)
+})
+
+test('an ordinary npm answer and a missing status get no Windows advice', () => {
+  // The negative control for the branch order: HTTP statuses must keep falling
+  // through to npmFailureAdvice, and a spawn that never started has no status at
+  // all, which must not be dressed up as an exception.
+  for (const status of [0, 1, 402, 403, 404, 429, null, undefined]) {
+    assert.deepEqual(windowsStatusAdvice(status), [], `status ${String(status)} must not take the Windows branch`)
+  }
+  assert.ok(npmFailureAdvice(404).length > 0, 'the HTTP advice must still exist for a real 404')
 })

@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+### Changed
+- The two package READMEs are now live entries in the copy channel. `gate_copy` checks their bytes, fact-pack hash, prose numbers and writer, and requires both entries; the P-0017 prose test stays as a second guard. The pages are still hand-written and still ship in the tarball, so a change to them reaches npm only with a release.
 
 ## [0.4.1] - 2026-11-13
 ### Fixed

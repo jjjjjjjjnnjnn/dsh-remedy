@@ -1,33 +1,21 @@
 # dsh-remedy AGENTS.md
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
-> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.3.8`（已发布，两包 `latest`）
-> **Stand**：R26（2026-11-13，**P-0018：Windows 退出码不再被当成 HTTP 答案**——`3221226505` 是
-> `0xC0000409`，那次尝试的两份 npm log 里没有任何 HTTP 请求；据此命名并指向直调。R25 是 P-0017
-> （先量 2331 B 里散文数字为 0，再钉住两页），R24 是 P-0016（覆盖表单源化）。**251 测试 / 6 门**)｜
-> R23（2026-11-13，**桌面 App 确认在 0.3.8 上跑 + `agent/pre-step` 拒绝语义实测**。探针
-> 在隔离 `DSH_HOME` 里跑出八条事件：`turn/end blocked`、无 step、输入被 claim 掉、退出码 1；
-> 记为 P-0015（`tested`），并把「桌面 UI 渲染 `blocked` 未测」留成 `BS-17`。**242 测试 / 6 门**)｜
-> R22（2026-11-13，**交接审计**：事实包说错 pin/上一版、HANDOFF 引用一个不存在的哈希、
-> npm 页面的包内 README 少一整条命令；新增三类判据 `facts-truth` / `handoff-truth` /
-> `cli-usage` 逐行相等，并记为 P-0014。**242 测试 / 6 门**)｜
-> R21（2026-11-12，**0.3.8 发布 + 对外文字改用本会话直写**。第二个接缝 `agent/request-error`
-> 有契约与 9 条测试；字节预算按加载路径拆；37 次 `UNSUPPORTED_REASONING_EFFORT` 从"无人命名"变成
-> 按 (step, code) 命名一次 + 纯函数 preflight；新增 `explain`；**copy 通道改用 `copy_record.mjs`，
-> 判据是"每个散文数字都在事实包里"，不再靠模型身份**）｜R17（2026-11-11，收尾 0.3.6 的对外文字与台账，重测 census 到
-> 293 turns / 393 attempts，装机验收第一次落成产物）｜R16（2026-11-11，P-0009 窗口化扫描的
-> `createdAt` 回退）｜
-> R15（P-0008 字节预算门）｜R14（P-0007 copy 通道传输）｜R13（P-0006 turn census）｜
-> R12（P-0004 scan 保真 + 脱敏形状）｜R11（P-0005 裸值 reseal）｜R10（0.3.0 被 npm 写坏，
-> 0.3.1 修）｜R9（P-0003 升 `verified`）｜R8（P-0002 升 `verified`）｜R7（0.3.0 可观测性）｜
-> R6（0.2.0 加固）｜R5（0.1.1 发布 + 陌生人验收）｜R4（npm 0.1.0 双包）｜R3（桌面 profile +
-> App 重启）｜R2（P-0001 升 `verified`）｜R1（首个补丁落地）
+> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.1`（已发布，两包 `latest`）
+> **Stand**：R34（2026-11-13，**两个 npm 页面进了 copy 通道**：P-0024 把
+> `packages/plugin/README.md` 与 `packages/core/README.md` 登记为 live 条目，`gate_copy` 的
+> `covered` 列表要求它们，`BS-13` 关闭。R32 是 0.4.1 发布（P-0021/22/23），R31 是那三个补丁，
+> R30 是 BS-17 桌面实测。**258 测试 / 6 门**)｜
+> R29（2026-11-13，0.4.0 发布：二十补丁第一次同时上线，registry 冷装验过）｜
+> R27（2026-11-13，对外页面按补丁集重写）｜R26（P-0018 Windows 退出码）｜
+> R23（P-0015 `agent/pre-step` 拒绝语义）｜R22（交接审计：facts-truth / handoff-truth / cli-usage）｜
+> R21（0.3.8 发布 + copy 通道改本会话直写）｜R17（0.3.6 收尾）｜R15…R1（P-0008…P-0001）
 > **接手先读**：`docs/HANDOFF.md` → `PROJECT_RULES.md` → `INDEX.md`
 >
-> **基线（2026-11-13）**：`pnpm run verify` = **251 tests / 6 gates**；
-> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.3.8`（latest）+
-> `dsh-remedy-core@0.3.8`。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
-> `v0.3.8`。
+> **基线（2026-11-13）**：`pnpm run verify` = **258 tests / 6 gates**；
+> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.1`（latest）+
+> `dsh-remedy-core@0.4.1`。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
+> `v0.4.1`。P-0024 已合并、未发布（下一版 0.4.2）。
 > **本目录不是 git 根**：提交在 `..`（容器），公开仓库由
 > `git subtree split --prefix=dsh-remedy` 切出。
 

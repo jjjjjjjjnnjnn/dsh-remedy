@@ -19,6 +19,12 @@ git push remedy public-remedy:main
 repository has no `dsh-triage` files and no container README. Do not `git
 filter-repo` the container; the other project must keep its own history.
 
+> **This machine's git 2.56 has no `subtree` subcommand.** Use the `commit-tree`
+> procedure in `docs/HANDOFF.md` ("仓库坐标"): take `main:dsh-remedy` as the tree,
+> commit it with `public-remedy` as the parent, force the branch, verify
+> `public-remedy^{tree}` equals `main:dsh-remedy`, then push. It produces the same
+> history shape without the subcommand.
+
 ## Repository status (created 2026-11-09)
 
 Done:
@@ -33,37 +39,38 @@ Pending (human):
 
 - Protect `main`: require the `verify` and `verify (windows, node 24)` checks
   after the first CI run names them.
-- Publish npm (below), then update the install section through the copy channel.
+- ~~Publish npm~~ done: both packages are published (currently `0.4.1`) and the
+  install section is updated through the copy channel.
 
-## First release (manual, with OTP)
+## Publishing a release
 
-The registry requires a one-time password. The code is never written to the
-repository; pass it on the command line only.
+The account is `auth-and-writes`. The token in this environment bypasses the
+one-time password (R29); a fresh `--otp <code>` is only needed if npm answers
+`EOTP`. The script packs both packages, checks the manifests, publishes core then
+plugin, and refuses to continue on a manifest mismatch:
 
 ```bash
-pnpm install
 pnpm run verify
 node scripts/gate.mjs --mutate
-pnpm -r publish --access public --no-git-checks --otp <code>
+node scripts/publish_packages.mjs            # add --otp <code> only if npm answers EOTP
+node scripts/record_publish.mjs --stamp <ISO> --retries 3
+node scripts/record_install_acceptance.mjs --version <x.y.z> --stamp <ISO>
 ```
 
-Two packages publish in order: `dsh-remedy-core` first, then `dsh-remedy`
-(which depends on the exact core version). Record the registry state as soon as
-`npm view` agrees:
-
-```bash
-node scripts/record_publish.mjs --stamp 2026-11-09T20:00:00.000Z --retries 3
-```
-
-A red `publish-*.json` is evidence that a copy had not propagated yet; do not
-edit it. Wait about five minutes and record a new stamp.
+A red `publish-*.json` is evidence that a replica had not propagated yet; do not
+edit it. Wait a few minutes and record a new stamp. Core and plugin can appear a
+few minutes apart; that is replica lag, not a failed publish.
 
 After `ok: true`:
 
-1. Update `docs/copy/facts/public-repo-facts.md` (npm published, install command),
-   regenerate every copy file with `--force`, and run `node scripts/gate_copy.mjs`.
-2. Commit, push `main`, then `git subtree split` and push again.
-3. Tag `v0.1.0` on the public repository.
+1. Update `docs/copy/facts/public-repo-facts.md` (published version, pin, tarball
+   sizes and shasums), re-register every live copy file with `--force`, and run
+   `node scripts/gate_copy.mjs`.
+2. Commit, push the public branch (the `commit-tree` procedure above), and create
+   the GitHub release from `docs/copy/release-notes/v<x.y.z>.md`; read the body
+   back with byte semantics and compare it to the file.
+3. Record the new registry snapshot and the gate pair, and update the handoff's
+   evidence index.
 
 ## Published 0.3.0 (broken); 0.3.1 superseded by 0.3.2 (2026-11-10)
 

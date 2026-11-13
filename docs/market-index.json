@@ -5,8 +5,8 @@
     "zh": "dsh-remedy 补丁集"
   },
   "description": {
-    "en": "The DSH bundle for dsh-remedy: a patch set that repairs fused tool-call JSON at the stream seam and names the refusals it will not retry. This index pins the bundle to a git commit; the same package is also on npm as dsh-remedy, whichever a market prefers.",
-    "zh": "dsh-remedy 的 DSH 插件包：在流接缝上修复粘连的工具调用 JSON，并命名它拒绝重试的那些失败类。此索引把插件钉在一个 git 提交上；同一个包也在 npm 上，市场用哪个都行。"
+    "en": "The DSH bundle for dsh-remedy: a patch set that repairs fused tool-call JSON at the stream seam and names the refusals it will not retry. This index points at the published npm artifact; the same code is also on GitHub as dsh-remedy.",
+    "zh": "dsh-remedy 的 DSH 插件包：在流接缝上修复粘连的工具调用 JSON，并命名它拒绝重试的那些失败类。此索引指向已发布的 npm 产物；同一份代码也在 GitHub 上。"
   },
   "metadata": {
     "categories": {
@@ -61,6 +61,16 @@
       },
       "versions": [
         {
+          "version": "0.4.1",
+          "publishTimestamp": 1794570356,
+          "source": {
+            "type": "npm"
+          },
+          "engines": {
+            "dsh": ">=0.2.0-rc.1 <0.3.0-0"
+          }
+        },
+        {
           "version": "0.3.8",
           "publishTimestamp": 1794505202,
           "source": {
@@ -74,7 +84,7 @@
     }
   ],
   "head": {
-    "en": "The repository currently carries twenty patches; P-0014 through P-0020 are merged, tested and unpublished, so the git head is not the published artifact and this index does not pin it.",
-    "zh": "仓库当前有二十个补丁；P-0014 到 P-0020 已合并且测试过、但尚未发布，所以 git 头不是已发布的产物，本索引不钉它。"
+    "en": "The repository currently carries twenty-four patches; P-0024 is merged, tested and unpublished, so the git head is not the published artifact and this index does not pin it.",
+    "zh": "仓库当前有二十四个补丁；P-0024 已合并、测试过但尚未发布，所以 git 头不是已发布的产物，本索引不钉它。"
   }
 }

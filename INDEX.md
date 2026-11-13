@@ -59,7 +59,7 @@
 | `data/results/install-acceptance-2026-11-11T19-30-00.000Z.json` | 0.3.6 空目录从 registry 单装 6/6（R17 首次落盘） |
 | `data/results/publish-2026-11-11T17-35-00.000Z.json` | 0.3.6 发布后两包 `latest`（`ok: true`） |
 | `docs/patches/P-0001-toolcall-fusion.md` … `P-0009-session-header-window.md` | 每个补丁的症状 / 机制 / 反证 / 边界 |
-| `docs/patches/P-0010-cli-usage-truth.md` … `P-0023-patch-doc-mechanism.md` | 同上；P-0015 是 `agent/pre-step` 拒绝语义的实测记录；P-0016 的文档在 R31 补写（P-0023 就是让「每个补丁一篇文档」变成门禁） |
+| `docs/patches/P-0010-cli-usage-truth.md` … `P-0024-package-readme-copy-channel.md` | 同上；P-0015 是 `agent/pre-step` 拒绝语义的实测记录；P-0016 的文档在 R31 补写；P-0024 把两个包内 README 收进 copy 通道 |
 | `docs/adr/0001-stream-repair-over-asar-patch.md` | 为什么在 `llm/stream` 修 |
 
 ## 公开仓库（对外）

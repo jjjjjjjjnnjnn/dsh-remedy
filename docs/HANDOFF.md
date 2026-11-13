@@ -24,7 +24,7 @@ pnpm install
 pnpm run verify                  # build → typecheck → test → gate
 node scripts/gate.mjs --mutate   # 6 门都必须红
 node packages/plugin/dist/cli.js verify   # OK 6 fixture(s)
-npm view dsh-remedy version      # 0.4.0
+npm view dsh-remedy version      # 0.4.1
 ```
 
 `git` 要注意：本目录不是 git 根。
@@ -55,6 +55,24 @@ git -C .. log --oneline -3
 
 - 容器 `main` **没有**推到 `dsh-triage` 远端（推上去会破坏那个仓库的根布局）。不要顺手推。
 - `dsh-triage/` 只是同级项目，规则以它自己的 `AGENTS.md` 为准。
+
+## 当前批次（R35 → R1）
+
+**R35（2026-11-13）· 工作区维护：把描述当前状态的文字全部对齐到 0.4.1 / 二十四补丁。**
+
+> 触发：用户要求做项目维护与文件更新，然后交接。
+
+- `AGENTS.md` 的抬头从 0.3.8 / R26 / 251 tests 改成 **0.4.1 / R34 / 258 tests**，并把 Stand 换成 R34（P-0024 / BS-13）。
+- `docs/market-index.json`：`versions[0]` 从 0.3.8 改成 **0.4.1**（`publishTimestamp` 1794570356，实测自 `npm view dsh-remedy time`），0.3.8 保留为历史条目；`head` 改成「二十四个补丁，P-0024 已合并未发布」；`description` 不再说「钉 git 提交」。`tests/governance/distribution-entry.test.ts` 的 pin 同步改成 1794570356。
+- 事实包：`24 patches are registered` / `The other 21 are tested`，并加一行「0.4.1 carries 23 patches: the 20 that 0.4.0 shipped plus P-0021 through P-0023; P-0024 is merged and unpublished」——这行同时给 CHANGELOG 的 `23` / `20` 提供数字来源。
+- 两个 README 与中文版：补 P-0024 到构建侧表，状态段改成「二十个（加 P-0024 是二十一个）」，发布状态加「P-0024 已合并、测试过、未发布」。
+- `CHANGELOG.md` 的 `[Unreleased]` 加 P-0024 段；`INDEX.md` 的补丁文档区间改到 P-0024；`docs/PUBLISH.md` 改成当前发布流程（`publish_packages.mjs`、token 绕过 2FA、`commit-tree` 代替缺失的 `subtree`）。
+- `docs/HANDOFF.md` 五分钟检查的 `npm view` 注释改成 0.4.1。
+- 事实包变了 → 全部 live copy 条目（含两个包内 README）一次性重登记；`gate_copy` OK。
+
+**实测**：`pnpm run verify` → **258 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` → **6/6 CAUGHT**；门禁证据 `gates-2026-11-13T14-00-00.000Z.json` / `gates-mutate-2026-11-13T14-05-00.000Z.json`。
+
+**仍未做**：0.4.2 发布（P-0024 随它出去）；外部渠道等维护者（imsai catalog 巡检、dsh.so 合并、#14942 / #472 / #3）。
 
 ## 当前批次（R34 → R1）
 
@@ -1515,7 +1533,9 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | `gates-2026-11-13T12-30-00.000Z.json` / `gates-mutate-2026-11-13T12-35-00.000Z.json` | 绿 | R30 的门禁证据（profile 切到 0.4.0 + BS-17 桌面实测之后），255 tests |
 | `gates-2026-11-13T12-55-00.000Z.json` / `gates-mutate-2026-11-13T13-00-00.000Z.json` | 绿 | R31 的门禁证据（P-0021/22/23 落地之后），258 tests |
 | `gates-2026-11-13T13-20-00.000Z.json` / `gates-mutate-2026-11-13T13-25-00.000Z.json` | 绿 | R32 的门禁证据（0.4.1 发布 + 对外文字重登记之后），258 tests |
-| `gates-2026-11-13T13-35-00.000Z.json` / `gates-mutate-2026-11-13T13-40-00.000Z.json` | 绿 | **当前**门禁证据：R34（P-0024 / BS-13 收口之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，258 tests |
+| `gates-2026-11-13T13-35-00.000Z.json` / `gates-mutate-2026-11-13T13-40-00.000Z.json` | 绿 | R34 的门禁证据（P-0024 / BS-13 收口之后），258 tests |
+| `gates-2026-11-13T13-50-00.000Z.json` / `gates-mutate-2026-11-13T13-55-00.000Z.json` | 绿 | R35 中间一轮（事实包计数、市场索引时间戳、全部 live 条目重登记之后），258 tests |
+| `gates-2026-11-13T14-00-00.000Z.json` / `gates-mutate-2026-11-13T14-05-00.000Z.json` | 绿 | **当前**门禁证据：R35 收尾（`repo-metadata.json` 的 release_blurb 翻到 0.4.1 并重登记之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，258 tests |
 | `gates-2026-11-13T08-10-00.000Z` / `gates-mutate-2026-11-13T08-15-00.000Z` | 绿 | 门禁证据：R23 收尾（P-0015 台账 + 事实包加段 + 对外文件重登记） |
 | `gates-2026-11-13T09-30-00.000Z` / `gates-mutate-2026-11-13T09-35-00.000Z` | 绿 | 门禁证据：R25 收尾（P-0017 台账 + 事实包加段 + 全部对外文件重登记） |
 | `gates-2026-11-13T10-15-00.000Z` / `gates-mutate-2026-11-13T10-20-00.000Z` | 绿 | 门禁证据：R26 收尾（P-0018：Windows 退出码按异常命名） |

@@ -40,35 +40,35 @@
       "name": "changelog",
       "target": "CHANGELOG.md",
       "model": "in-session",
-      "generated_at": "2026-11-13T11:42:50.126Z",
-      "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
-      "draft_sha256": "92707291d41f60d642a7ebd55fac8abdfe5fac19b72bfd5a98838c02f8e6ea2f",
-      "output_sha256": "92707291d41f60d642a7ebd55fac8abdfe5fac19b72bfd5a98838c02f8e6ea2f"
+      "generated_at": "2026-11-13T13:59:04.584Z",
+      "facts_sha256": "1ee4800eac02ef86cf769c53249250aa2902d1e8e7ec5c14c157373d1331a9c5",
+      "draft_sha256": "70bc302977b59b1a9d713db00e964f6bc63481dbcaa3b72b5ab75e17fbe4e23d",
+      "output_sha256": "70bc302977b59b1a9d713db00e964f6bc63481dbcaa3b72b5ab75e17fbe4e23d"
     },
     {
       "name": "readme",
       "target": "README.md",
       "model": "in-session",
-      "generated_at": "2026-11-13T11:42:50.223Z",
-      "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
-      "draft_sha256": "461e11288c6813f43d3aedd634b4d554fb7e0ae5ec0d4cc484af2d755c7fc553",
-      "output_sha256": "461e11288c6813f43d3aedd634b4d554fb7e0ae5ec0d4cc484af2d755c7fc553"
+      "generated_at": "2026-11-13T13:59:04.709Z",
+      "facts_sha256": "1ee4800eac02ef86cf769c53249250aa2902d1e8e7ec5c14c157373d1331a9c5",
+      "draft_sha256": "084206656db846123f22a5c78d3ca9661fa71582943968596c99b7def8469c37",
+      "output_sha256": "084206656db846123f22a5c78d3ca9661fa71582943968596c99b7def8469c37"
     },
     {
       "name": "readme-zh",
       "target": "README.zh-CN.md",
       "model": "in-session",
-      "generated_at": "2026-11-13T11:42:50.319Z",
-      "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
-      "draft_sha256": "6b993cc34894d2d9cccc808e0447cdd5b5edc3eb06546fe1edf762f602eec42e",
-      "output_sha256": "6b993cc34894d2d9cccc808e0447cdd5b5edc3eb06546fe1edf762f602eec42e"
+      "generated_at": "2026-11-13T13:59:04.821Z",
+      "facts_sha256": "1ee4800eac02ef86cf769c53249250aa2902d1e8e7ec5c14c157373d1331a9c5",
+      "draft_sha256": "dcd672b2098e0e41d9589af52081591cbe8b9ab92867845d2d92597f93c312f4",
+      "output_sha256": "dcd672b2098e0e41d9589af52081591cbe8b9ab92867845d2d92597f93c312f4"
     },
     {
       "name": "contributing",
       "target": "CONTRIBUTING.md",
       "model": "in-session",
-      "generated_at": "2026-11-13T11:42:50.396Z",
-      "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
+      "generated_at": "2026-11-13T13:59:04.916Z",
+      "facts_sha256": "1ee4800eac02ef86cf769c53249250aa2902d1e8e7ec5c14c157373d1331a9c5",
       "draft_sha256": "025ecf6c7885d2b0ca17ad186b176151044d479a656da8895b9c3ab6cc14ced6",
       "output_sha256": "025ecf6c7885d2b0ca17ad186b176151044d479a656da8895b9c3ab6cc14ced6"
     },
@@ -76,8 +76,8 @@
       "name": "security",
       "target": "SECURITY.md",
       "model": "in-session",
-      "generated_at": "2026-11-13T11:42:50.478Z",
-      "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
+      "generated_at": "2026-11-13T13:59:05.017Z",
+      "facts_sha256": "1ee4800eac02ef86cf769c53249250aa2902d1e8e7ec5c14c157373d1331a9c5",
       "draft_sha256": "9fe2a67b388d8e8699eb7c15e50657c248a092b25948cd03d3a1a9a9f30e1db8",
       "output_sha256": "9fe2a67b388d8e8699eb7c15e50657c248a092b25948cd03d3a1a9a9f30e1db8"
     },
@@ -85,62 +85,17 @@
       "name": "code-of-conduct",
       "target": "CODE_OF_CONDUCT.md",
       "model": "in-session",
-      "generated_at": "2026-11-13T11:42:50.558Z",
-      "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
+      "generated_at": "2026-11-13T13:59:05.112Z",
+      "facts_sha256": "1ee4800eac02ef86cf769c53249250aa2902d1e8e7ec5c14c157373d1331a9c5",
       "draft_sha256": "9dc6c44f8c0122a8cbcb701f87acc264f2fb21d4cbecb63f8b027b28215ca31e",
       "output_sha256": "9dc6c44f8c0122a8cbcb701f87acc264f2fb21d4cbecb63f8b027b28215ca31e"
-    },
-    {
-      "name": "metadata",
-      "target": "docs/copy/repo-metadata.json",
-      "model": "in-session",
-      "generated_at": "2026-11-13T11:42:50.641Z",
-      "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
-      "draft_sha256": "8232be41f0cf45b18c0701cfc7edb444f6896721043478461eeba42893a274d6",
-      "output_sha256": "8232be41f0cf45b18c0701cfc7edb444f6896721043478461eeba42893a274d6"
-    },
-    {
-      "name": "templates:.github/ISSUE_TEMPLATE/bug_report.yml",
-      "target": ".github/ISSUE_TEMPLATE/bug_report.yml",
-      "model": "in-session",
-      "generated_at": "2026-11-13T11:43:03.482Z",
-      "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
-      "draft_sha256": "327e0118a860a58419e8ea2445c65d53d145352d561b00f2cda5a12e872a6dd6",
-      "output_sha256": "f56615e214bc297cf4ba581a6b5094235bd236634148c596e9581aeb405272b8"
-    },
-    {
-      "name": "templates:.github/ISSUE_TEMPLATE/feature_request.yml",
-      "target": ".github/ISSUE_TEMPLATE/feature_request.yml",
-      "model": "in-session",
-      "generated_at": "2026-11-13T11:43:03.482Z",
-      "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
-      "draft_sha256": "327e0118a860a58419e8ea2445c65d53d145352d561b00f2cda5a12e872a6dd6",
-      "output_sha256": "95e334680ad5a7a603abc0f005a5fb37a263d4a932e46c24aa591f7543c1bfcf"
-    },
-    {
-      "name": "templates:.github/ISSUE_TEMPLATE/config.yml",
-      "target": ".github/ISSUE_TEMPLATE/config.yml",
-      "model": "in-session",
-      "generated_at": "2026-11-13T11:43:03.482Z",
-      "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
-      "draft_sha256": "327e0118a860a58419e8ea2445c65d53d145352d561b00f2cda5a12e872a6dd6",
-      "output_sha256": "e354d0e18d416509296e613235167a334ca2c4c8b83ece393b9eea05066831b2"
-    },
-    {
-      "name": "templates:.github/PULL_REQUEST_TEMPLATE.md",
-      "target": ".github/PULL_REQUEST_TEMPLATE.md",
-      "model": "in-session",
-      "generated_at": "2026-11-13T11:43:03.482Z",
-      "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
-      "draft_sha256": "327e0118a860a58419e8ea2445c65d53d145352d561b00f2cda5a12e872a6dd6",
-      "output_sha256": "f24428fb646baf4ad6db682e31289ed3567865e82604bb730c8c0b8a1c24f94d"
     },
     {
       "name": "release-notes",
       "target": "docs/copy/release-notes/v0.4.1.md",
       "model": "in-session",
-      "generated_at": "2026-11-13T11:44:11.127Z",
-      "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
+      "generated_at": "2026-11-13T13:59:05.275Z",
+      "facts_sha256": "1ee4800eac02ef86cf769c53249250aa2902d1e8e7ec5c14c157373d1331a9c5",
       "draft_sha256": "297fca838bf69cf868afe65c9909159397c580c2607a63e083f28c0f67b9e9f9",
       "output_sha256": "297fca838bf69cf868afe65c9909159397c580c2607a63e083f28c0f67b9e9f9"
     },
@@ -148,8 +103,8 @@
       "name": "package-readme-plugin",
       "target": "packages/plugin/README.md",
       "model": "in-session",
-      "generated_at": "2026-11-13T13:42:11.374Z",
-      "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
+      "generated_at": "2026-11-13T13:59:05.381Z",
+      "facts_sha256": "1ee4800eac02ef86cf769c53249250aa2902d1e8e7ec5c14c157373d1331a9c5",
       "draft_sha256": "d5a0ce5c3e8cbd4c33abe6457b51ae8fb6514fdea1aa1a2f1d3d49ed52f446c5",
       "output_sha256": "d5a0ce5c3e8cbd4c33abe6457b51ae8fb6514fdea1aa1a2f1d3d49ed52f446c5"
     },
@@ -157,11 +112,56 @@
       "name": "package-readme-core",
       "target": "packages/core/README.md",
       "model": "in-session",
-      "generated_at": "2026-11-13T13:42:11.476Z",
-      "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
+      "generated_at": "2026-11-13T13:59:05.486Z",
+      "facts_sha256": "1ee4800eac02ef86cf769c53249250aa2902d1e8e7ec5c14c157373d1331a9c5",
       "draft_sha256": "81cd4042a4d7c2158fbae26171b0228038181c8ef070524d53199c537b530392",
       "output_sha256": "81cd4042a4d7c2158fbae26171b0228038181c8ef070524d53199c537b530392"
+    },
+    {
+      "name": "templates:.github/ISSUE_TEMPLATE/bug_report.yml",
+      "target": ".github/ISSUE_TEMPLATE/bug_report.yml",
+      "model": "in-session",
+      "generated_at": "2026-11-13T13:59:05.600Z",
+      "facts_sha256": "1ee4800eac02ef86cf769c53249250aa2902d1e8e7ec5c14c157373d1331a9c5",
+      "draft_sha256": "327e0118a860a58419e8ea2445c65d53d145352d561b00f2cda5a12e872a6dd6",
+      "output_sha256": "f56615e214bc297cf4ba581a6b5094235bd236634148c596e9581aeb405272b8"
+    },
+    {
+      "name": "templates:.github/ISSUE_TEMPLATE/feature_request.yml",
+      "target": ".github/ISSUE_TEMPLATE/feature_request.yml",
+      "model": "in-session",
+      "generated_at": "2026-11-13T13:59:05.600Z",
+      "facts_sha256": "1ee4800eac02ef86cf769c53249250aa2902d1e8e7ec5c14c157373d1331a9c5",
+      "draft_sha256": "327e0118a860a58419e8ea2445c65d53d145352d561b00f2cda5a12e872a6dd6",
+      "output_sha256": "95e334680ad5a7a603abc0f005a5fb37a263d4a932e46c24aa591f7543c1bfcf"
+    },
+    {
+      "name": "templates:.github/ISSUE_TEMPLATE/config.yml",
+      "target": ".github/ISSUE_TEMPLATE/config.yml",
+      "model": "in-session",
+      "generated_at": "2026-11-13T13:59:05.600Z",
+      "facts_sha256": "1ee4800eac02ef86cf769c53249250aa2902d1e8e7ec5c14c157373d1331a9c5",
+      "draft_sha256": "327e0118a860a58419e8ea2445c65d53d145352d561b00f2cda5a12e872a6dd6",
+      "output_sha256": "e354d0e18d416509296e613235167a334ca2c4c8b83ece393b9eea05066831b2"
+    },
+    {
+      "name": "templates:.github/PULL_REQUEST_TEMPLATE.md",
+      "target": ".github/PULL_REQUEST_TEMPLATE.md",
+      "model": "in-session",
+      "generated_at": "2026-11-13T13:59:05.600Z",
+      "facts_sha256": "1ee4800eac02ef86cf769c53249250aa2902d1e8e7ec5c14c157373d1331a9c5",
+      "draft_sha256": "327e0118a860a58419e8ea2445c65d53d145352d561b00f2cda5a12e872a6dd6",
+      "output_sha256": "f24428fb646baf4ad6db682e31289ed3567865e82604bb730c8c0b8a1c24f94d"
+    },
+    {
+      "name": "metadata",
+      "target": "docs/copy/repo-metadata.json",
+      "model": "in-session",
+      "generated_at": "2026-11-13T14:01:37.271Z",
+      "facts_sha256": "1ee4800eac02ef86cf769c53249250aa2902d1e8e7ec5c14c157373d1331a9c5",
+      "draft_sha256": "ed5acdf61080255aadcdf3999aed94bb459b2c23a7219284ee2ed721cb5d0cd5",
+      "output_sha256": "ed5acdf61080255aadcdf3999aed94bb459b2c23a7219284ee2ed721cb5d0cd5"
     }
   ],
-  "updated_at": "2026-11-13T13:42:11.479Z"
+  "updated_at": "2026-11-13T14:01:37.275Z"
 }

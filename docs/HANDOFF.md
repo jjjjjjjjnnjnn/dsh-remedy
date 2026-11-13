@@ -109,7 +109,16 @@ git -C .. log --oneline -3
 快照 `patch-registry-2026-11-13T20-35-00.000Z.json`（sha256 `0fdef2c7…`）；
 门禁证据 `gates-2026-11-13T20-45-00.000Z.json` / `gates-mutate-2026-11-13T20-50-00.000Z.json`。
 
-**仍未做**：两个 profile 切到 0.4.3 + 重启桌面 App（App 没在运行）；`P-0027`（BS-18）；外部渠道等人工。
+**F. 两个 profile 也切到 0.4.3（R38 收尾）**
+
+- `.tmp/pack043/` 的两个 tarball 是从 registry 用 `npm pack dsh-remedy@0.4.3` 拉回来的那一份，
+  sha1/sha512 与 `dist.shasum` / `dist.integrity` 一致（plugin `f6862043…` / core `6db798fb…`）。
+- 用 App 自带的 pnpm 11.28.5 在两个 profile 各装一次：desktop 与 remedy-live 的 `node_modules`
+  两包都报 **0.4.3**、plugin 的 pin 也是 `0.4.3`，两边 `dist/cli.js verify` 都回 `OK 6 fixture(s)`；
+  换装脚本 `.tmp/switch-profiles-043.mjs`，备份后缀 `before-043`。
+- **桌面 App 没在运行**，所以「重启加载」这一步没做；它下次启动会加载 DSH **0.2.2-rc.3** 与本插件 0.4.3。
+
+**仍未做**：重启桌面 App（App 没在运行，只有人能点）；`P-0027`（BS-18）；外部渠道等人工。
 
 ## 当前批次（R37 → R1）
 

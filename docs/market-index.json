@@ -74,7 +74,7 @@
     }
   ],
   "head": {
-    "en": "The repository currently carries nineteen patches; P-0014 through P-0019 are merged, tested and unpublished, so the git head is not the published artifact and this index does not pin it.",
-    "zh": "仓库当前有十九个补丁；P-0014 到 P-0019 已合并且测试过、但尚未发布，所以 git 头不是已发布的产物，本索引不钉它。"
+    "en": "The repository currently carries twenty patches; P-0014 through P-0020 are merged, tested and unpublished, so the git head is not the published artifact and this index does not pin it.",
+    "zh": "仓库当前有二十个补丁；P-0014 到 P-0020 已合并且测试过、但尚未发布，所以 git 头不是已发布的产物，本索引不钉它。"
   }
 }

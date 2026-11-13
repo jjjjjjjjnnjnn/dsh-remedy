@@ -1,21 +1,20 @@
 # dsh-remedy AGENTS.md
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
-> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.1`（已发布，两包 `latest`）
-> **Stand**：R34（2026-11-13，**两个 npm 页面进了 copy 通道**：P-0024 把
-> `packages/plugin/README.md` 与 `packages/core/README.md` 登记为 live 条目，`gate_copy` 的
-> `covered` 列表要求它们，`BS-13` 关闭。R32 是 0.4.1 发布（P-0021/22/23），R31 是那三个补丁，
-> R30 是 BS-17 桌面实测。**258 测试 / 6 门**)｜
-> R29（2026-11-13，0.4.0 发布：二十补丁第一次同时上线，registry 冷装验过）｜
+> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.2`（已发布，两包 `latest`）
+> **Stand**：R37（2026-11-13，**0.4.2 发布**：二十六补丁一起上线，含 P-0024 / P-0025 / P-0026；
+> R36 是那两条「把没测当成发现」与「发布流程两个家」的补丁，R35 是对齐 0.4.1 的文字，
+> R34 是两个 npm 页面进 copy 通道。**264 测试 / 6 门**)｜
+> R32（2026-11-13，0.4.1 发布：P-0021/22/23）｜R29（2026-11-13，0.4.0 发布：二十补丁第一次同时上线）｜
 > R27（2026-11-13，对外页面按补丁集重写）｜R26（P-0018 Windows 退出码）｜
 > R23（P-0015 `agent/pre-step` 拒绝语义）｜R22（交接审计：facts-truth / handoff-truth / cli-usage）｜
 > R21（0.3.8 发布 + copy 通道改本会话直写）｜R17（0.3.6 收尾）｜R15…R1（P-0008…P-0001）
 > **接手先读**：`docs/HANDOFF.md` → `PROJECT_RULES.md` → `INDEX.md`
 >
-> **基线（2026-11-13）**：`pnpm run verify` = **258 tests / 6 gates**；
-> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.1`（latest）+
-> `dsh-remedy-core@0.4.1`。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
-> `v0.4.1`。P-0024 已合并、未发布（下一版 0.4.2）。
+> **基线（2026-11-13）**：`pnpm run verify` = **264 tests / 6 gates**；
+> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.2`（latest）+
+> `dsh-remedy-core@0.4.2`（latest）。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
+> `v0.4.2`。二十六补丁全部随 0.4.2 出去（3 `verified` + 23 `tested`）。
 > **本目录不是 git 根**：提交在 `..`（容器），公开仓库由
 > `git subtree split --prefix=dsh-remedy` 切出。
 

@@ -409,6 +409,38 @@
         "tests/governance/package-readme-prose.test.ts",
         "tests/unit/cli-usage.test.ts"
       ]
+    },
+    {
+      "id": "P-0025",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.2",
+      "evidence": [
+        "packages/plugin/src/explain-command.ts",
+        "tests/e2e/explain.test.ts",
+        "packages/plugin/README.md"
+      ],
+      "guards": [
+        "tests/e2e/explain.test.ts",
+        "packages/plugin/src/explain-command.ts",
+        "tests/governance/coverage-single-source.test.ts"
+      ]
+    },
+    {
+      "id": "P-0026",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.2",
+      "evidence": [
+        "docs/HANDOFF.md",
+        "docs/PUBLISH.md",
+        "scripts/publish_packages.mjs",
+        "tests/governance/release-procedure.test.ts"
+      ],
+      "guards": [
+        "tests/governance/release-procedure.test.ts",
+        "tests/governance/handoff-truth.test.ts"
+      ]
     }
   ]
 }

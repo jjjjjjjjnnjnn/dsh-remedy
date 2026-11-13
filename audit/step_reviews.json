@@ -634,7 +634,41 @@
         "packages/core/README.md",
         "scripts/gate_copy.mjs"
       ]
+    },
+    {
+      "id": "S36",
+      "gate": "copy",
+      "title": "A command that answers \"is it on here\" must not answer \"off\" when it was never asked",
+      "axes": {
+        "correctness": "Row.enabled became readonly string[] | null, where null means no profile was read. The cell prints unknown for null, (no) only for a read profile that switches every coverer off, and the coverer list otherwise. uncovered is incremented only when config !== null, so an unread profile can no longer produce exit 1. Measured before the fix: --sessions alone printed (no) and exited 1; after: unknown and exit 0, while repair:false still exits 1.",
+        "reproducibility": "tests/e2e/explain.test.ts grew three tests written before the fix; the first was red against the built CLI and the other two were already green, which is what keeps the finding path from being deleted rather than fixed. The session fixture is generated inside the test (one turn/end with MALFORMED_RESPONSE), so no host state is required.",
+        "compliance": "The package README, which npm renders, claimed the old semantics; it is a live copy entry, so the correction goes through copy_record and gate_copy rather than a hand edit. The patch is recorded tested, not verified, because the CLI has no resident seam to witness it. No byte cap was moved: the CLI half settled at 41362 of 42000 after the comments were condensed twice.",
+        "ssot": "The three-state vocabulary now lives in one place (the Row type and the printer) and the exit code uses EXIT_FINDING rather than a literal. The registry entry, the ledger row, the patch doc and the fact pack all name P-0025, and the doc quotes the same measured output the test asserts.",
+        "adversarial": "The adversary is the shape this project keeps finding: an unknown rendered as a value and then promoted into a finding. The middle test deliberately fails if the counting is removed, so the fix cannot be \"make the exit code 0 by measuring nothing\"."
+      },
+      "evidence": [
+        "docs/patches/P-0025-explain-unknown-profile.md",
+        "packages/plugin/src/explain-command.ts",
+        "tests/e2e/explain.test.ts"
+      ]
+    },
+    {
+      "id": "S37",
+      "gate": "registry",
+      "title": "A procedure with two homes rots in the one nobody reads, and that was the one the instructions pointed at",
+      "axes": {
+        "correctness": "docs/HANDOFF.md no longer restates the publish procedure: it points at docs/PUBLISH.md, and the boundary section no longer cites a .tmp/ tarball or a latest the packages do not ship. The three rules that enforce it were written first and all three failed against the recorded text.",
+        "reproducibility": "release-procedure.test.ts derives the supported flag set from scripts/publish_packages.mjs itself (process.argv.includes plus the flag helper) and pins it to --dry-run and --otp, so adding a flag to the script without naming it fails. Each rule carries an injected negative control in the same file; a rule that stops matching fails instead of passing quietly.",
+        "compliance": "The change edits documentation and adds one governance test; no emitted module changed, so the byte caps were not touched and the size gate is unchanged. The ledger, the registry entry and the patch doc were updated in the same round, and gate_registry now requires docs/patches/P-0026-*.md like every other patch.",
+        "ssot": "There is now one home for the release procedure. HANDOFF keeps the prohibition sentence (never put OTP, tokens or unredacted sessions in the repository) because that is a rule, not a procedure. The boundary section states versions the fact pack and the manifests also state, and the test compares its latest claim to the package version.",
+        "adversarial": "The adversary is the second copy that survived because handoff-truth only read two sections. The boundary rule refuses gitignored scratch paths specifically because a fresh clone cannot verify them, which is how that section kept saying 0.3.5 for four releases."
+      },
+      "evidence": [
+        "docs/patches/P-0026-release-procedure-single-source.md",
+        "docs/HANDOFF.md",
+        "tests/governance/release-procedure.test.ts"
+      ]
     }
   ],
-  "updated_at": "2026-11-13T11:20:00.000Z"
+  "updated_at": "2026-11-13T14:40:00.000Z"
 }

@@ -19,13 +19,15 @@
  * whether that patch is on here. It never invents a number: every count comes
  * from the scan, and every "on here" comes from the profile file.
  *
- * Exit codes: 0 when nothing is uncovered that this profile *hits*, 1 when the
- * scan hit a class that no enabled patch covers, 3 when an input is unreadable.
+ * Exit codes: 0 when no class this host hits is covered-and-switched-off in a
+ * profile that was read, 1 when one is, 3 when an input is unreadable. With no
+ * `--profile-file` nothing was measured, so `enabled here` reads `unknown` and
+ * no class can be a finding (P-0025).
  */
 
 import { existsSync, readFileSync } from 'node:fs'
 import process from 'node:process'
-import { EXIT_OK, EXIT_UNAVAILABLE, flagString, type Args } from './cli-args.js'
+import { EXIT_FINDING, EXIT_OK, EXIT_UNAVAILABLE, flagString, type Args } from './cli-args.js'
 import { redactReport, scanSessions, type ScanTurnCensus } from './session-scan.js'
 import { decompressSessionLog } from './session-log.js'
 import { readdirSync, statSync } from 'node:fs'
@@ -121,7 +123,11 @@ interface Row {
   readonly failure: string
   readonly count: number
   readonly coveredBy: readonly string[]
-  readonly enabled: readonly string[]
+  /**
+   * Patches switched on in the profile that was read, or `null` when none was
+   * read (P-0025: on / off / unmeasured are three states, not two).
+   */
+  readonly enabled: readonly string[] | null
   readonly byDesign?: string
 }
 
@@ -133,7 +139,7 @@ export function explainRows(census: ScanTurnCensus, errorCodes: Readonly<Record<
       failure,
       count,
       coveredBy: covering,
-      enabled: covering.filter((patch) => isPatchOn(patch, config)),
+      enabled: config === null ? null : covering.filter((patch) => isPatchOn(patch, config)),
       ...(BY_DESIGN[failure] === undefined ? {} : { byDesign: BY_DESIGN[failure] }),
     })
   }
@@ -192,14 +198,23 @@ export function cmdExplain(args: Args): number {
   let uncovered = 0
   for (const row of rows) {
     const covering = row.coveredBy.length === 0 ? (row.byDesign === undefined ? '(none)' : 'by design') : row.coveredBy.join(',')
-    const enabled = row.coveredBy.length === 0 ? (row.byDesign === undefined ? '(none)' : 'no (by design)') : row.enabled.length === 0 ? '(no)' : row.enabled.join(',')
+    // `unknown` is a third state, not a synonym for "(no)": no profile was read,
+    // so "off" would answer a question the command never asked (P-0025).
+    const enabled =
+      row.coveredBy.length === 0
+        ? (row.byDesign === undefined ? '(none)' : 'no (by design)')
+        : row.enabled === null
+          ? 'unknown'
+          : row.enabled.length === 0
+            ? '(no)'
+            : row.enabled.join(',')
     process.stdout.write(
       `${row.failure.padEnd(23)}  ${String(row.count).padStart(5)}  ${covering.padEnd(17)}  ${enabled}\n`,
     )
-    // A class this host hits, that a patch covers, but that is switched off here
-    // is the one thing worth a nonzero exit: the plugin is installed and not doing
-    // the job it exists for.
-    if (row.coveredBy.length > 0 && row.enabled.length === 0) uncovered += 1
+    // A class this host hits, covered by a patch, switched off in a profile that
+    // was actually read, is the one thing worth a nonzero exit. An unread profile
+    // cannot support that claim (P-0025).
+    if (config !== null && row.coveredBy.length > 0 && row.enabled !== null && row.enabled.length === 0) uncovered += 1
   }
 
   if (config === null) {
@@ -213,5 +228,5 @@ export function cmdExplain(args: Args): number {
   for (const row of rows) {
     if (row.byDesign !== undefined) process.stdout.write(`by design: ${row.failure} — ${row.byDesign}\n`)
   }
-  return uncovered === 0 ? EXIT_OK : 1
+  return uncovered === 0 ? EXIT_OK : EXIT_FINDING
 }

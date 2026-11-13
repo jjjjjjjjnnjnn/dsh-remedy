@@ -3,9 +3,17 @@
 All notable changes to this project are documented here.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
-## [Unreleased]
+## [0.4.2] - 2026-11-13
+### Fixed
+- `dsh-remedy explain` no longer reports an unread profile as a finding. With `--sessions` and no `--profile-file` it printed `(no)` in the "enabled here" column for every covered class and exited `1`, while the same screen said `enabled-here is unknown`; the column now has three states (the coverers, `(no)` for a profile that switches them off, and `unknown` when no profile was named) and only a profile that was actually read can make the command exit `1`. The package README, which npm renders, described the old semantics and is corrected through the copy channel.
+- The release procedure now has one home. `docs/HANDOFF.md` still taught the pnpm filter publish path and an OTP requirement, and its boundary section described the profiles and the registry latest three releases out of date; the handoff now points at `docs/PUBLISH.md` and a governance test refuses the retired commands, any flag `scripts/publish_packages.mjs` does not read, and a boundary statement that cites a gitignored `.tmp/` path or a `latest` the packages do not ship.
+
 ### Changed
 - The two package READMEs are now live entries in the copy channel. `gate_copy` checks their bytes, fact-pack hash, prose numbers and writer, and requires both entries; the P-0017 prose test stays as a second guard. The pages are still hand-written and still ship in the tarball, so a change to them reaches npm only with a release.
+
+### Notes
+- This release carries 26 patches: the 23 that 0.4.1 shipped plus P-0024, P-0025 and P-0026.
+- All three are `tested`, not `verified`: two are build-side and one changes text a command prints, so no resident seam can witness them.
 
 ## [0.4.1] - 2026-11-13
 ### Fixed

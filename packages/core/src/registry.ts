@@ -698,6 +698,62 @@ export const PATCHES: readonly PatchRecord[] = [
     ],
     failureClasses: [],
   },
+  {
+    id: 'P-0025',
+    title: 'An unread profile was reported as a finding',
+    symptom:
+      '`dsh-remedy explain --sessions <dir>` printed `(no)` in the "enabled here" column for every covered class and exited 1, while the same output ended with `enabled-here is unknown: pass --profile-file`. Measured on this host: `MALFORMED_RESPONSE 47 P-0001,P-0002,P-0003,P-0005,P-0011 (no)` and exit 1, with no profile argument anywhere; the same command with the desktop profile exits 0',
+    rootCause:
+      '`enabled` had two states where the domain has three. `isPatchOn` answered false whenever the config was null, so "nobody read a profile" became "every coverer is switched off", the cell printed the same `(no)` a measured profile prints, and `uncovered` counted it, turning the exit code into a finding. The status vocabulary of this project already separates unmeasured from quiet; this command collapsed them again',
+    surface: 'cli',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'packages/plugin/src/explain-command.ts',
+      'tests/e2e/explain.test.ts',
+      'packages/plugin/README.md',
+    ],
+    guards: [
+      'tests/e2e/explain.test.ts',
+      'packages/plugin/src/explain-command.ts',
+      'tests/governance/coverage-single-source.test.ts',
+    ],
+    limits: [
+      'the three-state fix covers "no profile was read"; a profile that is read but declares no switch key still falls back to the command default, which is a different question and stays unmeasured',
+      'exit 0 without a profile means "nothing was found", not "nothing is wrong": a script that wants the old strictness has to pass --profile-file',
+      'the printed table row is what was tested, not the width of the columns; a longer patch id would still shift the layout',
+      'no live artifact is possible: this is the CLI answering from the registry and an optional file, not a resident seam',
+    ],
+    failureClasses: [],
+  },
+  {
+    id: 'P-0026',
+    title: 'The release procedure had two homes, and the older one was retired',
+    symptom:
+      'docs/PUBLISH.md described the procedure this repository uses (scripts/publish_packages.mjs, a token that bypasses the one-time password, commit-tree instead of the missing subtree subcommand), while docs/HANDOFF.md still told a successor to run the pnpm filter publish path and to expect OTP, and its boundary section said the two profiles pointed at a 0.3.5 tarball and that npm latest was 0.3.5',
+    rootCause:
+      'handoff-truth.test.ts checks the status table and "第一件事"; the release procedure and the boundary section sit after the evidence index, so they were outside the live contract while still being the sections a successor acts on. A procedure with two homes rots in the one nobody reads, and the stale one was the one the instructions pointed at',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'docs/HANDOFF.md',
+      'docs/PUBLISH.md',
+      'scripts/publish_packages.mjs',
+      'tests/governance/release-procedure.test.ts',
+    ],
+    guards: [
+      'tests/governance/release-procedure.test.ts',
+      'tests/governance/handoff-truth.test.ts',
+    ],
+    limits: [
+      'the test pins the shape of the sections, not the truth of every step: a PUBLISH.md step can still be wrong while the flags it names are real',
+      'it forbids the retired commands by pattern, so a differently worded wrong command is not caught',
+      'the boundary section rule looks for .tmp/ paths and a `latest` version; a stale statement phrased without either is still unread',
+      'no live artifact is possible: this is documentation and a governance test',
+    ],
+    failureClasses: [],
+  },
 ]
 
 /** Look up one patch by id. */

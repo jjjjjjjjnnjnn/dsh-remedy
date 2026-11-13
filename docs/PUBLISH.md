@@ -39,7 +39,7 @@ Pending (human):
 
 - Protect `main`: require the `verify` and `verify (windows, node 24)` checks
   after the first CI run names them.
-- ~~Publish npm~~ done: both packages are published (currently `0.4.1`) and the
+- ~~Publish npm~~ done: both packages are published (currently `0.4.2`) and the
   install section is updated through the copy channel.
 
 ## Publishing a release
@@ -60,6 +60,16 @@ node scripts/record_install_acceptance.mjs --version <x.y.z> --stamp <ISO>
 A red `publish-*.json` is evidence that a replica had not propagated yet; do not
 edit it. Wait a few minutes and record a new stamp. Core and plugin can appear a
 few minutes apart; that is replica lag, not a failed publish.
+
+Two answers measured on the 0.4.2 publish (2026-11-13) and worth recognising:
+
+- `npm notice … Your package is being processed and may take a few minutes to
+  become available`, then `GET /<name>/<version>` answering **404 for about four
+  minutes** before both versions read 200. That is the replica lag above, not a
+  failure — do not republish.
+- Publishing a version that already exists answers `409 Conflict - Cannot publish
+  over previously staged version "<x>"`. It is not a credentials answer; the
+  version is already on the registry.
 
 After `ok: true`:
 

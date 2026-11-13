@@ -55,8 +55,11 @@ dropped, `--max-files` caps the walk. It also prints the turn census and the
 error codes it counted. `repair` reads stdin when no file is given, and a `.json`
 fixture through its `arguments` field. `explain` prints, per failure class this
 machine actually hit, how often, which patch covers it, and whether that patch is
-switched on in the profile named by `--profile-file`; it exits `1` when a class
-the host hits is covered by a patch that is switched off here.
+switched on in the profile named by `--profile-file`. Three answers are possible
+in that last column: the coverers, `(no)` for a profile that switches them off,
+and `unknown` when no profile was named — an unread profile is not a finding, so
+`explain` exits `0` in that case and `1` only when a profile it read switches
+every coverer of a class the host hits off.
 
 Exit codes: `0` ok · `1` finding · `2` usage · `3` unavailable.
 

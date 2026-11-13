@@ -1,7 +1,7 @@
 {
   "description": "Resident repair layer for DeepSeek Harness: splits glued tool-call JSON at proven boundaries, re-throws what it cannot prove, and names what it will not fix.",
-  "plugin_description": "DeepSeek Harness plugin that intercepts MALFORMED_RESPONSE streams, splits fused tool-call arguments, re-throws unprovable buffers, and names the deterministic refusals it does not retry.",
-  "core_description": "Pure tool-call splitting and repair engine for DeepSeek Harness. Nothing unproven is ever emitted; a failure it cannot split is re-thrown unchanged.",
+  "plugin_description": "DeepSeek Harness patch set that intercepts MALFORMED_RESPONSE streams, splits fused tool-call arguments, re-throws unprovable buffers, and names the deterministic refusals it does not retry.",
+  "core_description": "Pure repair and redaction engine for the dsh-remedy patch set. Nothing unproven is ever emitted; a failure it cannot split is re-thrown unchanged.",
   "topics": [
     "deepseek-harness",
     "tool-call-fusion",

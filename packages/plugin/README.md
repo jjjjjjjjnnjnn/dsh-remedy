@@ -1,7 +1,16 @@
 # dsh-remedy (plugin)
 
-The resident half. It mounts at `llm/stream`, repairs a proven fusion, and says
-nothing when there is nothing to repair.
+The resident half of the patch set. It mounts at `llm/stream` and
+`agent/request-error`, repairs a proven fusion, names the refusals it will not
+retry, and says nothing when there is nothing to repair.
+
+Installing this package also installs `dsh-remedy-core`: the plugin pins the
+exact version of that engine, so one install resolves both. The split is
+deliberate rather than packaging noise — the engine does no I/O and takes no
+host, so it can be embedded and tested on its own, while this package owns the
+seam, the configuration and the command line. Because the pin is exact, the two
+versions always ship together; a version skew is refused before anything is
+published.
 
 ## Mount
 

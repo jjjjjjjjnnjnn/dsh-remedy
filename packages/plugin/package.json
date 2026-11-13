@@ -1,7 +1,7 @@
 {
   "name": "dsh-remedy",
   "version": "0.3.8",
-  "description": "DeepSeek Harness plugin that intercepts MALFORMED_RESPONSE streams, splits fused tool-call arguments, re-throws unprovable buffers, and names the deterministic refusals it does not retry.",
+  "description": "DeepSeek Harness patch set that intercepts MALFORMED_RESPONSE streams, splits fused tool-call arguments, re-throws unprovable buffers, and names the deterministic refusals it does not retry.",
   "type": "module",
   "bin": {
     "dsh-remedy": "./dist/cli.js",

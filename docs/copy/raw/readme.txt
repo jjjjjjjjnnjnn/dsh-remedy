@@ -8,7 +8,7 @@
 
 [中文说明](README.zh-CN.md)
 
-dsh-remedy is a resident repair layer for DeepSeek Harness (DSH). It mounts on `llm/stream`, splits tool-call argument text that a relay glued into one index, and re-throws the original failure whenever it cannot prove the split. It also names the failure classes it refuses to repair, so a dead turn comes with a line explaining it instead of silence.
+dsh-remedy is a patch set for DeepSeek Harness (DSH) — eighteen defects, each registered with the seam it touches, the symptom it removes, the mechanism that was measured, and the limits it does not cross. Two of those seams are resident (`llm/stream` and `agent/request-error`); the rest are the CLI, the build side, and one seam that has been measured but deliberately not mounted.
 
 ## What it fixes
 
@@ -27,6 +27,20 @@ Two of those classes needed different treatment, and both are now visible:
 
 - `MALFORMED_RESPONSE` is a fusion, so it is repaired when the split can be proven.
 - `UNSUPPORTED_REASONING_EFFORT` is a deterministic refusal: a profile asked for a level the adapter does not offer (`provider "opendesign" model "deepseek-v4.1-flash-eco" does not support reasoning effort "xhigh"`). Retrying it spends a request to learn the same answer twice, so the plugin names it once and refuses to touch it.
+
+## The patch set, by seam
+
+The registry is the single source: `packages/core/src/registry.ts` for the claims, `dsh-remedy status` to print it, and `dsh-remedy explain` to answer which of them cover a failure class your machine actually hits.
+
+| seam | patches | what each one settles |
+|---|---|---|
+| `llm/stream` (resident) | P-0001, P-0002, P-0003, P-0005 | split a proven fusion; a rescue must be provable, attributable and atomic; a refusal must be observable; reseal a bare member value or refuse it |
+| `agent/request-error` (resident) | P-0011, P-0013 | the contract for who owns the decision, with a bounded retry budget; name the deterministic refusals instead of retrying them |
+| CLI | P-0004, P-0006, P-0009, P-0010, P-0016 | scan fidelity and redaction shapes; the turn census; a session header is dated by `createdAt`; the usage text must match the binary; coverage is declared by the patch, not restated by the command |
+| build side | P-0007, P-0008, P-0012, P-0014, P-0017, P-0018 | a copy channel that can name its failures; a byte budget a script checks; one cap per load path; the project's own description must be true; the two npm pages; a Windows exit code is not a registry answer |
+| measured, not mounted | P-0015 | what a rejected `agent/pre-step` decision does, so a later patch can use that seam on measured ground |
+
+Three patches are `verified`: a real host ran them and left a `data/results/live-*` artifact. The other fifteen are `tested`: unit tests, a negative control and a measured fixture, scan or corpus, but nothing a resident journal can witness. The status section below names which is which.
 
 ## Install
 
@@ -162,7 +176,7 @@ Without `--sessions` it prints no counts rather than a row of zeros, and without
 | Journal migration | Existing journal lines are not migrated; in a mixed journal `status --json` reports the shape of the last line. |
 | Custom index tracking | An adapter that closes blocks itself and keeps its own index bookkeeping is still unmeasured (`BS-11`). |
 | Request retries | Off by default. `SERVER`, `TRANSPORT` and `TIMEOUT` are already retried upstream, so this plugin only retries `MALFORMED_RESPONSE`, and only inside a budget you set. |
-| Reasoning effort | The plugin can tell you a configured effort will be refused, but it never changes it for you. `agent/pre-step` is deliberately not mounted: nobody has measured what a user sees when a plugin rejects a step. |
+| Reasoning effort | The plugin can tell you a configured effort will be refused, but it never changes it for you. `agent/pre-step` is **not** mounted, and that is now a measured decision: P-0015 records what a rejection does — the turn closes as `blocked` with no step opened, the claimed input is discarded, and the CLI exits `1` — so a patch may use the seam, but it must rewrite the message with `{kind:'enter'}` rather than refuse. The desktop rendering of `blocked` is still unmeasured (`BS-17`). |
 | Mid-stream withdrawal | Measured unreachable on this host: none of the persisted attempt streams carried a provable fusion inside a `block-end`, which is what `rolled-back` requires (`BS-14`). |
 
 ## Verify it yourself
@@ -181,11 +195,10 @@ The whole `MALFORMED_RESPONSE` corpus on one machine was replayed through the bu
 
 ## Status
 
-P-0001, P-0002 and P-0003 are `verified` on a real host: P-0001 on a headless profile and on the desktop app, P-0002 on a 2026-11-10 headless run that repaired a real two-call fusion and saw the synthesized call dispatched, and P-0003 on a 2026-11-10 headless run whose journal wrote a non-zero `refused` after the code declined to repair a budget refusal.
+Three patches are `verified` on a real host: P-0001 on a headless profile and on the desktop app, P-0002 on a 2026-11-10 headless run that repaired a real two-call fusion and saw the synthesized call dispatched, and P-0003 on a 2026-11-10 headless run whose journal wrote a non-zero `refused` after the code declined to repair a budget refusal.
 
-P-0004, P-0005, P-0006, P-0007, P-0008, P-0009, P-0010, P-0011, P-0012 and P-0013 are `tested`, not `verified`. Each has unit tests and negative controls, and a measured fixture, scan or corpus where one exists. P-0004, P-0006 and P-0009 change an offline reader; P-0005 has no live bare-value shape yet; P-0007 and P-0012 are build-side; P-0010 changes the CLI usage text; and P-0011 and P-0013 sit on a seam a live journal witnesses only when a turn fails in a class this plugin retries, which the default budget of 0 never triggers.
-
-Release status: `0.3.8` is published and is the registry `latest` for both `dsh-remedy` and `dsh-remedy-core`. The previous release is `0.3.7`.
+The other fifteen are `tested`, not `verified`. Each carries unit tests, a negative control and a measured artifact where one exists: P-0004, P-0006 and P-0009 change an offline reader; P-0005 has no live bare-value shape yet; P-0007, P-0008, P-0012, P-0014, P-0017 and P-0018 are build-side; P-0010 and P-0016 change text a command prints; P-0011 and P-0013 sit on a seam a live journal witnesses only when a turn fails in a class this plugin retries, which the default budget of 0 never triggers; and P-0015 is a measurement on an isolated profile rather than a mount.
+Release status: `0.3.8` is published and is the registry `latest` for both `dsh-remedy` and `dsh-remedy-core`; it carried thirteen patches. The five after it — P-0014 through P-0018 — are merged and `tested` but unreleased, so the registry does not serve them yet. The previous release is `0.3.7`.
 
 Package sizes:
 
@@ -194,7 +207,7 @@ Package sizes:
 - 0.3.7 plugin: 29462 bytes compressed, 29 files, 98001 bytes unpacked, shasum `69087301f5ff802e387061af61756b65b883b11d`; core: 20000 bytes compressed, 19 files, 65961 bytes unpacked, shasum `33eaaf0320eb474d5d7c5ce2761f10de79d17d21`.
 - No sourcemaps are shipped; that removal is worth 41926 bytes of unpacked payload.
 
-The emitted plugin budget is three checks: residency 41143 of 44000 bytes (the modules a mounted plugin loads), cli 40665 of 42000 bytes (the modules only a command loads), and a total of 81808 of 83000 bytes. Per-file caps: `repair-stream.js` 28000, `session-scan.js` 14000, `cli.js` 12000. A patch that crosses a per-file number splits that file instead of absorbing it. These three are measured on the working tree, whose emitted comments changed after the 0.3.8 tarball was packed: that shipped tarball is 81740 of those bytes, so a reader checking the published package will see the smaller figure.
+The emitted plugin budget is three checks: residency 41143 of 44000 bytes (the modules a mounted plugin loads), cli 40845 of 42000 bytes (the modules only a command loads), and a total of 81988 of 83000 bytes. Per-file caps: `repair-stream.js` 28000, `session-scan.js` 14000, `cli.js` 12000. A patch that crosses a per-file number splits that file instead of absorbing it. These three are measured on the working tree, whose emitted comments changed after the 0.3.8 tarball was packed: that shipped tarball is 81740 of those bytes, so a reader checking the published package will see the smaller figure.
 
 ## Development
 
@@ -205,7 +218,7 @@ pnpm run gate
 node scripts/gate.mjs --mutate
 ```
 
-Six gates run on every change: `ssot`, `registry`, `namespace`, `step-review`, `copy`, `size`. `--mutate` breaks each one on purpose and requires every one to go red; it currently catches 6 of 6. The suite is 242 tests and 0 failing.
+Six gates run on every change: `ssot`, `registry`, `namespace`, `step-review`, `copy`, `size`. `--mutate` breaks each one on purpose and requires every one to go red; it currently catches 6 of 6. The suite is 251 tests and 0 failing.
 
 ## Contributing
 

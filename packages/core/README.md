@@ -1,6 +1,14 @@
 # dsh-remedy-core
 
-Pure repair engine. No I/O, no host, no clock except what the caller passes in.
+The engine behind `dsh-remedy`, and its own package rather than a folder inside
+it. Pure: no I/O, no host, no clock except what the caller passes in.
+
+Installing the plugin installs this package automatically, because the plugin
+pins its exact version; you only need to depend on it directly if you want the
+engine without the DSH seam — to test a repair decision, to replay captured
+arguments, or to embed the splitter somewhere else. The registry, the redaction
+rules and the verdict vocabulary also live here, which is why the plugin can
+answer `status` and `explain` without its own copy of those claims.
 
 | Module | Export | What it decides |
 |---|---|---|

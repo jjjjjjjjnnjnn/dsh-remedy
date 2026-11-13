@@ -8,7 +8,7 @@
 | 渠道 | 形式 | URL | 状态 |
 |---|---|---|---|
 | [imsai-sh/awesome-deepseek-harness-plugins](https://github.com/imsai-sh/awesome-deepseek-harness-plugins) | PR，一个 `catalog/plugins/*.json` | [#928](https://github.com/imsai-sh/awesome-deepseek-harness-plugins/pull/928) | ✅ **已合并**（`github-actions[bot]` 09:12:12Z 自动 squash；静态检查全过、Codex 复查 0 findings）。条目已在 `main` 上。它的 bot 评论（[#issuecomment-6848857038](https://github.com/imsai-sh/awesome-deepseek-harness-plugins/pull/928#issuecomment-6848857038)）写明：商店只从 npm 装，包没发到 npm 之前只给「仅浏览」；发布后**自动检测，不需要再提 PR**。0.4.1 已发布，但 `deepseek1024.com/api/v1/plugins/jjjjjjjjnnjnn/dsh-remedy/packages/plugin` 在 2026-11-13 仍返回 `github:jjjjjjjjnnjnn/dsh-remedy#path:packages/plugin` 的安装串，说明自动检测还没跑到。**这不是我们这边的缺口**：包已发布、manifest 带 `dsh.bundle`、`repository.directory` 也指向 `packages/plugin`。商店自己有一串同类未修 issue（#32 `dsh-plugin-mesh`、#29 `dsh-mermaid-plus`、#28 `dsh-steer-note`、#27 `dsh-global-todo`、#25 `dsh-reasoning-effort-sniffer`、#22 `dsh-plugin-compat-check`、#12、#15），其中 #19 直接写「仓库巡检疑似自 2026-09-07T03:07:41Z 起停摆，安装方式被静默冻结」。所以处理方式是**记录读数、不重复提 PR、不另开重复 issue**，等它恢复；恢复后重查这一条 |
-| [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) | PR，一个 `data/plugins/*.yml` | [#14942](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/14942) | `open` / **`CLEAN`**（`check` 与 `Submission gate` 两个 check 全绿）/ `+7 -0` / **changed_files 1** |
+| [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) | PR，一份 `data/plugins/*.yml` | [#14942](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/14942) | ✅ **已合并**（2026-11-13T17:47:20Z，merge commit `d80d77b`；`check` 与 `Submission gate` 两个 check 都 SUCCESS，changed_files 1）。条目 `data/plugins/jjjjjjjjnnjnn__dsh-remedy--packages-plugin.yml` 已在 `main`，生成的 README（395 万字节）也包含 `dsh-remedy`。**合并 ≠ 站点可见**：站点由 `build-site` 发布，一次要 47–173 分钟（目录 10 859 条），2026-11-13 17:49–17:54 的合并潮让前面几次构建被 cancel；当前构建 run `43477377365` 于 19:04 开始跑，站点上的 `plugins.json` 仍是当天 02:25 那次构建发布的版本（没有 `dsh-remedy`）。等它完成后复查即可，**不需要再提 PR**；它自己的 `site-health.yml` 只在落后 300 条以上时才报警，1 条不会被它发现 |
 | [polang233/dsh-plugin-index](https://github.com/polang233/dsh-plugin-index)（dshopen） | issue 模板 | [#472](https://github.com/polang233/dsh-plugin-index/issues/472) | open（人工审） |
 | [alldsh/submissions](https://github.com/alldsh/submissions) | issue 模板 | [#3](https://github.com/alldsh/submissions/issues/3) | open（人工审） |
 | [dsh.so](https://dsh.so/submit/) | 站上表单（npm 通道） | <https://dsh.so/artifact/dsh-remedy/> | ✅ **已提交**（2026-11-13）：表单检查 `Pass` / `SECURITY SCAN Pass` / 28 files / schema valid；点提交后按钮变 `✓ Submitted`。站点已有条目，安装命令仍写 `0.3.7`，等维护者用新提交更新 |
@@ -54,7 +54,7 @@ GitHub release `v0.4.1` 的正文与 `docs/copy/release-notes/v0.4.1.md` 逐字�
 
 - **imsai**：它的 bot 在合并时说得很清楚 —— 商店只从 npm 装，包发到 npm 才显示安装命令。0.4.1 上线后，
   那条条目应当自动从「仅浏览」变成「可安装」（它自己声明「发布后自动检测，不需要再提 PR」）。
-- **awesome-dsh-plugin** #14942：两个 check 都绿（`check` 与 `Submission gate` → `SUCCESS`），
+- **awesome-dsh-plugin** #14942：**已合并**（17:47:20Z），条目在 `main`、README 已包含。站点发布要等 `build-site` 跑完（一次 47–173 分钟；当前 run `43477377365` 从 19:04 起在跑）。合并后不需要再提 PR。
   `mergeStateStatus` 仍是 **`CLEAN`** / `open`。CI 绿是前置条件，收录仍要维护者读代码。
 - **dshopen** #472 与 **AllDSH** #3 仍是 open / 0 评论，等人工审。
 

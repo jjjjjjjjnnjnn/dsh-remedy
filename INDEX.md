@@ -90,6 +90,7 @@
 | `scripts/lib/budgets.mjs` | 三个 cap、两份模块清单、`approved_by` 签名 |
 | `scripts/lib/kit.mjs` | 门禁共用 `runGate` / `readJson` / `sha256` / `isoStamp` |
 | `scripts/lib/copy-policy.mjs` | 数字白名单 / 占位符 / writer，纯函数 |
+| `scripts/lib/copy-policy.d.mts` | 上面那个模块的类型，测试才能在 `--noEmit` 下复用同一套剥法（P-0017） |
 | `scripts/lib/agy-channel.mjs` | 已退役通道的传输规则（P-0007 历史记录） |
 | `scripts/copy_record.mjs` | copy 通道：登记本会话写的草稿（先校验数字再写盘）；`--freeze` 把已发布条目冻成 release 记录 |
 | `scripts/publish_packages.mjs` | `pnpm pack` → 读回 manifest → `npm publish` |
@@ -134,6 +135,7 @@
 | `tests/governance/handoff-truth.test.ts` | 证据索引=现在（可解析+哈希）+ 批次叙事=当时；每族只能一个「当前」（R22） |
 | `tests/governance/coverage-single-source.test.ts` | 覆盖表只能住在 registry；不许命令自带 `COVERAGE`/`SWITCHES`（P-0016） |
 | `tests/governance/coverage-vocabulary.test.ts` | 覆盖的故障类必须属于 census 会报的集合，且覆盖者必须是常驻接缝（P-0016） |
+| `tests/governance/package-readme-prose.test.ts` | 两个包内 README：不许有散文数字，围栏里的命令必须真能 dispatch（P-0017） |
 | `tests/unit/request-error.test.ts` | 第二接缝的五种决定、`next()` 契约、有界缓存 |
 | `tests/unit/preflight.test.ts` | reasoning effort 预检：9 例，全部取自本机数据 |
 | `tests/governance/budget-split.test.ts` | 预算的两份清单必须与真实模块图双向一致 |

@@ -2,7 +2,10 @@
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
 > **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.3.8`（已发布，两包 `latest`）
-> **Stand**：R23（2026-11-13，**桌面 App 确认在 0.3.8 上跑 + `agent/pre-step` 拒绝语义实测**。探针
+> **Stand**：R26（2026-11-13，**P-0018：Windows 退出码不再被当成 HTTP 答案**——`3221226505` 是
+> `0xC0000409`，那次尝试的两份 npm log 里没有任何 HTTP 请求；据此命名并指向直调。R25 是 P-0017
+> （先量 2331 B 里散文数字为 0，再钉住两页），R24 是 P-0016（覆盖表单源化）。**251 测试 / 6 门**)｜
+> R23（2026-11-13，**桌面 App 确认在 0.3.8 上跑 + `agent/pre-step` 拒绝语义实测**。探针
 > 在隔离 `DSH_HOME` 里跑出八条事件：`turn/end blocked`、无 step、输入被 claim 掉、退出码 1；
 > 记为 P-0015（`tested`），并把「桌面 UI 渲染 `blocked` 未测」留成 `BS-17`。**242 测试 / 6 门**)｜
 > R22（2026-11-13，**交接审计**：事实包说错 pin/上一版、HANDOFF 引用一个不存在的哈希、
@@ -21,7 +24,7 @@
 > App 重启）｜R2（P-0001 升 `verified`）｜R1（首个补丁落地）
 > **接手先读**：`docs/HANDOFF.md` → `PROJECT_RULES.md` → `INDEX.md`
 >
-> **基线（2026-11-13）**：`pnpm run verify` = **242 tests / 6 gates**；
+> **基线（2026-11-13）**：`pnpm run verify` = **251 tests / 6 gates**；
 > `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.3.8`（latest）+
 > `dsh-remedy-core@0.3.8`。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
 > `v0.3.8`。

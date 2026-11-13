@@ -66,7 +66,7 @@
           "source": {
             "type": "git",
             "url": "https://github.com/jjjjjjjjnnjnn/dsh-remedy",
-            "commit": "39cc358eb65f7cc9610bba2e9220fa7d16010f3e",
+            "commit": "5a19cf0f8aa9a7227ea81e9f4fcdd5ce3619bd06",
             "path": "packages/plugin"
           },
           "engines": {

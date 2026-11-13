@@ -6,11 +6,13 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [Unreleased]
 ### Added
 - P-0014: the project's own description became an assertion. Three statements about this repository were false while every gate was green: the fact pack said the published `0.3.8` plugin pins `dsh-remedy-core` `0.3.7` (the tarball, and the registry, pin `0.3.8`), the handoff quoted a hash for a registry snapshot that hashes differently, and the package README that npm renders still documented four commands after `explain` shipped. Three governance tests now check the claims instead of the shape of the claims: the fact pack's version, pin, previous-release and patch-id statements against the manifests, the change log and the registry; the handoff's evidence index against the files it cites (and the batch sections stay dated records that may quote the stamp of that day); and the packaged README's usage block against the CLI's own block, line for line. Blind spots `BS-15` and `BS-16` close, and `BS-13` narrows to the package README's prose outside the CLI block.
+### Added
+- P-0015: `agent/pre-step` was left unmounted since R20 on a sentence nobody had checked — a rejected step "could read as a cancellation". It does not: the runtime claims the batch, awaits the waterfall, and on a rejection closes the turn with `reason.kind "blocked"`, and a probe on an isolated `DSH_HOME` produces a session with eight events and no step at all. What the `reject` **does** cost is measured too: the claimed input is discarded, so a user who retries has to retype the message, and the CLI exits `1`. `scripts/record_prestep_probe.mjs` records that as an artifact, and the seam is now usable but not yet presentable, because the desktop rendering of `blocked` is still unmeasured.
 - `dsh-remedy` records the freezing of a published release record: `copy_record.mjs --freeze` turns an existing entry into a frozen one, keeping its recorded bytes, and refuses to freeze an entry whose bytes on disk have drifted from what the manifest records.
 ### Fixed
 - The emitted plugin's comment change costs 68 bytes and no cap moved: residency `41143` of `44000`, CLI `40665` of `42000`, total `81808` of `83000`. The published `0.3.8` tarball remains `81740` of those bytes, so the README states both rather than quietly replacing one.
 ### Notes
-- P-0014 is `tested` and not `verified`: it touches prose, a manifest recorder and governance tests, and nothing a live journal could witness. It is not released on its own; it will ride with the next version.
+- P-0014 and P-0015 are `tested` and not `verified`: one touches prose, a manifest recorder and governance tests, the other measures a seam on an isolated profile. Neither is released on its own; both will ride with the next version.
 
 ## [0.3.8] - 2026-11-12
 ### Added

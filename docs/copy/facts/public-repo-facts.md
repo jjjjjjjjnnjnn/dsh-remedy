@@ -129,6 +129,17 @@
 - Byte account: the comment change costs 68 emitted bytes and no cap moved. Residency is 41143 of 44000, the CLI half 40665 of 42000, and the total 81808 of 83000; the published 0.3.8 tarball remains 81740 of those bytes, so both numbers are stated instead of one being quietly replaced.
 - Still unmeasured: the fact pack is only checked against other files in this repository, so a sentence nothing else records stays a claim about the world; and the package README's prose outside the CLI block still has no mechanism (BS-13).
 
+## The pre-step rejection (P-0015)
+
+- Status `tested`. Surface `profile`. It is a measurement of a seam, not a mount: no shipped profile calls `agent/pre-step`.
+- What was unmeasured: three rounds of handoff repeated that a rejected pre-step "could read as a cancellation", and that sentence kept the seam unmounted since R20. Nobody had run it.
+- What the runtime does, read from `dsh-agent-loop/lib/index.js:492-514`: `preStep` claims the inbox batch, awaits the `agent/pre-step` waterfall, and on `{kind:'reject'}` closes the turn with `reason.kind = "blocked"` without appending `step/start`.
+- What the probe measured: an isolated `DSH_HOME` under `.tmp`, a bundle with one inserted row whose listener always rejects, and one prompt. The CLI exits 1 and the session holds eight events: one `turn/start`, two `agent/inbox/spliced`, one `turn/end {"reason":{"kind":"blocked"}}`. There is no `step/start`, no `user/message`, no `assistant/*` and no `tool/call`.
+- The three measured facts: a rejection is a named ending (`blocked`), not a cancellation; the claimed input is discarded (`removedCount:1`, no `inserted`, no `outcome:'canceled'`), so a user who retries has to retype; and the CLI exit code is 1, so a script can tell a refusal from a completion.
+- The evidence is `data/results/prestep-probe-2026-11-13T07-45-00.000Z.json`, produced by `scripts/record_prestep_probe.mjs`.
+- What is still unmeasured: how the desktop UI renders `reason.kind "blocked"` (the conversation definitions in this install contain no match on it), so the seam is usable but not presentable; and a rejection inside a multi-step turn was not exercised. That is blind spot `BS-17`.
+- What this enables and forbids: a later patch may use the seam, but should rewrite the message with `{kind:'enter'}` rather than refuse, because only a rewrite keeps the user's input alive; and it must not ship to the desktop profile until the `blocked` rendering is measured.
+
 ## The windowed scan and the session header (P-0009)
 
 - Status `tested`. Surface `cli`. Like P-0004 it changes an offline reader, so no resident journal can attest it.

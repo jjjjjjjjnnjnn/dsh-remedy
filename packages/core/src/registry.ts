@@ -423,6 +423,33 @@ export const PATCHES: readonly PatchRecord[] = [
       'gate_copy still cannot see the handoff or the package README, so the new checks are governance tests, not gates, and they run where the suite runs',
     ],
   },
+  {
+    id: 'P-0015',
+    title: 'The seam nobody mounted because nobody measured what refusing looks like',
+    symptom:
+      'agent/pre-step has been left unmounted since R20 on one sentence repeated in three places: "a rejected step opens no step, but what the user sees on rejection has not been measured, it could read as a cancellation". A capability that can refuse a step before it costs a token was therefore blocked by an assumption nobody had checked',
+    rootCause:
+      'the claim was never tested against the runtime. The loop own source answers it in five lines: preStep calls inbox.claim, awaits the agent/pre-step waterfall, and on {kind:"reject"} closes the turn with reason kind "blocked" without opening a step. Nobody had run it, so the sentence survived three rounds as if it were a finding rather than a hypothesis',
+    surface: 'profile',
+    status: 'tested',
+    severity: 'major',
+    evidence: [
+      'docs/patches/P-0015-pre-step-rejection.md',
+      'data/results/prestep-probe-2026-11-13T07-45-00.000Z.json',
+      'scripts/record_prestep_probe.mjs',
+    ],
+    guards: [
+      'data/results/prestep-probe-2026-11-13T07-45-00.000Z.json',
+      'scripts/record_prestep_probe.mjs',
+      'scripts/gate_ssot.mjs',
+    ],
+    limits: [
+      'it measures the seam, it does not mount a product on it: nothing calls agent/pre-step in a shipped profile after this patch',
+      'the desktop UI render of reason.kind "blocked" remains unmeasured, so the seam is usable but not yet presentable, and the probe ran on a headless profile only',
+      'a rejection discards the claimed input: the measured cost is that a user must retype the message, which is why a rewrite via {kind:"enter"} is the better default when the goal is to say something',
+      'only the first proposed step of one turn was exercised; rejection inside a multi-step turn (next-step steering) is untested',
+    ],
+  },
 ]
 
 /** Look up one patch by id. */

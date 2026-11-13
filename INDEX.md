@@ -59,6 +59,7 @@
 | `data/results/install-acceptance-2026-11-11T19-30-00.000Z.json` | 0.3.6 空目录从 registry 单装 6/6（R17 首次落盘） |
 | `data/results/publish-2026-11-11T17-35-00.000Z.json` | 0.3.6 发布后两包 `latest`（`ok: true`） |
 | `docs/patches/P-0001-toolcall-fusion.md` … `P-0009-session-header-window.md` | 每个补丁的症状 / 机制 / 反证 / 边界 |
+| `docs/patches/P-0010-cli-usage-truth.md` … `P-0015-pre-step-rejection.md` | 同上；P-0015 是 `agent/pre-step` 拒绝语义的实测记录 |
 | `docs/adr/0001-stream-repair-over-asar-patch.md` | 为什么在 `llm/stream` 修 |
 
 ## 公开仓库（对外）
@@ -97,6 +98,7 @@
 | `scripts/record_publish.mjs` | 发布后 registry 状态 → `publish-*` 产物 |
 | `scripts/record_session_sample.mjs` | 本机故障样本（必须带 `--until`） |
 | `scripts/record_install_acceptance.mjs` | 空目录从 registry 单装 → `install-acceptance-*` 产物 |
+| `scripts/record_prestep_probe.mjs` | 隔离 `DSH_HOME` 里 `agent/pre-step` 拒绝语义的会话 → `prestep-probe-*` 产物（P-0015） |
 | `scripts/replay_malformed_corpus.mjs` | 全部真实 `MALFORMED_RESPONSE` 回放 → `malformed-replay-*` |
 | `scripts/stress_repair.mjs` | 生成式压力（固定 seed）→ `stress-repair-*` |
 | `scripts/probe_withdrawn_reachability.mjs` | 实测 `withdrawn` 在本机是否可达 → `withdrawn-reachability-*` 产物 |

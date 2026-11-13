@@ -2,7 +2,10 @@
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
 > **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.3.8`（已发布，两包 `latest`）
-> **Stand**：R22（2026-11-13，**交接审计**：事实包说错 pin/上一版、HANDOFF 引用一个不存在的哈希、
+> **Stand**：R23（2026-11-13，**桌面 App 确认在 0.3.8 上跑 + `agent/pre-step` 拒绝语义实测**。探针
+> 在隔离 `DSH_HOME` 里跑出八条事件：`turn/end blocked`、无 step、输入被 claim 掉、退出码 1；
+> 记为 P-0015（`tested`），并把「桌面 UI 渲染 `blocked` 未测」留成 `BS-17`。**242 测试 / 6 门**)｜
+> R22（2026-11-13，**交接审计**：事实包说错 pin/上一版、HANDOFF 引用一个不存在的哈希、
 > npm 页面的包内 README 少一整条命令；新增三类判据 `facts-truth` / `handoff-truth` /
 > `cli-usage` 逐行相等，并记为 P-0014。**242 测试 / 6 门**)｜
 > R21（2026-11-12，**0.3.8 发布 + 对外文字改用本会话直写**。第二个接缝 `agent/request-error`

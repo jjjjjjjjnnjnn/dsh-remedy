@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_prestep_probe.mjs",
+  "generated_at": "2026-11-13T07:45:00.000Z",
+  "question": "What does a user see when an agent/pre-step listener returns {kind:\"reject\"}? Written down as a measurement instead of an assumption.",
+  "probe": {
+    "home": ".tmp/prestep-home (DSH_HOME, isolated: nothing under ~/.dsh is written)",
+    "profile": "probe",
+    "bundle": ".tmp/prestep-probe (one inserted row, id probe-pre-step, name prestep-probe)",
+    "listener": "ctx.on('agent/pre-step', async (payload, next) => ({ kind: 'reject', reason })) — it owns the decision, so it does not chain next()",
+    "command": "\"Reply with exactly: OK\" | dsh --profile probe",
+    "exit_code": 1
+  },
+  "session": {
+    "file": ".tmp\\prestep-home\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy-.tmp-prestep-home-profiles-probe--\\session-90c06c0e-96d9-448b-94a8-343361897f25\\session.v4.jsonl.zstd",
+    "sha256": "24c7e8fd711a5ac845eb28558a692fce457d53f604c159ef559ae0a765973730",
+    "events": 8,
+    "turn_starts": 1,
+    "step_starts": 0,
+    "user_messages": 0,
+    "assistant_events": 0,
+    "tool_calls": 0,
+    "inbox_splices": 2,
+    "claimed_then_discarded": 1,
+    "turn_end_reason": {
+      "kind": "blocked"
+    },
+    "event_types": [
+      "agent/inbox/spliced",
+      "approval/policy",
+      "permission/preset",
+      "sandbox/mode",
+      "session",
+      "turn/end",
+      "turn/start"
+    ]
+  },
+  "findings": [
+    "A rejection opens the durable turn and then closes it as reason.kind = \"blocked\". There is no step/start, no user/message re-append, no assistant/* and no tool/call in the whole session.",
+    "The claimed batch is removed (removedCount 1, no inserted, no outcome: \"canceled\") — that is the claim being consumed, not a user cancellation. dsh-agent lanesForClaim treats \"blocked\" as an ending that accounts for the input, unlike \"completed\".",
+    "The typed message is therefore lost: a user who wants to retry has to type it again. That is the measured cost of a rejection.",
+    "The CLI exits 1, so a scripted caller can tell a refused turn from a completed one."
+  ],
+  "not_proven": [
+    "The desktop UI render of reason.kind = \"blocked\" was not measured: the conversation definitions in this install contain no match on that reason, so what the window draws is unknown.",
+    "A rejection inside a multi-step turn (next-step steering) was not exercised; only the first proposed step of turn 1.",
+    "One profile, one provider route, one prompt."
+  ],
+  "verdict": {
+    "seam_usable": true,
+    "reason": "it neither pretends to succeed nor leaves a half-opened step; the turn ends in a named reason",
+    "safe_to_present": false,
+    "because": "the desktop rendering of \"blocked\" is unmeasured, and the input is discarded on rejection"
+  },
+  "redaction": {
+    "replacements": 0,
+    "kinds": []
+  }
+}

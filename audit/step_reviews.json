@@ -462,7 +462,24 @@
         "docs/copy/facts/public-repo-facts.md",
         "docs/copy/manifest.json"
       ]
+    },
+    {
+      "id": "S26",
+      "gate": "ssot",
+      "title": "A sentence nobody checked blocked a whole seam for three rounds",
+      "axes": {
+        "correctness": "The claim was that a rejected pre-step \"could read as a cancellation\". The runtime source answers it: preStep claims the inbox batch, awaits the waterfall, and on {kind:\"reject\"} closes the turn with reason.kind \"blocked\" without appending step/start. The probe session holds exactly eight events: one turn/start, two inbox splices, one turn/end blocked, and nothing else — no step, no user/message, no assistant event, no tool call.",
+        "reproducibility": "node scripts/record_prestep_probe.mjs reads the newest session under .tmp/prestep-home/sessions and writes data/results/prestep-probe-2026-11-13T07-45-00.000Z.json with a .sha256, produced_by and generated_at, so gate_ssot accepts it. Re-running the probe in the isolated DSH_HOME reproduces the same event types; the profile and bundle live under .tmp and are not shipped.",
+        "compliance": "Nothing under ~/.dsh was written: the probe ran with DSH_HOME pointed at .tmp/prestep-home, and its credentials file is a copy rather than an edit of the real one. The probe is a measurement, not a mount: no shipped profile gains an agent/pre-step row, which is the discipline P-0013 asked for.",
+        "ssot": "The registry now holds fifteen patches with P-0015 status tested, the patch ledger matches it, and the evidence the entry names is the artifact the script produced. The new recorder sits next to the other recorders and its output carries the fields gate_ssot requires.",
+        "adversarial": "The failure this replaces is the assumption itself: three rounds of handoff repeated \"it could read as a cancellation\" as if it had been measured. The probe is that sentence neg control — if a rejection had opened a step the session would contain step/start, and if it had been a cancellation the inbox splice would carry outcome canceled. Neither appears."
+      },
+      "evidence": [
+        "docs/patches/P-0015-pre-step-rejection.md",
+        "data/results/prestep-probe-2026-11-13T07-45-00.000Z.json",
+        "scripts/record_prestep_probe.mjs"
+      ]
     }
   ],
-  "updated_at": "2026-11-13T06:10:00.000Z"
+  "updated_at": "2026-11-13T07:55:00.000Z"
 }

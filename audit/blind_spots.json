@@ -80,7 +80,12 @@
       "id": "BS-14",
       "status": "accepted",
       "note": "The `withdrawn` bucket cannot move on this host, and that is now measured rather than assumed. `rolled-back` needs a proven repair held in `pending`, and `pending` is only filled by the `block-end` path; fused text here arrives in `tool-call-chunks` entries, which are repaired at `finish` and never held. The probe `scripts/probe_withdrawn_reachability.mjs` walked 24 329 persisted attempt streams: 62 carry a fused `tool-call-chunks` entry, 23 724 carry arguments inside a `block-end`, and **0** carry a provable fusion inside a `block-end` (artifact `data/results/withdrawn-reachability-2026-11-12T09-40-00.000Z.json`). So a live `withdrawn` can only come from `consumer-abort`, which needs a consumer that stops reading mid-stream — not something a scripted headless run does. P-0003 therefore stays verified for the branch that was observed (budget refusal) and its `withdrawn` half stays unit-proven by design, not by lack of effort."
+    },
+    {
+      "id": "BS-17",
+      "status": "open",
+      "note": "A rejected agent/pre-step turn ends with reason.kind \"blocked\", and that is measured (data/results/prestep-probe-2026-11-13T07-45-00.000Z.json). What is NOT measured is how the desktop UI renders that ending: the conversation definitions shipped in this install contain no match on the \"blocked\" reason, so the probe ran only on a headless profile and cannot say what the window draws. Until someone drives the desktop with a rejecting listener, agent/pre-step is usable but must not be presented: a user could see an empty or unexplained turn. The second unmeasured half is the cost: a rejection discards the claimed input, so a patch that uses this seam should rewrite the message via {kind:\"enter\"} rather than refuse."
     }
   ],
-  "updated_at": "2026-11-13T06:40:00.000Z"
+  "updated_at": "2026-11-13T08:00:00.000Z"
 }

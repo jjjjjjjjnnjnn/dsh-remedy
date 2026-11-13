@@ -1205,25 +1205,24 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 - `metadata.json` 的 `description` 有 **160 字符上限**，改它要同时改两个 `package.json` 的 description。
 
 **下一个必须做的，按顺序：**
-1. ~~重启桌面 App~~ **R23 已完成**：进程启动时间 7:24:52–7:25:13，晚于 profile 里 0.3.8 的安装时间，
-   两个 profile 内 `verify` 都回 `OK 6 fixture(s)`、包都报 0.3.8，`dsh plugin --profile desktop list`
-   列出 `dsh-remedy@0.3.8`。不要再重复这一步。
-2. ~~实测 `agent/pre-step` 的拒绝语义~~ **R23 已完成（P-0015）**：拒绝写出的结局是
-   `turn/end {"reason":{"kind":"blocked"}}`，没有 step、输入被 claim 掉、退出码 1
-   （`data/results/prestep-probe-2026-11-13T07-45-00.000Z.json`）。
-   **接缝可用但还不能上桌面**：UI 对 `blocked` 的渲染未测，而且拒绝会丢用户输入。
-   所以下一个用到它的 patch 只能先接成「用 `{kind:'enter'}` 改写消息」，不能接成拒绝。
-3. ~~把 `explain` 的覆盖表抬进 registry~~ **R24 已完成（P-0016）**：`failureClasses` / `switchKey`
-   现在住在补丁上，命令读 `PATCHES`，两个新治理测试钉住「不许再长第二张表」与「类名必须是 census 会报的」。
-4. ~~包内 README 正文~~ **R25 已完成（P-0017）**：先量后发现 2331 B 里散文数字是 0，于是判据改成
-   「两页不许有散文数字（复用 copy 通道的剥法）」+「围栏里的命令必须真能 dispatch」。
-   BS-13 仍开着，但已经收窄成「布局与行为散文」。
-5. ~~`publish_packages.mjs` 对 3221226505 命名~~ **R26 已完成（P-0018）**：`windowsStatusAdvice` 现在把
-   `3221226505`/`3221225477` 名成 `0xC0000409`/`0xC0000005` 并指向直调 `npm publish <tarball>`，
-   反向对照保证 HTTP 状态不会走这个分支。**剩下的只有两件不需要打补丁的事**：
-   (a) 驱动桌面窗口看一眼 `blocked` 的渲染（BS-17，脚本做不了）；
-   (b) 下一个版本发布时把 P-0014…P-0018 一起带出去，并同时翻事实包的「published」段。
-6. `withdrawn` 别再试：BS-14 已实测本机不可达（24 329 条流里 0 条的 `block-end` 含可证明融合）。
+
+1. ~~重启桌面 App~~ **R23 已完成**。
+2. ~~实测 `agent/pre-step` 的拒绝语义~~ **R23 已完成（P-0015）**。
+3. ~~把 `explain` 的覆盖表抬进 registry~~ **R24 已完成（P-0016）**。
+4. ~~包内 README 正文~~ **R25 已完成（P-0017）**。
+5. ~~`publish_packages.mjs` 对 3221226505 命名~~ **R26 已完成（P-0018）**。
+
+**编号补丁到这里是清零的。剩下三件事，都不需要新号：**
+
+- **A. 驱动桌面窗口看一次 `blocked` 的渲染**（BS-17）。R23 只证了 headless：
+  拒绝写出 `turn/end {"reason":{"kind":"blocked"}}`、无 step、输入被 claim 掉、退出码 1。
+  桌面 UI 会把这画成什么，没有任何产物能回答，而这件事只能由人在窗口里点。
+  测出来之前，任何用到 `agent/pre-step` 的补丁都**不许**上桌面 profile。
+- **B. 发一个版本，把 P-0014…P-0018 一起带出去**（registry 上仍是 0.3.8）。
+  发布时必须**同一次**做完三件事：bump 两包 → `pnpm pack` 得到真 tarball →
+  翻事实包的「published」段并重登记全部 live 对外文件（R17 那条教训：翻口径与重登记隔一轮就红三小时）。
+- **C. 可选**：把 `packages/*/README.md` 收进 copy 通道（BS-13 的剩余部分）。
+  R25 已证明它们没有散文数字，所以这只是"让 npm 页面也由通道生成"的产品决定，不是安全洞。
 
 **接缝利用率（别重新论证一遍）：**
 

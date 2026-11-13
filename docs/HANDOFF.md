@@ -56,6 +56,45 @@ git -C .. log --oneline -3
 - 容器 `main` **没有**推到 `dsh-triage` 远端（推上去会破坏那个仓库的根布局）。不要顺手推。
 - `dsh-triage/` 只是同级项目，规则以它自己的 `AGENTS.md` 为准。
 
+## 当前批次（R39 → R1）
+
+**R39（2026-11-13）· `BS-18` 的错误派发不再执行错工具；顺带被 CI 抓到一个「本机绿、干净检出红」。**
+
+> 触发：用户要求继续做 P-0027 并「全部自己控制」。
+
+**A. P-0027 · 名字证不出来就不许用别的工具的名字**
+
+- 症状（0.2.2-rc.3 实测两次）：粘连文本把 `read` 和一条 shell 命令粘在一起，流对这个 index 只带一个名字，
+  第二个片段沿用它 → 以 `read` 派发 `{"command":"Get-ChildItem …"}`，工具回 `INVALID_ARGS`，turn 继续。
+- 机制：`planRescue` 只证明 JSON 拆得开，然后对每个片段复用 `candidate.call.name`。同工具融合时那是对的，
+  跨工具时就是给第二个调用安了第一个调用的名字。
+- 修法：listener 把请求里的 `options.tools` 传进包装器；每个合成片段对照被命名工具的 `required` 字段，
+  不合格的以 **`remedy_unattributed`** 发出——运行时会回 `UNKNOWN_TOOL` 并继续（实测）。首个片段不动。
+  `repaired` 事件带 `unattributed: <n>`，journal 不会说「修好了」而把这件事藏起来。
+- 为什么不直接拒绝整次救援：rc.3 上适配器可能已经派发了第一个片段；而且拒绝会连带丢掉同工具融合（本补丁集的主要价值）。
+- 判据（先红后绿）：`tests/unit/attribution.test.ts` 六条，跨工具与事件字段两条在旧构建下红。
+- 付款：第一次构建超 total cap **2 539 B**，靠压缩 `repair-stream.ts` 的散文（四轮）+ 内联 `toolsOf` 付清；
+  cap 一个没动，最终 **常驻 41 623 / 44 000、CLI 41 362 / 42 000、total 82 985 / 83 000（只剩 15 B）**。
+
+**B. 冻结条目不再被数字规则咬住（`gate_copy`）**
+
+- 0.4.4 一发布，0.4.2 / 0.4.3 的 release notes（frozen）就红了：它们引用的 tarball 尺寸已经离开当前事实包。
+- 门禁本来就对 frozen 条目豁免 `facts-current` 与 `writer`，数字检查是唯一漏掉的那一处；补上并写明理由。
+  `--mutate` 注入的是哈希，不是数字，所以负对照没有被削弱。
+
+**C. CI 抓到的事实包 CRLF（本轮最重要的教训）**
+
+- 本地 `verify` 全绿之后推送，公开仓库 CI **红**：`public-copy.test.ts` 报 `CHANGELOG.md cites a stale fact pack`。
+- 根因：这一轮编辑事实包时插入了一个 `\r\n`，`facts_sha256` 是在 CRLF 工作副本上算的；干净检出是 LF，哈希自然不同。
+  「本机绿、干净检出红」——正是这个仓库反复在防的那一类。
+- 修法：事实包转回 LF、全部 live 条目重登记；并加判据 `facts-truth`「事实包必须是 LF」，带注入式负对照。
+
+**实测**：`pnpm run verify` → **271 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` → **6/6**；
+快照 `patch-registry-2026-11-13T22-50-00.000Z.json`（sha256 `9430764c…`）；
+门禁证据 `gates-2026-11-13T22-40-00.000Z.json` / `gates-mutate-2026-11-13T22-45-00.000Z.json`。
+
+**仍未做**：两个 profile 换到 0.4.4 + 重启桌面 App（App 没在运行）；下一个补丁先拆模块（字节只剩 15 B）；外部渠道等人工。
+
 ## 当前批次（R38 → R1）
 
 **R38（2026-11-13）· 桌面运行时升到 DSH 0.2.2-rc.3：接缝没变，一个「已验证」的断言被自己否证。**
@@ -1725,7 +1764,8 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | `patch-registry-2026-11-13T19-00-00.000Z.json` | 绿 | （0.4.2 时点）快照（二十六补丁：0.4.2 发布之后；3 `verified` + 23 `tested`；sha256 `7e5c16a0…`） |
 | `patch-registry-2026-11-13T20-25-00.000Z.json` | 绿 | （中间快照）快照（二十六补丁：0.4.3 发布之后；3 `verified` + 23 `tested`；sha256 `3b2bd310…`） |
 | `patch-registry-2026-11-13T20-35-00.000Z.json` | 绿 | （0.4.3 时点）快照（二十六补丁：0.4.3 发布、事实包补历史尺寸之后；3 `verified` + 23 `tested`；sha256 `0fdef2c7…`） |
-| `patch-registry-2026-11-13T22-00-00.000Z.json` | 绿 | **当前**快照（二十七补丁：P-0027 加入；3 `verified` + 24 `tested`；sha256 `dcfcf3a8…`） |
+| `patch-registry-2026-11-13T22-00-00.000Z.json` | 绿 | （0.4.4 发布时点）快照（二十七补丁：P-0027 加入；3 `verified` + 24 `tested`；sha256 `dcfcf3a8…`） |
+| `patch-registry-2026-11-13T22-50-00.000Z.json` | 绿 | **当前**快照（二十七补丁：事实包改回 LF、live 条目重登记之后；3 `verified` + 24 `tested`；sha256 `9430764c…`） |
 | `patch-registry-2026-11-13T14-40-00.000Z.json` | 绿 | R36 快照（二十六补丁；sha256 `4bdaba69…`，已被 19-00 取代） |
 | `gates-2026-11-13T12-10-00.000Z.json` / `gates-mutate-2026-11-13T12-15-00.000Z.json` | 绿 | R29 发布轮的门禁证据（0.4.0 已发、事实包翻口径、全部对外文件重登记之后） |
 | `gates-2026-11-13T12-30-00.000Z.json` / `gates-mutate-2026-11-13T12-35-00.000Z.json` | 绿 | R30 的门禁证据（profile 切到 0.4.0 + BS-17 桌面实测之后），255 tests |
@@ -1742,7 +1782,8 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | `gates-2026-11-13T20-45-00.000Z.json` / `gates-mutate-2026-11-13T20-50-00.000Z.json` | 绿 | （中间一轮）门禁证据：R38 收尾（0.4.3 发布、DSH 0.2.2-rc.3 适配实测、事实包补历史尺寸、全部对外文件重登记、P-0002 记录改写之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT` |
 | `gates-2026-11-13T20-55-00.000Z.json` / `gates-mutate-2026-11-13T21-00-00.000Z.json` | 绿 | （0.4.3 时点）门禁证据：R38 最终一轮（0.4.3 发布 + DSH 0.2.2-rc.3 适配实测 + AGENTS/HANDOFF 同步之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，264 tests |
 | `gates-2026-11-13T22-10-00.000Z.json` / `gates-mutate-2026-11-13T22-15-00.000Z.json` | 绿 | （中间一轮）门禁证据：R39 收尾（0.4.4 发布、P-0027 归因检查、冻结条目从数字规则豁免、全部对外文件重登记之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，270 tests |
-| `gates-2026-11-13T22-25-00.000Z.json` / `gates-mutate-2026-11-13T22-30-00.000Z.json` | 绿 | **当前**门禁证据：R39 最终一轮（0.4.4 发布、P-0027、冻结条目数字豁免、边界 latest 0.4.4 之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，270 tests |
+| `gates-2026-11-13T22-25-00.000Z.json` / `gates-mutate-2026-11-13T22-30-00.000Z.json` | 绿 | （0.4.4 发布时点）门禁证据：R39 最终一轮（0.4.4 发布、P-0027、冻结条目数字豁免、边界 latest 0.4.4 之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，270 tests |
+| `gates-2026-11-13T22-40-00.000Z.json` / `gates-mutate-2026-11-13T22-45-00.000Z.json` | 绿 | **当前**门禁证据：CI 红后的一轮（事实包 CRLF → LF、全部 live 条目重登记、新增 LF 判据之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，271 tests |
 | `gates-2026-11-13T08-10-00.000Z` / `gates-mutate-2026-11-13T08-15-00.000Z` | 绿 | 门禁证据：R23 收尾（P-0015 台账 + 事实包加段 + 对外文件重登记） |
 | `gates-2026-11-13T09-30-00.000Z` / `gates-mutate-2026-11-13T09-35-00.000Z` | 绿 | 门禁证据：R25 收尾（P-0017 台账 + 事实包加段 + 全部对外文件重登记） |
 | `gates-2026-11-13T10-15-00.000Z` / `gates-mutate-2026-11-13T10-20-00.000Z` | 绿 | 门禁证据：R26 收尾（P-0018：Windows 退出码按异常命名） |

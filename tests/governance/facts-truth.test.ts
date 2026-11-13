@@ -80,6 +80,20 @@ test('every version the pack calls the previous release has a changelog entry', 
   }
 })
 
+test('the fact pack is LF, so its hash is the same on a fresh clone', () => {
+  // Measured 2026-11-13: an edit to the pack went in with one CRLF line ending.
+  // Every live copy entry records facts_sha256, hashed on this machine, so the
+  // release was green locally and red on CI, where the checkout is LF. The pack is
+  // the file every outward number is checked against; it must hash the same
+  // wherever it is read.
+  const carried = (facts.match(/\r\n/g) ?? []).length
+  assert.equal(carried, 0, `the fact pack carries ${carried} CRLF line ending(s); convert it to LF`)
+
+  // The rule must fail on its own example, or it proves nothing.
+  const injected = 'line one\r\nline two\n'
+  assert.notEqual((injected.match(/\r\n/g) ?? []).length, 0, 'the CRLF detector does not detect CRLF')
+})
+
 test('the pack does not quote a patch id that does not exist', () => {
   // The pack once compressed "P-0011 and P-0013 added three modules" into
   // `P-0001x`, which is not a patch. A reader cannot look that up.

@@ -573,6 +573,30 @@ export const PATCHES: readonly PatchRecord[] = [
     ],
     failureClasses: [],
   },
+  {
+    id: 'P-0020',
+    title: 'A listing that pins git bytes while advertising a registry version installs neither',
+    symptom:
+      'docs/market-index.json declared version 0.3.8 and a git commit in the same entry. 0.3.8 is the published tarball with thirteen patches; the commit it named carried nineteen, the new package descriptions and a rewritten README. A market that trusted the entry would clone bytes the version number does not describe, which is exactly the drift the pinned format exists to prevent',
+    rootCause:
+      'the guard written one round earlier checked the shape of the pin and never its meaning: commit matched a forty-character hex pattern and path was packages/plugin, so a pin that pointed at the wrong kind of artifact passed. The index also could not name the commit that contained it, so every document commit forced another re-pin — three in a row was the visible symptom of a source object with no defined meaning',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'major',
+    evidence: [
+      'docs/patches/P-0020-market-source-truth.md',
+      'docs/market-index.json',
+      'tests/governance/distribution-entry.test.ts',
+    ],
+    guards: ['tests/governance/distribution-entry.test.ts', 'docs/market-index.json'],
+    limits: [
+      'it does not turn the repository into a published artifact: P-0014 through P-0019 stay merged and unreleased, and the index says so in words instead of hiding it',
+      'a git source remains allowed, but only with an explicit unreleased marker, so a future release may pin a commit whose bytes really are that release',
+      'the guard cannot check the registry over the network, so "0.3.8 is still latest" stays a fact read at release time rather than an assertion in the suite',
+      'it fixes the index this project publishes; it cannot correct the third-party market that already crawled the private workspace shell at the repository root',
+    ],
+    failureClasses: [],
+  },
 ]
 
 /** Look up one patch by id. */

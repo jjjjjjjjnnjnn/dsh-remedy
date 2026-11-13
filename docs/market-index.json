@@ -64,17 +64,17 @@
           "version": "0.3.8",
           "publishTimestamp": 1794505202,
           "source": {
-            "type": "git",
-            "url": "https://github.com/jjjjjjjjnnjnn/dsh-remedy",
-            "commit": "40e59b1136bab2eb1b1536ad847f60f805b1f252",
-            "path": "packages/plugin"
+            "type": "npm"
           },
           "engines": {
             "dsh": ">=0.2.0-rc.1 <0.3.0-0"
-          },
-          "note": "the plugin pins dsh-remedy-core 0.3.8 exactly; installing it resolves both"
+          }
         }
       ]
     }
-  ]
+  ],
+  "head": {
+    "en": "The repository currently carries nineteen patches; P-0014 through P-0019 are merged, tested and unpublished, so the git head is not the published artifact and this index does not pin it.",
+    "zh": "仓库当前有十九个补丁；P-0014 到 P-0019 已合并且测试过、但尚未发布，所以 git 头不是已发布的产物，本索引不钉它。"
+  }
 }

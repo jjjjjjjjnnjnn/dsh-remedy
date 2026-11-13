@@ -8,7 +8,7 @@
 
 [中文说明](README.zh-CN.md)
 
-dsh-remedy is a patch set for DeepSeek Harness (DSH) — nineteen defects, each registered with the seam it touches, the symptom it removes, the mechanism that was measured, and the limits it does not cross. Two of those seams are resident (`llm/stream` and `agent/request-error`); the rest are the CLI, the build side, and one seam that has been measured but deliberately not mounted.
+dsh-remedy is a patch set for DeepSeek Harness (DSH) — twenty defects, each registered with the seam it touches, the symptom it removes, the mechanism that was measured, and the limits it does not cross. Two of those seams are resident (`llm/stream` and `agent/request-error`); the rest are the CLI, the build side, and one seam that has been measured but deliberately not mounted.
 
 ## What it fixes
 
@@ -37,10 +37,10 @@ The registry is the single source: `packages/core/src/registry.ts` for the claim
 | `llm/stream` (resident) | P-0001, P-0002, P-0003, P-0005 | split a proven fusion; a rescue must be provable, attributable and atomic; a refusal must be observable; reseal a bare member value or refuse it |
 | `agent/request-error` (resident) | P-0011, P-0013 | the contract for who owns the decision, with a bounded retry budget; name the deterministic refusals instead of retrying them |
 | CLI | P-0004, P-0006, P-0009, P-0010, P-0016 | scan fidelity and redaction shapes; the turn census; a session header is dated by `createdAt`; the usage text must match the binary; coverage is declared by the patch, not restated by the command |
-| build side | P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019 | a copy channel that can name its failures; a byte budget a script checks; one cap per load path; the project's own description must be true; the two npm pages; a Windows exit code is not a registry answer; the outward pages described a project that had stopped existing |
+| build side | P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019, P-0020 | a copy channel that can name its failures; a byte budget a script checks; one cap per load path; the project's own description must be true; the two npm pages; a Windows exit code is not a registry answer; the outward pages described a project that had stopped existing; a listing that pins git bytes while advertising a registry version |
 | measured, not mounted | P-0015 | what a rejected `agent/pre-step` decision does, so a later patch can use that seam on measured ground |
 
-Three patches are `verified`: a real host ran them and left a `data/results/live-*` artifact. The other sixteen are `tested`: unit tests, a negative control and a measured fixture, scan or corpus, but nothing a resident journal can witness. The status section below names which is which.
+Three patches are `verified`: a real host ran them and left a `data/results/live-*` artifact. The other seventeen are `tested`: unit tests, a negative control and a measured fixture, scan or corpus, but nothing a resident journal can witness. The status section below names which is which.
 
 ## Install
 
@@ -197,8 +197,8 @@ The whole `MALFORMED_RESPONSE` corpus on one machine was replayed through the bu
 
 Three patches are `verified` on a real host: P-0001 on a headless profile and on the desktop app, P-0002 on a 2026-11-10 headless run that repaired a real two-call fusion and saw the synthesized call dispatched, and P-0003 on a 2026-11-10 headless run whose journal wrote a non-zero `refused` after the code declined to repair a budget refusal.
 
-The other sixteen are `tested`, not `verified`. Each carries unit tests, a negative control and a measured artifact where one exists: P-0004, P-0006 and P-0009 change an offline reader; P-0005 has no live bare-value shape yet; P-0007, P-0008, P-0012, P-0014, P-0017, P-0018 and P-0019 are build-side; P-0010 and P-0016 change text a command prints; P-0011 and P-0013 sit on a seam a live journal witnesses only when a turn fails in a class this plugin retries, which the default budget of 0 never triggers; and P-0015 is a measurement on an isolated profile rather than a mount.
-Release status: `0.3.8` is published and is the registry `latest` for both `dsh-remedy` and `dsh-remedy-core`; it carried thirteen patches. The six after it — P-0014 through P-0019 — are merged and `tested` but unreleased, so the registry does not serve them yet. The previous release is `0.3.7`.
+The other seventeen are `tested`, not `verified`. Each carries unit tests, a negative control and a measured artifact where one exists: P-0004, P-0006 and P-0009 change an offline reader; P-0005 has no live bare-value shape yet; P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019 and P-0020 are build-side; P-0010 and P-0016 change text a command prints; P-0011 and P-0013 sit on a seam a live journal witnesses only when a turn fails in a class this plugin retries, which the default budget of 0 never triggers; and P-0015 is a measurement on an isolated profile rather than a mount.
+Release status: `0.3.8` is published and is the registry `latest` for both `dsh-remedy` and `dsh-remedy-core`; it carried thirteen patches. The seven after it — P-0014 through P-0020 — are merged and `tested` but unreleased, so the registry does not serve them yet. The previous release is `0.3.7`.
 
 Package sizes:
 

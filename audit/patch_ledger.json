@@ -332,6 +332,21 @@
         "tests/governance/package-readme-prose.test.ts",
         "tests/governance/facts-truth.test.ts"
       ]
+    },
+    {
+      "id": "P-0020",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.3.9",
+      "evidence": [
+        "docs/patches/P-0020-market-source-truth.md",
+        "docs/market-index.json",
+        "tests/governance/distribution-entry.test.ts"
+      ],
+      "guards": [
+        "tests/governance/distribution-entry.test.ts",
+        "docs/market-index.json"
+      ]
     }
   ]
 }

@@ -37,13 +37,13 @@
 
 ## The patch set, by seam (the shape of the project)
 
-- The project is a patch set, not one wrapper. 19 patches are registered, each with its own evidence, guards and limits, and each declaring the seam it touches. The registry is `packages/core/src/registry.ts`; `dsh-remedy status` prints it and `dsh-remedy explain` answers which of them cover a failure class this host actually hits.
+- The project is a patch set, not one wrapper. 20 patches are registered, each with its own evidence, guards and limits, and each declaring the seam it touches. The registry is `packages/core/src/registry.ts`; `dsh-remedy status` prints it and `dsh-remedy explain` answers which of them cover a failure class this host actually hits.
 - Four patches sit on the resident `llm/stream` seam: P-0001 (split a proven fusion), P-0002 (a rescue must be provable, attributable and atomic), P-0003 (a refusal must be observable), and P-0005 (reseal a bare member value or refuse it).
 - Two patches sit on the second resident seam, `agent/request-error`: P-0011 (the contract for who owns the decision, plus a bounded retry budget) and P-0013 (name the deterministic refusals instead of retrying them).
 - Five patches live in the CLI half: P-0004 (scan fidelity and redaction shapes), P-0006 (the turn census), P-0009 (a session header is dated by createdAt), P-0010 (the usage text must match the binary), and P-0016 (coverage is declared by the patch, not restated by the command).
-- Seven patches are build-side, on `scripts`: P-0007 (a copy channel that cannot report "exited null"), P-0008 (a byte budget no script checks is a suggestion), P-0012 (one cap for two load paths), P-0014 (the project description itself must be true), P-0017 (the two npm pages had no mechanism), P-0018 (a Windows exit code is not a registry answer), and P-0019 (the outward pages described a project that had stopped existing).
+- Eight patches are build-side, on `scripts`: P-0007 (a copy channel that cannot report "exited null"), P-0008 (a byte budget no script checks is a suggestion), P-0012 (one cap for two load paths), P-0014 (the project description itself must be true), P-0017 (the two npm pages had no mechanism), P-0018 (a Windows exit code is not a registry answer), P-0019 (the outward pages described a project that had stopped existing), and P-0020 (a listing that pins git bytes while advertising a registry version).
 - One patch is a measurement rather than a mount: P-0015 records what a rejected `agent/pre-step` decision does, so that a later patch can use that seam on measured ground.
-- Three patches are `verified` (P-0001, P-0002, P-0003 — each on a real host with a `data/results/live-*` artifact). The other 16 are `tested`: they have unit tests, negative controls and a measured fixture, scan or corpus, but no artifact a resident journal can witness.
+- Three patches are `verified` (P-0001, P-0002, P-0003 — each on a real host with a `data/results/live-*` artifact). The other 17 are `tested`: they have unit tests, negative controls and a measured fixture, scan or corpus, but no artifact a resident journal can witness.
 - What the set is trying to be: every claim about a defect carries the same four things — a symptom quoted from the host, a mechanism with the file and line that was measured, counter-evidence, and a written limit. That is enforced by `scripts/gate_registry.mjs` and `packages/core/src/registry.ts`.
 
 ## The repair
@@ -184,6 +184,15 @@
 - What changed: both pages now open as a patch set, carry a seam classification table, and replace the pre-step guess with the measurement plus its remaining blind spot (`BS-17`). Status names three `verified` and sixteen `tested` patches and states that the six after `0.3.8` are merged, tested and unreleased.
 - The two package READMEs, which npm renders, now explain the split: installing the plugin installs the engine because the pin is exact, and the engine is its own package because it does no I/O and can be embedded and tested alone.
 - Still unmeasured: the root README has no structural guard, so a page could still describe behaviour the code does not have without a gate noticing; npm keeps serving the `0.3.8` tarball until a release carries these pages.
+
+## The market source (P-0020)
+
+- Status `tested`. Surface `scripts`. It corrects a machine-readable listing, not a seam.
+- What it fixes: `docs/market-index.json` declared version `0.3.8` and a git commit in the same entry. `0.3.8` is the published tarball with thirteen patches; the commit it named carried nineteen, the new package descriptions and a rewritten README, so a market trusting the entry would have installed bytes the version number does not describe.
+- Why it lasted one round: the guard added with the index checked the shape of the pin — a forty-character hex commit and `path: packages/plugin` — and never its meaning. It is the same defect the project has now written down five times: a check on form is not a check on meaning.
+- What changed: a `source` now names where a version bytes actually live. The published version points at the registry (`{"type":"npm"}`) and carries no commit; a git pin is allowed only together with an explicit `unreleased` marker, so a working tree cannot pose as a release. The unreleased head is stated once in words under `head` instead of being pinned.
+- The guard: `tests/governance/distribution-entry.test.ts` enforces all four cases (npm without commit, git with sha plus `unreleased`, the measured `publishTimestamp` of `1794505202`, and both halves of the head note).
+- Still unmeasured: the guard cannot ask the registry over the network, so "0.3.8 is still the latest" remains a fact read at release time; and it cannot correct a third-party market that already crawled the private workspace shell at the repository root.
 
 ## The windowed scan and the session header (P-0009)
 

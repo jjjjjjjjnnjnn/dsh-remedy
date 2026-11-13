@@ -548,7 +548,24 @@
         "packages/plugin/README.md",
         "docs/patches/P-0019-outward-pages.md"
       ]
+    },
+    {
+      "id": "S31",
+      "gate": "ssot",
+      "title": "A pin whose shape is right and whose meaning is wrong is the defect this suite keeps finding",
+      "axes": {
+        "correctness": "The version and the source now describe the same artifact. 0.3.8 is on the registry, so its source is npm and carries no commit; the repository head carries nineteen patches including six unreleased ones, and that is stated once in words under head instead of being pinned as if it were the release. The publish timestamp stays the measured 1794505202.",
+        "reproducibility": "tests/governance/distribution-entry.test.ts enforces the four cases: npm source with no commit and no unreleased marker, git source with a full sha, path packages/plugin and an explicit unreleased marker, a timestamp equal to the measured one, and both halves of the head note present. The document commits no longer move the index, which is why the churn stopped.",
+        "compliance": "the index says what the repository contains rather than implying the working tree is the published package, and P-0020 records the correction as its own patch instead of editing P-0019 in place.",
+        "ssot": "the registry entry, the ledger row and this review name the same three paths; the patch doc is the fourth evidence file, and the fact pack is unchanged because no outward number moved.",
+        "adversarial": "the negative control is the pre-patch index itself: it declared a published version and a git commit, and the old guard passed it. The new guard fails that exact shape by asserting that an npm source carries no commit and that a git pin may only describe unreleased bytes."
+      },
+      "evidence": [
+        "docs/market-index.json",
+        "tests/governance/distribution-entry.test.ts",
+        "docs/patches/P-0020-market-source-truth.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-13T10:30:00.000Z"
+  "updated_at": "2026-11-13T11:20:00.000Z"
 }

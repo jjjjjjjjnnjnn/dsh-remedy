@@ -36,23 +36,50 @@ test('the market entry carries no digits, because that list checks each sentence
   assert.match(entry, /  zh: /, 'the Chinese half is optional for them but required here')
 })
 
-test('the market index pins a commit and a real publish timestamp', () => {
+test('the market index names where a version bytes actually come from', () => {
+  // P-0020: the first version of this index pinned a git commit while declaring a
+  // published version number. Those cannot both be true — the commit carried
+  // nineteen patches and 0.3.8 shipped thirteen — so a market trusting the entry
+  // would install something the version does not describe. A source is now either
+  // the registry (no commit, because there is none) or git (with a commit and an
+  // explicit `unreleased` marker so a working tree cannot pose as a release).
   const index = readJson<{
     format: number
-    plugins: { name: string; versions: { version: string; publishTimestamp: number; source: { commit: string; path: string } }[] }[]
+    head?: { en?: string; zh?: string }
+    plugins: {
+      name: string
+      versions: {
+        version: string
+        publishTimestamp: number
+        unreleased?: boolean
+        source: { type: string; commit?: string; path?: string }
+      }[]
+    }[]
   }>('docs/market-index.json')
   assert.equal(index.format, 1)
-  const plugin = index.plugins[0]
-  assert.ok(plugin !== undefined)
-  const version = plugin.versions[0]
-  assert.ok(version !== undefined)
-  // A pinned commit is the whole point of `format: 1`: a listing must not drift
-  // away from the bytes that were tested.
-  assert.match(version.source.commit, /^[0-9a-f]{40}$/, 'the index must pin a full commit sha')
-  assert.equal(version.source.path, 'packages/plugin')
-  // The timestamp is a measurement, not a placeholder: 0.3.8 landed on the
-  // registry at 2026-11-12T17:40:02.359Z, which is epoch 1794505202.
+
+  const version = index.plugins[0]?.versions[0]
+  assert.ok(version !== undefined, 'the index must carry at least one version')
+
+  if (version.source.type === 'npm') {
+    assert.equal(version.source.commit, undefined, 'an npm source has no commit to point at')
+    assert.equal(version.source.path, undefined, 'an npm source has no in-repo path')
+    assert.equal(version.unreleased, undefined, 'an npm source is a published artifact by definition')
+  } else {
+    assert.equal(version.source.type, 'git')
+    assert.match(String(version.source.commit), /^[0-9a-f]{40}$/, 'a git source must pin a full sha')
+    assert.equal(version.source.path, 'packages/plugin')
+    assert.equal(version.unreleased, true, 'a git pin may only describe unreleased bytes')
+  }
+
+  // The publish timestamp is a measurement, not a placeholder: 0.3.8 landed on
+  // the registry at 2026-11-12T17:40:02.359Z, which is epoch 1794505202.
   assert.equal(version.publishTimestamp, 1794505202)
+
+  // And the unreleased head is stated once, in words, so a reader of the index
+  // learns what the repository contains without mistaking it for the artifact.
+  assert.equal(typeof index.head?.en, 'string')
+  assert.equal(typeof index.head?.zh, 'string')
 })
 
 test('the package manifest declares the blocks the ecosystem indexes read', () => {

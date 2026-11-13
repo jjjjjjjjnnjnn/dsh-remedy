@@ -88,6 +88,8 @@ git -C .. log --oneline -3
 - 根因：这一轮编辑事实包时插入了一个 `\r\n`，`facts_sha256` 是在 CRLF 工作副本上算的；干净检出是 LF，哈希自然不同。
   「本机绿、干净检出红」——正是这个仓库反复在防的那一类。
 - 修法：事实包转回 LF、全部 live 条目重登记；并加判据 `facts-truth`「事实包必须是 LF」，带注入式负对照。
+- 发布本身也受了影响：`v0.4.4` 的 tag 先落在那个红提交上（CI `failure`）。修完之后把 release 与 tag 一起
+  移到已验过的提交 `e4755e4`，tag 的 CI 随即 `success`；正文重新逐字节读回仍相同。红的那次记录保留，不改写。
 
 **实测**：`pnpm run verify` → **271 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` → **6/6**；
 快照 `patch-registry-2026-11-13T22-50-00.000Z.json`（sha256 `9430764c…`）；

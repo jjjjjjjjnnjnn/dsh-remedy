@@ -1,5 +1,6 @@
 /**
- * P-0014 — the counter ledger, split out of `repair-stream.ts`.
+ * The counter ledger, split out of `repair-stream.ts` (the split recorded as
+ * P-0012's payment, not as a patch of its own).
  *
  * The wrapper decides; this file only books. Splitting them is what keeps
  * `repair-stream.js` inside its own 28 000-byte cap while the reasoning that

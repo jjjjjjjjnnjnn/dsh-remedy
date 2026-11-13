@@ -194,7 +194,7 @@ Package sizes:
 - 0.3.7 plugin: 29462 bytes compressed, 29 files, 98001 bytes unpacked, shasum `69087301f5ff802e387061af61756b65b883b11d`; core: 20000 bytes compressed, 19 files, 65961 bytes unpacked, shasum `33eaaf0320eb474d5d7c5ce2761f10de79d17d21`.
 - No sourcemaps are shipped; that removal is worth 41926 bytes of unpacked payload.
 
-The emitted plugin budget is three checks: residency 41075 of 44000 bytes (the modules a mounted plugin loads), cli 40665 of 42000 bytes (the modules only a command loads), and a total of 81740 of 83000 bytes. Per-file caps: `repair-stream.js` 28000, `session-scan.js` 14000, `cli.js` 12000. A patch that crosses a per-file number splits that file instead of absorbing it.
+The emitted plugin budget is three checks: residency 41143 of 44000 bytes (the modules a mounted plugin loads), cli 40665 of 42000 bytes (the modules only a command loads), and a total of 81808 of 83000 bytes. Per-file caps: `repair-stream.js` 28000, `session-scan.js` 14000, `cli.js` 12000. A patch that crosses a per-file number splits that file instead of absorbing it. These three are measured on the working tree, whose emitted comments changed after the 0.3.8 tarball was packed: that shipped tarball is 81740 of those bytes, so a reader checking the published package will see the smaller figure.
 
 ## Development
 
@@ -205,7 +205,7 @@ pnpm run gate
 node scripts/gate.mjs --mutate
 ```
 
-Six gates run on every change: `ssot`, `registry`, `namespace`, `step-review`, `copy`, `size`. `--mutate` breaks each one on purpose and requires every one to go red; it currently catches 6 of 6. The suite is 228 tests and 0 failing.
+Six gates run on every change: `ssot`, `registry`, `namespace`, `step-review`, `copy`, `size`. `--mutate` breaks each one on purpose and requires every one to go red; it currently catches 6 of 6. The suite is 242 tests and 0 failing.
 
 ## Contributing
 

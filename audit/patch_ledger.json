@@ -232,6 +232,25 @@
         "tests/unit/request-error.test.ts",
         "packages/core/src/preflight.ts"
       ]
+    },
+    {
+      "id": "P-0014",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.3.9",
+      "evidence": [
+        "docs/patches/P-0014-description-truth.md",
+        "tests/governance/facts-truth.test.ts",
+        "tests/governance/handoff-truth.test.ts",
+        "tests/unit/cli-usage.test.ts",
+        "docs/copy/facts/public-repo-facts.md"
+      ],
+      "guards": [
+        "tests/governance/facts-truth.test.ts",
+        "tests/governance/handoff-truth.test.ts",
+        "tests/unit/cli-usage.test.ts",
+        "scripts/copy_record.mjs"
+      ]
     }
   ]
 }

@@ -2,11 +2,13 @@
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
 > **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.3.8`（已发布，两包 `latest`）
-> **Stand**：R21（2026-11-12，**0.3.8 发布 + 对外文字改用本会话直写**。第二个接缝 `agent/request-error`
+> **Stand**：R22（2026-11-13，**交接审计**：事实包说错 pin/上一版、HANDOFF 引用一个不存在的哈希、
+> npm 页面的包内 README 少一整条命令；新增三类判据 `facts-truth` / `handoff-truth` /
+> `cli-usage` 逐行相等，并记为 P-0014。**242 测试 / 6 门**)｜
+> R21（2026-11-12，**0.3.8 发布 + 对外文字改用本会话直写**。第二个接缝 `agent/request-error`
 > 有契约与 9 条测试；字节预算按加载路径拆；37 次 `UNSUPPORTED_REASONING_EFFORT` 从"无人命名"变成
 > 按 (step, code) 命名一次 + 纯函数 preflight；新增 `explain`；**copy 通道改用 `copy_record.mjs`，
-> 判据是"每个散文数字都在事实包里"，不再靠模型身份**。
-> **228 测试 / 6 门**)｜R17（2026-11-11，收尾 0.3.6 的对外文字与台账，重测 census 到
+> 判据是"每个散文数字都在事实包里"，不再靠模型身份**）｜R17（2026-11-11，收尾 0.3.6 的对外文字与台账，重测 census 到
 > 293 turns / 393 attempts，装机验收第一次落成产物）｜R16（2026-11-11，P-0009 窗口化扫描的
 > `createdAt` 回退）｜
 > R15（P-0008 字节预算门）｜R14（P-0007 copy 通道传输）｜R13（P-0006 turn census）｜
@@ -16,7 +18,7 @@
 > App 重启）｜R2（P-0001 升 `verified`）｜R1（首个补丁落地）
 > **接手先读**：`docs/HANDOFF.md` → `PROJECT_RULES.md` → `INDEX.md`
 >
-> **基线（2026-11-12）**：`pnpm run verify` = **228 tests / 6 gates**；
+> **基线（2026-11-13）**：`pnpm run verify` = **242 tests / 6 gates**；
 > `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.3.8`（latest）+
 > `dsh-remedy-core@0.3.8`。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
 > `v0.3.8`。
@@ -62,7 +64,7 @@ dsh-remedy/
 │   ├── repair-stream.ts    # chunk 包装器；计数与事件
 │   ├── stream-types.ts     # P-0005 拆出的流类型（编译期擦除）
 │   ├── failure-text.ts     # P-0005 拆出的失败消息助手
-│   ├── monitor.ts          # P-0014 拆出的计数器账本（每条计数为何移动）
+│   ├── monitor.ts          # 计数器账本（每条计数为何移动；P-0012 付账的那次拆分）
 │   ├── failure-listener.ts # 第二接缝：命名诊断 + 有界重试（P-0011/P-0013）
 │   ├── session-scan.ts     # 离线扫描 .jsonl / zstd 目录 + turn census
 │   ├── session-log.ts      # 多帧 zstd 会话日志读取

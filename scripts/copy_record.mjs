@@ -19,6 +19,12 @@
  *
  * `--split` expects `<<<FILE: path>>>` markers, one per target.
  *
+ * `--freeze` turns an existing entry into a frozen release record: it keeps the
+ * recorded bytes and hashes and only adds `frozen_at`, because a page that has
+ * just been published must stop tracking the fact pack (rewriting a public page
+ * every time the pack moves is the failure `frozen_at` exists to prevent). The
+ * freeze is a recorded operation rather than a hand edit to the manifest.
+ *
  * Every recorded entry carries `writer`, `facts_sha256` and `output_sha256`, and
  * the draft is kept under `docs/copy/raw/` so a later reader can see both the
  * input and the validated output.
@@ -43,6 +49,55 @@ const outPath = flag('out', null)
 const draftPath = flag('file', null)
 const split = has('split')
 const force = has('force')
+const freeze = has('freeze')
+
+// Freezing is its own operation: it must not require a draft (nothing is written)
+// and it must refuse to freeze anything it has no recorded bytes for.
+if (freeze) {
+  if (name === null) {
+    process.stderr.write('copy_record: --freeze needs --name\n')
+    process.exit(2)
+  }
+  const manifestPath = 'docs/copy/manifest.json'
+  if (!existsSync(abs(manifestPath))) {
+    process.stderr.write('copy_record: no docs/copy/manifest.json to freeze an entry in\n')
+    process.exit(3)
+  }
+  const manifest = JSON.parse(readFileSync(abs(manifestPath), 'utf8'))
+  const entries = Array.isArray(manifest.entries) ? manifest.entries : []
+  const index = entries.findIndex((entry) => entry.name === name)
+  if (index === -1) {
+    process.stderr.write(`copy_record: no entry named ${name} to freeze\n`)
+    process.exit(3)
+  }
+  const entry = entries[index]
+  if (typeof entry.frozen_at === 'string') {
+    process.stdout.write(`ALREADY FROZEN ${name} at ${entry.frozen_at}\n`)
+    process.exit(0)
+  }
+  if (!existsSync(abs(entry.target))) {
+    process.stderr.write(`copy_record: entry ${name} points at a missing file ${entry.target}; nothing to freeze\n`)
+    process.exit(3)
+  }
+  const text = readFileSync(abs(entry.target), 'utf8')
+  const actual = createHash('sha256').update(text).digest('hex')
+  // The recorded bytes must be the bytes on disk: freezing a page whose bytes have
+  // drifted would hide a drift behind the "already public" exemption instead of
+  // reporting it.
+  if (actual !== entry.output_sha256) {
+    process.stderr.write(
+      `copy_record: ${name} is ${actual.slice(0, 12)}… but the manifest records ${String(entry.output_sha256).slice(0, 12)}…; ` +
+        're-register it before freezing, so the frozen record is the published page\n',
+    )
+    process.exit(1)
+  }
+  entry.frozen_at = isoStamp(new Date().toISOString())
+  entry.channel = entry.channel ?? 'retired-external-model'
+  manifest.updated_at = isoStamp(new Date().toISOString())
+  writeFileSync(abs(manifestPath), `${JSON.stringify(manifest, null, 2)}\n`, 'utf8')
+  process.stdout.write(`FROZE ${name} at ${entry.frozen_at}\n`)
+  process.exit(0)
+}
 
 if (name === null) {
   process.stderr.write('copy_record: --name is required\n')

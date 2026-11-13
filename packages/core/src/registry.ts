@@ -393,6 +393,36 @@ export const PATCHES: readonly PatchRecord[] = [
       'it does not validate createdAt against the wall clock of the file; a hand-edited session can still claim any date',
     ],
   },
+  {
+    id: 'P-0014',
+    title: 'The project describing itself is the part nothing checked',
+    symptom:
+      'the fact pack said its packed manifest pins "dsh-remedy-core": "0.3.7" and that 0.3.6 was the previous release while the published 0.3.8 tarball pinned 0.3.8 and README/CHANGELOG both named 0.3.7; the handoff called patch-registry-2026-11-12T19-35-00.000Z.json 900820ae while the file and its .sha256 both hash to 96f9144f; and the package README that npm renders still documented four commands after explain shipped, because the only test compared the scan line',
+    rootCause:
+      'R21 replaced "an external model wrote it" with "every prose number exists in the fact pack", which checks the shape of a claim and never its truth: nothing read the fact pack own statements, so they could describe a version the packages had left behind. The handoff is prose, and gate_ssot only validates data/results/*.json, so a hash printed next to an artifact had no sibling sidecar to disagree with. tests/unit/cli-usage.test.ts compared one line, exactly as far as P-0010 needed, and P-0010 recorded that limit in its own limits field; the next release added a command and it fell through',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'major',
+    evidence: [
+      'docs/patches/P-0014-description-truth.md',
+      'tests/governance/facts-truth.test.ts',
+      'tests/governance/handoff-truth.test.ts',
+      'tests/unit/cli-usage.test.ts',
+      'docs/copy/facts/public-repo-facts.md',
+    ],
+    guards: [
+      'tests/governance/facts-truth.test.ts',
+      'tests/governance/handoff-truth.test.ts',
+      'tests/unit/cli-usage.test.ts',
+      'scripts/copy_record.mjs',
+    ],
+    limits: [
+      'the package README is still hand-written prose without an output_sha256; what guards it now is its equality with USAGE, not a hash against the fact pack, so the rest of the page is still unguarded (BS-13 narrows rather than closes)',
+      'the fact pack is only checked against other files in this repository, so a sentence nothing else records remains a claim about the world that this patch cannot verify',
+      'the hash check reads only evidence-index rows carrying exactly one artifact and exactly one hash; a row that compares two publishes is skipped rather than guessed',
+      'gate_copy still cannot see the handoff or the package README, so the new checks are governance tests, not gates, and they run where the suite runs',
+    ],
+  },
 ]
 
 /** Look up one patch by id. */

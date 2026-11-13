@@ -36,8 +36,8 @@ import type {
   StreamChunk,
 } from './stream-types.js'
 
-// The counter ledger moved to `monitor.ts` (P-0014 seam split) because the
-// reasoning behind each counter is the largest part of it and the stream
+// The counter ledger moved to `monitor.ts` (the split P-0012 pays for) because
+// the reasoning behind each counter is the largest part of it and the stream
 // wrapper has its own cap to stay under.
 export { RemedyMonitor } from './monitor.js'
 

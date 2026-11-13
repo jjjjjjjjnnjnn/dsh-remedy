@@ -36,6 +36,7 @@ nothing when there is nothing to repair.
 dsh-remedy status  [--json] [--journal <file>]
 dsh-remedy repair  [<file>] [--name <tool>] [--id <call-id>] [--max-calls <n>] [--truncated] [--json]
 dsh-remedy scan    <session.jsonl|directory> [--since <iso>] [--max-files <n>] [--json] [--out <file>]
+dsh-remedy explain [--sessions <dir>] [--profile-file <cordis.patch.yml>]
 dsh-remedy verify  [--json]
 ```
 
@@ -43,7 +44,10 @@ dsh-remedy verify  [--json]
 or a directory of them; `--since` drops older events and reports how many it
 dropped, `--max-files` caps the walk. It also prints the turn census and the
 error codes it counted. `repair` reads stdin when no file is given, and a `.json`
-fixture through its `arguments` field.
+fixture through its `arguments` field. `explain` prints, per failure class this
+machine actually hit, how often, which patch covers it, and whether that patch is
+switched on in the profile named by `--profile-file`; it exits `1` when a class
+the host hits is covered by a patch that is switched off here.
 
 Exit codes: `0` ok · `1` finding · `2` usage · `3` unavailable.
 

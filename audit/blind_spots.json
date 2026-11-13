@@ -64,7 +64,17 @@
     {
       "id": "BS-13",
       "status": "open",
-      "note": "The gate set does not cover packages/*/README.md. gate_copy only verifies the eleven outward files at the repository root, and packages/plugin/README.md is hand-written package prose with no recorded output_sha256, so nothing compared it with the binary until P-0010 added tests/unit/cli-usage.test.ts — and that test compares only the `scan` usage line, not the rest of the page. Closing it means either moving the package README into the copy channel (so it is generated and hashed) or adding a test that every command shape it mentions exists in the USAGE text."
+      "note": "The gate set does not cover packages/*/README.md as a whole. gate_copy only verifies the outward files at the repository root, and packages/*/README.md is hand-written package prose with no recorded output_sha256. P-0010 narrowed it to the `scan` line; P-0014 narrowed it further: tests/unit/cli-usage.test.ts now requires the README CLI block to equal the CLI USAGE block line for line, and requires a usage line for every command `cli.ts` dispatches (that check caught `explain` missing from the page npm renders). What remains open is the rest of the page: the prose outside the CLI block still has no mechanism, so it can describe behaviour the code does not have."
+    },
+    {
+      "id": "BS-15",
+      "status": "closed",
+      "note": "Closed 2026-11-13 by P-0014: the fact pack is the file every outward number is checked against, and nothing checked the pack's own claims. It described a 0.3.8 plugin that pins core 0.3.7 (the tarball pins 0.3.8) and called 0.3.6 the previous release (it was 0.3.7). tests/governance/facts-truth.test.ts now compares the pack's Version line to the three package manifests, every `pins` claim to the core version publish_packages.mjs enforces, every previous-release claim to a CHANGELOG section, and every patch id it quotes to registry.ts. What stays open is narrower and recorded in the patch limits: the pack is only checked against other files in this repository, so a sentence nothing else records is still unverified prose."
+    },
+    {
+      "id": "BS-16",
+      "status": "closed",
+      "note": "Closed 2026-11-13 by P-0014: the handoff is prose about the repository and no mechanism read it, so it could quote a hash for a file that hashes differently (it called patch-registry-2026-11-12T19-35-00.000Z.json `900820ae…` when the file and its .sha256 both say `96f9144f…`), mark three artifacts as current at once, and cite five 0.3.8 artifacts the evidence index never listed. tests/governance/handoff-truth.test.ts now separates two contracts: the evidence index is 'now' (rows must resolve, hashes must match, one current row per family and it must be the newest artifact), while the batch sections are 'then' and may quote the stamp of that day. What stays open is narrower: a hash quoted inside a batch section, and a claim in the live sections that no artifact backs, are still unread."
     },
     {
       "id": "BS-14",
@@ -72,5 +82,5 @@
       "note": "The `withdrawn` bucket cannot move on this host, and that is now measured rather than assumed. `rolled-back` needs a proven repair held in `pending`, and `pending` is only filled by the `block-end` path; fused text here arrives in `tool-call-chunks` entries, which are repaired at `finish` and never held. The probe `scripts/probe_withdrawn_reachability.mjs` walked 24 329 persisted attempt streams: 62 carry a fused `tool-call-chunks` entry, 23 724 carry arguments inside a `block-end`, and **0** carry a provable fusion inside a `block-end` (artifact `data/results/withdrawn-reachability-2026-11-12T09-40-00.000Z.json`). So a live `withdrawn` can only come from `consumer-abort`, which needs a consumer that stops reading mid-stream — not something a scripted headless run does. P-0003 therefore stays verified for the branch that was observed (budget refusal) and its `withdrawn` half stays unit-proven by design, not by lack of effort."
     }
   ],
-  "updated_at": "2026-11-12T09:45:00.000Z"
+  "updated_at": "2026-11-13T06:40:00.000Z"
 }

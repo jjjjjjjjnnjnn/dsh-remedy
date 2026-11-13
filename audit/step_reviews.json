@@ -442,7 +442,27 @@
         "tests/governance/public-copy.test.ts",
         "docs/copy/release-notes/v0.3.8.md"
       ]
+    },
+    {
+      "id": "S25",
+      "gate": "step-review",
+      "title": "A handoff that quotes a hash nobody checked is the same defect as a gate that quotes a number nobody checked",
+      "axes": {
+        "correctness": "R21 wrote 900820ae for patch-registry-2026-11-12T19-35-00.000Z.json; the file hashes to 96f9144f and so does its .sha256 sidecar, while 900820ae exists in no artifact. The new test reads only evidence-index rows that carry exactly one artifact and exactly one hash, compares the prefix to the actual file, and skips anything ambiguous instead of guessing which of two hashes belongs to which of two files.",
+        "reproducibility": "node --test tests/governance/handoff-truth.test.ts is red on the old handoff and green after the index was corrected; the same file also proves every evidence-index row resolves, that each family marks exactly one row current and that it is the newest artifact on disk, and that the five 0.3.8 artifacts cited in prose were added to the index.",
+        "compliance": "The patch records two contracts in the test header rather than one loose check: the evidence index is now (it must resolve), the batch sections are then (R1-R21 quote that day stamps, and git log --follow shows every publish renames the registry snapshot to a new stamp while keeping 99 percent of its bytes, so demanding the old prose resolve would require rewriting history). PROJECT_RULES section 2 says evidence is produced by scripts; this keeps a hand-written index honest without rewriting dated records.",
+        "ssot": "The fact pack is the only number source for outward text and is now also checked against the repository that owns it: its Version line must equal the three package manifests, every pins claim must equal the core version publish_packages.mjs already enforces, every previous-release claim must have a CHANGELOG section, and every P-NNNN it names must exist in registry.ts (P-0001x did not).",
+        "adversarial": "The failure that motivated this patch was a fact with no mechanism, three times over in one file set. The negative control is the old state itself: each of the new tests fails against the pre-patch fact pack, handoff and package README. The opposite failure, freezing a published page whose bytes have drifted, is refused by the new copy_record --freeze, which compares the recorded output_sha256 to the bytes on disk before it adds frozen_at."
+      },
+      "evidence": [
+        "docs/patches/P-0014-description-truth.md",
+        "tests/governance/facts-truth.test.ts",
+        "tests/governance/handoff-truth.test.ts",
+        "tests/unit/cli-usage.test.ts",
+        "docs/copy/facts/public-repo-facts.md",
+        "docs/copy/manifest.json"
+      ]
     }
   ],
-  "updated_at": "2026-11-12T18:30:00.000Z"
+  "updated_at": "2026-11-13T06:10:00.000Z"
 }

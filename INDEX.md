@@ -28,7 +28,7 @@
 | `packages/plugin/src/repair-stream.ts` | `llm/stream` 包装器 + 计数 |
 | `packages/plugin/src/stream-types.ts` | P-0005 拆出的流类型（编译期擦除） |
 | `packages/plugin/src/failure-text.ts` | P-0005 拆出的失败消息助手 |
-| `packages/plugin/src/monitor.ts` | P-0014 拆出的计数器账本 |
+| `packages/plugin/src/monitor.ts` | 计数器账本（每条计数为何移动；P-0012 付账的那次拆分） |
 | `packages/plugin/src/failure-listener.ts` | `agent/request-error`：命名诊断 + 有界重试（P-0011/P-0013） |
 | `packages/plugin/src/index.ts` | DSH loader 入口（默认导出 `{name, apply}`） |
 | `packages/plugin/src/session-scan.ts` | 离线扫描（zstd / 目录 / `--since` / turn census） |
@@ -90,7 +90,7 @@
 | `scripts/lib/kit.mjs` | 门禁共用 `runGate` / `readJson` / `sha256` / `isoStamp` |
 | `scripts/lib/copy-policy.mjs` | 数字白名单 / 占位符 / writer，纯函数 |
 | `scripts/lib/agy-channel.mjs` | 已退役通道的传输规则（P-0007 历史记录） |
-| `scripts/copy_record.mjs` | copy 通道：登记本会话写的草稿（先校验数字再写盘） |
+| `scripts/copy_record.mjs` | copy 通道：登记本会话写的草稿（先校验数字再写盘）；`--freeze` 把已发布条目冻成 release 记录 |
 | `scripts/publish_packages.mjs` | `pnpm pack` → 读回 manifest → `npm publish` |
 | `scripts/redact_artifacts.mjs` | 已落盘产物的脱敏重写（P-0004） |
 | `scripts/record_live_mount.mjs` | 真机 journal/session → `live-*` 产物 |
@@ -125,9 +125,11 @@
 | `tests/unit/registry.test.ts` | 注册表形状与状态语义 |
 | `tests/unit/package-files.test.ts` | 包里必须带哪些文件（fixtures 进包） |
 | `tests/unit/publish.test.ts` | 发布 preflight：登录、404/401/403、OTP、manifest 协议 |
-| `tests/unit/cli-usage.test.ts` | 包内 README 与 CLI `USAGE` 的 `scan` 行必须一致（P-0010） |
+| `tests/unit/cli-usage.test.ts` | 包内 README 与 CLI `USAGE` 的用法块必须逐行相同（P-0010 / P-0016） |
 | `tests/unit/fuzz-invariants.test.ts` | 属性测试：任何被接受的调用，其参数必须各自能 parse |
 | `tests/governance/manifest-targets.test.ts` | manifest 条目必须指向仓库内存在的文件（不得指向 `.tmp/`） |
+| `tests/governance/facts-truth.test.ts` | 事实包自己的陈述必须成立：版本、pin、上一版、引用的补丁号（R22） |
+| `tests/governance/handoff-truth.test.ts` | 证据索引=现在（可解析+哈希）+ 批次叙事=当时；每族只能一个「当前」（R22） |
 | `tests/unit/request-error.test.ts` | 第二接缝的五种决定、`next()` 契约、有界缓存 |
 | `tests/unit/preflight.test.ts` | reasoning effort 预检：9 例，全部取自本机数据 |
 | `tests/governance/budget-split.test.ts` | 预算的两份清单必须与真实模块图双向一致 |
@@ -135,3 +137,4 @@
 | `tests/governance/ledgers.test.ts` | 台账 / 六格披露行 / 唯一 SessionID / 快照一致 |
 | `tests/governance/public-copy.test.ts` | 对外文件 / 事实包 / 模板 / 元数据 |
 | `tests/e2e/cli.test.ts` | 四条命令的退出码与产物 |
+| `tests/e2e/explain.test.ts` | `explain` 不造假：无输入就报 unknown、读 profile、输入不可读时退出 3 |

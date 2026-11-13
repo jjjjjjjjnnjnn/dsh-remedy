@@ -1,0 +1,80 @@
+{
+  "format": 1,
+  "title": {
+    "en": "dsh-remedy plugins",
+    "zh": "dsh-remedy 补丁集"
+  },
+  "description": {
+    "en": "The DSH bundle for dsh-remedy: a patch set that repairs fused tool-call JSON at the stream seam and names the refusals it will not retry. This index pins the bundle to a git commit; the same package is also on npm as dsh-remedy, whichever a market prefers.",
+    "zh": "dsh-remedy 的 DSH 插件包：在流接缝上修复粘连的工具调用 JSON，并命名它拒绝重试的那些失败类。此索引把插件钉在一个 git 提交上；同一个包也在 npm 上，市场用哪个都行。"
+  },
+  "metadata": {
+    "categories": {
+      "dev": {
+        "title": {
+          "en": "Developer",
+          "zh": "开发"
+        }
+      }
+    },
+    "labels": {
+      "repair": {
+        "title": {
+          "en": "Stream repair",
+          "zh": "流修复"
+        }
+      }
+    }
+  },
+  "plugins": [
+    {
+      "name": "dsh-remedy",
+      "title": {
+        "en": "dsh-remedy",
+        "zh": "dsh-remedy"
+      },
+      "description": {
+        "en": "Repairs fused tool-call arguments at the llm/stream seam and re-throws whatever it cannot prove, names the deterministic refusals it will not retry at agent/request-error, and answers per failure class which patch covers it and whether that patch is switched on here.",
+        "zh": "在 llm/stream 接缝上修复粘连的工具调用参数，证不出来的原样抛回；在 agent/request-error 上命名它不重试的确定性拒绝；并按失败类回答哪个补丁覆盖它、以及它在本 profile 里是否启用。"
+      },
+      "author": "jjjjjjjjnnjnn",
+      "homepage": "https://github.com/jjjjjjjjnnjnn/dsh-remedy",
+      "repository": {
+        "url": "https://github.com/jjjjjjjjnnjnn/dsh-remedy",
+        "directory": "packages/plugin"
+      },
+      "metadata": {
+        "category": "dev",
+        "keywords": [
+          "deepseek-harness",
+          "dsh",
+          "cordis",
+          "dsh-remedy",
+          "patch-set",
+          "tool-call-fusion",
+          "stream-repair",
+          "dsh-plugin"
+        ],
+        "labels": [
+          "repair"
+        ]
+      },
+      "versions": [
+        {
+          "version": "0.3.8",
+          "publishTimestamp": 1794505202,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/jjjjjjjjnnjnn/dsh-remedy",
+            "commit": "39cc358eb65f7cc9610bba2e9220fa7d16010f3e",
+            "path": "packages/plugin"
+          },
+          "engines": {
+            "dsh": ">=0.2.0-rc.1 <0.3.0-0"
+          },
+          "note": "the plugin pins dsh-remedy-core 0.3.8 exactly; installing it resolves both"
+        }
+      ]
+    }
+  ]
+}

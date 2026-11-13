@@ -315,6 +315,23 @@
         "tests/unit/publish.test.ts",
         "scripts/publish_packages.mjs"
       ]
+    },
+    {
+      "id": "P-0019",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.3.9",
+      "evidence": [
+        "docs/patches/P-0019-outward-pages.md",
+        "tests/unit/cli-usage.test.ts",
+        "packages/plugin/README.md",
+        "packages/core/README.md"
+      ],
+      "guards": [
+        "tests/unit/cli-usage.test.ts",
+        "tests/governance/package-readme-prose.test.ts",
+        "tests/governance/facts-truth.test.ts"
+      ]
     }
   ]
 }

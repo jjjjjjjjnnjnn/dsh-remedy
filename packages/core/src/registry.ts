@@ -542,6 +542,37 @@ export const PATCHES: readonly PatchRecord[] = [
     ],
     failureClasses: [],
   },
+  {
+    id: 'P-0019',
+    title: 'The page strangers read first described a project that had stopped existing',
+    symptom:
+      'README.md and README.zh-CN.md opened as "a resident repair layer that mounts on llm/stream" while the project had become a patch set of eighteen defects across two resident seams, the CLI and the build side. Worse, one sentence had become false: both pages said agent/pre-step was not mounted because nobody had measured what a rejection does, and R23 had measured exactly that',
+    rootCause:
+      'the copy channel guards numbers, not shape. gate_copy checks that every prose digit exists in the fact pack and has no opinion about whether the page still describes the product; P-0014 pinned the pack own claims and P-0017 pinned the package pages, so the two root READMEs could keep saying "one seam, one wrapper" while the registry grew to eighteen patches. Three numbers had also drifted with them (tests, the CLI half of the budget, the total)',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'major',
+    evidence: [
+      'docs/patches/P-0019-outward-pages.md',
+      'README.md',
+      'README.zh-CN.md',
+      'packages/plugin/README.md',
+      'packages/core/README.md',
+    ],
+    guards: [
+      'tests/unit/cli-usage.test.ts',
+      'tests/governance/package-readme-prose.test.ts',
+      'tests/governance/facts-truth.test.ts',
+      'scripts/gate_copy.mjs',
+    ],
+    limits: [
+      'the root README still has no structural guard: the mechanism is "every digit exists in the pack", and a page could describe behaviour the code does not have with no gate noticing (BS-13 own family)',
+      'it does not change what npm renders, because npm serves the tarball and the published tarball is 0.3.8; the new descriptions and package READMEs appear only when a release carries them',
+      'the seam table is hand-maintained prose: a patch that moves seam must be moved in the table by hand, and nothing compares the two',
+      'no live artifact is possible: these are pages, not a seam',
+    ],
+    failureClasses: [],
+  },
 ]
 
 /** Look up one patch by id. */

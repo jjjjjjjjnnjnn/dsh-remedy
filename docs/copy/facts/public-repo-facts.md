@@ -37,13 +37,13 @@
 
 ## The patch set, by seam (the shape of the project)
 
-- The project is a patch set, not one wrapper. 18 patches are registered, each with its own evidence, guards and limits, and each declaring the seam it touches. The registry is `packages/core/src/registry.ts`; `dsh-remedy status` prints it and `dsh-remedy explain` answers which of them cover a failure class this host actually hits.
+- The project is a patch set, not one wrapper. 19 patches are registered, each with its own evidence, guards and limits, and each declaring the seam it touches. The registry is `packages/core/src/registry.ts`; `dsh-remedy status` prints it and `dsh-remedy explain` answers which of them cover a failure class this host actually hits.
 - Four patches sit on the resident `llm/stream` seam: P-0001 (split a proven fusion), P-0002 (a rescue must be provable, attributable and atomic), P-0003 (a refusal must be observable), and P-0005 (reseal a bare member value or refuse it).
 - Two patches sit on the second resident seam, `agent/request-error`: P-0011 (the contract for who owns the decision, plus a bounded retry budget) and P-0013 (name the deterministic refusals instead of retrying them).
 - Five patches live in the CLI half: P-0004 (scan fidelity and redaction shapes), P-0006 (the turn census), P-0009 (a session header is dated by createdAt), P-0010 (the usage text must match the binary), and P-0016 (coverage is declared by the patch, not restated by the command).
-- Six patches are build-side, on `scripts`: P-0007 (a copy channel that cannot report "exited null"), P-0008 (a byte budget no script checks is a suggestion), P-0012 (one cap for two load paths), P-0014 (the project description itself must be true), P-0017 (the two npm pages had no mechanism), and P-0018 (a Windows exit code is not a registry answer).
+- Seven patches are build-side, on `scripts`: P-0007 (a copy channel that cannot report "exited null"), P-0008 (a byte budget no script checks is a suggestion), P-0012 (one cap for two load paths), P-0014 (the project description itself must be true), P-0017 (the two npm pages had no mechanism), P-0018 (a Windows exit code is not a registry answer), and P-0019 (the outward pages described a project that had stopped existing).
 - One patch is a measurement rather than a mount: P-0015 records what a rejected `agent/pre-step` decision does, so that a later patch can use that seam on measured ground.
-- Three patches are `verified` (P-0001, P-0002, P-0003 — each on a real host with a `data/results/live-*` artifact). The other 15 are `tested`: they have unit tests, negative controls and a measured fixture, scan or corpus, but no artifact a resident journal can witness.
+- Three patches are `verified` (P-0001, P-0002, P-0003 — each on a real host with a `data/results/live-*` artifact). The other 16 are `tested`: they have unit tests, negative controls and a measured fixture, scan or corpus, but no artifact a resident journal can witness.
 - What the set is trying to be: every claim about a defect carries the same four things — a symptom quoted from the host, a mechanism with the file and line that was measured, counter-evidence, and a written limit. That is enforced by `scripts/gate_registry.mjs` and `packages/core/src/registry.ts`.
 
 ## The repair
@@ -176,6 +176,15 @@
 - The guard: `tests/unit/publish.test.ts` grew two tests — one pins that both codes produce advice naming the exception, the other is the negative control that `0`, `1`, `402`, `403`, `404`, `429`, `null` and `undefined` do **not** take that branch, so a real 404 keeps its real advice.
 - Still unmeasured: only the two codes this machine produced are named; a third Windows exception still prints its raw number. The patch also does not retry the publish, because publishing is the operator's decision.
 
+## The outward pages (P-0019)
+
+- Status `tested`. Surface `scripts`. It rewrites prose and adds no behaviour.
+- What it fixes: `README.md` and `README.zh-CN.md` opened as "a resident repair layer that mounts on `llm/stream`" while the project had become a patch set of eighteen defects across two resident seams, the CLI and the build side. One sentence had also become false: both pages said `agent/pre-step` was not mounted because nobody had measured what a rejection does, and R23 had measured exactly that (P-0015).
+- Why it lasted: the copy channel guards numbers, not shape. `gate_copy` checks that every prose digit exists in the fact pack and has no opinion about whether the page still describes the product; P-0014 pinned the pack own claims and P-0017 pinned the package pages, so the two root READMEs could keep saying "one seam, one wrapper".
+- What changed: both pages now open as a patch set, carry a seam classification table, and replace the pre-step guess with the measurement plus its remaining blind spot (`BS-17`). Status names three `verified` and sixteen `tested` patches and states that the six after `0.3.8` are merged, tested and unreleased.
+- The two package READMEs, which npm renders, now explain the split: installing the plugin installs the engine because the pin is exact, and the engine is its own package because it does no I/O and can be embedded and tested alone.
+- Still unmeasured: the root README has no structural guard, so a page could still describe behaviour the code does not have without a gate noticing; npm keeps serving the `0.3.8` tarball until a release carries these pages.
+
 ## The windowed scan and the session header (P-0009)
 
 - Status `tested`. Surface `cli`. Like P-0004 it changes an offline reader, so no resident journal can attest it.
@@ -273,7 +282,7 @@
 
 ## Tests and gates
 
-- Tests: 251 pass, 0 fail.
+- Tests: 255 pass, 0 fail.
 - Gates: 6 (`ssot`, `registry`, `namespace`, `step-review`, `copy`, `size`).
 - Negative controls (`--mutate`): 6 of 6 caught.
 - Publishing: `scripts/publish_packages.mjs` publishes the two package

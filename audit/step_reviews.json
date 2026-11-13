@@ -530,7 +530,25 @@
         "tests/unit/publish.test.ts",
         "docs/patches/P-0018-windows-exit-code.md"
       ]
+    },
+    {
+      "id": "S30",
+      "gate": "copy",
+      "title": "The page strangers read first described a project that stopped existing at R20",
+      "axes": {
+        "correctness": "The README was not merely stale: it said agent/pre-step was unmounted because nobody had measured what a rejection does, and R23 measured exactly that (P-0015 records the turn closing as blocked, no step, the claimed input discarded, exit 1). Both READMEs now open as a patch set of eighteen defects, carry a seam table, and replace that sentence with the measured decision plus its remaining blind spot.",
+        "reproducibility": "copy_record wrote both READMEs from the drafts after the fact pack gained the seam section and the three drifted numbers (251 tests, cli 40845, total 81988); pnpm run verify reports 251 tests, six gates green, and gate_copy OK with every live entry pointing at the current pack.",
+        "compliance": "no number was invented: the pack was corrected first, then the drafts were written from it, and copy_record refused nothing because every digit already existed there. Release status says P-0014 through P-0018 are merged and tested but unreleased instead of implying 0.3.8 serves them.",
+        "ssot": "the registry, the patch ledger and the package READMEs now agree on what the project is; the package pages gained the two-package explanation and their descriptions were re-registered through the copy channel so gate_copy compares them with both package.json files.",
+        "adversarial": "the failure this replaces is a page that contradicts a measurement this repository already produced — the same family as P-0014, one layer out. The negative control is the pre-patch README text quoted in the patch document; the guards are cli-usage (usage block equality), package-readme-prose (no prose digits, every fenced command dispatchable) and facts-truth (the pack own claims must hold)."
+      },
+      "evidence": [
+        "README.md",
+        "README.zh-CN.md",
+        "packages/plugin/README.md",
+        "docs/patches/P-0019-outward-pages.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-13T09:50:00.000Z"
+  "updated_at": "2026-11-13T10:30:00.000Z"
 }

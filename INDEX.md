@@ -74,6 +74,9 @@
 | `docs/copy/prompts/` / `raw/` / `manifest.json` | 草稿要求、原始草稿、provenance |
 | `docs/copy/repo-metadata.json` | GitHub 描述 / topics / 发布文案 / npm 描述 |
 | `docs/copy/release-notes/` | GitHub release 正文（同一 copy 通道；条目带 `frozen_at`，不随事实包漂移） |
+| `docs/market-index.json` | format 1 索引源，钉在公开仓提交；市场可直接消费（R27） |
+| `docs/distribution/README.md` | 渠道台账：每家要交什么、哪些是自动采集、描述红线（R27） |
+| `docs/distribution/awesome-dsh-plugin-entry.yml` | 那张表的条目文件本体，可直接复制进 `data/plugins/`（R27） |
 | `docs/PUBLISH.md` | `git subtree split` 与首次发布步骤 |
 
 ## 门禁与台账
@@ -136,6 +139,7 @@
 | `tests/governance/coverage-single-source.test.ts` | 覆盖表只能住在 registry；不许命令自带 `COVERAGE`/`SWITCHES`（P-0016） |
 | `tests/governance/coverage-vocabulary.test.ts` | 覆盖的故障类必须属于 census 会报的集合，且覆盖者必须是常驻接缝（P-0016） |
 | `tests/governance/package-readme-prose.test.ts` | 两个包内 README：不许有散文数字，围栏里的命令必须真能 dispatch（P-0017） |
+| `tests/governance/distribution-entry.test.ts` | 市场条目指向 `packages/plugin`、描述无数字、索引钉住提交与真实时间戳（R27） |
 | `tests/unit/request-error.test.ts` | 第二接缝的五种决定、`next()` 契约、有界缓存 |
 | `tests/unit/preflight.test.ts` | reasoning effort 预检：9 例，全部取自本机数据 |
 | `tests/governance/budget-split.test.ts` | 预算的两份清单必须与真实模块图双向一致 |

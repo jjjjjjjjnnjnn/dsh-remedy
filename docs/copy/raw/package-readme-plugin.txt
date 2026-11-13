@@ -77,4 +77,10 @@ block-end(index=<next>, id=<original>#remedy-1)
 finish{kind:'stop'}
 ```
 
+When a fused text glues two calls of different tools, the stream carries one
+tool name for that index. A fragment whose arguments do not satisfy the named
+tool's declared `required` fields is sent out under **`remedy_unattributed`**;
+the runtime answers `UNKNOWN_TOOL` and the turn continues, so the wrong tool is
+never called. The repair event records how many fragments that happened to.
+
 Everything else passes through unchanged.

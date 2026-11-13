@@ -62,7 +62,18 @@ export type StreamChunk =
   | FinishChunk
 
 export type RepairEvent =
-  | { readonly kind: 'repaired'; readonly tool: string; readonly callId: string; readonly fragments: number }
+  | {
+      readonly kind: 'repaired'
+      readonly tool: string
+      readonly callId: string
+      readonly fragments: number
+      /**
+       * Fragments sent out under the fallback name because the declared tool's
+       * schema did not accept their arguments (P-0027). Absent means every
+       * fragment was dispatched under a proven name.
+       */
+      readonly unattributed?: number
+    }
   | {
       readonly kind: 'resealed'
       readonly tool: string
@@ -85,6 +96,26 @@ export type RepairEvent =
 export interface RepairStreamOptions {
   /** Ceiling on calls synthesized across the whole stream. Default 8. */
   readonly maxCalls?: number
+  /**
+   * The tool declarations the request carried (`options.tools` on `llm/stream`).
+   *
+   * A fused text can glue two calls of different tools, and the stream carries
+   * one name for that index; the surplus fragments therefore have no provable
+   * name. With these declarations each fragment's arguments can be checked
+   * against the named tool's own `required` list, which is the only evidence
+   * available at this seam (P-0027).
+   */
+  readonly tools?: readonly ToolDeclaration[]
+}
+
+/** The slice of a tool declaration this seam needs; the host type is wider. */
+export interface ToolDeclaration {
+  readonly name: string
+  readonly parameters?: {
+    readonly required?: readonly string[]
+    /** The host sends a full JSON Schema; nothing else is read here. */
+    readonly [key: string]: unknown
+  }
 }
 
 export interface OpenCall {

@@ -89,8 +89,9 @@
     {
       "id": "BS-18",
       "status": "open",
-      "note": "A fused text that glues two calls of different tools carries one tool name per index, so the fragments after the first inherit it. Measured twice on DSH 0.2.2-rc.3 (2026-11-13): a rescue split {\"file_path\":…}{\"command\":…} into a read and a second call, and the second was dispatched as read with shell arguments, which the tool rejected with INVALID_ARGS instead of running the intended tool. The failure is visible, not silent, but it is a wrong dispatch: the name of fragments 2..N cannot be proven from the stream. Artifact: data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json. What would close it: either refuse a multi-object split whose tool names cannot all be proven, or carry a per-fragment name from the stream; both change the repair rate and need their own patch (P-0027, planned)."
+      "note": "A fused text that glues two calls of different tools carries one tool name per index. P-0027 now checks each synthesized fragment against the declared tool's `required` fields and, when it does not fit, sends it out under `remedy_unattributed`, which the runtime answers with `UNKNOWN_TOOL` (measured on 0.2.2-rc.3) instead of running the wrong tool with foreign arguments. What stays open is narrower: a tool that declares no `required` list proves nothing, so its fragments still inherit the stream name; a fragment that happens to satisfy the wrong tool's required list is still dispatched as that tool; and the attribution of the stage that glued the objects is still unknown (P-0001 limit). The original measurement, twice on 0.2.2-rc.3, is in data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json; the fix and its negative controls are tests/unit/attribution.test.ts.",
+      "updated_at": "2026-11-13T21:20:00.000Z"
     }
   ],
-  "updated_at": "2026-11-13T19:58:00.000Z"
+  "updated_at": "2026-11-13T21:20:00.000Z"
 }

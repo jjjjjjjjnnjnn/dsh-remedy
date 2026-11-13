@@ -39,10 +39,10 @@ export class RemedyMonitor {
     this.streams += 1
   }
 
-  recordRepaired(tool: string, callId: string, fragments: number): void {
+  recordRepaired(tool: string, callId: string, fragments: number, unattributed = 0): void {
     this.fused += 1
     this.repaired += 1
-    this.emit({ kind: 'repaired', tool, callId, fragments })
+    this.emit({ kind: 'repaired', tool, callId, fragments, ...(unattributed > 0 ? { unattributed } : {}) })
   }
 
   /**

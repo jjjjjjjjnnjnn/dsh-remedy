@@ -1,21 +1,12 @@
 /**
- * The `llm/stream` repair wrapper.
+ * The `llm/stream` repair wrapper. Measured ordering (session 9045e2ec, seq 524):
+ * `block-start` → `tool-call-delta`* → `usage` → `finish{kind:'error'}`, no
+ * `block-end` for the fused call — so the repair point is the terminal finish (the
+ * throw path is handled too). DSH 0.2.2-rc.3 closes the first block itself and
+ * leaves the surplus object to that same finish.
  *
- * MEASURED ORDERING (session 9045e2ec, seq 524): the adapter emits
- * `block-start` → `tool-call-delta`* → `usage` → `finish{kind:'error'}` with
- * `MALFORMED_RESPONSE`. It never emits `block-end` for the fused call. So the
- * primary repair point is the terminal `finish`, using the deltas already
- * buffered; the thrown-exception path is handled too because other adapters
- * throw instead of finishing with an error.
- *
- * WHAT THIS FILE REFUSES TO DO:
- *  - it never turns an error into a success it did not prove (every fragment
- *    must parse; otherwise the original finish/throw goes through untouched);
- *  - it never repairs a `max-tokens` truncation;
- *  - it never dispatches a call it could not name or trace;
- *  - it never commits a `block-end` repair while that same stream could still
- *    reject a later block, so one turn is either fully repaired or untouched;
- *  - it never drops the adapter's `replayState` on a repaired finish.
+ * Refusals: no unproven success; no `max-tokens` repair; no unnamed dispatch; no
+ * commit while a later block could still reject; no dropped `replayState`.
  */
 
 import {
@@ -34,6 +25,7 @@ import type {
   RepairEvent,
   RepairStreamOptions,
   StreamChunk,
+  ToolDeclaration,
 } from './stream-types.js'
 
 // The counter ledger moved to `monitor.ts` (the split P-0012 pays for) because
@@ -55,6 +47,7 @@ export type {
   RepairStreamOptions,
   StreamChunk,
   ToolCallDeltaChunk,
+  ToolDeclaration,
   UsageChunk,
 } from './stream-types.js'
 
@@ -64,18 +57,32 @@ function ceilingOf(options: RepairStreamOptions): number {
   return value
 }
 
+/** Sent when a fragment's name cannot be proven (P-0027); the runtime answers
+ * `UNKNOWN_TOOL` and continues (measured 0.2.2-rc.3). */
+export const UNATTRIBUTED_NAME = 'remedy_unattributed'
+
+/** Only a declared `required` list proves anything; none means no claim. */
+function attributable(call: ToolCallInput, tools: readonly ToolDeclaration[] | undefined): boolean {
+  if (tools === undefined || tools.length === 0) return true
+  const declaration = tools.find((tool) => tool.name === call.name)
+  const required = declaration?.parameters?.required
+  if (declaration === undefined || required === undefined || required.length === 0) return true
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(normalizeArguments(call.arguments))
+  } catch {
+    return false
+  }
+  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return false
+  return required.every((key) => Object.prototype.hasOwnProperty.call(parsed, key))
+}
+
 interface RescuePlan {
   readonly chunks: readonly StreamChunk[]
 }
 
-/**
- * Wrap a chunk stream and repair fused tool calls.
- *
- * The returned generator yields the same chunks in the same order, except that
- * a repaired tool call becomes N `block-end` chunks and a terminal
- * `MALFORMED_RESPONSE` finish becomes `{kind:'stop'}`. If no repair is proven,
- * the original chunks (or the original throw) pass through unchanged.
- */
+/** A proven fusion becomes N `block-end` chunks and an error finish becomes
+ * `{kind:'stop'}`; anything unproven passes through, throw included. */
 export async function* repairStream(
   source: AsyncIterable<unknown>,
   monitor: RemedyMonitor,
@@ -123,7 +130,6 @@ export async function* repairStream(
     ...(replayState === undefined ? {} : { replayState }),
   })
 
-  /** Once a `block-end` is held, everything after it is held too, so order is never rewritten. */
   const hold = (entry: PendingBlock): void => {
     holding = true
     pending.push(entry)
@@ -134,13 +140,7 @@ export async function* repairStream(
     hold({ original: chunk, synthesized: null, repaired: null, spent: 0 })
   }
 
-  /**
-   * Decide every open call at once. All-or-nothing: one unrepairable buffer
-   * aborts the rescue, so a turn never runs with a silently dropped call.
-   *
-   * A name conflict aborts too: two tool names on one index means the rest of
-   * the request cannot be attributed to the right tool without guessing.
-   */
+  /** All-or-nothing: one unrepairable buffer or two names on an index aborts. */
   const planRescue = (failure: LlmFailure | undefined): RescuePlan | null => {
     if (nameConflict || blockRejected) return null
     if (!isFusionFailure(failure)) return null
@@ -225,6 +225,7 @@ export async function* repairStream(
     if (!fusedSeen) return null
 
     const chunks: StreamChunk[] = []
+    let unattributed = 0
     for (const decision of decisions) {
       for (const [offset, call] of decision.calls.entries()) {
         if (offset === 0 && decision.index !== -1) {
@@ -235,6 +236,14 @@ export async function* repairStream(
         // index the consumer never saw start is not a well-formed block sequence.
         const index = nextIndex()
         chunks.push({ type: 'block-start', index, blockType: 'tool-call' })
+        // P-0027: the stream named one tool for this index, so a fragment that does
+        // not fit that tool's declared fields has no provable name. It goes out
+        // under a name the runtime cannot execute rather than as a wrong call.
+        if (offset > 0 && !attributable(call, options.tools)) {
+          unattributed += 1
+          chunks.push(closeCall(index, { ...call, name: UNATTRIBUTED_NAME }))
+          continue
+        }
         chunks.push(closeCall(index, call))
       }
     }
@@ -249,17 +258,14 @@ export async function* repairStream(
         monitor.recordResealed(decision.reseal.tool, decision.reseal.callId, decision.reseal.key)
         continue
       }
-      monitor.recordRepaired(first.name, first.id, decision.calls.length)
+      monitor.recordRepaired(first.name, first.id, decision.calls.length, unattributed)
     }
 
     return { chunks }
   }
 
-  /**
-   * Emit the held tail. If any block in this stream was rejected, every repair is
-   * withdrawn and the originals go out instead: the turn fails as a whole rather
-   * than running with a half-repaired call list.
-   */
+  /** Emit the held tail; a rejected block withdraws every repair, so the turn fails
+   * whole instead of running half-repaired. */
   function* flushPending(): Generator<StreamChunk> {
     if (pending.length === 0) return
     const blocks = pending.splice(0, pending.length)
@@ -320,13 +326,8 @@ export async function* repairStream(
     }
   }
 
-  /**
-   * A failing stream must not commit a repair it cannot complete: withdrawing is
-   * the same all-or-nothing rule as a rejected block, applied at the finish.
-   *
-   * A `max-tokens` finish withdraws too, but for a different reason: the stream
-   * was cut, not rejected, so it must not be counted as an unrepaired fusion.
-   */
+  /** Withdraw at the finish for the same all-or-nothing reason; a `max-tokens`
+   * finish withdraws as a cut, not as an unrepaired fusion. */
   const withdrawPending = (reason: 'rejected' | 'truncated'): void => {
     if (pending.some((entry) => entry.repaired !== null)) withdrawing = reason
   }

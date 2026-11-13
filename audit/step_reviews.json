@@ -668,7 +668,24 @@
         "docs/HANDOFF.md",
         "tests/governance/release-procedure.test.ts"
       ]
+    },
+    {
+      "id": "S38",
+      "gate": "size",
+      "title": "A rescue that proves the split must not invent the name",
+      "axes": {
+        "correctness": "The listener now passes options.tools into the wrapper; each synthesized fragment (offset >= 1) is checked against the named tool parameters.required, and a fragment that does not fit is emitted as remedy_unattributed instead of inheriting the first call name. The first fragment is untouched. Six tests were written before the change and two of them were red (the marker and the repaired event unattributed count).",
+        "reproducibility": "tests/unit/attribution.test.ts builds every stream in the test from literals, so no host state is needed: cross-tool, same-tool, no declarations, empty required list, the event field, and the measured same-tool fixture as a regression guard. The runtime answer for the fallback name was measured separately on 0.2.2-rc.3 (Error: unknown tool, code UNKNOWN_TOOL, turn continues).",
+        "compliance": "No byte cap moved. The first build was 2539 bytes over the total cap, so repair-stream.ts prose paid for the patch in four passes and toolsOf was inlined; the size gate now passes at residency 41623 of 44000, CLI 41362 of 42000, total 82985 of 83000. The registry entry, the ledger row, the patch doc and the fact pack were updated in the same round.",
+        "ssot": "One home for the fallback name (UNATTRIBUTED_NAME), one predicate for the claim (attributable), and the caveat travels in the same repaired event the counters already use, so the journal cannot say repaired while hiding an unattributed fragment. The patch doc names the two halves that were measured separately instead of implying one live run.",
+        "adversarial": "The adversary is the engine asserting a name it cannot prove. The rule is deliberately one-sided: only a declared required list can refuse a name, so a loose schema keeps the old behaviour rather than inventing a refusal, and the doc records that hole instead of closing it with a guess."
+      },
+      "evidence": [
+        "docs/patches/P-0027-unattributed-fragments.md",
+        "packages/plugin/src/repair-stream.ts",
+        "tests/unit/attribution.test.ts"
+      ]
     }
   ],
-  "updated_at": "2026-11-13T14:40:00.000Z"
+  "updated_at": "2026-11-13T21:25:00.000Z"
 }

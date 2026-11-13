@@ -82,7 +82,7 @@ export const PATCHES: readonly PatchRecord[] = [
     limits: [
       'on DSH 0.2.2-rc.1 the measured adapter never closed a tool-call block, which is why the finish-time rescue is the primary path; on 0.2.2-rc.3 it does emit block-end for the first fragment of a fusion and leaves the surplus text to that same finish path (measured 2026-11-13, data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json)',
       'proves downstream acceptance of a synthesized block-start only on the finish path; an adapter that closes blocks itself is still unmeasured (BS-11)',
-      'a fused text that glues two calls of *different* tools carries one name for that index, so fragments after the first inherit it and are dispatched under the wrong tool; the tool then rejects the arguments with INVALID_ARGS, which fails visibly but is still a wrong dispatch (measured twice on 0.2.2-rc.3, blind spot BS-18)',
+      'a fused text that glues two calls of *different* tools carries one name for that index; P-0027 sends a fragment that does not fit the declared tool out under remedy_unattributed (UNKNOWN_TOOL) instead of as that tool, so the remaining hole is a tool whose declaration proves nothing (BS-18)',
       'treats a tool name that arrives twice with different values as unrepairable, so a legitimate adapter bug stays a failure',
       'leaves the verdict vocabulary untouched: until P-0003 every rejection was counted as fused, so a non-fusion syntax error read as degraded (BS-12, closed by P-0003)',
     ],
@@ -752,6 +752,33 @@ export const PATCHES: readonly PatchRecord[] = [
       'it forbids the retired commands by pattern, so a differently worded wrong command is not caught',
       'the boundary section rule looks for .tmp/ paths and a `latest` version; a stale statement phrased without either is still unread',
       'no live artifact is possible: this is documentation and a governance test',
+    ],
+    failureClasses: [],
+  },
+  {
+    id: 'P-0027',
+    title: 'A fragment dispatched under a name nobody proved',
+    symptom:
+      'A fused text that glues two calls of *different* tools carries one tool name for that index, so every fragment after the first inherited it. Measured twice on DSH 0.2.2-rc.3 (2026-11-13): the surplus object {"command":"Get-ChildItem …"} was dispatched as read and the tool answered Error: invalid arguments: missing required property "file_path" (INVALID_ARGS). The turn continued, so nothing ran silently, but a wrong tool was called',
+    rootCause:
+      'the rescue proves the JSON split and nothing else. The stream names one tool per index, and the engine reused that name for every fragment because the alternative — inventing a name — looked worse. What it actually did was invent one: the first call names the fused index, and the surplus objects are different calls by construction',
+    surface: 'llm/stream',
+    status: 'tested',
+    severity: 'major',
+    evidence: [
+      'packages/plugin/src/repair-stream.ts',
+      'tests/unit/attribution.test.ts',
+      'data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json',
+    ],
+    guards: [
+      'tests/unit/attribution.test.ts',
+      'packages/plugin/src/repair-stream.ts',
+    ],
+    limits: [
+      'only the declared required fields are provable: a tool with no required list proves nothing, so its fragments keep the stream name and the old behaviour',
+      'the fallback name is not a tool, so the model pays one UNKNOWN_TOOL round trip before it can retry; that is the cost of not running the wrong tool',
+      'a fragment that happens to satisfy the wrong tool schema is still dispatched as that tool; schemas are a filter, not a proof',
+      'the declarations come from options.tools; a hand-built call or a CLI repair carries none, so nothing changes there',
     ],
     failureClasses: [],
   },

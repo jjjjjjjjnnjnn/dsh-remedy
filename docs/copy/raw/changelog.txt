@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.4.4] - 2026-11-13
+### Fixed
+- A fused text that glues two calls of **different** tools no longer runs the wrong tool. The stream carries one tool name for that index, so the fragments after the first inherited it; measured twice on DSH 0.2.2-rc.3, the surplus object was dispatched as `read` and the tool answered `invalid arguments: missing required property "file_path"`. The wrapper now receives the request's tool declarations and checks each synthesized fragment against the named tool's `required` fields; one that does not fit goes out as `remedy_unattributed`, which the runtime answers with `UNKNOWN_TOOL` while the turn continues. The `repaired` event records `unattributed: <n>`.
+- `BS-18` narrows with it: the wrong dispatch is now a named failure the model can retry, and what stays open is a tool whose declaration proves nothing.
+
+### Notes
+- This release carries 27 patches.
+- The resident half paid for the patch itself: the first build was 2 539 bytes over the 83000-byte total, so `repair-stream.ts` prose was condensed in four passes and `toolsOf` was inlined. No cap moved; the gate now reads residency 41623 of 44000, CLI 41362 of 42000, total 82985 of 83000.
+- P-0027 is `tested`, not `verified`: the engine is pinned by six unit tests, and the runtime's answer to the fallback name was measured with a probe rather than by a live fusion of two different tools.
+
 ## [0.4.3] - 2026-11-13
 ### Changed
 - Re-measured on **DSH 0.2.2-rc.3**, the desktop build released today (the previous measurement was 0.2.2-rc.1). All three seams this plugin uses are declared identically in both versions — `llm/stream` stays a synchronous waterfall over `AsyncIterable<StreamChunk>`, `agent/pre-step` keeps `PreStepDecision`, `agent/request-error` keeps `RequestErrorAction` — so the supported range stays `>=0.2.0-rc.1 <0.3.0-0` and only the measured statement moved. `data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json` records the run: an isolated `DSH_HOME`, the published 0.4.2 tarball, one real turn, and a real fusion repaired with the synthesized call dispatched.

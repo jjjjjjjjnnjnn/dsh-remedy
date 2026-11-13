@@ -72,10 +72,10 @@ test('the market index names where a version bytes actually come from', () => {
     assert.equal(version.unreleased, true, 'a git pin may only describe unreleased bytes')
   }
 
-  // The publish timestamp is a measurement, not a placeholder: 0.4.3 landed on
-  // the registry at 2026-11-13T18:49:50.774Z, which is epoch 1794595790. The
+  // The publish timestamp is a measurement, not a placeholder: 0.4.4 landed on
+  // the registry at 2026-11-13T19:25:22.282Z, which is epoch 1794597922. The
   // older entries stay in the index with their own measured timestamps.
-  assert.equal(version.publishTimestamp, 1794595790)
+  assert.equal(version.publishTimestamp, 1794597922)
 
   // And the unreleased head is stated once, in words, so a reader of the index
   // learns what the repository contains without mistaking it for the artifact.

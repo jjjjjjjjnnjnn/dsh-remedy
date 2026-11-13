@@ -74,8 +74,10 @@ await runGate('copy', async ({ checks, mutate }) => {
     const extra = unknownNumbers(text, facts)
     checks.add(
       `numbers:${entry.name}`,
-      extra.length === 0,
-      extra.length === 0 ? 'every prose number is in the fact pack' : `not in facts: ${extra.join(', ')}`,
+      frozen || extra.length === 0,
+      frozen
+        ? 'frozen release record: its own page, its own numbers'
+        : extra.length === 0 ? 'every prose number is in the fact pack' : `not in facts: ${extra.join(', ')}`,
     )
   }
 

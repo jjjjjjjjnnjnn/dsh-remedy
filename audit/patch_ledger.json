@@ -441,6 +441,21 @@
         "tests/governance/release-procedure.test.ts",
         "tests/governance/handoff-truth.test.ts"
       ]
+    },
+    {
+      "id": "P-0027",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.4",
+      "evidence": [
+        "packages/plugin/src/repair-stream.ts",
+        "tests/unit/attribution.test.ts",
+        "data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/attribution.test.ts",
+        "packages/plugin/src/repair-stream.ts"
+      ]
     }
   ]
 }

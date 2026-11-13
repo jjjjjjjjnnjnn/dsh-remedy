@@ -17,7 +17,7 @@
 import { appendFileSync, mkdirSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { PATCHES, redactValue } from 'dsh-remedy-core'
-import { RemedyMonitor, repairStream, type RepairEvent } from './repair-stream.js'
+import { RemedyMonitor, repairStream, type RepairEvent, type ToolDeclaration } from './repair-stream.js'
 import { makeFailureListener, RETRY_CACHE_LIMIT, type FailureListener } from './failure-listener.js'
 
 export { makeFailureListener, RETRY_CACHE_LIMIT, type FailureListener }
@@ -79,10 +79,21 @@ function isThenable(value: unknown): value is PromiseLike<unknown> {
  * synchronously; only re-enter through `.then` when `next()` itself was already
  * asynchronous.
  */
-function wrapStream(stream: unknown, monitor: RemedyMonitor, maxCalls: number | undefined): unknown {
-  if (isThenable(stream)) return stream.then((value) => wrapStream(value, monitor, maxCalls))
+function wrapStream(
+  stream: unknown,
+  monitor: RemedyMonitor,
+  maxCalls: number | undefined,
+  tools: readonly ToolDeclaration[] | undefined,
+): unknown {
+  if (isThenable(stream)) return stream.then((value) => wrapStream(value, monitor, maxCalls, tools))
   if (!isAsyncIterable(stream)) return stream
-  return repairStream(stream, monitor, { maxCalls })
+  return repairStream(stream, monitor, { maxCalls, tools })
+}
+
+/** The declarations the request carried; without them every name is unproven. */
+function toolsOf(options: unknown): readonly ToolDeclaration[] | undefined {
+  const tools = (options as { tools?: unknown } | null)?.tools
+  return Array.isArray(tools) ? (tools as ToolDeclaration[]) : undefined
 }
 
 function journalWriter(
@@ -120,7 +131,7 @@ function mount(ctx: RemedyContext, config: RemedyConfig, monitor: RemedyMonitor)
 
     if (config.repair !== false) {
       disposers.push(
-        ctx.on('llm/stream', (_options, next) => wrapStream(next(), monitor, config.maxCalls)),
+        ctx.on('llm/stream', (options, next) => wrapStream(next(), monitor, config.maxCalls, toolsOf(options))),
       )
     }
 

@@ -12,7 +12,7 @@
 | 基线 | **264 tests / 6 gates / `--mutate` 6-6** |
 | 包体 | **已发布 0.4.2 = 37 258 B 压缩 / 35 文件 / 120 776 B 解包**，core **0.4.2 = 34 488 B / 21 文件 / 111 142 B 解包**（两包 shasum `134ca137…` / `82ab88df…`；plugin 比 0.4.1 多 352 B —— `explain-command.js` 的三态与压缩后的注释；core 多 1 397 B —— registry 多两条补丁记录）。上一个发布 **0.4.1 = 36 906 B / 35 文件 / 119 744 B 解包**，core **0.4.1 = 33 091 B / 21 文件 / 105 353 B 解包**（shasum `dac640ea…` / `c9a081bf…`）。再上一个 **0.4.0 = 36 928 B / 35 文件 / 119 866 B 解包**，core **0.4.0 = 31 773 B / 21 文件 / 100 304 B 解包**（shasum `dd3b764d…` / `48d449b7…`）。emit 总量 82 505 / 83 000（常驻 41 143 / 44 000，CLI 41 362 / 42 000）。 |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1` / `v0.3.2` / `v0.3.3` / `v0.3.4` / `v0.3.5` / `v0.3.6` / `v0.3.7` / `v0.3.8` / `v0.4.0` / `v0.4.1` / **`v0.4.2`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release）；`v0.4.2` 的正文与 `docs/copy/release-notes/v0.4.2.md` 逐字节比对。 |
-| 装机验收 | **0.4.2 已从 registry 单装到空目录验过 `OK 6 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-13T18-55-00.000Z.json`（`ok: true`、三条命令退出码 0/0/0）。两个 profile 装的仍是 0.4.1 的 registry 字节（`.tmp/pack041`），**要等一次「切到 0.4.2 + 重启桌面 App」**（App 当前没在运行，只有人能点）。历史：0.4.1 / 0.4.0 / 0.3.8 各有 `install-acceptance-*` 产物；0.3.2–0.3.7 各自从 registry 单装验过。 |
+| 装机验收 | **0.4.2 已从 registry 单装到空目录验过 `OK 6 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-13T18-55-00.000Z.json`（`ok: true`、三条命令退出码 0/0/0）。**R37 把两个 profile 切到 registry 的 0.4.2**：`.tmp/pack042/` 的两个 tarball 的 sha1/sha512 与 registry 一致（plugin `134ca137…` / core `82ab88df…`），用 App 自带的 pnpm 11.28.5 装完，desktop 与 remedy-live 的 `node_modules` 两包都报 **0.4.2**、pin 也是 `0.4.2`，两边 `dist/cli.js verify` 都回 `OK 6 fixture(s)`。**桌面 App 仍需一次重启才加载新版本，而它当前没在运行**（只有人能点）。历史：0.4.1 / 0.4.0 / 0.3.8 各有 `install-acceptance-*` 产物；0.3.2–0.3.7 各自从 registry 单装验过。 |
 | 下一件事 | **0.4.2 已发布，两包 `latest = 0.4.2`，二十六补丁全部上线。** 剩下三件：①**把两个 profile 切到 0.4.2 并重启桌面 App**（脚本已备好同类做法，App 关着时需要人工点重启）；②外部渠道等人工（imsai catalog 巡检 / dsh.so 合并 / `awesome-dsh-plugin` #14942 / dshopen #472 / AllDSH #3）；③下一个补丁之前先看字节账：CLI 41 362 / 42 000、total 82 505 / 83 000，**只剩 638 / 495 B**，要么拆模块要么删散文，不许抬 cap。 |
 
 ## 五分钟检查
@@ -1749,7 +1749,7 @@ pnpm 的过滤发版路径（`publish_packages.mjs` 正是为替代它而写的�
 
 ## 明确边界
 
-- 两个 profile（桌面与 `remedy-live`）当前装的都是 **0.4.1**，用的是从 registry 取回、并已用
+- 两个 profile（桌面与 `remedy-live`）当前装的都是 **0.4.2**，用的是从 registry 取回、并已用
   sha1/sha512 对上 `dist.shasum` / `dist.integrity` 的那份 tarball；装到哪一份、什么时候装的、
   App 什么时候重启，都记在批次叙事与 `data/results/install-acceptance-*.json` 里，不写在这里 ——
   这台机器的 scratch 目录是 gitignored 的，写进来的是一个新克隆无法核对的断言。

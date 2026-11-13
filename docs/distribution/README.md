@@ -24,7 +24,7 @@
 
 | 渠道 | 为什么 |
 |---|---|
-| [deepseek-ai/deepseek-harness Discussions](https://github.com/deepseek-ai/deepseek-harness/discussions)「Show Your Plugins!」 | 发帖由人决定；六条规则（一贴一项目 / 标题格式 / 显著标注非官方 / 禁无关推广 / 正文含地址+简介+截图+集成方式 / 建议模板） |
+| [deepseek-ai/deepseek-harness Discussions](https://github.com/deepseek-ai/deepseek-harness/discussions)「Show Your Plugins!」 | 发帖由人决定；六条规则（一贴一项目 / 标题格式 / 显著标注非官方 / 禁无关推广 / 正文含地址+简介+截图+集成方式 / 建议模板）。草稿在 `docs/distribution/deepseek-discussions-post.md`，截图待补 |
 | [dsh-so/dsh-plugin-submissions](https://github.com/dsh-so/dsh-plugin-submissions) | 自 2026-09-08 无 push、无 issue 模板；表单在站上，是人工动作 |
 
 ## 3. 描述红线（每一家都适用）

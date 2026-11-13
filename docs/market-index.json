@@ -61,6 +61,16 @@
       },
       "versions": [
         {
+          "version": "0.4.2",
+          "publishTimestamp": 1794591237,
+          "source": {
+            "type": "npm"
+          },
+          "engines": {
+            "dsh": ">=0.2.0-rc.1 <0.3.0-0"
+          }
+        },
+        {
           "version": "0.4.1",
           "publishTimestamp": 1794570356,
           "source": {
@@ -84,7 +94,7 @@
     }
   ],
   "head": {
-    "en": "The repository currently carries twenty-four patches; P-0024 is merged, tested and unpublished, so the git head is not the published artifact and this index does not pin it.",
-    "zh": "仓库当前有二十四个补丁；P-0024 已合并、测试过但尚未发布，所以 git 头不是已发布的产物，本索引不钉它。"
+    "en": "The repository carries twenty-six patches and every one of them is inside the published 0.4.2 artifact, so the git head and the npm tarball describe the same code. This index still pins the npm bytes rather than a commit: a version number is what a market installs.",
+    "zh": "仓库有二十六个补丁，而且全部都在已发布的 0.4.2 产物里，所以 git 头与 npm tarball 描述的是同一份代码。本索引仍钉 npm 字节而不是某个提交：市场安装的是版本号。"
   }
 }

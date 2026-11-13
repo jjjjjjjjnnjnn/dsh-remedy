@@ -86,6 +86,18 @@ git -C .. log --oneline -3
   0.4.1 那份用 `--freeze` 冻成 `release-notes-041-frozen`，条目名随之让给新的 `release-notes`。
 - 两个 README、两个包内 README、CHANGELOG、CONTRIBUTING / SECURITY / CODE_OF_CONDUCT / 模板 /
   metadata **一次性重登记**（事实包变了，`facts_sha256` 全部作废）；`gate_copy` OK。
+- `docs/market-index.json`：`versions[0]` 翻到 0.4.2（`publishTimestamp` 1794591237，实测自
+  `npm view dsh-remedy time`），0.4.1 / 0.3.8 保留为历史；`head` 改成「二十六个补丁全部在已发布产物里，
+  所以本索引仍钉 npm 字节而不是提交」。`tests/governance/distribution-entry.test.ts` 的 pin 同步。
+
+**D. 两个 profile 也切过去了（R37 收尾）**
+
+- `.tmp/pack042/` 的两个 tarball 是从 registry 用 `npm pack` 拉回来的那一份，sha1/sha512 与
+  `dist.shasum` / `dist.integrity` 一致（plugin `134ca137…` / core `82ab88df…`）。
+- 用 App 自带的 pnpm 11.28.5 在两个 profile 各装一次：desktop 与 remedy-live 的 `node_modules`
+  两包都报 **0.4.2**、plugin 的 pin 也是 `0.4.2`，两边 `dist/cli.js verify` 都回 `OK 6 fixture(s)`；
+  换装脚本 `.tmp/switch-profiles-042.mjs`，备份后缀 `before-042`。
+- **桌面 App 没在运行**，所以「重启加载 0.4.2」这一步没做——它是本机唯一剩下的人工动作。
 
 **C. 台账**
 
@@ -1653,7 +1665,8 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | `gates-2026-11-13T18-30-00.000Z.json` / `gates-mutate-2026-11-13T18-35-00.000Z.json` | 绿 | R36 中间一轮（文档与台账改完之后、索引更新之前），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`；已被 18-45 / 18-50 取代 |
 | `gates-2026-11-13T18-45-00.000Z.json` / `gates-mutate-2026-11-13T18-50-00.000Z.json` | 绿 | R36 收尾的门禁证据（`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，264 tests；已被 19-10 / 19-15 取代） |
 | `gates-2026-11-13T19-10-00.000Z.json` / `gates-mutate-2026-11-13T19-15-00.000Z.json` | 绿 | R37 中间一轮（release notes 加 `### Added` 之前），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`；已被 19-30 / 19-35 取代 |
-| `gates-2026-11-13T19-30-00.000Z.json` / `gates-mutate-2026-11-13T19-35-00.000Z.json` | 绿 | **当前**门禁证据：R37 收尾（0.4.2 已发布、事实包与全部对外文件翻口径并重登记、release notes 补齐五段、AGENTS/PUBLISH/HANDOFF 同步之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，264 tests |
+| `gates-2026-11-13T19-30-00.000Z.json` / `gates-mutate-2026-11-13T19-35-00.000Z.json` | 绿 | R37 中间一轮（profile 换装与市场索引之前），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`；已被 19-45 / 19-50 取代 |
+| `gates-2026-11-13T19-45-00.000Z.json` / `gates-mutate-2026-11-13T19-50-00.000Z.json` | 绿 | **当前**门禁证据：R37 最终一轮（0.4.2 发布 + 两个 profile 切到 0.4.2 + 市场索引翻 0.4.2 + 全部对外文件重登记之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，264 tests |
 | `gates-2026-11-13T08-10-00.000Z` / `gates-mutate-2026-11-13T08-15-00.000Z` | 绿 | 门禁证据：R23 收尾（P-0015 台账 + 事实包加段 + 对外文件重登记） |
 | `gates-2026-11-13T09-30-00.000Z` / `gates-mutate-2026-11-13T09-35-00.000Z` | 绿 | 门禁证据：R25 收尾（P-0017 台账 + 事实包加段 + 全部对外文件重登记） |
 | `gates-2026-11-13T10-15-00.000Z` / `gates-mutate-2026-11-13T10-20-00.000Z` | 绿 | 门禁证据：R26 收尾（P-0018：Windows 退出码按异常命名） |

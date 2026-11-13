@@ -11,6 +11,8 @@
 | [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) | PR，一个 `data/plugins/*.yml` | [#14942](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/14942) | `open` / **`CLEAN`**（`check` 与 `Submission gate` 两个 check 全绿）/ `+7 -0` / **changed_files 1** |
 | [polang233/dsh-plugin-index](https://github.com/polang233/dsh-plugin-index)（dshopen） | issue 模板 | [#472](https://github.com/polang233/dsh-plugin-index/issues/472) | open（人工审） |
 | [alldsh/submissions](https://github.com/alldsh/submissions) | issue 模板 | [#3](https://github.com/alldsh/submissions/issues/3) | open（人工审） |
+| [dsh.so](https://dsh.so/submit/) | 站上表单（npm 通道） | <https://dsh.so/artifact/dsh-remedy/> | ✅ **已提交**（2026-11-13）：表单检查 `Pass` / `SECURITY SCAN Pass` / 28 files / schema valid；点提交后按钮变 `✓ Submitted`。站点已有条目，安装命令仍写 `0.3.7`，等维护者用新提交更新 |
+| [deepseek-ai/deepseek-harness Discussions](https://github.com/deepseek-ai/deepseek-harness/discussions)「Show Your Plugins!」 | 讨论帖 | [#13206](https://github.com/deepseek-ai/deepseek-harness/discussions/13206) | ✅ **已发布**（2026-11-13）：分类 `Show Your Plugins!`、非官方标注、仓库 + 安装、两条常驻接缝、CLI、构建侧、pre-step 限制；正文含 `explain` 截图（`docs/distribution/explain-0.4.1.png`） |
 
 ## 1. 自动采集，不需要申请
 
@@ -22,10 +24,7 @@
 
 ## 2. 还要人做
 
-| 渠道 | 为什么 |
-|---|---|
-| [deepseek-ai/deepseek-harness Discussions](https://github.com/deepseek-ai/deepseek-harness/discussions)「Show Your Plugins!」 | 发帖由人决定；六条规则（一贴一项目 / 标题格式 / 显著标注非官方 / 禁无关推广 / 正文含地址+简介+截图+集成方式 / 建议模板）。草稿在 `docs/distribution/deepseek-discussions-post.md`，截图待补 |
-| [dsh-so/dsh-plugin-submissions](https://github.com/dsh-so/dsh-plugin-submissions) | 自 2026-09-08 无 push、无 issue 模板；表单在站上，是人工动作 |
+2026-11-13：dsh.so 表单与 Discussions 发帖都已完成，见第 0 节。剩下的只是等维护者审，没有待办的人工动作。
 
 ## 3. 描述红线（每一家都适用）
 
@@ -59,13 +58,12 @@ GitHub release `v0.4.1` 的正文与 `docs/copy/release-notes/v0.4.1.md` 逐字�
   `mergeStateStatus` 仍是 **`CLEAN`** / `open`。CI 绿是前置条件，收录仍要维护者读代码。
 - **dshopen** #472 与 **AllDSH** #3 仍是 open / 0 评论，等人工审。
 
-## 6. 还没做的两件事
+## 6. 两件人工动作也做完了（2026-11-13）
 
-两件都不需要再打补丁号：
-
-1. **`dsh.so` 的站上表单**（人工动作）。那个仓库自 2026-09-08 后没有 push，也没有 issue 模板。
-2. **DeepSeek Discussions 发帖**（人工动作）。六条规则：一贴一项目 / 标题格式 / 显著标注非官方 /
-   禁无关推广 / 正文含地址+简介+截图+集成方式 / 建议模板。
+- **`dsh.so` 表单**：npm 通道，检查 `Pass` / `SECURITY SCAN Pass` / 28 files / schema valid，提交后按钮变
+  `✓ Submitted`；站点已有条目，安装命令仍写 `0.3.7`，等维护者用新提交更新。
+- **DeepSeek Discussions**：帖子 [#13206](https://github.com/deepseek-ai/deepseek-harness/discussions/13206)，
+  分类 `Show Your Plugins!`，正文含 `explain` 截图。
 
 `BS-17` 已在 R30 关闭：桌面渲染器把拒绝画成「已完成」且不显示任何内容，所以 `agent/pre-step` 只能用
 `{kind:'enter'}` 改写，不能拒绝；那条改写路径仍未测。

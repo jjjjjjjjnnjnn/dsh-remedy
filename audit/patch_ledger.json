@@ -237,7 +237,7 @@
       "id": "P-0014",
       "status": "tested",
       "owner": "remedy",
-      "since": "0.3.9",
+      "since": "0.4.0",
       "evidence": [
         "docs/patches/P-0014-description-truth.md",
         "tests/governance/facts-truth.test.ts",
@@ -256,7 +256,7 @@
       "id": "P-0015",
       "status": "tested",
       "owner": "remedy",
-      "since": "0.3.9",
+      "since": "0.4.0",
       "evidence": [
         "docs/patches/P-0015-pre-step-rejection.md",
         "data/results/prestep-probe-2026-11-13T07-45-00.000Z.json",
@@ -272,7 +272,7 @@
       "id": "P-0016",
       "status": "tested",
       "owner": "remedy",
-      "since": "0.3.9",
+      "since": "0.4.0",
       "evidence": [
         "packages/core/src/registry.ts",
         "packages/core/src/types.ts",
@@ -289,7 +289,7 @@
       "id": "P-0017",
       "status": "tested",
       "owner": "remedy",
-      "since": "0.3.9",
+      "since": "0.4.0",
       "evidence": [
         "packages/plugin/README.md",
         "packages/core/README.md",
@@ -305,7 +305,7 @@
       "id": "P-0018",
       "status": "tested",
       "owner": "remedy",
-      "since": "0.3.9",
+      "since": "0.4.0",
       "evidence": [
         "scripts/publish_packages.mjs",
         "tests/unit/publish.test.ts",
@@ -320,7 +320,7 @@
       "id": "P-0019",
       "status": "tested",
       "owner": "remedy",
-      "since": "0.3.9",
+      "since": "0.4.0",
       "evidence": [
         "docs/patches/P-0019-outward-pages.md",
         "tests/unit/cli-usage.test.ts",
@@ -337,7 +337,7 @@
       "id": "P-0020",
       "status": "tested",
       "owner": "remedy",
-      "since": "0.3.9",
+      "since": "0.4.0",
       "evidence": [
         "docs/patches/P-0020-market-source-truth.md",
         "docs/market-index.json",

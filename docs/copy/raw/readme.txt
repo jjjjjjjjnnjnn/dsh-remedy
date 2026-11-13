@@ -198,13 +198,13 @@ The whole `MALFORMED_RESPONSE` corpus on one machine was replayed through the bu
 Three patches are `verified` on a real host: P-0001 on a headless profile and on the desktop app, P-0002 on a 2026-11-10 headless run that repaired a real two-call fusion and saw the synthesized call dispatched, and P-0003 on a 2026-11-10 headless run whose journal wrote a non-zero `refused` after the code declined to repair a budget refusal.
 
 The other seventeen are `tested`, not `verified`. Each carries unit tests, a negative control and a measured artifact where one exists: P-0004, P-0006 and P-0009 change an offline reader; P-0005 has no live bare-value shape yet; P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019 and P-0020 are build-side; P-0010 and P-0016 change text a command prints; P-0011 and P-0013 sit on a seam a live journal witnesses only when a turn fails in a class this plugin retries, which the default budget of 0 never triggers; and P-0015 is a measurement on an isolated profile rather than a mount.
-Release status: `0.3.8` is published and is the registry `latest` for both `dsh-remedy` and `dsh-remedy-core`; it carried thirteen patches. The seven after it — P-0014 through P-0020 — are merged and `tested` but unreleased, so the registry does not serve them yet. The previous release is `0.3.7`.
+Release status: `0.4.0` is published and is the registry `latest` for both `dsh-remedy` and `dsh-remedy-core`; it carries twenty patches — the thirteen `0.3.8` shipped plus P-0014 through P-0020. A cold directory installed it from the registry and `dsh-remedy verify` printed `OK 6 fixture(s)`. The previous release is `0.3.8`, and `0.3.7` the one before it.
 
 Package sizes:
 
-- 0.3.8 plugin: 35898 bytes compressed, 35 files, 117750 bytes unpacked (81740 bytes of `dist/*.js`, 26605 bytes of `dist/*.d.ts`, 3583 bytes of `fixtures/`, 5822 bytes of package-root files), shasum `3bc47df12f21fe7d68336f595d397ff868b3d4d7`.
-- 0.3.8 core: 26551 bytes compressed, 21 files, 83461 bytes unpacked (58062 bytes of `dist/*.js`, 22102 bytes of `dist/*.d.ts`), shasum `0df993f85589e101b15b830fa105e7ef8c66c5d5`.
-- 0.3.7 plugin: 29462 bytes compressed, 29 files, 98001 bytes unpacked, shasum `69087301f5ff802e387061af61756b65b883b11d`; core: 20000 bytes compressed, 19 files, 65961 bytes unpacked, shasum `33eaaf0320eb474d5d7c5ce2761f10de79d17d21`.
+- 0.4.0 plugin: 36928 bytes compressed, 35 files, 119866 bytes unpacked, shasum `dd3b764dd57d09d4cf85e312867da23360a4e06f`.
+- 0.4.0 core: 31773 bytes compressed, 21 files, 100304 bytes unpacked, shasum `48d449b75bb7fa06f4bc16181433e617d2ca5a66`.
+- 0.3.8 plugin: 35898 bytes compressed, 35 files, 117750 bytes unpacked, shasum `3bc47df12f21fe7d68336f595d397ff868b3d4d7`; core: 26551 bytes compressed, 21 files, 83461 bytes unpacked, shasum `0df993f85589e101b15b830fa105e7ef8c66c5d5`.
 - No sourcemaps are shipped; that removal is worth 41926 bytes of unpacked payload.
 
 The emitted plugin budget is three checks: residency 41143 of 44000 bytes (the modules a mounted plugin loads), cli 40845 of 42000 bytes (the modules only a command loads), and a total of 81988 of 83000 bytes. Per-file caps: `repair-stream.js` 28000, `session-scan.js` 14000, `cli.js` 12000. A patch that crosses a per-file number splits that file instead of absorbing it. These three are measured on the working tree, whose emitted comments changed after the 0.3.8 tarball was packed: that shipped tarball is 81740 of those bytes, so a reader checking the published package will see the smaller figure.

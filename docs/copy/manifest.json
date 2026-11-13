@@ -133,15 +133,6 @@
       "output_sha256": "c5858ab0a5dfd80a2bcf8918a14d98a6a36c08f005a23a65359971d6d6c75232"
     },
     {
-      "name": "package-readme-plugin",
-      "target": "packages/plugin/README.md",
-      "model": "in-session",
-      "generated_at": "2026-11-13T19:35:05.164Z",
-      "facts_sha256": "29b3c7f11a8239bcd6077b0e0ea713caa5b5bdf4d4427cdac911a5dc0d18ce18",
-      "draft_sha256": "d99eda5cc69814d5764a220b4e8ba642dbcc272365e5cc412471c08a08dafae1",
-      "output_sha256": "d99eda5cc69814d5764a220b4e8ba642dbcc272365e5cc412471c08a08dafae1"
-    },
-    {
       "name": "readme",
       "target": "README.md",
       "model": "in-session",
@@ -203,7 +194,16 @@
       "facts_sha256": "29b3c7f11a8239bcd6077b0e0ea713caa5b5bdf4d4427cdac911a5dc0d18ce18",
       "draft_sha256": "7ba8c48f7cee29c6dfd27a79a55674553c42dbf65b19d543dc6996717aa5593e",
       "output_sha256": "7ba8c48f7cee29c6dfd27a79a55674553c42dbf65b19d543dc6996717aa5593e"
+    },
+    {
+      "name": "package-readme-plugin",
+      "target": "packages/plugin/README.md",
+      "model": "in-session",
+      "generated_at": "2026-11-13T20:47:00.349Z",
+      "facts_sha256": "29b3c7f11a8239bcd6077b0e0ea713caa5b5bdf4d4427cdac911a5dc0d18ce18",
+      "draft_sha256": "6dc8934a6a871bf7be6da9606c6514064c0196ae07bf675cd21bd904ba499c0d",
+      "output_sha256": "6dc8934a6a871bf7be6da9606c6514064c0196ae07bf675cd21bd904ba499c0d"
     }
   ],
-  "updated_at": "2026-11-13T20:42:20.948Z"
+  "updated_at": "2026-11-13T20:47:00.354Z"
 }

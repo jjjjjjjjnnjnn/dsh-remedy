@@ -1,8 +1,20 @@
 # dsh-remedy (plugin)
 
-The resident half of the patch set. It mounts at `llm/stream` and
-`agent/request-error`, repairs a proven fusion, names the refusals it will not
-retry, and says nothing when there is nothing to repair.
+**Stop losing a whole turn to one fused tool call.** The model occasionally glues
+two tool calls into one JSON blob, the adapter cannot parse it, and the turn dies.
+This plugin splits the blob at the stream seam into two calls that can run; what
+it cannot prove — a truncated tail, a single object, a fragment that does not fit
+the tool — keeps its original error instead of being dressed up as a repair. It
+also names the deterministic refusals it will not retry, and says nothing when
+there is nothing to repair.
+
+Installing this package also installs `dsh-remedy-core`: the plugin pins the
+exact version of that engine, so one install resolves both. The split is
+deliberate rather than packaging noise — the engine does no I/O and takes no
+host, so it can be embedded and tested on its own, while this package owns the
+seam, the configuration and the command line. Because the pin is exact, the two
+versions always ship together; a version skew is refused before anything is
+published.
 
 Installing this package also installs `dsh-remedy-core`: the plugin pins the
 exact version of that engine, so one install resolves both. The split is

@@ -392,6 +392,23 @@
         "scripts/gate_registry.mjs",
         "docs/patches/P-0016-coverage-single-source.md"
       ]
+    },
+    {
+      "id": "P-0024",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.2",
+      "evidence": [
+        "docs/patches/P-0024-package-readme-copy-channel.md",
+        "packages/plugin/README.md",
+        "packages/core/README.md",
+        "scripts/gate_copy.mjs"
+      ],
+      "guards": [
+        "scripts/gate_copy.mjs",
+        "tests/governance/package-readme-prose.test.ts",
+        "tests/unit/cli-usage.test.ts"
+      ]
     }
   ]
 }

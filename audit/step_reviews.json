@@ -616,6 +616,24 @@
         "docs/patches/P-0016-coverage-single-source.md",
         "scripts/gate_registry.mjs"
       ]
+    },
+    {
+      "id": "S35",
+      "gate": "copy",
+      "title": "A page is outward text because of who reads it, not because of where it sits",
+      "axes": {
+        "correctness": "Both pages npm renders are now live manifest entries. gate_copy checks their bytes, fact-pack hash, prose numbers, placeholder and writer exactly as it does for the root README, and its covered list fails if either entry disappears. The bytes are the bytes that were already on disk; registering them was bookkeeping, not a rewrite.",
+        "reproducibility": "The registration was accepted by copy_record with zero unknown numbers, which is the same measurement P-0017 made. gate_copy prints covered:packages/plugin/README.md and covered:packages/core/README.md; deleting either entry from the manifest makes the gate red, and the negative control for the copy gate still corrupts a hash.",
+        "compliance": "The pages stay hand-written; this patch registers them instead of pretending to generate them. The P-0017 prose test remains as a second guard with a different criterion (no prose number at all, and every fenced command must be dispatchable), and its comment no longer claims gate_copy cannot see the pages.",
+        "ssot": "The registry entry, the ledger row, the patch doc and the manifest name the same two targets; the snapshot is re-recorded after the registry change, and the ledger since is 0.4.2 because 0.4.1 is already published.",
+        "adversarial": "The adversary is the state BS-13 described for five rounds: a page that is the first thing a stranger reads and is outside the channel that guards outward text. The covered list turns that state from \"possible\" into a red gate, and the number rule is the same one every other live entry is held to."
+      },
+      "evidence": [
+        "docs/patches/P-0024-package-readme-copy-channel.md",
+        "packages/plugin/README.md",
+        "packages/core/README.md",
+        "scripts/gate_copy.mjs"
+      ]
     }
   ],
   "updated_at": "2026-11-13T11:20:00.000Z"

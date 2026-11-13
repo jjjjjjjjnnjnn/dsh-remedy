@@ -7,7 +7,7 @@
 
 | 渠道 | 形式 | URL | 状态 |
 |---|---|---|---|
-| [imsai-sh/awesome-deepseek-harness-plugins](https://github.com/imsai-sh/awesome-deepseek-harness-plugins) | PR，一个 `catalog/plugins/*.json` | [#928](https://github.com/imsai-sh/awesome-deepseek-harness-plugins/pull/928) | ✅ **已合并**（`github-actions[bot]` 09:12:12Z 自动 squash；静态检查全过、Codex 复查 0 findings）。条目已在 `main` 上。**0.4.0 发布后应转为「可安装」**：它的商店只从 npm 装，而 0.4.0 已上线、manifest 带 `dsh.bundle`（它自己说「发布后自动检测，不需要再提 PR」） |
+| [imsai-sh/awesome-deepseek-harness-plugins](https://github.com/imsai-sh/awesome-deepseek-harness-plugins) | PR，一个 `catalog/plugins/*.json` | [#928](https://github.com/imsai-sh/awesome-deepseek-harness-plugins/pull/928) | ✅ **已合并**（`github-actions[bot]` 09:12:12Z 自动 squash；静态检查全过、Codex 复查 0 findings）。条目已在 `main` 上。它的 bot 评论（[#issuecomment-6848857038](https://github.com/imsai-sh/awesome-deepseek-harness-plugins/pull/928#issuecomment-6848857038)）写明：商店只从 npm 装，包没发到 npm 之前只给「仅浏览」；发布后**自动检测，不需要再提 PR**。0.4.1 已发布，但 `deepseek1024.com/api/v1/plugins/jjjjjjjjnnjnn/dsh-remedy/packages/plugin` 在 2026-11-13 仍返回 `github:jjjjjjjjnnjnn/dsh-remedy#path:packages/plugin` 的安装串，说明自动检测还没跑到；记录读数，等下一次 catalog sync，不重复提 PR |
 | [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) | PR，一个 `data/plugins/*.yml` | [#14942](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/14942) | `open` / **`CLEAN`**（`check` 与 `Submission gate` 两个 check 全绿）/ `+7 -0` / **changed_files 1** |
 | [polang233/dsh-plugin-index](https://github.com/polang233/dsh-plugin-index)（dshopen） | issue 模板 | [#472](https://github.com/polang233/dsh-plugin-index/issues/472) | open（人工审） |
 | [alldsh/submissions](https://github.com/alldsh/submissions) | issue 模板 | [#3](https://github.com/alldsh/submissions/issues/3) | open（人工审） |

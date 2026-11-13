@@ -143,7 +143,25 @@
       "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
       "draft_sha256": "297fca838bf69cf868afe65c9909159397c580c2607a63e083f28c0f67b9e9f9",
       "output_sha256": "297fca838bf69cf868afe65c9909159397c580c2607a63e083f28c0f67b9e9f9"
+    },
+    {
+      "name": "package-readme-plugin",
+      "target": "packages/plugin/README.md",
+      "model": "in-session",
+      "generated_at": "2026-11-13T13:42:11.374Z",
+      "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
+      "draft_sha256": "d5a0ce5c3e8cbd4c33abe6457b51ae8fb6514fdea1aa1a2f1d3d49ed52f446c5",
+      "output_sha256": "d5a0ce5c3e8cbd4c33abe6457b51ae8fb6514fdea1aa1a2f1d3d49ed52f446c5"
+    },
+    {
+      "name": "package-readme-core",
+      "target": "packages/core/README.md",
+      "model": "in-session",
+      "generated_at": "2026-11-13T13:42:11.476Z",
+      "facts_sha256": "ead3101372c74ae4e72282b128e31b61da0ae90f49d3d00be9a79f8a2c4dfa48",
+      "draft_sha256": "81cd4042a4d7c2158fbae26171b0228038181c8ef070524d53199c537b530392",
+      "output_sha256": "81cd4042a4d7c2158fbae26171b0228038181c8ef070524d53199c537b530392"
     }
   ],
-  "updated_at": "2026-11-13T11:44:11.131Z"
+  "updated_at": "2026-11-13T13:42:11.479Z"
 }

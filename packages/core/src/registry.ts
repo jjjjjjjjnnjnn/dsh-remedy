@@ -669,6 +669,35 @@ export const PATCHES: readonly PatchRecord[] = [
     ],
     failureClasses: [],
   },
+  {
+    id: 'P-0024',
+    title: 'The two pages npm renders were outside the copy channel',
+    symptom:
+      'packages/plugin/README.md and packages/core/README.md were hand-written and absent from docs/copy/manifest.json, so gate_copy never checked their bytes, their fact-pack hash or their writer. P-0017 had narrowed the exposure to "no prose number and every fenced command exists", which is not the same as the channel that every other outward page goes through',
+    rootCause:
+      'the copy channel was described as "the outward files at the repository root", and the two package pages were treated as package metadata rather than outward text. A page can be hand-written and still be the first thing a stranger reads; the location of the file was mistaken for the audience',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'docs/patches/P-0024-package-readme-copy-channel.md',
+      'packages/plugin/README.md',
+      'packages/core/README.md',
+      'scripts/gate_copy.mjs',
+    ],
+    guards: [
+      'scripts/gate_copy.mjs',
+      'tests/governance/package-readme-prose.test.ts',
+      'tests/unit/cli-usage.test.ts',
+    ],
+    limits: [
+      'the copy gate checks numbers, bytes and provenance, not truth: a page can still describe behaviour the code does not have',
+      'the pages ship inside the tarball, so a change reaches npm only with a release; the manifest is checked in the repository, not against the published tarball',
+      'the pages stay hand-written prose that is now registered; a generated page is a different product decision',
+      'no live artifact is possible: this is a build-side channel, not a resident seam',
+    ],
+    failureClasses: [],
+  },
 ]
 
 /** Look up one patch by id. */

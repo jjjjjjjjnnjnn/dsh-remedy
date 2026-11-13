@@ -63,8 +63,8 @@
     },
     {
       "id": "BS-13",
-      "status": "open",
-      "note": "The gate set does not cover packages/*/README.md as a whole. gate_copy only verifies the outward files at the repository root, and packages/*/README.md is hand-written package prose with no recorded output_sha256. P-0010 narrowed it to the `scan` line; P-0014 narrowed it further: tests/unit/cli-usage.test.ts now requires the README CLI block to equal the CLI USAGE block line for line, and requires a usage line for every command `cli.ts` dispatches (that check caught `explain` missing from the page npm renders). What remains open is the rest of the page: the prose outside the CLI block still has no mechanism, so it can describe behaviour the code does not have. P-0017 (2026-11-13) measured what is actually left, instead of assuming it was the whole page: packages/plugin/README.md is 2331 bytes and contains zero prose numbers outside fenced/inline code, so the number rule cannot rot there. What remains unguarded is layout and claims about behaviour — 44 lines of hand-written prose, compared against nothing. Closing that fully still means moving packages/*/README.md into the copy channel, which would also make npm render a generated page."
+      "status": "closed",
+      "note": "Closed 2026-11-13 by P-0024. Both packages/*/README.md are now live entries in docs/copy/manifest.json (package-readme-plugin 2886 bytes, package-readme-core 1788 bytes), so gate_copy checks their bytes, their fact-pack hash, their prose numbers, their placeholder and their writer, and its covered list fails if either entry disappears. P-0017's measurement still holds: both pages carry zero prose numbers outside fences, so registering them was bookkeeping rather than a rewrite. What remains narrower: the copy gate checks numbers, bytes and provenance, not truth, so a page can still describe behaviour the code does not have; the pages ship inside the tarball, so a change reaches npm only with a release; and they stay hand-written prose that is now registered rather than generated."
     },
     {
       "id": "BS-15",
@@ -87,5 +87,5 @@
       "note": "Closed 2026-11-13 by R30 (data/results/prestep-ui-2026-11-13T12-15-00.000Z.json). The renderer the desktop shell loads was served by `dsh web` from an isolated DSH_HOME and driven through CDP, with a rejecting listener and a control turn. The rejection draws one line, \"已完成，用时 1秒\" — the same completion line a real turn prints — and nothing else: no user bubble, no assistant bubble, no error, no reason; the control draws the user bubble, the assistant \"OK\" and the same completion line. So the window reports a rejected turn as completed and shows nothing that happened, and a reject must not be used on the desktop profile. The same run measured the pass-through path: `return next()` answers the step and then ends the turn with reason.kind \"error\", message \"next is not a function\", code UNKNOWN, so the seam's chain is not the request-error chain. What remains narrower: the Electron shell itself was not driven (only the web app bundle it loads), a rejection inside a multi-step turn was not exercised, and the {kind:\"enter\"} rewrite — the only candidate left — is still unmeasured."
     }
   ],
-  "updated_at": "2026-11-13T12:20:00.000Z"
+  "updated_at": "2026-11-13T12:30:00.000Z"
 }

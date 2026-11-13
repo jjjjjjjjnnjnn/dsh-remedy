@@ -79,7 +79,19 @@ await runGate('copy', async ({ checks, mutate }) => {
     )
   }
 
-  for (const required of ['README.md', 'README.zh-CN.md', 'CONTRIBUTING.md', 'SECURITY.md', 'CODE_OF_CONDUCT.md', 'CHANGELOG.md']) {
+  for (const required of [
+    'README.md',
+    'README.zh-CN.md',
+    'CONTRIBUTING.md',
+    'SECURITY.md',
+    'CODE_OF_CONDUCT.md',
+    'CHANGELOG.md',
+    // The two pages npm renders are outward text too (P-0024): they used to be
+    // hand-written and outside the manifest, so their bytes and numbers had no
+    // mechanism even after P-0017 added a prose test.
+    'packages/plugin/README.md',
+    'packages/core/README.md',
+  ]) {
     checks.add(`covered:${required}`, entries.some((entry) => entry.target === required), required)
   }
 

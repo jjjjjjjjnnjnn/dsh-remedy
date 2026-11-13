@@ -1,8 +1,9 @@
 # dsh-remedy AGENTS.md
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
-> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.2`（已发布，两包 `latest`）
-> **Stand**：R37（2026-11-13，**0.4.2 发布**：二十六补丁一起上线，含 P-0024 / P-0025 / P-0026；
+> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.3`（已发布，两包 `latest`）
+> **Stand**：R38（2026-11-13，**桌面运行时升到 DSH 0.2.2-rc.3 并实测**：三条接缝逐字未变，真实融合修好一次，
+> 同时否证 P-0002 的一条记录（BS-18）；0.4.3 发布。R37 是 **0.4.2 发布**：二十六补丁一起上线，含 P-0024 / P-0025 / P-0026；
 > R36 是那两条「把没测当成发现」与「发布流程两个家」的补丁，R35 是对齐 0.4.1 的文字，
 > R34 是两个 npm 页面进 copy 通道。**264 测试 / 6 门**)｜
 > R32（2026-11-13，0.4.1 发布：P-0021/22/23）｜R29（2026-11-13，0.4.0 发布：二十补丁第一次同时上线）｜
@@ -12,9 +13,9 @@
 > **接手先读**：`docs/HANDOFF.md` → `PROJECT_RULES.md` → `INDEX.md`
 >
 > **基线（2026-11-13）**：`pnpm run verify` = **264 tests / 6 gates**；
-> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.2`（latest）+
-> `dsh-remedy-core@0.4.2`（latest）。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
-> `v0.4.2`。二十六补丁全部随 0.4.2 出去（3 `verified` + 23 `tested`）。
+> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.3`（latest）+
+> `dsh-remedy-core@0.4.3`（latest）。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
+> `v0.4.3`。二十六补丁随 0.4.2 全部出去；0.4.3 是同一份字节、第一个在 DSH 0.2.2-rc.3 上实测过的版本（3 `verified` + 23 `tested`）。
 > **本目录不是 git 根**：提交在 `..`（容器），公开仓库由
 > `git subtree split --prefix=dsh-remedy` 切出。
 

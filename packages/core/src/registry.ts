@@ -80,8 +80,9 @@ export const PATCHES: readonly PatchRecord[] = [
     failureClasses: ['MALFORMED_RESPONSE'],
     switchKey: 'repair',
     limits: [
-      'cannot prove the atomic-commit path live on this host: the measured adapter never emits block-end for a tool call',
+      'on DSH 0.2.2-rc.1 the measured adapter never closed a tool-call block, which is why the finish-time rescue is the primary path; on 0.2.2-rc.3 it does emit block-end for the first fragment of a fusion and leaves the surplus text to that same finish path (measured 2026-11-13, data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json)',
       'proves downstream acceptance of a synthesized block-start only on the finish path; an adapter that closes blocks itself is still unmeasured (BS-11)',
+      'a fused text that glues two calls of *different* tools carries one name for that index, so fragments after the first inherit it and are dispatched under the wrong tool; the tool then rejects the arguments with INVALID_ARGS, which fails visibly but is still a wrong dispatch (measured twice on 0.2.2-rc.3, blind spot BS-18)',
       'treats a tool name that arrives twice with different values as unrepairable, so a legitimate adapter bug stays a failure',
       'leaves the verdict vocabulary untouched: until P-0003 every rejection was counted as fused, so a non-fusion syntax error read as degraded (BS-12, closed by P-0003)',
     ],

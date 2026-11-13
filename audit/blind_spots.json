@@ -85,7 +85,12 @@
       "id": "BS-17",
       "status": "closed",
       "note": "Closed 2026-11-13 by R30 (data/results/prestep-ui-2026-11-13T12-15-00.000Z.json). The renderer the desktop shell loads was served by `dsh web` from an isolated DSH_HOME and driven through CDP, with a rejecting listener and a control turn. The rejection draws one line, \"已完成，用时 1秒\" — the same completion line a real turn prints — and nothing else: no user bubble, no assistant bubble, no error, no reason; the control draws the user bubble, the assistant \"OK\" and the same completion line. So the window reports a rejected turn as completed and shows nothing that happened, and a reject must not be used on the desktop profile. The same run measured the pass-through path: `return next()` answers the step and then ends the turn with reason.kind \"error\", message \"next is not a function\", code UNKNOWN, so the seam's chain is not the request-error chain. What remains narrower: the Electron shell itself was not driven (only the web app bundle it loads), a rejection inside a multi-step turn was not exercised, and the {kind:\"enter\"} rewrite — the only candidate left — is still unmeasured."
+    },
+    {
+      "id": "BS-18",
+      "status": "open",
+      "note": "A fused text that glues two calls of different tools carries one tool name per index, so the fragments after the first inherit it. Measured twice on DSH 0.2.2-rc.3 (2026-11-13): a rescue split {\"file_path\":…}{\"command\":…} into a read and a second call, and the second was dispatched as read with shell arguments, which the tool rejected with INVALID_ARGS instead of running the intended tool. The failure is visible, not silent, but it is a wrong dispatch: the name of fragments 2..N cannot be proven from the stream. Artifact: data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json. What would close it: either refuse a multi-object split whose tool names cannot all be proven, or carry a per-fragment name from the stream; both change the repair rate and need their own patch (P-0027, planned)."
     }
   ],
-  "updated_at": "2026-11-13T12:30:00.000Z"
+  "updated_at": "2026-11-13T19:58:00.000Z"
 }

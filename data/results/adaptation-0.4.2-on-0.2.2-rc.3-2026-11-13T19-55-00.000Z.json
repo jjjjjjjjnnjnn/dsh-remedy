@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_adaptation.mjs",
+  "generated_at": "2026-11-13T19:55:00.000Z",
+  "home": ".tmp/adapt-rc3-home",
+  "runtime": {
+    "version": "0.2.2-rc.3",
+    "source": "C:/Users/rongj/AppData/Local/Programs/DeepSeek Harness/resources/runtime/primary-runtime/runtime.json"
+  },
+  "plugin": {
+    "profile": "adapt-rc3",
+    "version": "0.4.2"
+  },
+  "mounted": true,
+  "journal": {
+    "lines": 36,
+    "repaired_events": 1,
+    "last_counters": {
+      "streams": 35,
+      "fused": 1,
+      "repaired": 1,
+      "unrepaired": 0,
+      "truncated": 0,
+      "errors": 0,
+      "refused": 0,
+      "withdrawn": 0,
+      "resealed": 0,
+      "diagnoses": 0
+    },
+    "repaired": [
+      {
+        "at": "2026-11-13T18:31:45.988Z",
+        "tool": "read",
+        "call_id": "call_00_l5fy916l8kgihkbkb277cl3x",
+        "fragments": 2,
+        "counters": {
+          "streams": 11,
+          "fused": 1,
+          "repaired": 1,
+          "unrepaired": 0,
+          "truncated": 0,
+          "errors": 0,
+          "refused": 0,
+          "withdrawn": 0,
+          "resealed": 0,
+          "diagnoses": 0
+        }
+      }
+    ]
+  },
+  "sessions": [
+    {
+      "session": "session-1a65dd9f-a61e-4ed2-9847-c92c0eb0baab",
+      "sha256": "22c664b587f06b1f9080e6ed85aba886b8004190717d95d8608d10645d7eaebd",
+      "events": 21,
+      "turn_end": {
+        "kind": "completed"
+      },
+      "tool_calls": 0,
+      "synthetic_calls": []
+    },
+    {
+      "session": "session-52f3eb9f-19c3-4e4f-a836-7b920679cc74",
+      "sha256": "91082c6ccc9551af3bdd8f6cf719fefb5b89588cc366afc7e351f969fd6e7642",
+      "events": 290,
+      "turn_end": null,
+      "tool_calls": 55,
+      "synthetic_calls": [
+        {
+          "id": "call_00_sr79pv3oflmkbuuzpnn8bujb#remedy-1",
+          "name": "read",
+          "dispatched": true,
+          "errored": true,
+          "name_proven_by_stream": false
+        }
+      ]
+    },
+    {
+      "session": "session-6e945fc1-5575-4ba0-b6b0-8f9be5e99c45",
+      "sha256": "bdc47e30ecc8caaacc6ad218ea8653be87bbd9e4e758b1046fa393ca8873487e",
+      "events": 91,
+      "turn_end": {
+        "kind": "completed"
+      },
+      "tool_calls": 15,
+      "synthetic_calls": []
+    },
+    {
+      "session": "session-867470e8-d469-4e83-99e7-4b7d6ca501c5",
+      "sha256": "018dac254bbcb9ff8cd759cda8d4e21fc18322fd1832741c69289ce937db60ff",
+      "events": 20,
+      "turn_end": {
+        "kind": "error",
+        "error": {
+          "message": "llm-deepseek: no API key for provider route \"deepseek-official\"; store DEEPSEEK_API_KEY through the credentials service (the web Models page writes it), or export DEEPSEEK_API_KEY in the launching environment",
+          "code": "MISSING_CREDENTIAL"
+        }
+      },
+      "tool_calls": 0,
+      "synthetic_calls": []
+    },
+    {
+      "session": "session-ae9db90f-26f1-44ba-a240-988e4334d0a5",
+      "sha256": "61e7329840bc22bca4910af6769cc9cb5f7b62c542b28c9bf81222a2f1cd26e0",
+      "events": 290,
+      "turn_end": null,
+      "tool_calls": 58,
+      "synthetic_calls": [
+        {
+          "id": "call_00_l5fy916l8kgihkbkb277cl3x#remedy-1",
+          "name": "read",
+          "dispatched": true,
+          "errored": true,
+          "name_proven_by_stream": false
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "this records one host and one adapter route; another provider may fuse differently",
+    "a mounted plugin is proven by its journal lines, not by the absence of an error",
+    "the synthetic ids come from the plugin, so a name_proven_by_stream of false means the name was assumed"
+  ]
+}

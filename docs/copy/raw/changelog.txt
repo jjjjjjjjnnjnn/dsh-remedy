@@ -3,6 +3,18 @@
 All notable changes to this project are documented here.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.4.3] - 2026-11-13
+### Changed
+- Re-measured on **DSH 0.2.2-rc.3**, the desktop build released today (the previous measurement was 0.2.2-rc.1). All three seams this plugin uses are declared identically in both versions — `llm/stream` stays a synchronous waterfall over `AsyncIterable<StreamChunk>`, `agent/pre-step` keeps `PreStepDecision`, `agent/request-error` keeps `RequestErrorAction` — so the supported range stays `>=0.2.0-rc.1 <0.3.0-0` and only the measured statement moved. `data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json` records the run: an isolated `DSH_HOME`, the published 0.4.2 tarball, one real turn, and a real fusion repaired with the synthesized call dispatched.
+- One measured behaviour changed: on rc.1 the adapter never closed a tool-call block, on rc.3 it closes the first fragment itself and leaves the surplus object to the finish-time rescue. Both paths are accepted by the runtime; P-0002's record now says which version showed which.
+
+### Recorded
+- `BS-18`, open: a fused text that glues two calls of different tools carries one name for that index, so fragments after the first inherit it. Measured twice on rc.3 — the synthesized call was dispatched as `read` with shell arguments and the tool answered `INVALID_ARGS`. Visible, but a wrong dispatch; P-0002's limits and doc no longer claim otherwise. The fix is planned as `P-0027`.
+- `scripts/record_adaptation.mjs` regenerates that artifact from an isolated home, so the next runtime upgrade is measured the same way instead of argued from version numbers.
+
+### Notes
+- No seam behaviour changed: the engine, the wrapper and the CLI are byte-identical to 0.4.2 except the registry's P-0002 limit text. This release exists because the published page said "measured on 0.2.2-rc.1" while the runtime in use is rc.3, and because the probe that checked it found a boundary the record claimed was closed.
+
 ## [0.4.2] - 2026-11-13
 ### Fixed
 - `dsh-remedy explain` no longer reports an unread profile as a finding. With `--sessions` and no `--profile-file` it printed `(no)` in the "enabled here" column for every covered class and exited `1`, while the same screen said `enabled-here is unknown`; the column now has three states (the coverers, `(no)` for a profile that switches them off, and `unknown` when no profile was named) and only a profile that was actually read can make the command exit `1`. The package README, which npm renders, described the old semantics and is corrected through the copy channel.

@@ -83,8 +83,15 @@ and `maxCalls` is a per-block ceiling, so one stream can still synthesize `block
 - Attribution of the stage that glued the objects (unchanged).
 - Whether a new `block-start` on a fresh index is accepted downstream: the live run
   below proves the finish path emits a well-formed block sequence and the runtime
-  dispatched both calls, but an adapter with its own index bookkeeping that closes
-  blocks itself is still unmeasured (`BS-11`).
+  dispatched both calls. On DSH 0.2.2-rc.3 the adapter itself closes the first
+  block (`block-end` index 0) before the rescue adds index 1, and that sequence is
+  also accepted (measured 2026-11-13).
+- **A fused text that glues two calls of different tools.** The stream carries one
+  tool name per index, so the fragments after the first inherit it. Measured twice
+  on 0.2.2-rc.3: a rescue split `{"file_path":…}{"command":…}` and dispatched the
+  second fragment as `read` with shell arguments, which the tool rejected with
+  `INVALID_ARGS`. Visible, but a wrong dispatch; recorded as `BS-18` and planned as
+  `P-0027`.
 
 ## Live evidence (2026-11-10)
 
@@ -104,6 +111,53 @@ two independent tool calls in one message. The fourth task produced a real fusio
 That run proves the synthesized id is dispatched and answered — the property P-0002 exists
 to guarantee. It does not prove the atomic-commit path, because this adapter never closes
 a tool-call block (`BS-11`).
+
+## Measured again on DSH 0.2.2-rc.3 (2026-11-13)
+
+The desktop build moved from 0.2.2-rc.1 to 0.2.2-rc.3, so the two claims this patch
+rests on were re-measured on the installed runtime rather than assumed to hold.
+
+**The seam did not move.** `llm/stream` is still declared as
+
+```
+'llm/stream'(this: LlmRuntime, options: GenerateOptions, next: () => AsyncIterable<StreamChunk>): AsyncIterable<StreamChunk>
+```
+
+with `@mode waterfall`, byte for byte, in `@deepseek-ai/dsh-llm@0.2.2-rc.1` and
+`@0.2.2-rc.3`. `agent/pre-step` (`PreStepDecision`) and `agent/request-error`
+(`RequestErrorAction`) are likewise unchanged in `@deepseek-ai/dsh-agent`.
+
+**One measured behaviour did change.** On rc.1 the adapter never emitted
+`block-end` for a tool call, which is why the finish-time rescue is the primary
+path. On rc.3 it emits `block-end` for the first fragment and leaves the surplus
+object to the finish:
+
+```
+block-start(index=0, tool-call)
+tool-call-chunks(index=0, dt=…)      ← fused text, one name
+usage(…)
+block-end(index=0, read{file_path})   ← the adapter closes it itself now
+block-start(index=1)                  ← this patch's synthesized fragment
+block-end(index=1, id#remedy-1, …)
+finish{kind:'stop'}
+```
+
+Both paths are accepted by the runtime; the artifact
+`data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json`
+records the run (`fused:1 repaired:1`, fragments 2, synthesized id dispatched).
+
+**One boundary this patch does not cross, now measured.** The fused text above
+glued a `read` and a shell command. The stream names one tool for that index, so
+the second fragment inherited `read` and was dispatched with
+`{"command":"Get-ChildItem …"}`; the tool answered
+`Error: invalid arguments: missing required property "file_path"` (`INVALID_ARGS`).
+The turn continued and the model retried, so nothing was silently executed under
+the wrong tool — but the dispatch was wrong, which is exactly the failure mode the
+"empty or wrong tool name" half of this patch was supposed to remove for
+same-tool fusions only. It is recorded as `BS-18` and planned as `P-0027`; the
+honest options (refuse a multi-object split whose names cannot all be proven, or
+carry a per-fragment name) both change the repair rate and need their own
+measurement.
 
 ## Reproduction
 

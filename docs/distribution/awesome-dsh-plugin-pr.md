@@ -9,7 +9,7 @@ the profile you point at), and reads multi-frame zstd session logs offline.
 - Repo: https://github.com/jjjjjjjjnnjnn/dsh-remedy (MIT)
 - Bundle: `packages/plugin` declares `dsh.bundle.patch: ./cordis.patch.yml`
 - npm: `dsh-remedy` (the plugin) and `dsh-remedy-core` (the engine it pins exactly)
-- DSH compatibility: `>=0.2.0-rc.1 <0.3.0-0` (measured on 0.2.2-rc.1)
+- DSH compatibility: `>=0.2.0-rc.1 <0.3.0-0` (measured on 0.2.2-rc.3)
 - One entry added, `data/plugins/jjjjjjjjnnjnn__dsh-remedy--packages-plugin.yml`;
   the generated READMEs are left alone.
 

@@ -149,10 +149,12 @@ git -C .. log --oneline -3
   `facts-truth` 5、`handoff-truth` 5、`cli-usage` +3、`manifest-targets` 原有）；
 - `node scripts/gate.mjs --mutate` → **6/6 CAUGHT**；
 - 快照 `patch-registry-2026-11-13T06-20-00.000Z.json`（sha256 `1adaa5b7…`，**十四补丁**），
-  门禁证据 `gates-2026-11-13T06-50-00.000Z.json` / `gates-mutate-2026-11-13T06-55-00.000Z.json`；
+  门禁证据 `gates-2026-11-13T07-10-00.000Z.json` / `gates-mutate-2026-11-13T07-15-00.000Z.json`；
 - `scripts/copy_record.mjs --freeze --name release-notes-038` → `FROZE … at 2026-11-13T05:51:16.038Z`
   （0.3.8 的 release notes 是已公开页面，冻结成 frozen 条目而不是手改 manifest）；
-- `node scripts/gate_copy.mjs` → **OK copy**（12 个 live 条目全部重登记到新事实包一次做完）。
+- `node scripts/gate_copy.mjs` → **OK copy**（12 个 live 条目全部重登记到新事实包一次做完）；
+- 公开仓库已切到容器 `main:dsh-remedy` 的 tree（`public-remedy` → 远端 `main` = `814f58d`），
+  两次 push 的 CI 都是 **success**；registry 上两包仍是 `0.3.8`（P-0014 **没有发布**）。
 
 **仍未做（本批之外，顺序同「第一件事」）**：重启桌面 App（只有人能点）；`agent/pre-step` 的拒绝语义仍未实测；
 `P-0015`（覆盖表抬进 registry）；`P-0016`（包内 README 正文，BS-13）；`P-0017`（`publish_packages.mjs`
@@ -1098,7 +1100,7 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | `publish-2026-11-12T16-45-00.000Z.json` | 绿 | 0.3.8 发布：两包 `exact_ok` + `latest_ok` 全 true（`git_head` `632f890…`） |
 | `install-acceptance-2026-11-12T16-50-00.000Z.json` | 绿 | 0.3.8 空目录从 registry 单装 `OK 6 fixture(s)`（`ok: true`、三条命令退出码 0/0/0） |
 | `patch-registry-2026-11-13T06-20-00.000Z.json` | 绿 | **当前**注册表快照（十四补丁：P-0001/2/3 `verified`，P-0014 新增且为 `tested`；sha256 `1adaa5b7…`），R22 记为 `docs/patches/P-0014-description-truth.md` |
-| `gates-2026-11-13T06-50-00.000Z.json` / `gates-mutate-2026-11-13T06-55-00.000Z.json` | 绿 | **当前**门禁证据：R22 收尾（三类新判据 + P-0014 台账 + 事实包翻成 242 tests / 81808 字节之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT` |
+| `gates-2026-11-13T07-10-00.000Z.json` / `gates-mutate-2026-11-13T07-15-00.000Z.json` | 绿 | **当前**门禁证据：R22 收尾（三类新判据 + P-0014 台账 + 事实包翻成 242 tests / 81808 字节之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT` |
 | `session-sample-2026-11-11T18-10-00.000Z.json` | 绿 | 本机 census 样本（`--until 2026-11-11T17:00:00.000Z`，两条 stamp 除 `generated_at` 外逐字节相同） |
 | `install-acceptance-2026-11-11T19-30-00.000Z.json` | 绿 | 0.3.6 空目录从 registry 单装 `OK 6 fixture(s)`（R17 首次把这个验收落成产物） |
 | `withdrawn-reachability-2026-11-12T09-40-00.000Z.json` | 绿 | **实测** `withdrawn` 在本机不可达：24 329 条流里 0 条的 `block-end` 带可证明融合（BS-14） |

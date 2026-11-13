@@ -45,6 +45,8 @@ export const PATCHES: readonly PatchRecord[] = [
       'scripts/gate_registry.mjs',
       'scripts/record_live_mount.mjs',
     ],
+    failureClasses: ['MALFORMED_RESPONSE'],
+    switchKey: 'repair',
     limits: [
       'cannot recover a call whose tail was cut by max-tokens (finish.reason.kind === length)',
       'does not fix the relay or adapter that assigned one index to two calls',
@@ -75,6 +77,8 @@ export const PATCHES: readonly PatchRecord[] = [
       'tests/unit/json-split.test.ts',
       'scripts/gate_registry.mjs',
     ],
+    failureClasses: ['MALFORMED_RESPONSE'],
+    switchKey: 'repair',
     limits: [
       'cannot prove the atomic-commit path live on this host: the measured adapter never emits block-end for a tool call',
       'proves downstream acceptance of a synthesized block-start only on the finish path; an adapter that closes blocks itself is still unmeasured (BS-11)',
@@ -104,6 +108,8 @@ export const PATCHES: readonly PatchRecord[] = [
       'tests/governance/ledgers.test.ts',
       'scripts/gate_registry.mjs',
     ],
+    failureClasses: ['MALFORMED_RESPONSE'],
+    switchKey: 'repair',
     limits: [
       'does not change the four verdict states or their order: refused and withdrawn are reported, never judged',
       'cannot express "observed, refused, and correctly not repaired" in a state name; only the counter row carries it',
@@ -135,6 +141,8 @@ export const PATCHES: readonly PatchRecord[] = [
       'tests/unit/verdict.test.ts',
       'scripts/gate_registry.mjs',
     ],
+    failureClasses: ['MALFORMED_RESPONSE'],
+    switchKey: 'repair',
     limits: [
       'reseals only when exactly one member value proves: two possible resealings is refused as ambiguous, never chosen',
       'never touches a truncated call: a cut tail is missing bytes, not a missing quote',
@@ -162,6 +170,8 @@ export const PATCHES: readonly PatchRecord[] = [
       'tests/unit/request-error.test.ts',
       'packages/plugin/src/failure-listener.ts',
     ],
+    failureClasses: ['MALFORMED_RESPONSE'],
+    switchKey: 'retryOnMalformed',
     limits: [
       'only MALFORMED_RESPONSE is retried: SERVER, TRANSPORT and TIMEOUT are already retried upstream (195 of 213 failing groups self-healed inside the same turn), so a second layer here would compete for the seam',
       'the retry budget defaults to 0, so nothing is retried unless a deployment asks for it',
@@ -218,6 +228,8 @@ export const PATCHES: readonly PatchRecord[] = [
       'tests/unit/request-error.test.ts',
       'packages/core/src/preflight.ts',
     ],
+    failureClasses: ['UNSUPPORTED_REASONING_EFFORT', 'INVALID_REQUEST', 'MISSING_CREDENTIAL', 'EMPTY_RESPONSE'],
+    switchKey: 'repair',
     limits: [
       'naming is always on, but it never repairs and never retries: a deterministic refusal costs one named line instead of one dead turn, which is the whole claim',
       'preflight is a pure decision, not a mount: it re-derives the adapter supported set from a profile declaration and answers ok/refuse/unknown. Nothing wires it into agent/pre-step yet, because that seam must first be proven to reject the step without being read as a user cancellation',
@@ -449,6 +461,62 @@ export const PATCHES: readonly PatchRecord[] = [
       'a rejection discards the claimed input: the measured cost is that a user must retype the message, which is why a rewrite via {kind:"enter"} is the better default when the goal is to say something',
       'only the first proposed step of one turn was exercised; rejection inside a multi-step turn (next-step steering) is untested',
     ],
+  },
+  {
+    id: 'P-0016',
+    title: 'The command that answers "what covers this" kept its own copy of the answer',
+    symptom:
+      '`dsh-remedy explain` printed which patch covers each failure class from two constants of its own, COVERAGE and SWITCHES, so the registry and the command were two homes for one claim. A patch could cover a class and never appear in the answer, and nothing compared the two tables',
+    rootCause:
+      'the command was written before the registry carried that kind of claim. Its tables were a convenient local map, and the only reader of both — a human comparing the file with registry.ts by eye — was also the only mechanism. This is the same family as P-0010 and P-0014: a fact with a second home rots, and the second home was the one users read',
+    surface: 'cli',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'packages/core/src/registry.ts',
+      'packages/core/src/types.ts',
+      'packages/plugin/src/explain-command.ts',
+      'tests/governance/coverage-single-source.test.ts',
+    ],
+    guards: [
+      'tests/governance/coverage-single-source.test.ts',
+      'tests/e2e/explain.test.ts',
+      'packages/core/src/registry.ts',
+    ],
+    limits: [
+      'it moves six coverage claims and no behaviour: the printed table is identical before and after, which is why the artifact comparison is worth one line in the reproduction',
+      'the switch keys are still a small closed vocabulary (repair, retryOnMalformed); a patch switched by some other key would need that key added here rather than inferred',
+      'a patch that answers a failure class but is never mounted still reads as covered-and-off, because coverage is a claim about the code rather than about the profile',
+      'no live artifact is possible: this is the CLI answering from the registry, not a resident seam',
+    ],
+  },
+  {
+    id: 'P-0017',
+    title: 'The two pages npm renders had no mechanism at all',
+    symptom:
+      'packages/plugin/README.md and packages/core/README.md are hand-written, carry no output_sha256 and are not generated by the copy channel, so gate_copy never saw them. P-0010 pinned one scan line and P-0014 pinned the CLI block; the rest of both pages — 2331 bytes on the plugin side — was compared against nothing while being the first thing a stranger installs from',
+    rootCause:
+      'the copy channel was built for the repository root outward files, and the package pages were written before it existed. Moving them in was always a separate decision, so each round pinned a little more of the page with a targeted test instead of answering the whole question: what is actually unguarded here',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'packages/plugin/README.md',
+      'packages/core/README.md',
+      'tests/governance/package-readme-prose.test.ts',
+      'docs/patches/P-0017-package-readme-prose.md',
+    ],
+    guards: [
+      'tests/governance/package-readme-prose.test.ts',
+      'tests/unit/cli-usage.test.ts',
+    ],
+    limits: [
+      'it proves there is no prose number and no undispatchable command left to rot; it does not put the page in the copy channel, so layout and behavioural claims are still hand-written',
+      'the number rule is the copy channel own criterion, not a general truth test: a page could still describe behaviour the code does not have, and nothing here would notice',
+      'packages/core/README.md is held to the weaker half only (no prose numbers, no CLI block), because it documents a library rather than a command',
+      'no live artifact is possible: these are package pages, not a resident seam',
+    ],
+    failureClasses: [],
   },
 ]
 

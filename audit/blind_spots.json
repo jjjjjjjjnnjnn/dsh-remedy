@@ -64,7 +64,7 @@
     {
       "id": "BS-13",
       "status": "open",
-      "note": "The gate set does not cover packages/*/README.md as a whole. gate_copy only verifies the outward files at the repository root, and packages/*/README.md is hand-written package prose with no recorded output_sha256. P-0010 narrowed it to the `scan` line; P-0014 narrowed it further: tests/unit/cli-usage.test.ts now requires the README CLI block to equal the CLI USAGE block line for line, and requires a usage line for every command `cli.ts` dispatches (that check caught `explain` missing from the page npm renders). What remains open is the rest of the page: the prose outside the CLI block still has no mechanism, so it can describe behaviour the code does not have."
+      "note": "The gate set does not cover packages/*/README.md as a whole. gate_copy only verifies the outward files at the repository root, and packages/*/README.md is hand-written package prose with no recorded output_sha256. P-0010 narrowed it to the `scan` line; P-0014 narrowed it further: tests/unit/cli-usage.test.ts now requires the README CLI block to equal the CLI USAGE block line for line, and requires a usage line for every command `cli.ts` dispatches (that check caught `explain` missing from the page npm renders). What remains open is the rest of the page: the prose outside the CLI block still has no mechanism, so it can describe behaviour the code does not have. P-0017 (2026-11-13) measured what is actually left, instead of assuming it was the whole page: packages/plugin/README.md is 2331 bytes and contains zero prose numbers outside fenced/inline code, so the number rule cannot rot there. What remains unguarded is layout and claims about behaviour — 44 lines of hand-written prose, compared against nothing. Closing that fully still means moving packages/*/README.md into the copy channel, which would also make npm render a generated page."
     },
     {
       "id": "BS-15",
@@ -87,5 +87,5 @@
       "note": "A rejected agent/pre-step turn ends with reason.kind \"blocked\", and that is measured (data/results/prestep-probe-2026-11-13T07-45-00.000Z.json). What is NOT measured is how the desktop UI renders that ending: the conversation definitions shipped in this install contain no match on the \"blocked\" reason, so the probe ran only on a headless profile and cannot say what the window draws. Until someone drives the desktop with a rejecting listener, agent/pre-step is usable but must not be presented: a user could see an empty or unexplained turn. The second unmeasured half is the cost: a rejection discards the claimed input, so a patch that uses this seam should rewrite the message via {kind:\"enter\"} rather than refuse."
     }
   ],
-  "updated_at": "2026-11-13T08:00:00.000Z"
+  "updated_at": "2026-11-13T09:00:00.000Z"
 }

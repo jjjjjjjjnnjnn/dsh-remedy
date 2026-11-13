@@ -479,7 +479,41 @@
         "data/results/prestep-probe-2026-11-13T07-45-00.000Z.json",
         "scripts/record_prestep_probe.mjs"
       ]
+    },
+    {
+      "id": "S27",
+      "gate": "registry",
+      "title": "The answer to \"what covers this\" had a second home, and users read that one",
+      "axes": {
+        "correctness": "COVERAGE and SWITCHES were moved onto the patches as failureClasses and switchKey, and explain now reads PATCHES: coverersOf(failure) filters PATCHES by a class and switchOf(patchId) returns the key. The printed table is unchanged, which is what makes the move safe to check: the same six patches cover the same five classes before and after.",
+        "reproducibility": "node --test tests/governance/coverage-single-source.test.ts fails if the command grows a COVERAGE or SWITCHES constant again, and asserts the exact set of covered classes plus the six-patch count. tests/e2e/explain.test.ts still passes unchanged, and node packages/plugin/dist/cli.js explain prints the same rows it did before the move.",
+        "compliance": "the registry is the project single source by rule, and this patch removes a restatement rather than adding one. The switch vocabulary stays closed: a coverage claim must name repair or retryOnMalformed, because those are the two keys a mounted profile can carry.",
+        "ssot": "the registry snapshot was re-recorded after the move (patch-registry-2026-11-13T08-35-00.000Z), so the gate compares the built registry with the file rather than trusting the diff. The patch entry, the ledger row and this review name the same four paths.",
+        "adversarial": "the failure mode is two tables drifting apart, and the new test is the mechanism against it: it names the two constants so they cannot quietly return, and it checks the covered set so an accidental deletion is red. The opposite direction is also covered: a patch that names a switch key without covering a class fails."
+      },
+      "evidence": [
+        "packages/core/src/registry.ts",
+        "packages/plugin/src/explain-command.ts",
+        "tests/governance/coverage-single-source.test.ts"
+      ]
+    },
+    {
+      "id": "S28",
+      "gate": "copy",
+      "title": "Four rounds described \"the rest of the page\" without measuring how big it was",
+      "axes": {
+        "correctness": "The exposure was measured before a mechanism was written: packages/plugin/README.md is 2331 bytes and carries zero prose numbers once fences, inline code and URLs are stripped, which is exactly the rule copy-policy applies. So the number rule had nothing to rot there, and what remained was the fenced command block plus behavioural prose. The block was already pinned by P-0014; this patch pins the rest with two tests.",
+        "reproducibility": "node --test tests/governance/package-readme-prose.test.ts runs the same stripping function the copy channel uses, and fails on the first prose digit or on a fenced dsh-remedy command cli.ts does not dispatch. packageNumbers can be re-measured with one node --input-type=module command, quoted in the patch document.",
+        "compliance": "no outward text was invented: the two added paragraphs describe the exit-code vocabulary that cli-args.ts exports and behaviour explain already has, and neither contains a digit outside inline code, so the copy channel criterion still holds for the page even though it does not manage it.",
+        "ssot": "the registry carries P-0017 with the two pages as evidence, the ledger matches, and BS-13 was updated with the measurement rather than left as a four-round-old guess about the whole page.",
+        "adversarial": "the failure it prevents is a stranger copying a command the binary rejects, or quoting a number nobody checks. The negative control is the pre-patch page, which had neither mechanism; a page that grows a bare number or a fenced command outside the switch now fails where it used to pass."
+      },
+      "evidence": [
+        "packages/plugin/README.md",
+        "tests/governance/package-readme-prose.test.ts",
+        "docs/patches/P-0017-package-readme-prose.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-13T07:55:00.000Z"
+  "updated_at": "2026-11-13T09:10:00.000Z"
 }

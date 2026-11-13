@@ -9,10 +9,14 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 - P-0015: `agent/pre-step` was left unmounted since R20 on a sentence nobody had checked — a rejected step "could read as a cancellation". It does not: the runtime claims the batch, awaits the waterfall, and on a rejection closes the turn with `reason.kind "blocked"`, and a probe on an isolated `DSH_HOME` produces a session with eight events and no step at all. What the `reject` **does** cost is measured too: the claimed input is discarded, so a user who retries has to retype the message, and the CLI exits `1`. `scripts/record_prestep_probe.mjs` records that as an artifact, and the seam is now usable but not yet presentable, because the desktop rendering of `blocked` is still unmeasured.
 - `dsh-remedy` records the freezing of a published release record: `copy_record.mjs --freeze` turns an existing entry into a frozen one, keeping its recorded bytes, and refuses to freeze an entry whose bytes on disk have drifted from what the manifest records.
+### Changed
+- P-0016: `dsh-remedy explain` kept its own `COVERAGE` and `SWITCHES` tables for "which patch covers this failure class", so the registry had a second home for one claim and the only mechanism against drift was a person comparing two files. The patches now carry `failureClasses` and `switchKey`, the command reads `PATCHES`, and `tests/governance/coverage-single-source.test.ts` fails if the tables return. The printed table is unchanged.
 ### Fixed
 - The emitted plugin's comment change costs 68 bytes and no cap moved: residency `41143` of `44000`, CLI `40665` of `42000`, total `81808` of `83000`. The published `0.3.8` tarball remains `81740` of those bytes, so the README states both rather than quietly replacing one.
+### Fixed
+- P-0017: the two pages npm renders, `packages/plugin/README.md` and `packages/core/README.md`, had no mechanism at all — hand-written, no `output_sha256`, invisible to the copy gate. The exposure was measured before a guard was written: 2331 bytes on the plugin page and zero prose numbers, so the number rule had nothing to rot there. `tests/governance/package-readme-prose.test.ts` now reuses the copy channel's own stripping rule, requires zero prose numbers on both pages, and requires every fenced `dsh-remedy <command>` to be one the CLI dispatches.
 ### Notes
-- P-0014 and P-0015 are `tested` and not `verified`: one touches prose, a manifest recorder and governance tests, the other measures a seam on an isolated profile. Neither is released on its own; both will ride with the next version.
+- P-0014, P-0015, P-0016 and P-0017 are `tested` and not `verified`: they touch prose and manifests, measure a seam on an isolated profile, move a table into the registry, and guard two hand-written pages. None is released on its own; all will ride with the next version.
 
 ## [0.3.8] - 2026-11-12
 ### Added

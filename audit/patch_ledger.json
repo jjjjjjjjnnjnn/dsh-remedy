@@ -267,6 +267,39 @@
         "scripts/record_prestep_probe.mjs",
         "scripts/gate_ssot.mjs"
       ]
+    },
+    {
+      "id": "P-0016",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.3.9",
+      "evidence": [
+        "packages/core/src/registry.ts",
+        "packages/core/src/types.ts",
+        "packages/plugin/src/explain-command.ts",
+        "tests/governance/coverage-single-source.test.ts"
+      ],
+      "guards": [
+        "tests/governance/coverage-single-source.test.ts",
+        "tests/e2e/explain.test.ts",
+        "packages/core/src/registry.ts"
+      ]
+    },
+    {
+      "id": "P-0017",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.3.9",
+      "evidence": [
+        "packages/plugin/README.md",
+        "packages/core/README.md",
+        "tests/governance/package-readme-prose.test.ts",
+        "docs/patches/P-0017-package-readme-prose.md"
+      ],
+      "guards": [
+        "tests/governance/package-readme-prose.test.ts",
+        "tests/unit/cli-usage.test.ts"
+      ]
     }
   ]
 }

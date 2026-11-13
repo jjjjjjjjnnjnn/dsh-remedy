@@ -33,28 +33,28 @@ import { join } from 'node:path'
 import { PATCHES } from 'dsh-remedy-core'
 
 /**
- * Which failure class each patch answers, in the host's own vocabulary.
+ * Which failure class each patch answers — read from the registry, never restated
+ * here (P-0016).
  *
- * A patch with no failure class here is a build-side or tooling patch: it covers
- * no turn-ending code, so it must not appear as coverage for one.
+ * This table used to live in this file as two constants, `COVERAGE` and
+ * `SWITCHES`. That made "which patch covers which failure class" a fact with two
+ * homes: adding a patch meant remembering this command, and the two could drift
+ * with nothing to catch it. The patches themselves now carry `failureClasses`
+ * and `switchKey`, so a patch added tomorrow is covered by `explain` the moment
+ * it lands in `PATCHES`.
  */
-const COVERAGE: Readonly<Record<string, readonly string[]>> = {
-  'P-0001': ['MALFORMED_RESPONSE'],
-  'P-0002': ['MALFORMED_RESPONSE'],
-  'P-0003': ['MALFORMED_RESPONSE'],
-  'P-0005': ['MALFORMED_RESPONSE'],
-  'P-0011': ['MALFORMED_RESPONSE'],
-  'P-0013': ['UNSUPPORTED_REASONING_EFFORT', 'INVALID_REQUEST', 'MISSING_CREDENTIAL', 'EMPTY_RESPONSE'],
+function coverageOfPatch(patchId: string): readonly string[] {
+  return PATCHES.find((patch) => patch.id === patchId)?.failureClasses ?? []
 }
 
-/** The config keys that switch coverage on, by patch id. */
-const SWITCHES: Readonly<Record<string, string>> = {
-  'P-0001': 'repair',
-  'P-0002': 'repair',
-  'P-0003': 'repair',
-  'P-0005': 'repair',
-  'P-0011': 'retryOnMalformed',
-  'P-0013': 'repair',
+/** The covering patch ids for one failure class, in registry order. */
+function coverersOf(failure: string): readonly string[] {
+  return PATCHES.filter((patch) => (patch.failureClasses ?? []).includes(failure)).map((patch) => patch.id)
+}
+
+/** The config key that switches one patch's coverage on, if it has one. */
+function switchOf(patchId: string): string | undefined {
+  return PATCHES.find((patch) => patch.id === patchId)?.switchKey
 }
 
 /** Classes this project decided never to repair, with the reason. */
@@ -87,7 +87,7 @@ export function readProfileConfig(path: string): Record<string, unknown> | null 
 
 function isPatchOn(patchId: string, config: Record<string, unknown> | null): boolean {
   if (config === null) return false
-  const key = SWITCHES[patchId]
+  const key = switchOf(patchId)
   if (key === undefined) return false
   const value = config[key]
   if (key === 'repair') return value !== false
@@ -128,7 +128,7 @@ interface Row {
 export function explainRows(census: ScanTurnCensus, errorCodes: Readonly<Record<string, number>>, config: Record<string, unknown> | null): Row[] {
   const rows: Row[] = []
   const push = (failure: string, count: number) => {
-    const covering = PATCHES.filter((patch) => (COVERAGE[patch.id] ?? []).includes(failure)).map((patch) => patch.id)
+    const covering = coverersOf(failure)
     rows.push({
       failure,
       count,

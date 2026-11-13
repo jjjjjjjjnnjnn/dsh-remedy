@@ -29,17 +29,17 @@
       "name": "changelog",
       "target": "CHANGELOG.md",
       "model": "in-session",
-      "generated_at": "2026-11-13T07:02:32.025Z",
-      "facts_sha256": "32bbcc78aa92c6b29eec8554b94b0f9e78da7f69095aa23e14b23a00dde1a3a6",
-      "draft_sha256": "0916dcee241a727822b1b9997ec0539fc08c56e2d704ff4ce17ebeb16659cbeb",
-      "output_sha256": "0916dcee241a727822b1b9997ec0539fc08c56e2d704ff4ce17ebeb16659cbeb"
+      "generated_at": "2026-11-13T07:24:13.162Z",
+      "facts_sha256": "b3f59a272973224db20c1ec18c748f816aa0cbdf4e248bfd5524ab3bb3b2fa42",
+      "draft_sha256": "941c267ebf7eb03002196e7698c36adb78449a2d1102e01a4e5bf4d4890a5011",
+      "output_sha256": "941c267ebf7eb03002196e7698c36adb78449a2d1102e01a4e5bf4d4890a5011"
     },
     {
       "name": "readme",
       "target": "README.md",
       "model": "in-session",
-      "generated_at": "2026-11-13T07:02:41.722Z",
-      "facts_sha256": "32bbcc78aa92c6b29eec8554b94b0f9e78da7f69095aa23e14b23a00dde1a3a6",
+      "generated_at": "2026-11-13T07:24:13.251Z",
+      "facts_sha256": "b3f59a272973224db20c1ec18c748f816aa0cbdf4e248bfd5524ab3bb3b2fa42",
       "draft_sha256": "46307c414792e37018c85477fc4c437c30294ae96a05f58bb086b88a707da882",
       "output_sha256": "46307c414792e37018c85477fc4c437c30294ae96a05f58bb086b88a707da882"
     },
@@ -47,8 +47,8 @@
       "name": "readme-zh",
       "target": "README.zh-CN.md",
       "model": "in-session",
-      "generated_at": "2026-11-13T07:02:41.848Z",
-      "facts_sha256": "32bbcc78aa92c6b29eec8554b94b0f9e78da7f69095aa23e14b23a00dde1a3a6",
+      "generated_at": "2026-11-13T07:24:13.347Z",
+      "facts_sha256": "b3f59a272973224db20c1ec18c748f816aa0cbdf4e248bfd5524ab3bb3b2fa42",
       "draft_sha256": "3e77738baeb06298778f9e16ff3d8e480198f19eb2c3d9a3958c7fc4d5bdd5f5",
       "output_sha256": "3e77738baeb06298778f9e16ff3d8e480198f19eb2c3d9a3958c7fc4d5bdd5f5"
     },
@@ -56,8 +56,8 @@
       "name": "contributing",
       "target": "CONTRIBUTING.md",
       "model": "in-session",
-      "generated_at": "2026-11-13T07:02:41.959Z",
-      "facts_sha256": "32bbcc78aa92c6b29eec8554b94b0f9e78da7f69095aa23e14b23a00dde1a3a6",
+      "generated_at": "2026-11-13T07:24:13.436Z",
+      "facts_sha256": "b3f59a272973224db20c1ec18c748f816aa0cbdf4e248bfd5524ab3bb3b2fa42",
       "draft_sha256": "025ecf6c7885d2b0ca17ad186b176151044d479a656da8895b9c3ab6cc14ced6",
       "output_sha256": "025ecf6c7885d2b0ca17ad186b176151044d479a656da8895b9c3ab6cc14ced6"
     },
@@ -65,8 +65,8 @@
       "name": "security",
       "target": "SECURITY.md",
       "model": "in-session",
-      "generated_at": "2026-11-13T07:02:42.078Z",
-      "facts_sha256": "32bbcc78aa92c6b29eec8554b94b0f9e78da7f69095aa23e14b23a00dde1a3a6",
+      "generated_at": "2026-11-13T07:24:13.547Z",
+      "facts_sha256": "b3f59a272973224db20c1ec18c748f816aa0cbdf4e248bfd5524ab3bb3b2fa42",
       "draft_sha256": "9fe2a67b388d8e8699eb7c15e50657c248a092b25948cd03d3a1a9a9f30e1db8",
       "output_sha256": "9fe2a67b388d8e8699eb7c15e50657c248a092b25948cd03d3a1a9a9f30e1db8"
     },
@@ -74,8 +74,8 @@
       "name": "code-of-conduct",
       "target": "CODE_OF_CONDUCT.md",
       "model": "in-session",
-      "generated_at": "2026-11-13T07:02:42.220Z",
-      "facts_sha256": "32bbcc78aa92c6b29eec8554b94b0f9e78da7f69095aa23e14b23a00dde1a3a6",
+      "generated_at": "2026-11-13T07:24:13.662Z",
+      "facts_sha256": "b3f59a272973224db20c1ec18c748f816aa0cbdf4e248bfd5524ab3bb3b2fa42",
       "draft_sha256": "9dc6c44f8c0122a8cbcb701f87acc264f2fb21d4cbecb63f8b027b28215ca31e",
       "output_sha256": "9dc6c44f8c0122a8cbcb701f87acc264f2fb21d4cbecb63f8b027b28215ca31e"
     },
@@ -83,8 +83,8 @@
       "name": "metadata",
       "target": "docs/copy/repo-metadata.json",
       "model": "in-session",
-      "generated_at": "2026-11-13T07:02:42.353Z",
-      "facts_sha256": "32bbcc78aa92c6b29eec8554b94b0f9e78da7f69095aa23e14b23a00dde1a3a6",
+      "generated_at": "2026-11-13T07:24:13.772Z",
+      "facts_sha256": "b3f59a272973224db20c1ec18c748f816aa0cbdf4e248bfd5524ab3bb3b2fa42",
       "draft_sha256": "aadb86275cace8f8e50dea374a5d7ca316f035585c7b2966212b0872771d7009",
       "output_sha256": "aadb86275cace8f8e50dea374a5d7ca316f035585c7b2966212b0872771d7009"
     },
@@ -92,8 +92,8 @@
       "name": "templates:.github/ISSUE_TEMPLATE/bug_report.yml",
       "target": ".github/ISSUE_TEMPLATE/bug_report.yml",
       "model": "in-session",
-      "generated_at": "2026-11-13T07:02:52.284Z",
-      "facts_sha256": "32bbcc78aa92c6b29eec8554b94b0f9e78da7f69095aa23e14b23a00dde1a3a6",
+      "generated_at": "2026-11-13T07:24:13.854Z",
+      "facts_sha256": "b3f59a272973224db20c1ec18c748f816aa0cbdf4e248bfd5524ab3bb3b2fa42",
       "draft_sha256": "327e0118a860a58419e8ea2445c65d53d145352d561b00f2cda5a12e872a6dd6",
       "output_sha256": "f56615e214bc297cf4ba581a6b5094235bd236634148c596e9581aeb405272b8"
     },
@@ -101,8 +101,8 @@
       "name": "templates:.github/ISSUE_TEMPLATE/feature_request.yml",
       "target": ".github/ISSUE_TEMPLATE/feature_request.yml",
       "model": "in-session",
-      "generated_at": "2026-11-13T07:02:52.284Z",
-      "facts_sha256": "32bbcc78aa92c6b29eec8554b94b0f9e78da7f69095aa23e14b23a00dde1a3a6",
+      "generated_at": "2026-11-13T07:24:13.854Z",
+      "facts_sha256": "b3f59a272973224db20c1ec18c748f816aa0cbdf4e248bfd5524ab3bb3b2fa42",
       "draft_sha256": "327e0118a860a58419e8ea2445c65d53d145352d561b00f2cda5a12e872a6dd6",
       "output_sha256": "95e334680ad5a7a603abc0f005a5fb37a263d4a932e46c24aa591f7543c1bfcf"
     },
@@ -110,8 +110,8 @@
       "name": "templates:.github/ISSUE_TEMPLATE/config.yml",
       "target": ".github/ISSUE_TEMPLATE/config.yml",
       "model": "in-session",
-      "generated_at": "2026-11-13T07:02:52.284Z",
-      "facts_sha256": "32bbcc78aa92c6b29eec8554b94b0f9e78da7f69095aa23e14b23a00dde1a3a6",
+      "generated_at": "2026-11-13T07:24:13.854Z",
+      "facts_sha256": "b3f59a272973224db20c1ec18c748f816aa0cbdf4e248bfd5524ab3bb3b2fa42",
       "draft_sha256": "327e0118a860a58419e8ea2445c65d53d145352d561b00f2cda5a12e872a6dd6",
       "output_sha256": "e354d0e18d416509296e613235167a334ca2c4c8b83ece393b9eea05066831b2"
     },
@@ -119,11 +119,11 @@
       "name": "templates:.github/PULL_REQUEST_TEMPLATE.md",
       "target": ".github/PULL_REQUEST_TEMPLATE.md",
       "model": "in-session",
-      "generated_at": "2026-11-13T07:02:52.284Z",
-      "facts_sha256": "32bbcc78aa92c6b29eec8554b94b0f9e78da7f69095aa23e14b23a00dde1a3a6",
+      "generated_at": "2026-11-13T07:24:13.854Z",
+      "facts_sha256": "b3f59a272973224db20c1ec18c748f816aa0cbdf4e248bfd5524ab3bb3b2fa42",
       "draft_sha256": "327e0118a860a58419e8ea2445c65d53d145352d561b00f2cda5a12e872a6dd6",
       "output_sha256": "f24428fb646baf4ad6db682e31289ed3567865e82604bb730c8c0b8a1c24f94d"
     }
   ],
-  "updated_at": "2026-11-13T07:02:52.293Z"
+  "updated_at": "2026-11-13T07:24:13.860Z"
 }

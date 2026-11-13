@@ -37,6 +37,25 @@ export interface PatchRecord {
   readonly guards: readonly string[]
   /** What the patch explicitly does NOT do. */
   readonly limits: readonly string[]
+  /**
+   * The turn-ending codes this patch answers, in the host's own vocabulary.
+   *
+   * This lives here, not in the `explain` command, because "which patch covers
+   * which failure class" is a claim about the patch — the same kind of claim as
+   * its evidence and its limits, and it has to move whenever the patch moves
+   * (P-0016). A patch that answers no turn-ending code (a build-side gate, an
+   * offline reader) simply omits it, which is why it is optional rather than `[]`.
+   */
+  readonly failureClasses?: readonly string[]
+  /**
+   * The config key that switches this coverage on, if any.
+   *
+   * `explain` reads the mounted profile to answer "is this on *here*", so the key
+   * belongs to the patch too: a patch whose coverage is switched by `repair`
+   * must say `repair`, and one that is never switched (naming is always on)
+   * omits it instead of guessing a key that does not exist.
+   */
+  readonly switchKey?: string
 }
 
 /** A tool-call content block, exactly as the DSH assembler emits it. */

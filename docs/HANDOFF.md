@@ -12,8 +12,8 @@
 | 基线 | **264 tests / 6 gates / `--mutate` 6-6** |
 | 包体 | **已发布 0.4.4 = 37 804 B 压缩 / 35 文件 / 122 218 B 解包**，core **0.4.4 = 35 317 B / 21 文件 / 113 688 B 解包**（两包 shasum `f310006b…` / `84acd915…`；plugin 涨 545 B 是 P-0027 的归因检查与它的散文付款，core 涨 610 B 是 P-0027 记录与改写过的 P-0002 limit）。上一个发布 **0.4.3 = 37 259 B / 35 文件 / 120 776 B 解包**，core **34 707 B / 21 文件 / 111 716 B**（shasum `f6862043…` / `6db798fb…`）。emit 总量 **82 985 / 83 000**（常驻 41 623 / 44 000，CLI 41 362 / 42 000）——**只剩 15 B，下一个补丁必须先拆模块，不许抬 cap**。 |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1` / `v0.3.2` / `v0.3.3` / `v0.3.4` / `v0.3.5` / `v0.3.6` / `v0.3.7` / `v0.3.8` / `v0.4.0` / `v0.4.1` / **`v0.4.2`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release）；`v0.4.2` 的正文与 `docs/copy/release-notes/v0.4.2.md` 逐字节比对。 |
-| 装机验收 | **0.4.4 已从 registry 单装到空目录验过 `OK 6 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-13T21-45-00.000Z.json`（`ok: true`、三条命令退出码 0/0/0）。两个 profile 仍装着 0.4.3（`before-043` 备份），**换到 0.4.4 与桌面 App 重启都还没做**（App 当前没在运行）。历史：0.4.3 / 0.4.2 / 0.4.1 / 0.4.0 / 0.3.8 各有 `install-acceptance-*` 产物。 |
-| 下一件事 | **0.4.4 已发布：`BS-18` 的错误派发不再执行错工具。** 剩下三件：①把两个 profile 换到 0.4.4 并重启桌面 App；②**字节只剩 15 B** —— 下一个补丁必须先按加载路径拆模块（P-0012 的办法），不许抬 cap；③外部渠道等人工（imsai 巡检 / dsh.so 合并 / `#14942` / `#472` / `#3`）。 |
+| 装机验收 | **0.4.4 已从 registry 单装到空目录验过 `OK 6 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-13T21-45-00.000Z.json`（`ok: true`、三条命令退出码 0/0/0）。**两个 profile 已切到 registry 的 0.4.4**（`.tmp/pack044` 的两个 tarball sha1/sha512 对过 registry：`f310006b…` / `84acd915…`；换装脚本 `.tmp/switch-profiles-044.mjs`，备份 `before-044`），desktop 与 remedy-live 的 `node_modules` 两包都报 **0.4.4**、pin 也是 `0.4.4`，两边 `verify` 都 6/6。**桌面 App 于 20:41:18 重启**（晚于安装），`dsh plugin --profile desktop list` 列出 `dsh-remedy@0.4.4`，运行时 `dsh --version` 是 **0.2.2-rc.3**。**没有驱动 App 内的一个 turn**（本机没有可用的浏览器自动化通道），所以「应用内挂载」这一条只有清单与启动时间两条证据，不冒充第三条。历史：0.4.3 / 0.4.2 / 0.4.1 / 0.4.0 / 0.3.8 各有 `install-acceptance-*` 产物。 |
+| 下一件事 | **0.4.4 已发布并已装到两个 profile + 桌面 App 已重启（DSH 0.2.2-rc.3）。** 剩下两件：①**字节只剩 15 B**（total 82 985 / 83 000，常驻 41 623 / 44 000，CLI 41 362 / 42 000）—— 下一个补丁必须先按加载路径拆模块（P-0012 的办法），不许抬 cap；②外部渠道等人工（imsai 巡检 / dsh.so 合并 / `#14942` / `#472` / `#3`）。 |
 
 ## 五分钟检查
 
@@ -95,7 +95,15 @@ git -C .. log --oneline -3
 快照 `patch-registry-2026-11-13T22-50-00.000Z.json`（sha256 `9430764c…`）；
 门禁证据 `gates-2026-11-13T22-40-00.000Z.json` / `gates-mutate-2026-11-13T22-45-00.000Z.json`。
 
-**仍未做**：两个 profile 换到 0.4.4 + 重启桌面 App（App 没在运行）；下一个补丁先拆模块（字节只剩 15 B）；外部渠道等人工。
+**D. 两个 profile 与桌面 App（R39 收尾）**
+
+- `.tmp/pack044/` 的两个 tarball 是从 registry 拉回来的那一份，sha1/sha512 与 `dist.shasum` / `dist.integrity` 一致。
+  两个 profile 各装一次后都报 **0.4.4**、pin `0.4.4`，两边 `dist/cli.js verify` 都回 `OK 6 fixture(s)`。
+- 桌面 App 于 **20:41:18** 启动（晚于安装），`dsh plugin --profile desktop list` 列出 `dsh-remedy@0.4.4`，
+  `dsh --version` 回 **0.2.2-rc.3**。**没有在 App 里跑一个 turn** —— 本机没有可用的浏览器自动化通道，
+  所以「应用内挂载」只有「清单列出 + 启动时间晚于安装」两条证据，这一条写在「装机验收」行里，不夸大。
+
+**仍未做**：下一个补丁先拆模块（字节只剩 15 B）；外部渠道等人工。
 
 ## 当前批次（R38 → R1）
 

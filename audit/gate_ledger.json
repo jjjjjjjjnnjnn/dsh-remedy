@@ -35,7 +35,7 @@
       "id": "size",
       "script": "scripts/gate_size.mjs",
       "requires_build": true,
-      "negative_control": "compares the measured plugin total against a cap one byte below it, so a gate that stopped comparing would stay green"
+      "negative_control": "compares the measured plugin total against a cap one byte below it, and the handoff's byte row against a number one byte off the measurement, so a gate that stopped comparing would stay green"
     }
   ]
 }

@@ -86,7 +86,7 @@ the last feature is how this project would slowly become inexplicable.
 ## Reproduction
 
 ```
-node scripts/gate_size.mjs                # five checks, three subtotals
+node scripts/gate_size.mjs                # six checks, three subtotals (the sixth, handoff-bytes, is P-0029)
 node scripts/gate_size.mjs --mutate       # residency, cli and total all caught
 node --test tests/governance/budget-split.test.ts
 grep -n 'approved_by' scripts/lib/budgets.mjs

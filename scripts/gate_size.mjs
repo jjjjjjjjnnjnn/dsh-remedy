@@ -15,7 +15,7 @@
  */
 
 import { statSync } from 'node:fs'
-import { abs, listDir, runGate } from './lib/kit.mjs'
+import { abs, listDir, readText, runGate } from './lib/kit.mjs'
 import {
   CLI_CAP,
   CLI_FILES,
@@ -41,6 +41,32 @@ const subtotal = (sizes, names) =>
     const found = sizes.find((item) => item.name === name)
     return sum + (found?.bytes ?? 0)
   }, 0)
+
+/**
+ * The byte account the live handoff tells a successor to start from.
+ *
+ * It is hand-copied prose, and the same file used to tell the next agent to pay a
+ * new patch by splitting modules by load path. That cannot work: the total is the
+ * sum of both halves, so a split only moves bytes between the subtotals. The row
+ * is compared with the build so the advice and the numbers cannot drift apart.
+ *
+ * The fact pack writes thousands with a thin space (`82 985`); flatten only
+ * digit/space/three-digit groups, then read the one row that carries `emit`.
+ */
+function handoffClaim() {
+  const row = readText('docs/HANDOFF.md').split(/\r?\n/).find((line) => line.includes('emit 总量')) ?? ''
+  const flat = row.replace(/(\d)\s+(\d{3})/g, '$1$2')
+  const match = flat.match(/emit 总量 \*\*(\d+) \/ (\d+)\*\*（常驻 (\d+) \/ (\d+)，CLI (\d+) \/ (\d+)）/)
+  if (match === null) return null
+  return {
+    total: Number(match[1]),
+    totalCap: Number(match[2]),
+    residency: Number(match[3]),
+    residencyCap: Number(match[4]),
+    cli: Number(match[5]),
+    cliCap: Number(match[6]),
+  }
+}
 
 await runGate('size', async ({ checks, mutate }) => {
   const names = listDir(DIST).filter((entry) => entry.isFile && entry.name.endsWith('.js'))
@@ -85,6 +111,32 @@ await runGate('size', async ({ checks, mutate }) => {
       found === undefined ? `${name} is missing from ${DIST}` : `${found.bytes} of ${cap} bytes`,
     )
   }
+
+  // The live handoff's byte row is what a successor acts on, so it is measured
+  // rather than remembered. `--mutate` compares it against a number one byte off
+  // the measurement, which proves the check is not vacuously green.
+  const claim = handoffClaim()
+  const expected = {
+    total: mutate ? total + 1 : total,
+    totalCap: TOTAL_CAP,
+    residency: mutate ? residency + 1 : residency,
+    residencyCap: RESIDENCY_CAP,
+    cli: mutate ? cli + 1 : cli,
+    cliCap: CLI_CAP,
+  }
+  const drift =
+    claim === null
+      ? ['the live handoff has no "emit 总量" row to compare']
+      : Object.entries(expected)
+          .filter(([key, value]) => claim[key] !== value)
+          .map(([key, value]) => `${key}: handoff ${claim[key]} vs measured ${value}`)
+  checks.add(
+    'handoff-bytes',
+    drift.length === 0,
+    drift.length === 0
+      ? `total ${total} of ${TOTAL_CAP}, residency ${residency} of ${RESIDENCY_CAP}, cli ${cli} of ${CLI_CAP}`
+      : drift.join('; '),
+  )
 
   // A file above the unchecked limit that nobody capped is the shape of the bug
   // this gate exists to stop: it grows quietly and the total is the only alarm.

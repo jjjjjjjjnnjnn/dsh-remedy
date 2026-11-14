@@ -118,6 +118,31 @@ test('the handoff points at the one publish procedure instead of restating it', 
   assert.doesNotMatch(procedure as string, /```/, 'a second command block is a second procedure; keep the steps in one file')
 })
 
+/**
+ * `docs/PUBLISH.md` also says whether npm is published, and at which version.
+ * Nothing read that sentence: by R41 it still said `currently 0.4.2` while
+ * 0.4.3, 0.4.4 and 0.4.5 had gone out, because the rules above only check the
+ * shape of the commands, not the state they describe.
+ */
+export function currentlyClaim(text: string): string | null {
+  return text.match(/currently\s+`(\d+\.\d+\.\d+)`/i)?.[1] ?? null
+}
+
+test('the publish status names the version the packages ship', () => {
+  assert.equal(
+    currentlyClaim(publishDoc),
+    plugin.version,
+    'docs/PUBLISH.md says npm is at another version than the packages ship',
+  )
+  // Negative control: the value this rule was written for.
+  assert.equal(currentlyClaim('published (currently `0.4.2`)'), '0.4.2')
+  assert.notEqual(
+    currentlyClaim('published (currently `0.4.2`)'),
+    plugin.version,
+    'an old status must fail the rule above',
+  )
+})
+
 test('the boundary section cites no scratch path and no stale latest', () => {
   const boundary = section(handoff, '## 明确边界')
   assert.notEqual(boundary, null, 'the handoff must keep a 明确边界 section')

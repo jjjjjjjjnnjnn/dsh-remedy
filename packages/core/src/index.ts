@@ -31,6 +31,9 @@ export { DEFAULT_MAX_CALLS, repairToolCallArguments, wouldRepair } from './toolc
 export type { ResealAccepted, ResealRefused, ResealRejectionCode, ResealResult } from './reseal.js'
 export { resealToolCallArguments } from './reseal.js'
 
+export type { FragmentDeclaration, FragmentFit } from './attribute.js'
+export { fragmentFit } from './attribute.js'
+
 export type { RegistryProblem } from './registry.js'
 export { findPatch, PATCHES, patchRegistrySnapshot, registryProblems } from './registry.js'
 

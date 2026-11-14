@@ -73,6 +73,13 @@ export type RepairEvent =
        * fragment was dispatched under a proven name.
        */
       readonly unattributed?: number
+      /**
+       * Fragments that kept the stream's name although the schema proved nothing
+       * (P-0030). Absent means every fragment was checked against a schema that
+       * could speak. Present means the repair still happened, but the name on
+       * those fragments is an assumption the journal no longer hides.
+       */
+      readonly unproven?: number
     }
   | {
       readonly kind: 'resealed'
@@ -113,7 +120,11 @@ export interface ToolDeclaration {
   readonly name: string
   readonly parameters?: {
     readonly required?: readonly string[]
-    /** The host sends a full JSON Schema; nothing else is read here. */
+    /**
+     * The host sends a full JSON Schema (compiled by `dsh-tools`). P-0030 reads
+     * `properties` and `additionalProperties` from it; everything else stays
+     * opaque, and an undecidable keyword never produces a refusal.
+     */
     readonly [key: string]: unknown
   }
 }

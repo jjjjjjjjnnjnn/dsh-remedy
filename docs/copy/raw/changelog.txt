@@ -3,6 +3,26 @@
 All notable changes to this project are documented here.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.4.6] - 2026-11-14
+### Fixed
+- The live handoff told a successor three things that had already moved: it called `v0.4.2` the newest release after 0.4.3, 0.4.4 and 0.4.5 had shipped, it commented `# 0.4.1` on the five-minute `npm view` line, and `docs/PUBLISH.md` still said npm was at 0.4.2. Each is now compared with the shipping version instead of copied forward.
+- The same section told the next agent to pay for a new patch by splitting modules by load path. The total cap is the sum of both subtotals, so a split moves bytes between halves and pays none of the total; the advice now says delete or de-duplicate, or sign a cap change.
+- A synthesized fragment's name was checked only against the tool's `required` list. Reading the compiler that builds the request (`dsh-tools/lib/index.js:800-808`) showed the parameter schemas are open, so "every key must be declared" would have been an over-claim; the proof now also uses a closed schema (`additionalProperties: false`) and a declared value that breaks its own `type`, `enum` or `const`.
+- The `repaired` event counted unattributed fragments across the whole stream, so a stream with two fused blocks reported the first block's count on both events. Counts are per decision now.
+
+### Added
+- `tests/governance/handoff-truth.test.ts` reads the live release row and the five-minute `npm view` comments; `tests/governance/release-procedure.test.ts` reads the `currently` version in `docs/PUBLISH.md`; `scripts/gate_size.mjs` compares the handoff's byte row with the measured build (`handoff-bytes`), and `--mutate` proves the check is not vacuously green.
+- `packages/core/src/attribute.ts`: `fragmentFit()` returns `fits` / `foreign` / `unproven`. Only a schema violation the declaration itself states produces a refusal; a keyword the module does not decide never does.
+- The `repaired` event carries `unproven: <n>` when a synthesized fragment kept the stream's name although the schema could not speak, so the journal no longer implies the name was proven.
+
+### Package size
+- `dsh-remedy@0.4.6`: 39877 bytes compressed, 36 files, 126519 bytes unpacked (82913 of `dist/*.js`, 28204 of `dist/*.d.ts`, 3676 of `fixtures/`, 11726 of package-root files), shasum `1cd6d75a…`.
+- `dsh-remedy-core@0.4.6`: 39973 bytes compressed, 23 files, 127568 bytes unpacked (98247 of `dist/*.js`, 25509 of `dist/*.d.ts`, 3812 of package-root files), shasum `f18fb209…`.
+
+### Notes
+- This release carries 30 patches: 3 `verified` and 27 `tested`.
+- Byte budget: residency 41551 of 44000, CLI 41362 of 42000, total 82913 of 83000 — eighty-seven bytes of headroom. No cap moved; the plugin's emitted bytes fell because the attribution proof moved into the engine, which the budget does not measure.
+
 ## [0.4.5] - 2026-11-14
 ### Fixed
 - The packaged fixtures no longer carry this machine's home path. `fixtures/toolcall-fusion/session-9045e2ec-seq-526.json` quotes the shell command a real session ran, and that command began with the account's workspace; every tarball since the first release shipped it. The account segment is now `<home>`, the same placeholder the redactor writes, and the fixture's own note says the file is no longer a byte-for-byte copy. Reported by the dshopen maintainer while accepting the plugin (polang233/dsh-plugin-index#472).

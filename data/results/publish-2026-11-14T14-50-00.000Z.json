@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_publish.mjs",
+  "generated_at": "2026-11-14T14:50:00.000Z",
+  "source": {
+    "git_head": "192d94e1d2c60a0c6283788fc96096481ddd6499",
+    "git_dirty": true
+  },
+  "packages": [
+    {
+      "name": "dsh-remedy-core",
+      "local": "0.4.6",
+      "registry": "0.4.6",
+      "latest": "0.4.6",
+      "exact_ok": true,
+      "latest_ok": true
+    },
+    {
+      "name": "dsh-remedy",
+      "local": "0.4.6",
+      "registry": "0.4.6",
+      "latest": "0.4.6",
+      "exact_ok": true,
+      "latest_ok": true
+    }
+  ],
+  "ok": true
+}

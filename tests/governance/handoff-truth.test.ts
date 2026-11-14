@@ -8,6 +8,7 @@ const read = (path: string) => readFileSync(new URL(path, root), 'utf8')
 const exists = (path: string) => existsSync(new URL(path, root))
 
 const handoff = read('docs/HANDOFF.md')
+const plugin = JSON.parse(read('packages/plugin/package.json')) as { version: string }
 
 /** Any `x-2026-...Z.json` token, with or without the `data/results/` prefix. */
 const ARTIFACT = /(?:data\/results\/)?([a-z][a-z-]*-\d{4}-\d{2}-\d{2}T[\d.:-]+Z\.json)/g
@@ -168,4 +169,51 @@ test('the live sections do not describe a state that has moved on', () => {
     .filter((line) => stale.some((rule) => rule.pattern.test(line)))
     .map((line) => line.trim().slice(0, 90))
   assert.deepEqual(offenders, [], 'the live handoff tells a new session to redo finished work')
+})
+
+/**
+ * The live status table also carries two pointers a successor acts on: which
+ * release is newest, and which version `npm view` should print. Both are prose,
+ * and by R41 both had drifted three releases behind (the row called `v0.4.2`
+ * newest while `v0.4.3`/`v0.4.4`/`v0.4.5` had gone out, and the five-minute
+ * check still commented `# 0.4.1`). The stale-claim test above only knows the
+ * 0.3.x shapes, so neither line was ever compared with what the packages ship.
+ */
+export function releaseClaim(text: string): { newest: string | null; notes: string | null } {
+  const row = text.split(/\r?\n/).find((line) => /\breleases\b/.test(line)) ?? ''
+  const bold = [...row.matchAll(/\*\*`(v\d+\.\d+\.\d+)`\*\*/g)].map((match) => match[1] as string)
+  const notes = [...row.matchAll(/docs\/copy\/release-notes\/(v\d+\.\d+\.\d+)\.md/g)].map((match) => match[1] as string)
+  return { newest: bold.at(-1) ?? null, notes: notes.at(-1) ?? null }
+}
+
+/** The `# x.y.z` comments on the five-minute `npm view` lines. */
+export function npmViewClaims(text: string): string[] {
+  return [...text.matchAll(/npm view dsh-remedy(?:-core)? version\s+#\s*(\d+\.\d+\.\d+)/g)].map((match) => match[1] as string)
+}
+
+test('the live release row names the version the packages ship', () => {
+  const claim = releaseClaim(liveSections())
+  assert.equal(claim.newest, `v${plugin.version}`, `the live row calls ${claim.newest} the newest release; the packages ship ${plugin.version}`)
+  assert.equal(claim.notes, `v${plugin.version}`, `the live row compares ${claim.notes} notes byte-for-byte; the shipping release is ${plugin.version}`)
+  assert.ok(exists(`docs/copy/release-notes/v${plugin.version}.md`), `docs/copy/release-notes/v${plugin.version}.md must exist`)
+})
+
+test('the release-row rule catches an old tag instead of agreeing with anything', () => {
+  const old =
+    'releases `v0.1.0` / **`v0.4.2`**（0.2.0 / 0.3.0 从不单独发 release）；`v0.4.2` 的正文与 `docs/copy/release-notes/v0.4.2.md` 逐字节比对。'
+  const claim = releaseClaim(old)
+  assert.equal(claim.newest, 'v0.4.2')
+  assert.notEqual(claim.newest, `v${plugin.version}`, 'a row naming an old release must fail the rule above')
+  assert.notEqual(claim.notes, `v${plugin.version}`, 'an old notes file must fail the rule above')
+})
+
+test('the five-minute npm view comments name the version the packages ship', () => {
+  const claims = npmViewClaims(liveSections())
+  assert.ok(claims.length > 0, 'the five-minute check must keep an npm view line to compare')
+  for (const claimed of claims) {
+    assert.equal(claimed, plugin.version, `the five-minute check expects ${claimed}; the packages ship ${plugin.version}`)
+  }
+  // The exact line this rule was written for, so the rule is not about the file only.
+  assert.deepEqual(npmViewClaims('npm view dsh-remedy version      # 0.4.1'), ['0.4.1'])
+  assert.notEqual(claims[0], npmViewClaims('npm view dsh-remedy version      # 0.4.1')[0])
 })

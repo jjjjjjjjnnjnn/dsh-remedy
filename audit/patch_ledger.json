@@ -471,6 +471,41 @@
         "tests/governance/shipped-samples.test.ts",
         "packages/core/src/redact.ts"
       ]
+    },
+    {
+      "id": "P-0029",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.6",
+      "evidence": [
+        "docs/patches/P-0029-live-pointers.md",
+        "tests/governance/handoff-truth.test.ts",
+        "tests/governance/release-procedure.test.ts",
+        "scripts/gate_size.mjs"
+      ],
+      "guards": [
+        "tests/governance/handoff-truth.test.ts",
+        "tests/governance/release-procedure.test.ts",
+        "scripts/gate_size.mjs"
+      ]
+    },
+    {
+      "id": "P-0030",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.6",
+      "evidence": [
+        "docs/patches/P-0030-attribution-proof.md",
+        "packages/core/src/attribute.ts",
+        "packages/plugin/src/repair-stream.ts",
+        "tests/unit/attribute.test.ts",
+        "tests/unit/attribution.test.ts"
+      ],
+      "guards": [
+        "tests/unit/attribute.test.ts",
+        "tests/unit/attribution.test.ts",
+        "packages/plugin/src/repair-stream.ts"
+      ]
     }
   ]
 }

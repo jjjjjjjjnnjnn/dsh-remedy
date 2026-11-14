@@ -775,7 +775,7 @@ export const PATCHES: readonly PatchRecord[] = [
       'packages/plugin/src/repair-stream.ts',
     ],
     limits: [
-      'only the declared required fields are provable: a tool with no required list proves nothing, so its fragments keep the stream name and the old behaviour',
+      'the proof was widened by P-0030 (a required list, a closed schema, or a declared value that breaks its own type/enum): an open schema with no required list still proves nothing, so its fragments keep the stream name and book the residue',
       'the fallback name is not a tool, so the model pays one UNKNOWN_TOOL round trip before it can retry; that is the cost of not running the wrong tool',
       'a fragment that happens to satisfy the wrong tool schema is still dispatched as that tool; schemas are a filter, not a proof',
       'the declarations come from options.tools; a hand-built call or a CLI repair carries none, so nothing changes there',
@@ -806,6 +806,66 @@ export const PATCHES: readonly PatchRecord[] = [
       'the new rule scans the shipped set (fixtures, package pages, the fact pack, the root pages) and forbids an absolute Users/ segment; a path smuggled in another shape — an encoded directory, a POSIX home — is caught only by the P-0004 redactor, not by this test',
       'docs and evidence artifacts were rewritten in place; their stamps are unchanged, so this is a redaction repair rather than a re-measurement',
       'no live artifact is possible: this is a corpus and channel fix, not a resident seam',
+    ],
+    failureClasses: [],
+  },
+  {
+    id: 'P-0029',
+    title: 'The pointers a successor acts on were prose nobody compared',
+    symptom:
+      'the live handoff called v0.4.2 the newest release after v0.4.3, v0.4.4 and v0.4.5 had gone out, its five-minute check still commented "# 0.4.1", and docs/PUBLISH.md still said npm was at 0.4.2. These three lines are the map a new session starts from, and every gate stayed green',
+    rootCause:
+      'handoff-truth compared the evidence index with files and knew three 0.3.x stale shapes; release-procedure compared the shape of the publish commands; gate_size compared the build with the caps. No rule compared a live version claim with packages/plugin/package.json, and none read the byte row at all. The same section also told the next agent to pay a new patch by splitting modules by load path, which cannot work while the total is the binding cap: the total is the sum of both subtotals',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'docs/patches/P-0029-live-pointers.md',
+      'tests/governance/handoff-truth.test.ts',
+      'tests/governance/release-procedure.test.ts',
+      'scripts/gate_size.mjs',
+    ],
+    guards: [
+      'tests/governance/handoff-truth.test.ts',
+      'tests/governance/release-procedure.test.ts',
+      'scripts/gate_size.mjs',
+    ],
+    limits: [
+      'the rules are offline: they compare the row with packages/plugin/package.json, not with GitHub or npm, so a row can name the right version and still describe a tag nobody published',
+      'the release-body comparison is quoted, not fetched; the v0.4.5 check was manual and is not a mechanism',
+      'the channel rows in docs/distribution/README.md are dated readings and no test reads them, so they can go stale between rounds',
+      'it changes no runtime behaviour and ships only the registry entry, so a core release is needed to make it visible on npm',
+    ],
+    failureClasses: [],
+  },
+  {
+    id: 'P-0030',
+    title: 'The name check read required and nothing else, and its counter was a running total',
+    symptom:
+      'two narrow gaps after P-0027: a declaration with no required list proved nothing, so a synthesized fragment kept the stream name even when the schema could prove it did not belong to that tool; and the repaired event attributed one repair\'s unattributed fragment to every later repair in the same stream (measured in tests: two fused blocks reported [1,1] instead of [1,0])',
+    rootCause:
+      'the check was written against an imagined JSON Schema. dsh-tools compiles first-party parameter maps to {type:"object", properties, required?} and never sets additionalProperties (dsh-tools/lib/index.js:800-808), so the schema is open and an undeclared key is not proof: the obvious "every key must be declared" rule would have been an over-claim. The counter bug is a scoping mistake: unattributed sat one block above the per-decision loop',
+    surface: 'llm/stream',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'docs/patches/P-0030-attribution-proof.md',
+      'packages/core/src/attribute.ts',
+      'packages/plugin/src/repair-stream.ts',
+      'tests/unit/attribute.test.ts',
+      'tests/unit/attribution.test.ts',
+    ],
+    guards: [
+      'tests/unit/attribute.test.ts',
+      'tests/unit/attribution.test.ts',
+      'packages/plugin/src/repair-stream.ts',
+    ],
+    limits: [
+      'an open schema still cannot prove a fragment foreign by its keys, and that is the measured shape of every first-party DSH tool; only a closed schema (raw or MCP) changes that',
+      'fits is not identity: a fragment that is valid for the named tool is still dispatched as that tool, and the stage that glued the objects is still unknown (P-0001)',
+      'only the dsh-tools compiled first-party shape was read; a declaration in another dialect is classified unproven more often than necessary, which is the safe direction',
+      'the per-decision count changes what a journal event reports: an old journal that shared a running total will not compare equal to a new one, and no migration rewrites it',
+      'no live artifact: the runtime was not driven for this patch, and the rc.3 corpus had no tool without a required list, so the status is tested',
     ],
     failureClasses: [],
   },

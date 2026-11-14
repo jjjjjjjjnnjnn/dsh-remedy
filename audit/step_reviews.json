@@ -685,7 +685,45 @@
         "packages/plugin/src/repair-stream.ts",
         "tests/unit/attribution.test.ts"
       ]
+    },
+    {
+      "id": "S39",
+      "gate": "size",
+      "title": "The map a successor reads was compared with nothing",
+      "axes": {
+        "correctness": "Three live version claims and the byte row are now compared with what the build ships. Run before the text was fixed, the rules failed on the real files: the release row called v0.4.2 newest while the packages ship 0.4.5, the five-minute npm comment said 0.4.1, and docs/PUBLISH.md said 0.4.2. After the fix the same rules pass, and each carries an injected negative control (the old value) so a rule that agreed with anything would be caught. gate_size's handoff-bytes check compares the emit row with the measured total, residency, CLI and the three caps; --mutate compares it with a number one byte off the measurement and names handoff-bytes among the failures.",
+        "reproducibility": "node --test on the two governance files and node scripts/gate_size.mjs need no host state: the expected values come from packages/plugin/package.json and from dist/*.js. The release-body check could not be a test (it needs the GitHub API), so it was done once by hand on 2026-11-14 and the patch doc says it is quoted, not fetched.",
+        "compliance": "No cap moved and no emitted plugin byte changed: total is still 82985 of 83000, residency 41623 of 44000, CLI 41362 of 42000. The registry entry, the ledger row and the patch doc landed in the same round; the snapshot was re-recorded. The live handoff's advice to pay a new patch by splitting modules was corrected, because the total is the sum of both subtotals and a split cannot reduce it.",
+        "ssot": "The shipping version now has one home (packages/plugin/package.json) that the live rows are compared against, and the byte account has one home (the build) that the handoff row is compared against. The release row's notes reference must be that version's notes file, so the row cannot quote a byte-for-byte comparison for a release that is not the current one.",
+        "adversarial": "The adversary is a map that agrees with itself: prose copied forward each round and three gates that each looked somewhere else. The negative controls are the values that were actually wrong, so the rules are not satisfied by a regex that merely matches something. The remaining hole is stated instead of hidden: the rules are offline, so a row can name the right version and describe a tag nobody published, and the distribution ledger's channel readings are still unread prose."
+      },
+      "evidence": [
+        "docs/patches/P-0029-live-pointers.md",
+        "docs/HANDOFF.md",
+        "tests/governance/handoff-truth.test.ts",
+        "tests/governance/release-procedure.test.ts",
+        "scripts/gate_size.mjs"
+      ]
+    },
+    {
+      "id": "S40",
+      "gate": "size",
+      "title": "A proof that over-claimed, and a counter that booked another repair's work",
+      "axes": {
+        "correctness": "fragmentFit returns fits/foreign/unproven and only returns foreign on a violation the declaration itself states: a missing required field, an undeclared key in a closed schema, or a declared value that breaks its own type/enum/const. The plugin's fitOf only finds the declaration and parses nothing, and the repaired event now carries the unproven count. Counts are per decision. Red first: the closed-schema test dispatched the fragment as read and the unproven test read undefined; the two-block test was checked against the old shared counter by mutation, which reported [1,1] instead of [1,0].",
+        "reproducibility": "tests/unit/attribute.test.ts is table-driven and names the schema keyword behind every foreign verdict; tests/unit/attribution.test.ts builds each stream from literals. The schema shape that decided the design is quoted from the runtime (dsh-tools/lib/index.js:800-808), not inferred, and the patch doc says it was read rather than measured live. No host state is needed to reproduce any of it.",
+        "compliance": "No cap moved. The check moved from repair-stream.ts into core, which the plugin budget does not measure, so the plugin fell from 82985 to 82913 bytes of 83000 while gaining the fix; the imbalance (core has no cap) is recorded as a limit of P-0012 and P-0030 rather than fixed here. The registry entry, ledger row, patch doc and the P-0027 limit were updated in the same round; the snapshot was re-recorded.",
+        "ssot": "One home for the proof (core attribute.ts), one home for the fallback name (UNATTRIBUTED_NAME), and one field for the residue on the same event the counters already use. P-0027's first limit said only required fields were provable; that sentence would have been false after this patch, so it was rewritten to point at the widened proof instead of being left as history.",
+        "adversarial": "The adversary is a check that proves more than the schema does. The obvious rule — every key must be declared — was rejected because the host compiles open schemas, and the doc records that rejection; an undecided keyword (oneOf) is tested not to produce a refusal, so the module cannot refuse by pattern-matching. What remains is stated, not hidden: an open schema cannot prove a foreign key, fits is not identity, and no live run backs this patch."
+      },
+      "evidence": [
+        "docs/patches/P-0030-attribution-proof.md",
+        "packages/core/src/attribute.ts",
+        "packages/plugin/src/repair-stream.ts",
+        "tests/unit/attribute.test.ts",
+        "tests/unit/attribution.test.ts"
+      ]
     }
   ],
-  "updated_at": "2026-11-13T21:25:00.000Z"
+  "updated_at": "2026-11-14T14:30:00.000Z"
 }

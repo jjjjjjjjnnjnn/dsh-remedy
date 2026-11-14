@@ -11,6 +11,7 @@
 
 import {
   DEFAULT_MAX_CALLS,
+  fragmentFit,
   repairToolCallArguments,
   type ToolCallInput,
 } from 'dsh-remedy-core'
@@ -61,20 +62,11 @@ function ceilingOf(options: RepairStreamOptions): number {
  * `UNKNOWN_TOOL` and continues (measured 0.2.2-rc.3). */
 export const UNATTRIBUTED_NAME = 'remedy_unattributed'
 
-/** Only a declared `required` list proves anything; none means no claim. */
-function attributable(call: ToolCallInput, tools: readonly ToolDeclaration[] | undefined): boolean {
-  if (tools === undefined || tools.length === 0) return true
+/** Core owns the proof (P-0030); this side finds the declaration. */
+function fitOf(call: ToolCallInput, tools: readonly ToolDeclaration[] | undefined) {
+  if (!tools?.length) return 'unproven'
   const declaration = tools.find((tool) => tool.name === call.name)
-  const required = declaration?.parameters?.required
-  if (declaration === undefined || required === undefined || required.length === 0) return true
-  let parsed: unknown
-  try {
-    parsed = JSON.parse(normalizeArguments(call.arguments))
-  } catch {
-    return false
-  }
-  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return false
-  return required.every((key) => Object.prototype.hasOwnProperty.call(parsed, key))
+  return declaration ? fragmentFit(call.arguments, declaration) : 'unproven'
 }
 
 interface RescuePlan {
@@ -225,8 +217,11 @@ export async function* repairStream(
     if (!fusedSeen) return null
 
     const chunks: StreamChunk[] = []
-    let unattributed = 0
+    // Per decision: the old counter reported a running total (P-0030).
+    const counts: Array<{ unattributed: number; unproven: number }> = []
     for (const decision of decisions) {
+      let unattributed = 0
+      let unproven = 0
       for (const [offset, call] of decision.calls.entries()) {
         if (offset === 0 && decision.index !== -1) {
           chunks.push(closeCall(decision.index, call))
@@ -236,21 +231,25 @@ export async function* repairStream(
         // index the consumer never saw start is not a well-formed block sequence.
         const index = nextIndex()
         chunks.push({ type: 'block-start', index, blockType: 'tool-call' })
-        // P-0027: the stream named one tool for this index, so a fragment that does
-        // not fit that tool's declared fields has no provable name. It goes out
-        // under a name the runtime cannot execute rather than as a wrong call.
-        if (offset > 0 && !attributable(call, options.tools)) {
-          unattributed += 1
-          chunks.push(closeCall(index, { ...call, name: UNATTRIBUTED_NAME }))
-          continue
+        // P-0027: a proven mismatch goes out under a name the runtime rejects.
+        // P-0030: an undecided name is kept and counted.
+        if (offset > 0) {
+          const fit = fitOf(call, options.tools)
+          if (fit === 'foreign') {
+            unattributed += 1
+            chunks.push(closeCall(index, { ...call, name: UNATTRIBUTED_NAME }))
+            continue
+          }
+          if (fit === 'unproven') unproven += 1
         }
         chunks.push(closeCall(index, call))
       }
+      counts.push({ unattributed, unproven })
     }
 
     // Counters and the stream budget are recorded only after the whole plan is proven.
     synthesized += planned
-    for (const decision of decisions) {
+    for (const [at, decision] of decisions.entries()) {
       if (!decision.fused) continue
       const first = decision.calls[0]
       if (!first) continue
@@ -258,7 +257,7 @@ export async function* repairStream(
         monitor.recordResealed(decision.reseal.tool, decision.reseal.callId, decision.reseal.key)
         continue
       }
-      monitor.recordRepaired(first.name, first.id, decision.calls.length, unattributed)
+      monitor.recordRepaired(first.name, first.id, decision.calls.length, counts[at]!.unattributed, counts[at]!.unproven)
     }
 
     return { chunks }

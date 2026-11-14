@@ -103,8 +103,8 @@ test('without tool schemas the plugin keeps the old behaviour and says so', asyn
   assert.deepEqual(blocks.map((block) => block.name), ['read', 'read'])
 })
 
-test('a schema without required fields proves nothing, so the name is kept', async () => {
-  const { chunks } = await collect(
+test('a schema without required fields proves nothing, so the name is kept and the journal says unproven', async () => {
+  const { chunks, monitor } = await collect(
     (async function* () {
       yield* fusedStream('read', '{"file_path":"a.txt"}{"command":"Get-ChildItem"}')
     })(),
@@ -112,6 +112,44 @@ test('a schema without required fields proves nothing, so the name is kept', asy
   )
   const blocks = toolBlocks(chunks)
   assert.deepEqual(blocks.map((block) => block.name), ['read', 'read'])
+  const event = monitor.events().find((candidate) => candidate.kind === 'repaired')
+  assert.equal(event?.kind, 'repaired')
+  if (event?.kind !== 'repaired') return
+  assert.equal(
+    event.unproven,
+    1,
+    'the journal must say the name was kept without proof, instead of implying it was proven',
+  )
+})
+
+test('a closed schema with no required list still proves a foreign key', async () => {
+  // The hole P-0027 left open: no required list meant no check at all. A closed
+  // schema (`additionalProperties: false`, not what first-party DSH tools send but
+  // what a raw or MCP declaration may send) gives the check something to prove.
+  const closedRead = {
+    name: 'read',
+    parameters: { type: 'object', properties: { file_path: { type: 'string' } }, additionalProperties: false },
+  }
+  const { chunks } = await collect(
+    (async function* () {
+      yield* fusedStream('read', '{"file_path":"a.txt"}{"command":"Get-ChildItem"}')
+    })(),
+    { tools: [closedRead] },
+  )
+  const blocks = toolBlocks(chunks)
+  assert.equal(blocks[0]?.name, 'read')
+  assert.equal(blocks[1]?.name, 'remedy_unattributed', 'a closed schema makes an undeclared key a proven mismatch')
+})
+
+test('a declared field with the wrong type is unattributed', async () => {
+  const typedRead = { name: 'read', parameters: { type: 'object', properties: { file_path: { type: 'string' } } } }
+  const { chunks } = await collect(
+    (async function* () {
+      yield* fusedStream('read', '{"file_path":"a.txt"}{"file_path":42}')
+    })(),
+    { tools: [typedRead] },
+  )
+  assert.equal(toolBlocks(chunks)[1]?.name, 'remedy_unattributed')
 })
 
 test('the repaired event records that a fragment was unattributed', async () => {
@@ -132,6 +170,47 @@ test('the repaired event records that a fragment was unattributed', async () => 
     1,
     'the journal must say one fragment went out under the fallback name, not leave it to be noticed',
   )
+})
+
+test('two fused blocks in one stream book their own fragment counts', async () => {
+  // P-0030: the counting loop shared one variable across every decision, so both
+  // events reported the running total. A stream with two fused blocks attributed
+  // the first block's unattributed fragment to the second repair as well.
+  const { monitor } = await collect(
+    (async function* () {
+      yield { type: 'block-start', index: 0, blockType: 'tool-call' }
+      yield {
+        type: 'tool-call-delta',
+        index: 0,
+        id: 'call_a',
+        name: 'read',
+        argumentsDelta: '{"file_path":"a.txt"}{"command":"Get-ChildItem"}',
+      }
+      yield { type: 'block-start', index: 1, blockType: 'tool-call' }
+      yield {
+        type: 'tool-call-delta',
+        index: 1,
+        id: 'call_b',
+        name: 'read',
+        argumentsDelta: '{"file_path":"b.txt"}{"file_path":"c.txt"}',
+      }
+      yield {
+        type: 'finish',
+        reason: {
+          kind: 'error',
+          failure: {
+            code: 'MALFORMED_RESPONSE',
+            message: 'Received arguments:\n{"file_path":"a.txt"}{"command":"Get-ChildItem"}',
+          },
+        },
+      }
+    })(),
+    { tools: [READ, PWSH] },
+  )
+  const repaired = monitor.events().filter((event) => event.kind === 'repaired')
+  assert.equal(repaired.length, 2, 'both fused blocks are repaired')
+  const counts = repaired.map((event) => (event.kind === 'repaired' ? (event.unattributed ?? 0) : -1))
+  assert.deepEqual(counts, [1, 0], 'each event reports its own repair, not a running total')
 })
 
 test('the measured fixture still repairs into two calls', async () => {

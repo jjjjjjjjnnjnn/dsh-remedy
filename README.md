@@ -8,7 +8,7 @@
 
 [中文说明](README.zh-CN.md)
 
-dsh-remedy is a patch set for DeepSeek Harness (DSH) — thirty-one defects, each registered with the seam it touches, the symptom it removes, the mechanism that was measured, and the limits it does not cross. Two of those seams are resident (`llm/stream` and `agent/request-error`); the rest are the CLI, the build side, and one seam that has been measured but deliberately not mounted.
+dsh-remedy is a patch set for DeepSeek Harness (DSH) — thirty-three defects, each registered with the seam it touches, the symptom it removes, the mechanism that was measured, and the limits it does not cross. Two of those seams are resident (`llm/stream` and `agent/request-error`); the rest are the CLI, the build side, and one seam that has been measured but deliberately not mounted.
 
 ## What it fixes
 
@@ -34,13 +34,13 @@ The registry is the single source: `packages/core/src/registry.ts` for the claim
 
 | seam | patches | what each one settles |
 |---|---|---|
-| `llm/stream` (resident) | P-0001, P-0002, P-0003, P-0005 | split a proven fusion; a rescue must be provable, attributable and atomic; a refusal must be observable; reseal a bare member value or refuse it |
+| `llm/stream` (resident) | P-0001, P-0002, P-0003, P-0005, P-0027, P-0030, P-0033 | split a proven fusion; a rescue must be provable, attributable and atomic; a refusal must be observable; reseal a bare member value or refuse it; a fragment dispatched under a name nobody proved; the proof reads the schema the host sends; a call with no identity never reaches the log with an empty id |
 | `agent/request-error` (resident) | P-0011, P-0013 | the contract for who owns the decision, with a bounded retry budget; name the deterministic refusals instead of retrying them |
 | CLI | P-0004, P-0006, P-0009, P-0010, P-0016, P-0025 | scan fidelity and redaction shapes; the turn census; a session header is dated by `createdAt`; the usage text must match the binary; coverage is declared by the patch, not restated by the command; an unread profile is not a finding |
-| build side | P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019, P-0020, P-0021, P-0022, P-0023, P-0024, P-0026 | a copy channel that can name its failures; a byte budget a script checks; one cap per load path; the project's own description must be true; the two npm pages; a Windows exit code is not a registry answer; the outward pages described a project that had stopped existing; a listing that pins git bytes while advertising a registry version; an export that named a module that never existed; a drift test that repaired the drift; a doc rule no gate read; the two package pages finally inside the copy channel; the release procedure had two homes |
+| build side | P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019, P-0020, P-0021, P-0022, P-0023, P-0024, P-0026, P-0028, P-0029, P-0031, P-0032 | a copy channel that can name its failures; a byte budget a script checks; one cap per load path; the project's own description must be true; the two npm pages; a Windows exit code is not a registry answer; the outward pages described a project that had stopped existing; a listing that pins git bytes while advertising a registry version; an export that named a module that never existed; a drift test that repaired the drift; a doc rule no gate read; the two package pages finally inside the copy channel; the release procedure had two homes; the published sample that carried this machine's home path; the live pointers a successor acts on; the engine finally has a budget; the ledger stops repeating its patch docs |
 | measured, not mounted | P-0015 | what a rejected `agent/pre-step` decision does, so a later patch can use that seam on measured ground |
 
-Three patches are `verified`: a real host ran them and left a `data/results/live-*` artifact. The other twenty-eight are `tested`: unit tests, a negative control and a measured fixture, scan or corpus, but nothing a resident journal can witness. The status section below names which is which.
+Four patches are `verified`: a real host ran them and left a `data/results/live-*` artifact. The other twenty-nine are `tested`: unit tests, a negative control and a measured fixture, scan or corpus, but nothing a resident journal can witness. The status section below names which is which.
 
 ## Install
 
@@ -195,13 +195,15 @@ The whole `MALFORMED_RESPONSE` corpus on one machine was replayed through the bu
 
 ## Status
 
-Three patches are `verified` on a real host: P-0001 on a headless profile and on the desktop app, P-0002 on a 2026-11-10 headless run that repaired a real two-call fusion and saw the synthesized call dispatched, and P-0003 on a 2026-11-10 headless run whose journal wrote a non-zero `refused` after the code declined to repair a budget refusal.
+Four patches are `verified` on a real host: P-0001 on a headless profile and on the desktop app, P-0002 on a 2026-11-10 headless run that repaired a real two-call fusion and saw the synthesized call dispatched, P-0003 on a 2026-11-10 headless run whose journal wrote a non-zero `refused` after the code declined to repair a budget refusal, and P-0033 on an isolated harness whose endpoint replays the incomplete tool call of upstream discussion #13211: without the plugin the turn dies at V4 admission, with it the call carries a traceable id and the same session completes a second turn.
 
-The other twenty-eight are `tested`, not `verified`. Each carries unit tests, a negative control and a measured artifact where one exists: P-0004, P-0006 and P-0009 change an offline reader; P-0005 has no live bare-value shape yet; P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019, P-0020, P-0024, P-0026, P-0028, P-0029 and P-0031 are build-side or a corpus; P-0010, P-0016 and P-0025 change text a command prints; P-0011 and P-0013 sit on a seam a live journal witnesses only when a turn fails in a class this plugin retries, which the default budget of 0 never triggers; P-0015 is a measurement on an isolated profile rather than a mount; and P-0027 and P-0030 narrow the name a repaired fragment is dispatched under, with unit tests and a measured fixture but no live run of their own.
-Release status: `0.4.7` is published and is the registry `latest` for both `dsh-remedy` and `dsh-remedy-core`; it carries thirty-one patches and is measured on **DSH 0.2.2-rc.3**. A cold directory installed 0.4.7 from the registry and `dsh-remedy verify` printed `OK 6 fixture(s)`. The previous release is `0.4.6` with thirty patches, `0.4.5` with twenty-eight, `0.4.4` with twenty-seven, `0.4.3` with twenty-six, `0.4.2` with twenty-six, and `0.4.1` with twenty-three.
+The other twenty-nine are `tested`, not `verified`. Each carries unit tests, a negative control and a measured artifact where one exists: P-0004, P-0006 and P-0009 change an offline reader; P-0005 has no live bare-value shape yet; P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019, P-0020, P-0024, P-0026, P-0028, P-0029 and P-0031 are build-side or a corpus; P-0010, P-0016 and P-0025 change text a command prints; P-0011 and P-0013 sit on a seam a live journal witnesses only when a turn fails in a class this plugin retries, which the default budget of 0 never triggers; P-0015 is a measurement on an isolated profile rather than a mount; P-0027 and P-0030 narrow the name a repaired fragment is dispatched under, with unit tests and a measured fixture but no live run of their own; and P-0032 moves prose, not behaviour.
+Release status: `0.4.8` is published and is the registry `latest` for both `dsh-remedy` and `dsh-remedy-core`; it carries thirty-three patches and is measured on **DSH 0.2.2-rc.3**. A cold directory installed 0.4.8 from the registry and `dsh-remedy verify` printed `OK 6 fixture(s)`. The previous release is `0.4.7` with thirty-one patches, `0.4.6` with thirty, `0.4.5` with twenty-eight, `0.4.4` with twenty-seven, `0.4.3` with twenty-six, `0.4.2` with twenty-six, and `0.4.1` with twenty-three.
 
 Package sizes:
 
+- 0.4.8 plugin: 39378 bytes compressed, 36 files, 125434 bytes unpacked, shasum `6f42b4423117c7f3fc79f5458b18f3c35e2004ad`.
+- 0.4.8 core: 39869 bytes compressed, 23 files, 128145 bytes unpacked, shasum `2567629d4c28766622d546d2a22519029611fde7`.
 - 0.4.7 plugin: 39878 bytes compressed, 36 files, 126519 bytes unpacked, shasum `6c1a19a8890d73916b0732983aa5d72096ee8bb9`.
 - 0.4.7 core: 40504 bytes compressed, 23 files, 129511 bytes unpacked, shasum `68931b34abaad1c40cc3e635584784585c6b951d`.
 - 0.4.6 plugin: 39877 bytes compressed, 36 files, 126519 bytes unpacked, shasum `1cd6d75a93620192be920ac5e76ba7353fef971c`.
@@ -213,7 +215,7 @@ Package sizes:
 - 0.3.8 plugin: 35898 bytes compressed, 35 files, 117750 bytes unpacked, shasum `3bc47df12f21fe7d68336f595d397ff868b3d4d7`; core: 26551 bytes compressed, 21 files, 83461 bytes unpacked, shasum `0df993f85589e101b15b830fa105e7ef8c66c5d5`.
 - No sourcemaps are shipped; that removal is worth 41926 bytes of unpacked payload.
 
-The emitted plugin budget is three checks: residency 41551 of 44000 bytes (the modules a mounted plugin loads), cli 41362 of 42000 bytes (the modules only a command loads), and a total of 82913 of 83000 bytes. Per-file caps: `repair-stream.js` 28000, `session-scan.js` 14000, `cli.js` 12000. A patch that crosses a per-file number splits that file instead of absorbing it. These three are measured on the working tree and the 0.4.7 tarball ships 82913 of those bytes, so a reader checking the published package sees the same figure. The engine has its own two numbers: core 100190 of 104000 bytes, and `registry.js` 66303 of 68000.
+The emitted plugin budget is three checks: residency 41510 of 44000 bytes (the modules a mounted plugin loads), cli 41362 of 42000 bytes (the modules only a command loads), and a total of 82872 of 83000 bytes. Per-file caps: `repair-stream.js` 28000, `session-scan.js` 14000, `cli.js` 12000. A patch that crosses a per-file number splits that file instead of absorbing it. These three are measured on the working tree and the 0.4.8 tarball ships 82872 of those bytes, so a reader checking the published package sees the same figure. The engine has its own two numbers: core 98824 of 104000 bytes, and `registry.js` 64937 of 68000.
 
 ## Development
 
@@ -224,7 +226,7 @@ pnpm run gate
 node scripts/gate.mjs --mutate
 ```
 
-Six gates run on every change: `ssot`, `registry`, `namespace`, `step-review`, `copy`, `size`. `--mutate` breaks each one on purpose and requires every one to go red; it currently catches 6 of 6. The suite is 255 tests and 0 failing.
+Six gates run on every change: `ssot`, `registry`, `namespace`, `step-review`, `copy`, `size`. `--mutate` breaks each one on purpose and requires every one to go red; it currently catches 6 of 6. The suite is 295 tests and 0 failing.
 
 ## Contributing
 

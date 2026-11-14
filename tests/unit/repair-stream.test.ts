@@ -548,3 +548,92 @@ test('an empty tool name is never repaired into a dispatchable call', async () =
   const rejected = monitor.events().find((event) => event.kind === 'rejected')
   if (rejected?.kind === 'rejected') assert.equal(rejected.code, 'missing-name')
 })
+
+// --- P-0033 negative controls -------------------------------------------------
+
+function identityStream(id: string, name: string, args = '{}'): unknown[] {
+  return [
+    { type: 'block-start', index: 0, blockType: 'tool-call' },
+    { type: 'block-end', index: 0, block: { type: 'tool-call', id, name, arguments: args } },
+    { type: 'finish', reason: { kind: 'stop' } },
+  ]
+}
+
+function toolCallBlock(chunks: readonly StreamChunk[]) {
+  const block = chunks.find((chunk) => chunk.type === 'block-end')
+  assert.equal(block?.type, 'block-end')
+  if (block?.type !== 'block-end' || block.block.type !== 'tool-call') return null
+  return block.block
+}
+
+test('a tool call with no id and no name never leaves the seam with an empty identity', async () => {
+  // Upstream measurement (deepseek-harness discussion #13211): the adapter can emit
+  // {"type":"tool-call","id":"","name":"","arguments":"{}"} followed by a normal
+  // finish. The runtime appends tool/call with that empty callId, and the V4 log
+  // then refuses to resume: "tool/result at seq N requires toolCallId matching its
+  // tool source". Refusing the block and passing it through unchanged was exactly
+  // that failure with a journal line next to it.
+  const { chunks, monitor } = await collect(fromChunks(identityStream('', '', '{}')))
+  const block = toolCallBlock(chunks)
+  assert.ok(block !== null)
+  assert.notEqual(block.id, '', 'an empty callId is what makes the session unresumable')
+  assert.equal(block.id, 'call_remedy_1')
+  assert.equal(block.name, 'remedy_unattributed')
+  assert.equal(block.arguments, '{}')
+  assert.equal(monitor.counters().refused, 1, 'the missing identity is refused, never called repaired')
+  assert.equal(monitor.counters().repaired, 0)
+  // The verdict vocabulary is frozen (P-0003): `refused` alone reads `quiet`
+  // because no fusion was seen. The journal's `rejected` event is the record of
+  // this one, and `repaired` would claim a repair that did not happen.
+  assert.equal(monitor.verdict().state, 'quiet')
+  const rejected = monitor.events().find((event) => event.kind === 'rejected')
+  if (rejected?.kind === 'rejected') assert.equal(rejected.code, 'missing-id')
+})
+
+test('a named call with no id keeps its name and gets a traceable id', async () => {
+  const { chunks } = await collect(fromChunks(identityStream('', 'read', '{"path":"a.ts"}')))
+  const block = toolCallBlock(chunks)
+  assert.ok(block !== null)
+  assert.notEqual(block.id, '')
+  assert.equal(block.name, 'read', 'a proven name is not replaced by the fallback')
+  assert.equal(block.arguments, '{"path":"a.ts"}')
+})
+
+test('a call with an id but no name is sent under the refusal name', async () => {
+  const { chunks } = await collect(fromChunks(identityStream('call_keep', '', '{"command":"ls"}')))
+  const block = toolCallBlock(chunks)
+  assert.ok(block !== null)
+  assert.equal(block.id, 'call_keep', 'a real id is kept so the transcript stays traceable')
+  assert.equal(block.name, 'remedy_unattributed')
+})
+
+test('a synthesized identity never collides with an id already in the stream', async () => {
+  const chunks: unknown[] = [
+    { type: 'block-start', index: 0, blockType: 'tool-call' },
+    { type: 'block-end', index: 0, block: { type: 'tool-call', id: 'call_remedy_1', name: 'read', arguments: '{}' } },
+    { type: 'block-start', index: 1, blockType: 'tool-call' },
+    { type: 'block-end', index: 1, block: { type: 'tool-call', id: '', name: '', arguments: '{}' } },
+    { type: 'finish', reason: { kind: 'stop' } },
+  ]
+  const { chunks: output } = await collect(fromChunks(chunks))
+  const blocks = output.filter(
+    (chunk): chunk is Extract<StreamChunk, { type: 'block-end' }> => chunk.type === 'block-end',
+  )
+  const ids = blocks.map((chunk) => (chunk.block.type === 'tool-call' ? chunk.block.id : ''))
+  assert.equal(new Set(ids).size, ids.length, 'two calls must not share one id')
+  assert.ok(ids.includes('call_remedy_2'))
+})
+
+test('a neutralized call does not withdraw a later proven fusion', async () => {
+  const chunks: unknown[] = [
+    { type: 'block-start', index: 0, blockType: 'tool-call' },
+    { type: 'block-end', index: 0, block: { type: 'tool-call', id: '', name: '', arguments: '{}' } },
+    { type: 'block-start', index: 1, blockType: 'tool-call' },
+    { type: 'block-end', index: 1, block: { type: 'tool-call', id: 'call_fused', name: 'edit', arguments: '{"a":1}{"b":2}' } },
+    { type: 'finish', reason: { kind: 'stop' } },
+  ]
+  const { chunks: output, monitor } = await collect(fromChunks(chunks))
+  assert.equal(output.filter((chunk) => chunk.type === 'block-end').length, 3, 'one neutralized block plus two split calls')
+  assert.equal(monitor.counters().repaired, 1, 'the independent fusion is still repaired')
+})
+

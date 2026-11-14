@@ -58,9 +58,9 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0002',
     title: 'A rescue must be provable, attributable and atomic',
     symptom:
-      'A call split out of fused arguments runs with an empty or wrong tool name, a repaired finish replays without replayState, or a block-end repair is committed before a later block of the same stream is rejected',
+      'a split-out call could run under an empty or wrong tool name, a repaired finish could replay without replayState, and a block-end repair could be committed before a later block of the same stream was rejected',
     rootCause:
-      'Repair-stream used to commit each block-end repair as it arrived, kept only the last tool name seen on an index, and emitted {kind:"stop"} without the adapter replayState. None of these break the JSON proof, so P-0001 called them repaired while the runtime could still dispatch the wrong call.',
+      'repair-stream committed each block-end repair as it arrived, kept only the last name seen on an index, and emitted {kind:"stop"} without the adapter replayState; none of that broke the JSON proof, so a repaired call could still be dispatched wrong',
     surface: 'llm/stream',
     status: 'verified',
     severity: 'major',
@@ -80,11 +80,11 @@ export const PATCHES: readonly PatchRecord[] = [
     failureClasses: ['MALFORMED_RESPONSE'],
     switchKey: 'repair',
     limits: [
-      'on DSH 0.2.2-rc.1 the measured adapter never closed a tool-call block, which is why the finish-time rescue is the primary path; on 0.2.2-rc.3 it does emit block-end for the first fragment of a fusion and leaves the surplus text to that same finish path (measured 2026-11-13, data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json)',
-      'proves downstream acceptance of a synthesized block-start only on the finish path; an adapter that closes blocks itself is still unmeasured (BS-11)',
-      'a fused text that glues two calls of *different* tools carries one name for that index; P-0027 sends a fragment that does not fit the declared tool out under remedy_unattributed (UNKNOWN_TOOL) instead of as that tool, so the remaining hole is a tool whose declaration proves nothing (BS-18)',
-      'treats a tool name that arrives twice with different values as unrepairable, so a legitimate adapter bug stays a failure',
-      'leaves the verdict vocabulary untouched: until P-0003 every rejection was counted as fused, so a non-fusion syntax error read as degraded (BS-12, closed by P-0003)',
+      'on 0.2.2-rc.1 the adapter never closed a tool-call block; on rc.3 it closes the first fragment and leaves the surplus to the finish path (measured 2026-11-13, adaptation-0.4.2-on-0.2.2-rc.3)',
+      'a synthesized block-start is proven accepted on the finish path only; an adapter with its own index bookkeeping is still unmeasured (BS-11)',
+      'a fusion of two different tools carries one name per index; P-0027 sends the fragment that does not fit under remedy_unattributed (BS-18)',
+      'a tool name that arrives twice with different values stays unrepairable',
+      'leaves the verdict vocabulary untouched (BS-12, closed by P-0003)',
     ],
   },
   {
@@ -156,9 +156,9 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0011',
     title: 'A second seam with no test is a seam nobody has ever run',
     symptom:
-      'agent/request-error shipped in 0.2.0 behind retryOnMalformed and had zero tests: 20 test files, none of them mentioned the seam. It also called next() first and then overrode the answer, kept its budget in a Map that was never pruned (one entry per turn:step for the life of a desktop process), and would have retried IMAGE_OFFLOAD_REQUIRED / INVALID_CREDENTIAL / MISSING_CREDENTIAL if the code ever reached it, because only MALFORMED_RESPONSE was checked but the control codes were not excluded on purpose',
+      'agent/request-error shipped in 0.2.0 behind retryOnMalformed with zero tests; it called next() and then overrode the answer, kept its budget in a Map that was never pruned, and would have retried IMAGE_OFFLOAD_REQUIRED / INVALID_CREDENTIAL / MISSING_CREDENTIAL',
     rootCause:
-      'the listener was written against an assumed contract. The shipped runtime documents the real one: "a handling listener returns { kind: retry } without calling next(), while an unhandled failure is terminal", and "a waterfall listener that does not own the decision must return next()". Calling next() first and overriding it discards whatever the default chain decided, and context compaction authorizes its own retry on exactly that path. Nothing measured either direction, so both defects were invisible',
+      'the listener was written against an assumed contract. The shipped runtime says a handling listener returns {kind:"retry"} without calling next(), and a waterfall listener that does not own the decision must return next(); calling next() first discards the default chain, and context compaction authorizes its own retry on that path',
     surface: 'agent/request-error',
     status: 'tested',
     severity: 'major',
@@ -174,10 +174,10 @@ export const PATCHES: readonly PatchRecord[] = [
     failureClasses: ['MALFORMED_RESPONSE'],
     switchKey: 'retryOnMalformed',
     limits: [
-      'only MALFORMED_RESPONSE is retried: SERVER, TRANSPORT and TIMEOUT are already retried upstream (195 of 213 failing groups self-healed inside the same turn), so a second layer here would compete for the seam',
-      'the retry budget defaults to 0, so nothing is retried unless a deployment asks for it',
-      'the bound is 256 cache entries, which is far more than one turn needs and small enough that a week of desktop use cannot grow it; an entry older than that is evicted, so a very long single turn could revisit a step and spend a fresh retry',
-      'no live artifact: a retry is a decision on a seam, and the headless profile that produced the other live artifacts runs that seam only when a turn fails in a way this plugin retries, which never happened with the default budget of 0',
+      'only MALFORMED_RESPONSE is retried; SERVER, TRANSPORT and TIMEOUT already self-heal upstream (195 of 213 failing groups), so a second layer would compete for the seam',
+      'the retry budget defaults to 0: nothing is retried unless a deployment asks for it',
+      'the bound is 256 cache entries; an evicted entry lets a very long single turn spend a fresh retry',
+      'no live artifact: the headless profile never failed in a way this plugin retries at the default budget',
     ],
   },
   {
@@ -211,9 +211,9 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0013',
     title: 'The failure class this host hits most after fusion was named by nobody',
     symptom:
-      '37 turns on this host died with UNSUPPORTED_REASONING_EFFORT, all of them the same sentence: provider "opendesign" model "deepseek-v4.1-flash-eco" does not support reasoning effort "xhigh", across three workspaces, eleven sessions and two days. scan counted them; the resident layer said nothing, so a user got a dead turn and no line explaining why. INVALID_REQUEST, MISSING_CREDENTIAL and EMPTY_RESPONSE were silent in the same way',
+      '37 turns on this host died with UNSUPPORTED_REASONING_EFFORT (one sentence, three workspaces, eleven sessions); scan counted them and the resident layer said nothing. INVALID_REQUEST, MISSING_CREDENTIAL and EMPTY_RESPONSE were silent in the same way',
     rootCause:
-      'the resident layer only spoke about two outcomes: a repair it made, and a stream it saw end. A deterministic refusal before any request was dispatched left no event at all, because repair-stream is mounted on llm/stream and a step rejected during preparation never reaches it. The knowledge existed (the error code and its message) and had no path into the journal',
+      'repair-stream is mounted on llm/stream, so a step refused during preparation never reaches it; the error code and its message existed and had no path into the journal',
     surface: 'agent/request-error',
     status: 'tested',
     severity: 'major',
@@ -232,10 +232,10 @@ export const PATCHES: readonly PatchRecord[] = [
     failureClasses: ['UNSUPPORTED_REASONING_EFFORT', 'INVALID_REQUEST', 'MISSING_CREDENTIAL', 'EMPTY_RESPONSE'],
     switchKey: 'repair',
     limits: [
-      'naming is always on, but it never repairs and never retries: a deterministic refusal costs one named line instead of one dead turn, which is the whole claim',
-      'preflight is a pure decision, not a mount: it re-derives the adapter supported set from a profile declaration and answers ok/refuse/unknown. Nothing wires it into agent/pre-step yet, because that seam must first be proven to reject the step without being read as a user cancellation',
-      'it does not silently downgrade a level. The adapter itself is willing to (resolvedConfig = { ...defaulted, reasoningEffort: effective } when the requested level differs from a declared default), but changing a user configuration is a decision the user makes, so the patch reports a suggestion instead',
-      'the preflight cannot see a model whose metadata lives only in the adapter: it reads what the profile declares, and a profile that declares nothing is reported as unknown rather than assumed',
+      'naming is always on and never repairs or retries: one named line instead of one dead turn',
+      'preflight is a pure decision, not a mount; nothing wires it into agent/pre-step yet, because P-0015 measures that seam first',
+      'it never silently downgrades a level: the adapter would, the user decides, so the patch reports a suggestion instead',
+      'a model whose metadata lives only in the adapter is reported as unknown, never assumed',
     ],
   },
   {
@@ -354,9 +354,9 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0010',
     title: 'The npm page documented a CLI that had not existed since 0.3.3',
     symptom:
-      'two strings described scan and both were two releases stale: packages/plugin/README.md - the page npm renders - said scan <session.jsonl> [--json] [--out <file>], and the CLI USAGE said scan <session.jsonl|session.v4.jsonl.zstd> [--json] [--out <file>]. Neither admitted a directory, --since or --max-files, all shipped by P-0004 in 0.3.3, so the public install page described a tool that rejects the argument most users would pass',
+      'packages/plugin/README.md (the page npm renders) said scan <session.jsonl> [--json] [--out <file>] and the CLI USAGE said scan <session.jsonl|session.v4.jsonl.zstd> [--json] [--out <file>]; neither admitted a directory, --since or --max-files, all shipped by P-0004',
     rootCause:
-      'nothing watched either string. gate_copy covers the eleven outward files at the repository root, and packages/plugin/README.md is neither generated by the copy channel nor listed in tests/governance/public-copy.test.ts, so it had no output_sha256 and no gate. No test ran --help or compared the two strings, so a red result was impossible by construction. Same family as P-0004 and P-0006: a fact without a mechanism rots, and this one rotted on the page strangers read first',
+      'nothing watched either string: gate_copy covers the root outward files, the package README has no output_sha256 and no gate, and no test ran --help or compared the two strings, so a red result was impossible',
     surface: 'cli',
     status: 'tested',
     severity: 'minor',
@@ -372,10 +372,10 @@ export const PATCHES: readonly PatchRecord[] = [
       'packages/plugin/src/cli-args.ts',
     ],
     limits: [
-      'the gate set still does not cover packages/*/README.md: the new test compares the two scan lines, not the package README as a whole',
-      'gate_copy cannot see this file because it is hand-written package prose with no output_sha256; moving it into the copy channel would make it generated, which is a separate decision',
-      'the one-line-per-command rewrite pays for the flag list under the byte ceiling, so the per-command prose is thinner than it was; the detail lives in the fact pack and the patch document',
-      'no live artifact is possible: a usage string is not a resident seam, so this patch stays tested',
+      'the gate set still does not cover packages/*/README.md: the test compares the two scan lines, not the package README as a whole',
+      'moving the page into the copy channel would make it generated, which is a separate decision',
+      'the one-line-per-command rewrite pays for the flag list, so the per-command prose is thinner; the detail lives in the patch document',
+      'a usage string is not a resident seam: no live artifact, so this stays tested',
     ],
   },
   {
@@ -410,9 +410,9 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0014',
     title: 'The project describing itself is the part nothing checked',
     symptom:
-      'the fact pack said its packed manifest pins "dsh-remedy-core": "0.3.7" and that 0.3.6 was the previous release while the published 0.3.8 tarball pinned 0.3.8 and README/CHANGELOG both named 0.3.7; the handoff called patch-registry-2026-11-12T19-35-00.000Z.json 900820ae while the file and its .sha256 both hash to 96f9144f; and the package README that npm renders still documented four commands after explain shipped, because the only test compared the scan line',
+      'the fact pack pinned core 0.3.7 and called 0.3.6 the previous release while the published 0.3.8 tarball pinned 0.3.8 and README/CHANGELOG named 0.3.7; the handoff quoted 900820ae for a file that hashes to 96f9144f; and the npm page documented four commands after explain shipped',
     rootCause:
-      'R21 replaced "an external model wrote it" with "every prose number exists in the fact pack", which checks the shape of a claim and never its truth: nothing read the fact pack own statements, so they could describe a version the packages had left behind. The handoff is prose, and gate_ssot only validates data/results/*.json, so a hash printed next to an artifact had no sibling sidecar to disagree with. tests/unit/cli-usage.test.ts compared one line, exactly as far as P-0010 needed, and P-0010 recorded that limit in its own limits field; the next release added a command and it fell through',
+      'the copy criterion checked the shape of a claim (every prose number exists in the fact pack) and never the pack own statements; gate_ssot validates data/results/*.json and never a hash printed in prose; cli-usage.test.ts compared one line, exactly as far as P-0010 needed',
     surface: 'scripts',
     status: 'tested',
     severity: 'major',
@@ -430,10 +430,10 @@ export const PATCHES: readonly PatchRecord[] = [
       'scripts/copy_record.mjs',
     ],
     limits: [
-      'the package README is still hand-written prose without an output_sha256; what guards it now is its equality with USAGE, not a hash against the fact pack, so the rest of the page is still unguarded (BS-13 narrows rather than closes)',
-      'the fact pack is only checked against other files in this repository, so a sentence nothing else records remains a claim about the world that this patch cannot verify',
-      'the hash check reads only evidence-index rows carrying exactly one artifact and exactly one hash; a row that compares two publishes is skipped rather than guessed',
-      'gate_copy still cannot see the handoff or the package README, so the new checks are governance tests, not gates, and they run where the suite runs',
+      'the package README is still hand-written prose; its equality with USAGE is the guard, not a hash against the fact pack, so the rest of the page stays unguarded (BS-13 narrows)',
+      'the fact pack is checked only against other repository files; a sentence nothing else records stays an unverified claim about the world',
+      'the hash check skips any evidence row that compares two publishes rather than guessing',
+      'gate_copy still cannot see the handoff or the package README: these are governance tests, not gates',
     ],
   },
   {
@@ -547,9 +547,9 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0019',
     title: 'The page strangers read first described a project that had stopped existing',
     symptom:
-      'README.md and README.zh-CN.md opened as "a resident repair layer that mounts on llm/stream" while the project had become a patch set of eighteen defects across two resident seams, the CLI and the build side. Worse, one sentence had become false: both pages said agent/pre-step was not mounted because nobody had measured what a rejection does, and R23 had measured exactly that',
+      'README.md and README.zh-CN.md still opened as "a resident repair layer that mounts on llm/stream" while the project had become eighteen patches across two resident seams, the CLI and the build side; both also said agent/pre-step was unmounted because nobody had measured a rejection, which R23 had',
     rootCause:
-      'the copy channel guards numbers, not shape. gate_copy checks that every prose digit exists in the fact pack and has no opinion about whether the page still describes the product; P-0014 pinned the pack own claims and P-0017 pinned the package pages, so the two root READMEs could keep saying "one seam, one wrapper" while the registry grew to eighteen patches. Three numbers had also drifted with them (tests, the CLI half of the budget, the total)',
+      'the copy channel guards numbers, not shape: gate_copy checks that every prose digit exists in the fact pack and has no opinion about whether the page still describes the product; three numbers (tests, the CLI half, the total) had drifted too',
     surface: 'scripts',
     status: 'tested',
     severity: 'major',
@@ -567,10 +567,10 @@ export const PATCHES: readonly PatchRecord[] = [
       'scripts/gate_copy.mjs',
     ],
     limits: [
-      'the root README still has no structural guard: the mechanism is "every digit exists in the pack", and a page could describe behaviour the code does not have with no gate noticing (BS-13 own family)',
-      'it does not change what npm renders, because npm serves the tarball and the published tarball is 0.3.8; the new descriptions and package READMEs appear only when a release carries them',
-      'the seam table is hand-maintained prose: a patch that moves seam must be moved in the table by hand, and nothing compares the two',
-      'no live artifact is possible: these are pages, not a seam',
+      'the root README still has no structural guard: a page could describe behaviour the code does not have (BS-13 own family)',
+      'it does not change what npm renders until a release carries the new pages',
+      'the seam table is hand-maintained prose; nothing compares it with the registry',
+      'no live artifact: these are pages, not a seam',
     ],
     failureClasses: [],
   },
@@ -786,9 +786,9 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0028',
     title: 'A published sample carried this machine\'s home path',
     symptom:
-      'every tarball since 0.1.0 shipped data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json with the real workspace path inside the fused arguments (cd "C:/Users/<account>/Desktop/…"), and the public repository carried the same account name in six patch docs and one evidence artifact. Reported by the dshopen maintainer on 2026-11-14 (issue #472): "发布样例里有本机路径"',
+      'every tarball since 0.1.0 shipped a fixture whose fused arguments carried the real workspace path (cd "C:/Users/<account>/Desktop/…"), and the public repository carried the same account name in six patch docs, the handoff, a step review and one artifact. Reported by the dshopen maintainer on 2026-11-14 (#472)',
     rootCause:
-      'redaction was wired into the artifact writers (record_*.mjs, scan --out, the journal) and never into the fixture corpus. P-0004 fixed the three shapes a home path reaches an artifact in, but it fixed the reader, not the files that were already tracked: a fixture is quoted evidence, so nobody treated it as outbound text. The rule lived where the data was produced, not where it leaves the machine',
+      'redaction was wired into the artifact writers (record_*.mjs, scan --out, the journal) and never into the fixture corpus; P-0004 fixed the reader for three path shapes, not the files already tracked. The rule lived where data is produced, not where it leaves the machine',
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
@@ -802,10 +802,10 @@ export const PATCHES: readonly PatchRecord[] = [
       'packages/core/src/redact.ts',
     ],
     limits: [
-      'the fixture now carries <home> instead of the account name, so it is no longer a byte-for-byte copy of the session; its note says so, and the JSON shape it exists for is untouched',
-      'the new rule scans the shipped set (fixtures, package pages, the fact pack, the root pages) and forbids an absolute Users/ segment; a path smuggled in another shape — an encoded directory, a POSIX home — is caught only by the P-0004 redactor, not by this test',
-      'docs and evidence artifacts were rewritten in place; their stamps are unchanged, so this is a redaction repair rather than a re-measurement',
-      'no live artifact is possible: this is a corpus and channel fix, not a resident seam',
+      'the fixture now carries <home>, so it is no longer a byte-for-byte copy of the session; its note says so and the glued JSON shape is untouched',
+      'the rule scans the shipped set and forbids an absolute Users/ segment; a path in another shape (encoded, POSIX home) is caught only by the P-0004 redactor',
+      'docs and artifacts were rewritten in place with unchanged stamps: a redaction repair, not a re-measurement',
+      'no live artifact: a corpus and channel fix, not a resident seam',
     ],
     failureClasses: [],
   },
@@ -842,9 +842,9 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0030',
     title: 'The name check read required and nothing else, and its counter was a running total',
     symptom:
-      'two narrow gaps after P-0027: a declaration with no required list proved nothing, so a synthesized fragment kept the stream name even when the schema could prove it did not belong to that tool; and the repaired event attributed one repair\'s unattributed fragment to every later repair in the same stream (measured in tests: two fused blocks reported [1,1] instead of [1,0])',
+      'two gaps after P-0027: a declaration with no required list proved nothing, so a synthesized fragment kept the stream name even when its schema rejected it; and one repair\'s unattributed count was attributed to every later repair in the same stream (two fused blocks reported [1,1] instead of [1,0])',
     rootCause:
-      'the check was written against an imagined JSON Schema. dsh-tools compiles first-party parameter maps to {type:"object", properties, required?} and never sets additionalProperties (dsh-tools/lib/index.js:800-808), so the schema is open and an undeclared key is not proof: the obvious "every key must be declared" rule would have been an over-claim. The counter bug is a scoping mistake: unattributed sat one block above the per-decision loop',
+      'the check was written against an imagined JSON Schema. dsh-tools compiles {type:"object", properties, required?} and never sets additionalProperties (dsh-tools/lib/index.js:800-808), so an undeclared key is not proof; the counter bug was a scoping mistake one block above the per-decision loop',
     surface: 'llm/stream',
     status: 'tested',
     severity: 'minor',
@@ -861,11 +861,11 @@ export const PATCHES: readonly PatchRecord[] = [
       'packages/plugin/src/repair-stream.ts',
     ],
     limits: [
-      'an open schema still cannot prove a fragment foreign by its keys, and that is the measured shape of every first-party DSH tool; only a closed schema (raw or MCP) changes that',
-      'fits is not identity: a fragment that is valid for the named tool is still dispatched as that tool, and the stage that glued the objects is still unknown (P-0001)',
-      'only the dsh-tools compiled first-party shape was read; a declaration in another dialect is classified unproven more often than necessary, which is the safe direction',
-      'the per-decision count changes what a journal event reports: an old journal that shared a running total will not compare equal to a new one, and no migration rewrites it',
-      'no live artifact: the runtime was not driven for this patch, and the rc.3 corpus had no tool without a required list, so the status is tested',
+      'an open schema cannot prove a fragment foreign by its keys, which is the measured shape of every first-party DSH tool; only a closed schema changes that',
+      'fits is not identity: a fragment valid for the named tool is still dispatched as that tool, and the stage that glued the objects is still unknown (P-0001)',
+      'only the dsh-tools compiled shape was read; a declaration in another dialect is classified unproven more often than necessary, which is the safe direction',
+      'the per-decision count changes what a journal event reports, and no migration rewrites an old journal',
+      'tested, not verified: the rc.3 corpus had no tool without a required list',
     ],
     failureClasses: [],
   },
@@ -895,6 +895,62 @@ export const PATCHES: readonly PatchRecord[] = [
       'it caps the total and the registry file, not each of the other nine modules; a module below the registry can still grow inside the total',
       'core is still not measured as part of residency: the plugin numbers remain plugin-only, so the startup account is the two rows read together, not one number',
       'the registry is data, so the cap forces a decision (split the registry, or sign a raise) rather than describing a defect that was fixed once',
+    ],
+    failureClasses: [],
+  },
+  {
+    id: 'P-0032',
+    title: 'The ledger carried the narrative its patch docs already carried',
+    symptom:
+      'the eight longest records measured 2 107-2 377 bytes each while the registry had 1 697 bytes left, so the next patch could not be recorded without a raise disguised as a split; the duplication was also loaded on every mount that answers status or explain',
+    rootCause:
+      'the registry and docs/patches/ were both written in long form, so symptom, mechanism and limits existed twice while the code reads only id, title, surface, status, severity, evidence, guards, failureClasses and switchKey',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'docs/patches/P-0032-registry-ledger-dedup.md',
+      'packages/core/src/registry.ts',
+      'scripts/lib/budgets.mjs',
+      'data/results/patch-registry-2026-11-14T15-56-00.000Z.json',
+    ],
+    guards: [
+      'scripts/gate_size.mjs',
+      'tests/governance/ledgers.test.ts',
+    ],
+    limits: [
+      'the first batch compacts 8 of 31 records; the other 23 keep their long form until they are touched',
+      'the 68 000 registry cap did not move: measured 66 303 before and 61 509 after, so this is de-duplication, not a reallocation',
+      'no per-record length threshold was added: a threshold needs the owner signature PROJECT_RULES section 1 requires, and this round did not have one',
+      'the prose removed from a record is only safe while its doc still says it, and gate_registry checks that a doc exists, not what it says (BS-19)',
+    ],
+    failureClasses: [],
+  },
+  {
+    id: 'P-0033',
+    title: 'A tool call with no identity was refused and then dispatched anyway',
+    symptom:
+      'a block whose id and name were both empty (measured upstream on 0.2.2-rc.3, discussion #13211) was counted as refused and passed through unchanged, so the host persisted tool/call with an empty callId and the V4 session could never resume: "tool/result requires toolCallId matching its tool source"',
+    rootCause:
+      'the block-end rejection path was written for fusion refusals, where passing the original through fails the turn visibly; an identity refusal does not fail visibly, it persists a call the host cannot dispatch and a result it cannot match',
+    surface: 'llm/stream',
+    status: 'verified',
+    severity: 'major',
+    evidence: [
+      'docs/patches/P-0033-empty-identity.md',
+      'packages/plugin/src/repair-stream.ts',
+      'tests/unit/repair-stream.test.ts',
+      'data/results/live-empty-call-2026-11-14T16-02-00.000Z.json',
+    ],
+    guards: [
+      'tests/unit/repair-stream.test.ts',
+      'scripts/gate_size.mjs',
+    ],
+    limits: [
+      'the adapter that emits an incomplete call is not fixed: this seam names it and keeps the session resumable',
+      'a block whose arguments are fused and whose identity is empty is still refused before any split, so it goes out as one call (missing-id fires first)',
+      'the verdict stays quiet because no fusion was seen; the rejected event is the only record of the refusal',
+      'arguments that parse to a non-object are untouched: that is the other half of #12064',
     ],
     failureClasses: [],
   },

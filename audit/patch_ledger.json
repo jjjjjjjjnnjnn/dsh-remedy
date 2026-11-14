@@ -523,6 +523,39 @@
         "scripts/lib/budgets.mjs",
         "tests/governance/budget-split.test.ts"
       ]
+    },
+    {
+      "id": "P-0032",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.8",
+      "evidence": [
+        "docs/patches/P-0032-registry-ledger-dedup.md",
+        "packages/core/src/registry.ts",
+        "scripts/lib/budgets.mjs",
+        "data/results/patch-registry-2026-11-14T15-56-00.000Z.json"
+      ],
+      "guards": [
+        "scripts/gate_size.mjs",
+        "tests/governance/ledgers.test.ts"
+      ]
+    },
+    {
+      "id": "P-0033",
+      "status": "verified",
+      "owner": "remedy",
+      "since": "0.4.8",
+      "evidence": [
+        "docs/patches/P-0033-empty-identity.md",
+        "packages/plugin/src/repair-stream.ts",
+        "tests/unit/repair-stream.test.ts",
+        "data/results/live-empty-call-2026-11-14T16-02-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/repair-stream.test.ts",
+        "scripts/gate_size.mjs"
+      ],
+      "verified_at": "2026-11-14T16:02:00.000Z"
     }
   ]
 }

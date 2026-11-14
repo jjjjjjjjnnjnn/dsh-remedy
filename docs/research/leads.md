@@ -22,8 +22,8 @@ gh api graphql -f query='{ search(type: DISCUSSION, query: "repo:deepseek-ai/dee
 
 | id | source | reported | version | class | seam | status | decision |
 |---|---|---|---|---|---|---|---|
-| L-0001 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12901> | 2026-11 | ? | `MALFORMED_RESPONSE`? | `llm/stream` | lead | **先复现**：parallel tool calls 复用索引被合并。若与 P-0001 同形状，标 dup；若不同（例如只有 block-end 路径），写新补丁。 |
-| L-0002 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13211> | 2026-11 | **0.2.2-rc.3** | `MALFORMED_RESPONSE`? | `llm/stream` | lead | rc.3 已复现于报告；用同版本探针看空 tool call 是否经过我们的 wrapper，以及 `missing-name` / 空参数分支是否已覆盖。 |
+| L-0001 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12901> | 2026-11 | ? | `MALFORMED_RESPONSE`? | `llm/stream` | **rejected (dup)** | R43：与 P-0001 同形状——报告里两条都是同一个工具（`bash`），粘连文本在 `block-end`/`finish` 被拆成两个调用，用户可见的失败已由 P-0001 的夹具与 live 产物覆盖。第二个调用的真 id 在 `pi-ai` 的 `ensureToolCallBlock`（本机 `@earendil-works/pi-ai@0.82.1` 副本逐字确认：先按 index 找 block，没有结构闭合守卫）里就丢了，属上游；我们修不到那一半。适配器边界回放留作下一步（未在本轮重测，见 decision 的诚实边界）。 |
+| L-0002 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13211> | 2026-11 | **0.2.2-rc.3** | `MALFORMED_RESPONSE`? | `llm/stream` | **patched** | R43：本机接缝复现了同一形状（`block {id:'', name:'', arguments:'{}'}` + 正常 finish），旧构建只记 `refused` 然后原样放行，宿主把空 callId 写进 V4、会话不可 resume。**P-0033** 改为合成可追踪 id + `remedy_unattributed`；四条新测试先红后绿，见 `docs/patches/P-0033-empty-identity.md`。上游「提交前校验完整调用」的部分仍是 out-of-seam。 |
 | L-0003 | <https://github.com/deepseek-ai/deepseek-harness/discussions/11843> | 2026-11 | ? | `MALFORMED_RESPONSE` | `llm/stream` | lead | 大参数导致 invalid JSON；抽最小形状，确认是截断、粘连还是裸值（P-0005 已覆盖后者）。 |
 | L-0004 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12819> | 2026-11 | 0.2.2-rc.1 | `MALFORMED_RESPONSE` | `llm/stream` | lead | 尾部多一个 `"]"`；这是「单个坏对象」还是「粘连后截断」？前者 P-0003 拒绝、后者 P-0001 拆——先归类。 |
 | L-0005 | <https://github.com/deepseek-ai/deepseek-harness/discussions/10195> | 2026-11 | 0.2.1-rc.2 (Windows) | `MALFORMED_RESPONSE` | `llm/stream` | lead | Windows 流式参数损坏；在 0.2.2-rc.3 上重试，记录工具名与 index。 |
@@ -31,7 +31,7 @@ gh api graphql -f query='{ search(type: DISCUSSION, query: "repo:deepseek-ai/dee
 | L-0007 | <https://github.com/deepseek-ai/deepseek-harness/discussions/8976> | 2026-11 | ? | `MALFORMED_RESPONSE` / `STREAM_CLOSED` | `llm/stream` + `agent/request-error` | lead | 46 turns lost；对照我们本机 census 的 47 次 `MALFORMED_RESPONSE`，看是不是同一类。 |
 | L-0008 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12628> | 2026-11 | ? | `MALFORMED_RESPONSE` | `llm/stream` | lead | 提议「降级为工具错误」；我们的立场是「修不了就抛」，评估能否用 `remedy_unattributed` 或命名诊断表达，而不是吞掉。 |
 | L-0009 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12769> | 2026-11 | ? | `UNKNOWN_TOOL` | `llm/stream` | lead | relay 改工具名大小写；检查我们的名字/声明查找是否大小写敏感，以及 P-0027 的归因会不会误判。 |
-| L-0010 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12064> | 2026-11 | ? | `MALFORMED_RESPONSE`（被吞） | **out-of-seam**（adapter） | lead | adapter 把坏 JSON 静默变成命令文本——**这是「静默错误」，我们最该命名的那类**。若无法在接缝修复，做 scan/explain 的命名（P-0013 先例），不假装修。 |
+| L-0010 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12064> | 2026-11 | ? | `MALFORMED_RESPONSE`（被吞） | **out-of-seam**（adapter） | watching | R43：`dsh-agent-loop` 的 `parseArguments` 逐字确认是 `catch { return raw }`，宿主把字符串交给工具——不修宿主。我们这条接缝能看到的下半截是「参数能 parse 但不是对象」（字符串/数组/null），可以命名并送去 `remedy_unattributed`；那是独立补丁（P-0034 候选），不塞进 P-0033。 |
 
 ## B. 流 / 会话稳定性（相邻，先判断是否本接缝）
 
@@ -67,8 +67,15 @@ gh api graphql -f query='{ search(type: DISCUSSION, query: "repo:deepseek-ai/dee
 
 ## 下一会话的前三条（按优先级）
 
-1. **L-0001（#12901，reused index 合并）**：与我们 P-0001 最接近，先判定 dup / 新形状。
-2. **L-0002（#13211，rc.3 空 tool call）**：同版本，最容易复现；确认我们的 `missing-name` / 空参数分支是否已覆盖。
-3. **L-0010（#12064，adapter 静默吞错）**：如果确认 out-of-seam，就写一个「命名但不修」的补丁，这是本项目最擅长的诚实动作。
+> **R43 已处理前两条，第三条判定为 out-of-seam。** 结论在 A 表的 decision 列：
+> L-0001 = P-0001 的 dup（上游丢 id），L-0002 = P-0033（已修），L-0010 = watching。
+> 下一条候选：L-0003（大参数 invalid JSON，先判截断/粘连/裸值）、L-0004（尾部多 `"]"`）、
+> L-0009（relay 改工具名大小写，查 P-0027 归因是否大小写敏感）。
 
-复现任何一条之前，先决定 **registry 拆分 vs 提额**（registry 只剩 1 697 B）。
+1. **L-0001（#12901，reused index 合并）**：已结案为 dup；剩余动作只有适配器边界回放（可选）。
+2. **L-0002（#13211，rc.3 空 tool call）**：已由 P-0033 覆盖，`patched`。
+3. **L-0010（#12064，adapter 静默吞错）**：out-of-seam，保留 `watching`；接缝内的下半截
+   （非对象参数）是下一个候选补丁。
+
+复现任何一条之前，先看**字节账**：plugin 82 872 / 83 000（只剩 128 B），core 98 824 / 104 000，
+registry 64 937 / 68 000。新的常驻字节必须先付账（压散文或去重），不许抬 cap。

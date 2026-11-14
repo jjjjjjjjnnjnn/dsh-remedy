@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_empty_call_probe.mjs",
+  "generated_at": "2026-11-14T16:02:00.000Z",
+  "question": "What does the host persist for a tool call with no id and no name, and can the session be resumed after it? (upstream discussion #13211)",
+  "probe": {
+    "home": ".tmp/empty-call-home (isolated DSH_HOME; nothing under ~/.dsh is written)",
+    "endpoint": ".tmp/fake-openai.mjs on 127.0.0.1:8787 — answers a request with no tool result using the two SSE frames from #13211 (tool entry with only an index, then a tool_calls finish), and any later request with one text block",
+    "profiles": {
+      "before": "emptycall-before — same provider and model, dsh-remedy not mounted",
+      "after": "emptycall — same provider and model, dsh-remedy mounted with journalPath"
+    },
+    "dsh_version": "0.2.2-rc.3",
+    "commands": [
+      "node .tmp/fake-openai.mjs 8787",
+      "DSH_HOME=.tmp/empty-call-home PROBE_API_KEY=probe dsh --profile emptycall-before \"Reply with exactly: OK\"",
+      "DSH_HOME=.tmp/empty-call-home PROBE_API_KEY=probe dsh --profile emptycall \"Reply with exactly: OK\"",
+      "DSH_HOME=.tmp/empty-call-home PROBE_API_KEY=probe dsh --profile emptycall --session-id session-c52c7912-21cb-4236-ae72-92b8e701632d \"continue\""
+    ],
+    "exit_codes": {
+      "before": 1,
+      "after": 0,
+      "resume": 0
+    },
+    "note": "the endpoint is local and synthetic: it reproduces the adapter output, not a relay incident"
+  },
+  "before": {
+    "file": ".tmp\\empty-call-home\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-41c8f41a-1246-4c08-862c-aa53c24b25aa\\session.v4.jsonl.zstd",
+    "sha256": "4cf313733ed033b1dbd4996e7df1bab39067eb30bf776f9d62d62a3464053182",
+    "events": 19,
+    "event_types": [
+      "agent/inbox/spliced",
+      "approval/policy",
+      "assistant/message",
+      "permission/preset",
+      "request/context",
+      "request/header",
+      "sandbox/mode",
+      "session",
+      "session/title",
+      "session/title-llm-request",
+      "step/start",
+      "system/message",
+      "tool/call",
+      "turn/start",
+      "user/message"
+    ],
+    "turns_started": 1,
+    "steps_started": 1,
+    "assistant_messages": [
+      {
+        "seq": 16,
+        "blocks": [
+          {
+            "type": "tool-call",
+            "id": "",
+            "name": "",
+            "arguments": "{}"
+          }
+        ]
+      }
+    ],
+    "tool_calls": [
+      {
+        "seq": 17,
+        "callId": "",
+        "name": "",
+        "arguments": "{}"
+      }
+    ],
+    "tool_results": [],
+    "turn_ends": [],
+    "failure": null,
+    "failure_seq": null,
+    "verdict": "the turn dies at admission; the assistant message and tool/call remain with an empty callId"
+  },
+  "after": {
+    "file": ".tmp\\empty-call-home\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-c52c7912-21cb-4236-ae72-92b8e701632d\\session.v4.jsonl.zstd",
+    "sha256": "4921f9fd2c609851d529a1a5850bd268f83f71700526b737691b56637b3c66cf",
+    "events": 35,
+    "event_types": [
+      "agent/inbox/spliced",
+      "approval/policy",
+      "assistant/message",
+      "permission/preset",
+      "request/context",
+      "request/header",
+      "sandbox/mode",
+      "session",
+      "session/end-seed",
+      "session/title",
+      "session/title-llm-request",
+      "step/end",
+      "step/start",
+      "system/message",
+      "tool/call",
+      "tool/result",
+      "turn/end",
+      "turn/start",
+      "user/message"
+    ],
+    "turns_started": 2,
+    "steps_started": 3,
+    "assistant_messages": [
+      {
+        "seq": 16,
+        "blocks": [
+          {
+            "type": "tool-call",
+            "id": "call_remedy_1",
+            "name": "remedy_unattributed",
+            "arguments": "{}"
+          }
+        ]
+      },
+      {
+        "seq": 21,
+        "blocks": [
+          {
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "seq": 31,
+        "blocks": [
+          {
+            "type": "text"
+          }
+        ]
+      }
+    ],
+    "tool_calls": [
+      {
+        "seq": 17,
+        "callId": "call_remedy_1",
+        "name": "remedy_unattributed",
+        "arguments": "{}"
+      }
+    ],
+    "tool_results": [
+      {
+        "seq": 18,
+        "toolCallId": "call_remedy_1",
+        "isError": true,
+        "error_code": "UNKNOWN_TOOL",
+        "text": "Error: unknown tool \"remedy_unattributed\""
+      }
+    ],
+    "turn_ends": [
+      {
+        "seq": 23,
+        "reason": {
+          "kind": "completed"
+        }
+      },
+      {
+        "seq": 33,
+        "reason": {
+          "kind": "completed"
+        }
+      }
+    ],
+    "resume": {
+      "session_id": "session-c52c7912-21cb-4236-ae72-92b8e701632d",
+      "turns_started": 2,
+      "turn_ends": [
+        {
+          "seq": 23,
+          "reason": {
+            "kind": "completed"
+          }
+        },
+        {
+          "seq": 33,
+          "reason": {
+            "kind": "completed"
+          }
+        }
+      ],
+      "exit_code": 0
+    },
+    "verdict": "the call is written under a traceable id, the result matches it, and a second turn resumes the same session"
+  },
+  "journal": {
+    "file": ".tmp/empty-call-home/journal.jsonl",
+    "events": 6,
+    "refused": 0,
+    "rejections": [
+      {
+        "tool": "",
+        "code": "missing-id",
+        "detail": "a synthetic call cannot be traced without an id"
+      },
+      {
+        "tool": "",
+        "code": "missing-id",
+        "detail": "a synthetic call cannot be traced without an id"
+      }
+    ],
+    "counters": {
+      "streams": 1,
+      "fused": 0,
+      "repaired": 0,
+      "unrepaired": 0,
+      "truncated": 0,
+      "errors": 0,
+      "refused": 0,
+      "withdrawn": 0,
+      "resealed": 0,
+      "diagnoses": 0
+    }
+  },
+  "findings": [
+    "Without the plugin the harness reproduces the upstream failure exactly: assistant message with a tool call whose id and name are empty, tool/call with callId \"\", and \"format v4 tool/result at seq 18 requires toolCallId matching its tool source\" at exit 1.",
+    "With the plugin the same harness completes: the assistant message carries call_remedy_1 / remedy_unattributed, tool/call cites the same id, the result is an UNKNOWN_TOOL error whose toolCallId matches, and the turn ends completed at exit 0.",
+    "The session is then resumed by id and completes a second turn, which is the failure #13211 reports as permanent.",
+    "The journal records the refusal (code missing-id) twice: once for the session-title request and once for the main step. Only the main step persists a call; the title request never writes an assistant message.",
+    "Nothing is repaired and nothing is retried: a real call did not run, so the counter stays refused and the verdict for that stream is quiet (no fusion was seen)."
+  ],
+  "not_proven": [
+    "The upstream relay was not exercised: the endpoint is local and the stream is synthetic, exactly as the report says its own reproduction was.",
+    "Only one provider/model shape (openai-completions, one model) and one prompt were run.",
+    "The title-request path is observed but not asserted: its refusal is counted, and its response is never persisted."
+  ],
+  "verdict": {
+    "before_reproduced": true,
+    "after_prevents_persisting_an_unnamed_call": true,
+    "session_resumable": true,
+    "honest_limits": "synthetic endpoint; one provider; the adapter itself is still unfixed"
+  },
+  "redaction": {
+    "replacements": 0,
+    "kinds": []
+  }
+}

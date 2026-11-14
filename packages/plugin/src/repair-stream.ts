@@ -110,6 +110,15 @@ export async function* repairStream(
   /** Budget left for calls synthesized from this stream (not from one block). */
   const remaining = (): number => ceiling - synthesized
 
+  /** A traceable id for a call the model did not identify (P-0027 / P-0033). */
+  const syntheticId = (): string => {
+    let serial = 1
+    while (seenIds.has(`call_remedy_${serial}`)) serial += 1
+    const id = `call_remedy_${serial}`
+    seenIds.add(id)
+    return id
+  }
+
   const closeCall = (index: number, call: ToolCallInput): BlockEndChunk => ({
     type: 'block-end',
     index,
@@ -163,12 +172,7 @@ export async function* repairStream(
     let proven: { name: string; id: string } | null = null
     for (const candidate of candidates) {
       let id = candidate.call.id
-      if (id.trim() === '') {
-        let serial = 1
-        while (seenIds.has(`call_remedy_${serial}`)) serial += 1
-        id = `call_remedy_${serial}`
-        seenIds.add(id)
-      }
+      if (id.trim() === '') id = syntheticId()
       const result = repairToolCallArguments(
         { id, name: candidate.call.name, arguments: candidate.call.arguments },
         { truncated, maxCalls: remaining() - planned, existingIds: seenIds },
@@ -424,9 +428,18 @@ export async function* repairStream(
                 spent: result.calls.length,
               })
             } else if (result.status === 'rejected') {
+              monitor.recordRejected(chunk.block.name, chunk.block.id, result.code, result.detail)
+              // P-0033: no identity means no dispatch and no resumable log — the runtime
+              // persists an empty callId and V4 then refuses to resume (#13211). Send it
+              // under the refusal name with a traceable id: UNKNOWN_TOOL, turn continues.
+              if (result.code === 'missing-id' || result.code === 'missing-name') {
+                const id = chunk.block.id.trim() === '' ? syntheticId() : chunk.block.id
+                const name = chunk.block.name.trim() === '' ? UNATTRIBUTED_NAME : chunk.block.name
+                hold({ original: chunk, synthesized: [closeCall(chunk.index, { id, name, arguments: chunk.block.arguments })], repaired: null, spent: 0 })
+                break
+              }
               blockRejected = true
               withdrawPending('rejected')
-              monitor.recordRejected(chunk.block.name, chunk.block.id, result.code, result.detail)
               holdPlain(chunk)
             } else if (chunk.block.arguments.trim() === '') {
               // A no-argument tool call is `{}` downstream, not the empty string.

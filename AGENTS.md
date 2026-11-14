@@ -2,8 +2,9 @@
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
 > **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.7`（已发布，两包 `latest`）
-> **Stand**：R42（2026-11-14，**引擎的字节账**：P-0031 给 core 立了 cap，总 104 000、registry.js 68 000，
-> 并把实测与签署写进 `budgets.mjs`；0.4.7 发布）。R41 是继任者读的地图（P-0029）与归因证明（P-0030，0.4.6 发布）。
+> **Stand**：R43（2026-11-14，**外部反馈结出第一个运行时补丁**：P-0032 把台账去重（registry.js
+> 66 303 → 63 217，cap 不动），P-0033 让空身份的 tool call 不再被持久化；L-0001/L-0002/L-0010 结案）。
+> R42 是**引擎的字节账**（P-0031 立 cap，0.4.7 发布），R41 是继任者读的地图（P-0029）与归因证明（P-0030，0.4.6 发布）。
 > R40 是 dshopen 收录时点出的本机路径（P-0028，0.4.5 发布）。
 > R38 是**桌面运行时升到 DSH 0.2.2-rc.3 并实测**：三条接缝逐字未变，真实融合修好一次，
 > 同时否证 P-0002 的一条记录（BS-18）；0.4.3 发布。R37 是 **0.4.2 发布**：二十六补丁一起上线，含 P-0024 / P-0025 / P-0026；
@@ -16,10 +17,10 @@
 > **接手先读**：`docs/HANDOFF.md` → `docs/research/README.md` → `docs/research/leads.md` → `PROJECT_RULES.md` → `INDEX.md`
 > **R43 起的主线**是外部反馈 → 稳定补丁：报告只是线索，本机复现后才有补丁；来源与方法见 `docs/research/`。
 >
-> **基线（2026-11-14）**：`pnpm run verify` = **290 tests / 6 gates**；
+> **基线（2026-11-14）**：`pnpm run verify` = **295 tests / 6 gates**；
 > `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.7`（latest）+
 > `dsh-remedy-core@0.4.7`（latest）。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
-> `v0.4.7`。三十一补丁：3 `verified` + 28 `tested`，在 DSH 0.2.2-rc.3 上实测过。
+> `v0.4.7`。三十三补丁：4 `verified` + 29 `tested`，在 DSH 0.2.2-rc.3 上实测过。
 > **本目录不是 git 根**：提交在 `..`（容器），公开仓库由
 > `git subtree split --prefix=dsh-remedy` 切出。
 

@@ -42,6 +42,16 @@
  *      is paid by splitting the registry by seam or by a signed raise, because
  *      registry data must not silently eat the engine.
  *
+ *   4. R43 (2026-11-14), **no cap moved; the ledger stopped carrying the long form
+ *      twice**. P-0032 compacted the eight longest records and left their narrative
+ *      in docs/patches/, which already carried it and which gate_registry requires
+ *      anyway. Measured: the compaction alone took registry.js 66 303 -> 61 509
+ *      and core 100 190 -> 95 396; P-0032's own record brought registry.js to
+ *      63 217 and P-0033's to 64 861 (core 98 748). CORE_CAP and the 68 000
+ *      registry cap are unchanged. Splitting the registry by seam was measured
+ *      and rejected for payment: it moves the same bytes into other modules and
+ *      still spends the same budget.
+ *
  * What this does NOT do: it drops no per-file cap, and it does not reclassify a
  * file into `cli` to dodge payment — the lists below are explicit, and
  * `tests/governance/budget-split.test.ts` pins them against the actual module

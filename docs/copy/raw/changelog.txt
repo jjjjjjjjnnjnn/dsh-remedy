@@ -3,6 +3,21 @@
 All notable changes to this project are documented here.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.4.8] - 2026-11-14
+### Fixed
+- A tool call with no identity no longer poisons the session (P-0033). The adapter can end a stream with a block whose id and name are both empty (upstream discussion #13211); the plugin used to count the refusal and pass the block through, so the host wrote `tool/call` with an empty callId and the V4 log refused to resume the session on the matching result. The block is now rewritten in place with a traceable `call_remedy_N` id and the `remedy_unattributed` name: the runtime answers `UNKNOWN_TOOL`, the turn continues, and the session stays resumable. Nothing is repaired and nothing is retried, so the counter stays `refused`.
+
+### Changed
+- The registry no longer carries the long form of every patch (P-0032). Eight of the longest records keep one sentence per field and short limits, with the narrative staying in `docs/patches/`. `registry.js` fell from 66303 to 61509 bytes before the two new records; the 68000-byte cap did not move. Splitting the registry by seam was measured and rejected for payment, because it moves the same bytes into other modules.
+
+### Package size
+- `dsh-remedy@0.4.8`: 39378 bytes compressed, 36 files, 125434 bytes unpacked (82872 of `dist/*.js`), shasum `6f42b4423117c7f3fc79f5458b18f3c35e2004ad`.
+- `dsh-remedy-core@0.4.8`: 39869 bytes compressed, 23 files, 128145 bytes unpacked (98824 of `dist/*.js`), shasum `2567629d4c28766622d546d2a22519029611fde7`.
+
+### Notes
+- This release carries 33 patches: 4 `verified` and 29 `tested`.
+- Byte budget: residency 41510 of 44000, CLI 41362 of 42000, total 82872 of 83000; engine 98824 of 104000, `registry.js` 64937 of 68000. No cap moved; P-0033's own bytes were paid by condensing comments.
+
 ## [0.4.7] - 2026-11-14
 ### Fixed
 - The engine every mount loads had no byte budget. P-0012 recorded that `dsh-remedy-core` sits outside the size gate, and a governance test called the package "a separate package with its own budget", but no cap existed: the plugin half was down to 87 bytes of headroom while the engine had grown to 100190 emitted bytes, 66303 of them the registry data that gains a record per patch.

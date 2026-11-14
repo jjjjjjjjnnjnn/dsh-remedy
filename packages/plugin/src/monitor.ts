@@ -1,18 +1,11 @@
 /**
- * The counter ledger, split out of `repair-stream.ts` (the split recorded as
- * P-0012's payment, not as a patch of its own).
+ * The counter ledger, split out of `repair-stream.ts` (P-0012's payment, not a
+ * patch of its own). The wrapper decides; this file only books, which keeps
+ * `repair-stream.js` inside its cap while each counter keeps its reason.
  *
- * The wrapper decides; this file only books. Splitting them is what keeps
- * `repair-stream.js` inside its own 28 000-byte cap while the reasoning that
- * justifies each counter stays written down: the alternative was deleting the
- * prose, and this repository already rejected that trade twice (R15 recorded it,
- * P-0009 paid 354 bytes for it).
- *
- * Every counter here has exactly one meaning, and the docs below are the
- * contract rather than a comment. A counter that cannot say why it moved is a
- * counter that lies, and this project has already shipped two of those (the
- * fusion counter that moved on plain bad JSON, BS-12; and the unreadable-line
- * counter that rose with the number of files, P-0009).
+ * Every counter has exactly one meaning and these docs are the contract. A
+ * counter that cannot say why it moved lies, and this project shipped two of
+ * those (BS-12, and the unreadable-line counter of P-0009).
  */
 
 import { judgeRemedy } from 'dsh-remedy-core'
@@ -60,35 +53,25 @@ export class RemedyMonitor {
   }
 
   /**
-   * Book one refusal (P-0003 / BS-12).
+   * Book one refusal (P-0003 / BS-12). `fused` keeps its P-0001 meaning: a fusion
+   * was actually observed, so a plain bad JSON argument is not one (before P-0003
+   * it was, and such a stream read `degraded`). Three buckets, no fourth:
    *
-   * `fused` keeps its P-0001 meaning: a fusion was actually observed. Before
-   * P-0003 every rejection incremented it, so a plain bad JSON argument read as
-   * a fusion and a stream whose only defect was syntax reported `degraded`
-   * (BS-12). Three buckets, and no fourth:
-   *
-   *  - `refused` alone — we refused and the text was never proven to be a
-   *    fusion: `not-an-object-sequence`, `single-object`, `unparsable-fragment`,
+   *  - `refused` alone — the text was never proven to be a fusion:
+   *    `not-an-object-sequence`, `single-object`, `unparsable-fragment`,
    *    `fragment-not-object`, `missing-id`, `missing-name`, `name-changed`. An
    *    unknown code lands here too: a code this build does not know is not
    *    assumed repairable.
-   *  - `fused` + `refused` + `unrepaired` — `too-many-calls`: the input *was* a
-   *    proven fusion shape, but our own `maxCalls` budget refused to split it.
-   *    Booking `fused` without `unrepaired` would let `judgeRemedy` report
-   *    "defect seen and repaired" for a stream that repaired nothing; dropping
-   *    `fused` too would report "quiet" for a stream we just refused to fix.
-   *    `degraded` is the only state that describes a proven fusion left
-   *    unrepaired, which is exactly what `unrepaired` is defined to be.
-   *  - `withdrawn` alone — `rolled-back`: a repair that was already proven is
-   *    given back, so the run must not claim it. The abandoned proof itself is
-   *    booked by `recordAbandoned`.
+   *  - `fused` + `refused` + `unrepaired` — `too-many-calls`: the input was a
+   *    proven fusion and our own budget declined it. `fused` alone would report
+   *    "repaired", dropping it would report "quiet".
+   *  - `withdrawn` alone — `rolled-back`: a proven repair is given back, so the
+   *    run must not claim it; the abandoned proof is booked by `recordAbandoned`.
    *  - `withdrawn` plus the P-0002 pair — `consumer-abort`: the consumer stopped
-   *    reading before any decision. With `fused > 0` and `unrepaired === 0`
-   *    `judgeRemedy` would say "repaired"; with `fused === 0` it would say
-   *    "quiet". Both are false for a buffered call that was never emitted.
+   *    before any decision, which is neither `repaired` nor `quiet`.
    *
-   * `truncated` never reaches this method: a cut stream is counted by
-   * `recordTruncated()`, and a truncation withdrawal is not a failed repair.
+   * `truncated` never reaches this method: a cut stream is `recordTruncated()`,
+   * and a truncation withdrawal is not a failed repair.
    */
   recordRejected(tool: string, callId: string, code: string, detail: string): void {
     switch (code) {

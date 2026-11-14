@@ -63,6 +63,7 @@
 | `data/results/publish-2026-11-11T17-35-00.000Z.json` | 0.3.6 发布后两包 `latest`（`ok: true`） |
 | `docs/patches/P-0001-toolcall-fusion.md` … `P-0009-session-header-window.md` | 每个补丁的症状 / 机制 / 反证 / 边界 |
 | `docs/patches/P-0010-cli-usage-truth.md` … `P-0030-attribution-proof.md` | 同上；P-0015 是 `agent/pre-step` 拒绝语义的实测记录；P-0016 的文档在 R31 补写；P-0024 把两个包内 README 收进 copy 通道；P-0025 让 `explain` 的三态落地；P-0026 把发布流程收成一个家；P-0027 给「名字证不出来」的片段一个不可执行的名字；P-0028 把随包夹具里的本机路径换成 `<home>`；P-0029 把继任者的版本指针与字节账接上判据；P-0030 把归因证明搬进 core，按 schema 能证明的部分判定并记录 `unproven` |
+| `docs/patches/P-0031-core-budget.md` … `P-0033-empty-identity.md` | P-0031 给引擎立 cap；P-0032 把台账的长叙述搬回补丁文档（registry.js 66 303 → 63 217，cap 不动）；P-0033 让空 id/空名的 tool call 不再被持久化（合成 id + `remedy_unattributed`） |
 | `docs/adr/0001-stream-repair-over-asar-patch.md` | 为什么在 `llm/stream` 修 |
 
 ## 公开仓库（对外）

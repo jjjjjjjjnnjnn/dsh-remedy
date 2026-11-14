@@ -741,7 +741,60 @@
         "scripts/gate_size.mjs",
         "tests/governance/budget-split.test.ts"
       ]
+    },
+    {
+      "id": "S42",
+      "gate": "registry",
+      "title": "The ledger was paying for a second copy of every patch document",
+      "axes": {
+        "correctness": "The eight longest records now keep one sentence per narrative field and short limits; every field the code reads (id, title, surface, status, severity, evidence, guards, failureClasses, switchKey) is unchanged, and the patch still resolves through findPatch and the status/explain readers. The deletion was preceded by a coverage check against the matching docs/patches file for the mechanism, the measured numbers and the named blind spot.",
+        "reproducibility": "The byte count is the build: packages/core/dist/registry.js measured 66 303 bytes before the change and 61 509 after, and scripts/gate_size.mjs reports both the engine total and the registry file. The comparison that rejected a seam split (a split moves the same bytes into other modules and still spends 68 000) is arithmetic on the same measurement, not an opinion.",
+        "compliance": "No cap moved: CORE_CAP stays 104 000 and the registry cap stays 68 000, and scripts/lib/budgets.mjs records the before/after measurement instead of a new threshold. PROJECT_RULES section 1 forbids an unsigned threshold, so the proposed per-record length cap was not added; the rule lives in the patch doc and in BS-19.",
+        "ssot": "One long form per patch now: docs/patches. The registry keeps the machine-readable ledger fields plus a one-sentence summary, and the two homes no longer duplicate 4.8 KB of prose. The snapshot was re-recorded from the built registry, which is what gate_registry compares byte for byte.",
+        "adversarial": "The adversary is silent information loss: a compacted sentence can drop a caveat while the doc still has it or does not. Two things were done about it instead of nothing: each of the eight docs was checked for the mechanism and the measured numbers before the text was removed, and the remaining gap is written down as BS-19 (gate_registry checks that a doc exists, not what it says), so the next reader knows the summary is not independently checked."
+      },
+      "evidence": [
+        "docs/patches/P-0032-registry-ledger-dedup.md",
+        "packages/core/src/registry.ts",
+        "scripts/lib/budgets.mjs",
+        "tests/governance/ledgers.test.ts"
+      ]
+    },
+    {
+      "id": "S43",
+      "gate": "size",
+      "title": "A refusal that was counted and then dispatched anyway",
+      "axes": {
+        "correctness": "The block-end branch now separates identity refusals from fusion refusals. For missing-id/missing-name it keeps a real id or synthesizes a collision-checked call_remedy_<n>, keeps a real name or sends remedy_unattributed, and emits the rewritten block at the same index, so the host persists a dispatchable call and a matching result. It deliberately does not set blockRejected or withdraw a pending repair, because an identity refusal is not evidence about a later fusion; five tests pin this, four of them red before the change.",
+        "reproducibility": "The shape is the one measured upstream on 0.2.2-rc.3 (discussion #13211): block {id:'', name:'', arguments:'{}'} followed by a normal finish. The tests build that stream from literals. The host consequence was read from the shipped dsh-agent-loop (appendToolCall writes block.id verbatim; the V4 admission requires the result id to match its call source) rather than inferred, and the patch doc quotes the two sites.",
+        "compliance": "The new resident bytes were paid, not borrowed: repair-stream.js grew and the total crossed 83 000 by 916 bytes, so three comment blocks in monitor.ts were compressed with their facts intact and the shared synthetic-id loop removed one duplicate. Final total 82 872 of 83 000, residency 41 510 of 44 000, CLI 41 362 of 42 000; no cap moved. Record, ledger row, patch doc and snapshot landed in the same round.",
+        "ssot": "One refusal name (UNATTRIBUTED_NAME, already the P-0027 constant) and one synthetic-id helper now serve both the finish rescue and the block-end path. The counter vocabulary is unchanged: refused means refused, and the doc states that the verdict cannot express this case instead of inventing a counter for it.",
+        "adversarial": "The adversary is the project's own habit: a rejection that increments a counter and then lets the original through looks like observability while the damage proceeds. The patch names that as the defect and is limited on purpose: the adapter is not fixed, an unnamed *and* fused text still goes out as one call, a non-object argument set is untouched, and the verdict still reads quiet. Each of those is written in the limits, not left for a reader to discover."
+      },
+      "evidence": [
+        "docs/patches/P-0033-empty-identity.md",
+        "packages/plugin/src/repair-stream.ts",
+        "tests/unit/repair-stream.test.ts"
+      ]
+    },
+    {
+      "id": "S44",
+      "gate": "ssot",
+      "title": "The empty-identity fix, measured against the upstream failure on the same harness",
+      "axes": {
+        "correctness": "The before profile and the after profile differ only by whether dsh-remedy is mounted; both speak to the same local endpoint replaying the #13211 frames. Without the plugin the assistant message carries an empty tool-call identity, the tool/call is written with an empty callId, and admission fails with the upstream message; with the plugin the same stream becomes call_remedy_1 / remedy_unattributed, the result cites that id, and the session resumes a second turn. The artifact stores both sessions and the journal, so the comparison is readable rather than asserted.",
+        "reproducibility": "scripts/record_empty_call_probe.mjs reads the two session logs by id, extracts call/result identity and turn ends, redacts and writes the artifact plus its sha256. The endpoint and both profile files are described in the artifact; they live in .tmp and are not shipped. The fake endpoint replays literal SSE frames, so no network or provider state is needed.",
+        "compliance": "The run used an isolated DSH_HOME; nothing under ~/.dsh was written. The endpoint is local (127.0.0.1) and the artifact says the reproduction is synthetic at the endpoint, exactly as the upstream report describes its own. The patch moved from tested to verified only because data/results/live-* now exists, which is the rule gate_registry enforces.",
+        "ssot": "One artifact for both directions (before/after/resume), one recorder, and the patch doc table quotes the same four facts. The registry, ledger and doc statuses were changed in the same round; the snapshot was re-recorded after the status change.",
+        "adversarial": "The adversary is a live artifact that proves the harness rather than the patch: a passing run with the plugin mounted proves nothing unless the same harness fails without it. That is why the before profile exists and why its exit code and error line are recorded next to the after session. What is still not proven is stated: a synthetic endpoint, one provider shape, and the adapter itself untouched."
+      },
+      "evidence": [
+        "docs/patches/P-0033-empty-identity.md",
+        "scripts/record_empty_call_probe.mjs",
+        "data/results/live-empty-call-2026-11-14T16-02-00.000Z.json",
+        "tests/unit/repair-stream.test.ts"
+      ]
     }
   ],
-  "updated_at": "2026-11-14T15:40:00.000Z"
+  "updated_at": "2026-11-14T16:05:00.000Z"
 }

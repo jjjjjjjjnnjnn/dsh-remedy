@@ -72,6 +72,16 @@ GitHub release `v0.4.1` 的正文与 `docs/copy/release-notes/v0.4.1.md` 逐字�
 `BS-17` 已在 R30 关闭：桌面渲染器把拒绝画成「已完成」且不显示任何内容，所以 `agent/pre-step` 只能用
 `{kind:'enter'}` 改写，不能拒绝；那条改写路径仍未测。
 
+## 6b. 2026-11-14 的读数（R41，0.4.6 已发布）
+
+- **npm**：两包 `latest = 0.4.6`（`npm view` 实读），发布产物 `data/results/publish-2026-11-14T14-50-00.000Z.json`。
+- **awesome-dsh-plugin**：卡片正确 —— npm 安装行、`tarball:` 兜底、README（含中文）都在；PR #15072 已合并，不需要再提。
+- **dshopen**：#472 已关闭（收录 0.4.4），已回帖说明 0.4.5 起样例里不再有本机路径。
+- **dsh.so**：页面仍写 `dsh-remedy@0.4.1`。重提是人工动作（<https://dsh.so/submit/> 填 npm 包名即可）；本机 browse 通道未连接，没有自动提交。
+- **imsai**：条目仍只给 `github:…#path:packages/plugin`，`updatedAt` 停在 2026-11-13（它自己的巡检停摆，见它的 #19）。
+- **AllDSH**：#3 仍 open，等人工。
+- **自动采集**：bradeGithub 仍读仓库根（记成 `non-plugin`），改不了它的扫描逻辑；radar / marketplace 等下一次采集。
+
 ## 7. 渠道描述会长期被扫，所以承诺是硬的
 
 awesome-dsh-plugin 与 imsai 都会定期扫：仓库消失 / 归档 / 长停更会被移除，**描述与代码不符会被打回**。

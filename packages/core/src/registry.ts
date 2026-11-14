@@ -591,10 +591,10 @@ export const PATCHES: readonly PatchRecord[] = [
     ],
     guards: ['tests/governance/distribution-entry.test.ts', 'docs/market-index.json'],
     limits: [
-      'it does not turn the repository into a published artifact: P-0014 through P-0019 stay merged and unreleased, and the index says so in words instead of hiding it',
-      'a git source remains allowed, but only with an explicit unreleased marker, so a future release may pin a commit whose bytes really are that release',
-      'the guard cannot check the registry over the network, so "0.3.8 is still latest" stays a fact read at release time rather than an assertion in the suite',
-      'it fixes the index this project publishes; it cannot correct the third-party market that already crawled the private workspace shell at the repository root',
+      'it does not turn the repository into a published artifact: P-0014 through P-0019 stay merged and unreleased',
+      'a git source is allowed only with an explicit unreleased marker, so a future release may pin a commit whose bytes are that release',
+      'the guard cannot check the registry over the network, so "newest" stays a fact read at release time',
+      'it fixes the index this project publishes; it cannot correct a third party that already read this repository',
     ],
     failureClasses: [],
   },
@@ -758,10 +758,9 @@ export const PATCHES: readonly PatchRecord[] = [
   {
     id: 'P-0027',
     title: 'A fragment dispatched under a name nobody proved',
-    symptom:
-      'A fused text that glues two calls of *different* tools carries one tool name for that index, so every fragment after the first inherited it. Measured twice on DSH 0.2.2-rc.3 (2026-11-13): the surplus object {"command":"Get-ChildItem …"} was dispatched as read and the tool answered Error: invalid arguments: missing required property "file_path" (INVALID_ARGS). The turn continued, so nothing ran silently, but a wrong tool was called',
+    symptom: 'a fused text gluing two different tools sent the surplus call as the first tool`s name (INVALID_ARGS, measured twice on rc.3)',
     rootCause:
-      'the rescue proves the JSON split and nothing else. The stream names one tool per index, and the engine reused that name for every fragment because the alternative — inventing a name — looked worse. What it actually did was invent one: the first call names the fused index, and the surplus objects are different calls by construction',
+      'the rescue proves the JSON split and nothing else; the stream names one tool per index and the engine reused it for every fragment',
     surface: 'llm/stream',
     status: 'tested',
     severity: 'major',
@@ -997,6 +996,27 @@ export const PATCHES: readonly PatchRecord[] = [
       'it proves a row resolves against this manifest, not that the host loads it',
       'a row naming another package is accepted when it is declared, which is not proof of its subpath',
       'it runs in the test suite, not at load time; no live artifact is possible',
+    ],
+    failureClasses: [],
+  },
+  {
+    id: 'P-0036',
+    title: 'The host erased the id a delta-only stream had proved',
+    symptom: 'a delta-only tool call assembled as `id: ""` and the session could not resume (upstream #8653)',
+    rootCause:
+      'assembler.ts:72 assigns toolCallId unguarded while :73 guards the name, and :115 falls back only from null',
+    surface: 'llm/stream',
+    status: 'tested',
+    severity: 'major',
+    evidence: [
+      'docs/patches/P-0036-delta-identity.md',
+      'packages/plugin/src/repair-stream.ts',
+      'tests/unit/repair-stream.test.ts',
+    ],
+    guards: ['tests/unit/repair-stream.test.ts', 'scripts/gate_size.mjs'],
+    limits: [
+      'the host is not fixed; a different real id on one index passes through, so id-collision-split stays open',
+      'not verified: the red is at the seam, no live turn this round produced the shape',
     ],
     failureClasses: [],
   },

@@ -3,6 +3,58 @@
 All notable changes to this project are documented here.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.4.10] - 2026-11-14
+
+### Added
+
+- A research note on the seam's neighbours (`docs/research/similar-projects-2026-11-14.md`): the five plugins that
+  already repair this shape, which of their mechanisms was borrowed, and which of their trade-offs was refused —
+  no `jsonrepair` dependency, no request-side history rewrite, no offline session editing.
+- A numeric version comparison in the governance layer: `localeCompare` called `0.4.9` newer than `0.4.10`,
+  which only shows up when a minor version crosses into two digits. Not registered as a patch — the registry has
+  290 bytes free and a record costs about 550.
+
+### Fixed
+
+- **P-0036 — a delta-only tool call keeps the id the stream proved.** A provider that never
+  emits `block-end` reaches the host as pure `tool-call-delta` chunks, and the host's own
+  assembler assigns `partial.toolCallId = chunk.id` with **no guard**
+  (`dsh-llm/src/assembler.ts:72`, DSH 0.2.2-rc.3) while the name one line below
+  (`:73`) is guarded. Its only fallback (`:115`) is `??`, which cannot fire for an empty
+  string. A continuation delta spelled `id: ""` therefore erases an id that already arrived,
+  and a call that never carried one assembles as `id: ""`. The V4 log then refuses the
+  matching result: `format v4 tool/result … requires toolCallId matching its tool source`,
+  and every later turn repeats it. `P-0033` covered the half where the adapter *does* send a
+  `block-end`; this is the half where it never does. The wrapper now keeps one id per index:
+  a non-empty id is adopted, an empty one becomes the id that index already proved, and an
+  index that never carried one mints a collision-checked `call_remedy_<n>`.
+
+### Changed
+
+- Six leads closed with a source or a reason: `L-0037` is the same `empty-id-clobber` shape
+  reported against a competing plugin and became `P-0036`; `L-0038` is the handbook page whose
+  `assembler.ts:187` line gives `L-0036` (a stream that ends with no `finish` reads as a clean
+  `stop`) its host half, which is recorded rather than patched: adding `stop` repeats the
+  host's assumption and adding `error` invents one.
+- `docs/research/similar-projects-2026-11-14.md` records the five plugins on this seam, what
+  was borrowed as a mechanism, and what was refused: no `jsonrepair` dependency, no request-side
+  history rewrite, no offline session editing.
+
+### Package size
+
+- `dsh-remedy@0.4.10`: 39183 bytes compressed, 36 files, 124916 bytes unpacked (82957 of
+  `dist/*.js`), shasum `dcc33f65e7e0401800348c7f992830879f290ed7`.
+- `dsh-remedy-core@0.4.10`: 40494 bytes compressed, 23 files, 130919 bytes unpacked (101597 of
+  `dist/*.js`), shasum `75b4744e4681ad1e752308671889312a5006c20e`.
+
+### Notes
+
+- This release carries 36 patches: 4 `verified` and 32 `tested`.
+- Byte budget: residency 41595 of 44000, CLI 41362 of 42000, total 82957 of 83000 (43 bytes of
+  headroom); engine 101597 of 104000, `registry.js` 67710 of 68000. No cap moved.
+- P-0036 is `tested`, not `verified`: the red is at the seam and the host half is source-read
+  from this machine's `app.asar`, not a live turn this round.
+
 ## [0.4.9] - 2026-11-14
 ### Fixed
 - A turn that failed with `MALFORMED_RESPONSE` is no longer booked as a quiet one (P-0034). `isFusionFailure` decides by the failure code alone, so every `MALFORMED_RESPONSE` inherited the fusion path's assumption that a refusal had already counted it. Upstream discussion #11337 shows the shape that exposed it: a benign prompt produced a reasoning block, the Messages stream then closed with `stop_reason: "refusal"`, the adapter raised `unsupported stop reason refusal` (upstream `stopReason()` accepts only `end_turn` / `stop_sequence` / `tool_use` / `max_tokens`), and the turn died while the journal recorded no error at all. Both failure exits now count an error unless a refusal at this seam already explained the failure. Nothing is repaired, retried or rewritten; the verdict vocabulary and the adapter are untouched.

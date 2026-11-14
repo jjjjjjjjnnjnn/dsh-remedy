@@ -1,0 +1,46 @@
+## dsh-remedy 0.4.9
+
+### Added
+
+- **P-0035 — a patch-layer row can no longer promise a module nothing resolved.** Every `name:`
+  in `cordis.patch.yml` is resolved against the package's own `exports` and against the built
+  file. Upstream discussion #12318 is the negative control: a config that kept a removed subpath
+  export reported `never started`, and every session resume failed while the UI looked like
+  "one broken session". Four tests, three of them controls. Zero runtime bytes.
+
+### Fixed
+
+- **P-0034 — a turn that failed with `MALFORMED_RESPONSE` is no longer booked as a quiet one.**
+  `isFusionFailure` reads the failure *code*, and the finish path read that one answer as
+  "was this failure already counted?". So every `MALFORMED_RESPONSE` that had nothing to do with
+  arguments was booked as silence. Upstream discussion #11337 is the measured shape: a benign
+  prompt produced a reasoning block, the Messages stream closed with `stop_reason: "refusal"`,
+  the adapter raised `unsupported stop reason refusal`, the turn died — and the journal recorded
+  no error, no refusal, nothing. Both failure exits now count an error unless a refusal at this
+  seam already explained the failure; a refusal is still not counted twice.
+
+### Changed
+
+- Six leads closed with a reason instead of a patch. L-0033 is the same empty-identity shape
+  P-0033 already fixes. L-0034 is out-of-seam: the adapter substitutes `{}` for malformed
+  arguments before this seam can see the original text. L-0024 needed no change, because
+  `type:'json'` compiles to an untyped schema and the attribution proof already treats an
+  undeclared type as undecidable. L-0036 stays `watching`: this machine measured six attempts
+  with no `finish` out of 9401, and nothing here proves the host treats such a stream as a
+  success.
+
+### Package size
+
+- `dsh-remedy@0.4.9`: 39335 bytes compressed, 36 files, 125349 bytes unpacked (82877 of
+  `dist/*.js`), shasum `24eaaaf51169adbfcb7d59add2340993dcc4a6ee`.
+- `dsh-remedy-core@0.4.9`: 40534 bytes compressed, 23 files, 130634 bytes unpacked (101313 of
+  `dist/*.js`), shasum `f2b5593d588d9a06d31afa9e13c3d143c858b470`.
+
+### Notes
+
+- This release carries 35 patches: 4 `verified` and 31 `tested`.
+- Byte budget: residency 41515 of 44000, CLI 41362 of 42000, total 82877 of 83000 (123 bytes of
+  headroom); engine 101313 of 104000, `registry.js` 67426 of 68000. No cap moved.
+- P-0034 is `tested`, not `verified`: the reproduction is synthetic at the seam, built from the
+  chunk sequence the upstream report printed. What was read out of the shipped adapter is
+  `stopReason()` itself, not a live relay incident.

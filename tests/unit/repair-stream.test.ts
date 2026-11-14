@@ -661,6 +661,104 @@ test('a thrown MALFORMED_RESPONSE with no refusal is still an error', async () =
   assert.equal(monitor.counters().errors, 1, 'a thrown failure nobody explained is an error')
 })
 
+// --- P-0036 negative controls ------------------------------------------------
+//
+// HOST SOURCE (read out of this machine's app.asar, DSH 0.2.2-rc.3):
+//
+//   dsh-llm/src/assembler.ts:72   partial.toolCallId = chunk.id        // unconditional
+//   dsh-llm/src/assembler.ts:73   if (chunk.name) partial.toolCallName  // guarded
+//   dsh-llm/src/assembler.ts:115  id: partial.toolCallId ?? call-<index>  // "" is not null
+//
+// So a continuation delta that says `id: ""` erases an id that already arrived, and the
+// only fallback in the host cannot fire for an empty string. A delta-only stream (no
+// `block-end` at all) therefore assembles `id: ""`, and the V4 log then refuses to resume.
+// P-0033 fixed the block-end half; this is the half that never emits one.
+
+/** What the host assembler would end up with, applying its own two rules. */
+function hostAssembledId(chunks: readonly StreamChunk[]): string {
+  let id = ''
+  for (const chunk of chunks) {
+    if (chunk.type === 'tool-call-delta') {
+      id = chunk.id // assembler.ts:72, verbatim: no guard at all
+      continue
+    }
+    if (chunk.type === 'block-end' && chunk.block.type === 'tool-call') return chunk.block.id
+  }
+  return id === '' ? '<empty>' : id
+}
+
+test('a continuation delta with an empty id does not erase the id the stream proved', async () => {
+  // Measured shape (sandbaseai/deepseek-harness-handbook, verified on b150a55): the first
+  // delta carries a real id and name, every later delta for that index carries `id: ""`.
+  const chunks: unknown[] = [
+    { type: 'block-start', index: 0, blockType: 'tool-call' },
+    { type: 'tool-call-delta', index: 0, id: 'call_8f2', name: 'read', argumentsDelta: '{"file_path":' },
+    { type: 'tool-call-delta', index: 0, id: '', argumentsDelta: '"a.ts"}' },
+    { type: 'finish', reason: { kind: 'stop' } },
+  ]
+  const { chunks: output, monitor } = await collect(fromChunks(chunks))
+  const deltas = output.filter(
+    (chunk): chunk is Extract<StreamChunk, { type: 'tool-call-delta' }> => chunk.type === 'tool-call-delta',
+  )
+  assert.equal(deltas.length, 2, 'both deltas still reach the assembler; only the id is repaired')
+  assert.equal(deltas[1]!.id, 'call_8f2', 'an empty continuation must not erase the proven id')
+  assert.equal(deltas[1]!.argumentsDelta, '"a.ts"}', 'the argument text is untouched')
+  assert.equal(hostAssembledId(output), 'call_8f2', 'the host would now assemble a traceable call')
+  assert.equal(monitor.counters().refused, 1, 'nothing was repaired that the model sent; the id was refused')
+  assert.equal(monitor.counters().repaired, 0, 'a kept identity is not a fusion repair')
+})
+
+test('a delta-only call with no id at all gets one id that every continuation reuses', async () => {
+  // The same host rule from the other direction: no delta ever carries an id, so
+  // `partial.toolCallId` stays "" and `??` never fires. Minting here is the P-0033 value
+  // (a traceable synthetic id), not a guess about the model's intent.
+  const chunks: unknown[] = [
+    { type: 'block-start', index: 0, blockType: 'tool-call' },
+    { type: 'tool-call-delta', index: 0, id: '', name: 'read', argumentsDelta: '{"file_path":' },
+    { type: 'tool-call-delta', index: 0, id: '', argumentsDelta: '"a.ts"}' },
+    { type: 'finish', reason: { kind: 'stop' } },
+  ]
+  const { chunks: output } = await collect(fromChunks(chunks))
+  const deltas = output.filter(
+    (chunk): chunk is Extract<StreamChunk, { type: 'tool-call-delta' }> => chunk.type === 'tool-call-delta',
+  )
+  assert.equal(deltas.length, 2)
+  const first = deltas[0]!.id
+  assert.notEqual(first, '', 'an empty callId is what makes the session unresumable')
+  assert.equal(deltas[1]!.id, first, 'both deltas must name the same call, or the host sees two')
+  assert.equal(hostAssembledId(output), first)
+})
+
+test('an id the stream already proved is never replaced by a different real id', async () => {
+  // Regression guard and a stated limit: a later delta carrying a *different* non-empty id
+  // is a second call announced at an occupied index (the competitor"s `id-collision-split`).
+  // That is a separate defect with its own proof; this patch must not silently rewrite it.
+  const chunks: unknown[] = [
+    { type: 'block-start', index: 0, blockType: 'tool-call' },
+    { type: 'tool-call-delta', index: 0, id: 'call_a', name: 'read', argumentsDelta: '{"a":1}' },
+    { type: 'tool-call-delta', index: 0, id: 'call_b', argumentsDelta: '{"b":2}' },
+    { type: 'finish', reason: { kind: 'stop' } },
+  ]
+  const { chunks: output } = await collect(fromChunks(chunks))
+  const deltas = output.filter(
+    (chunk): chunk is Extract<StreamChunk, { type: 'tool-call-delta' }> => chunk.type === 'tool-call-delta',
+  )
+  assert.equal(deltas[1]!.id, 'call_b', 'a real id change is left exactly as the adapter sent it')
+})
+
+test('a stream whose deltas all carry real ids is byte-identical', async () => {
+  const chunks: unknown[] = [
+    { type: 'block-start', index: 0, blockType: 'tool-call' },
+    { type: 'tool-call-delta', index: 0, id: 'call_ok', name: 'read', argumentsDelta: '{"a":1}' },
+    { type: 'tool-call-delta', index: 0, id: 'call_ok', argumentsDelta: '}' },
+    { type: 'block-end', index: 0, block: { type: 'tool-call', id: 'call_ok', name: 'read', arguments: '{"a":1}' } },
+    { type: 'finish', reason: { kind: 'stop' } },
+  ]
+  const { chunks: output, monitor } = await collect(fromChunks(chunks))
+  assert.deepEqual(output, chunks, 'a healthy stream is never rewritten')
+  assert.equal(monitor.counters().refused, 0)
+})
+
 test('a neutralized call does not withdraw a later proven fusion', async () => {
   const chunks: unknown[] = [
     { type: 'block-start', index: 0, blockType: 'tool-call' },

@@ -74,10 +74,39 @@ test('every version the pack calls the previous release has a changelog entry', 
       `${version} is called the previous release but has no section in CHANGELOG.md`,
     )
     assert.ok(
-      version.localeCompare(core.version) < 0,
+      compareVersions(version, core.version) < 0,
       `${version} is called the previous release but is not older than ${core.version}`,
     )
   }
+})
+
+/**
+ * Numeric semver comparison.
+ *
+ * Measured on 0.4.10: this rule used `localeCompare`, which compares text — so `0.4.9` sorted *after*
+ * `0.4.10` (`"9" > "1"`) and the check claimed the previous release was newer than the
+ * current one. It only surfaced when the minor version crossed into two digits, which is
+ * the shape a text comparison always has and a numeric one never does.
+ */
+export function compareVersions(left: string, right: string): number {
+  const a = left.split('.').map((part) => Number.parseInt(part, 10))
+  const b = right.split('.').map((part) => Number.parseInt(part, 10))
+  for (let index = 0; index < Math.max(a.length, b.length); index += 1) {
+    const diff = (a[index] ?? 0) - (b[index] ?? 0)
+    if (diff !== 0) return diff < 0 ? -1 : 1
+  }
+  return 0
+}
+
+test('a text comparison would call 0.4.9 newer than 0.4.10, and the numeric one will not', () => {
+  // The rule above used localeCompare until 0.4.10 crossed the two-digit minor version.
+  // A numeric comparison is what makes the claim decidable, and this is the case that
+  // proves it: "0.4.9" > "0.4.10" as text, and 0.4.9 < 0.4.10 as versions.
+  assert.ok('0.4.9'.localeCompare('0.4.10') > 0, 'the text comparison really does call 0.4.9 newer')
+  assert.equal(compareVersions('0.4.9', '0.4.10'), -1, 'the numeric comparison calls 0.4.9 older')
+  assert.equal(compareVersions('0.4.10', '0.4.10'), 0, 'equal versions compare equal')
+  assert.equal(compareVersions('0.4.10', '0.4.9'), 1, 'the newer version compares newer')
+  assert.equal(compareVersions('0.10.0', '0.9.9'), 1, 'a two-digit minor is not smaller than a one-digit one')
 })
 
 test('the fact pack is LF, so its hash is the same on a fresh clone', () => {

@@ -88,6 +88,13 @@ gh api graphql -f query='{ search(type: DISCUSSION, query: "repo:deepseek-ai/dee
 | L-0035 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12318> | `dsh` | `full` | 2026-11-05 | **0.2.2-rc.1** | unknown | `profile` | **patched** | R46：`cordis.patch.yml` 里指向已被删除的子路径导出（`…/list-agents`），插件加载失败报 `never started`，于是**每一次 resume 都失败**，而界面看起来只是「某个会话坏了」。我们的 patch 层现在只挂裸包名，但没有任何判据检查这条承诺。**P-0035** 把「每个 row 的 `name:` 必须能在 manifest 的 exports 里解析、目标文件必须已构建」变成测试，并用这条上游 row 做负对照；0 运行时字节。 |
 | L-0036 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13069> | `dsh` | `full` | 2026-11 | ? | unknown（无 finish 的流） | `agent/request-error` | watching | R45：报告说「无 finish 的流被当正常结束」。本机 9 401 条 attempt 记录里确有 **6 条无 finish**（`docs/research/failure-map-2026-11-10.md`），但我们**没能证明**宿主把这种流当成功——上游 `translate()` 在 `message_stop` 之前结束会抛 `STREAM_CLOSED`，那会走 throw 路径（已记 `errors`）。还缺的证据：一个脚本化 provider 在发完 `block-end` 后直接关连接，看 `turn/end` 是 `completed` 还是 `error`。没有这条证据就不发补丁。 |
 
+## G. 同接缝的其他项目与上游源码（2026-11-14 读到的）
+
+| id | source | source_kind | read_depth | reported | version | class | seam | status | decision |
+|---|---|---|---|---|---|---|---|---|---|
+| L-0037 | <https://dshplugin.online/plugins/udsy19--dsh-toolcall-stream-repair> | `market` | `full` | 2026-11 | ? | `MALFORMED_RESPONSE` | `llm/stream` | **patched** | R47：竞品 0.1.0 有 11 个 repair code，其中 `empty-id-clobber` 与我们的 P-0033 边界正好拼上——它修的是「同一 index 的后续 delta 带 `id: ""` 把先到的真 id 擦掉」。本机 `app.asar` 逐行确认（`assembler.ts:72` 无守卫、`:73` 有守卫、`:115` 的 `??` 不兜空串），于是做成 **P-0036**。**只借机制，不抄代码**；它的 `jsonrepair` 路线不采用（见 L-0038 的同类理由）。 |
+| L-0038 | <https://sandbaseai.github.io/deepseek-harness-handbook/streamed-tool-call-identity.html> | `code` | `full` | 2026-08-28 | `b150a55` + `cd5ef81` | unknown | `llm/stream` | **rejected (dup)** | R47：这份手册把我们已知的两件事写全了——空身份链（已由 P-0033/P-0036 覆盖）与 `assembler.ts:187` 的「没有 finish 就读成 `stop`」。后者就是 **L-0036** 缺的宿主半边，现在**有源码**了；但补 `stop` 是重复宿主的假设、补 `error` 是编造，所以 L-0036 保持 `watching`，本轮只把它的证据等级从「需要脚本化 provider」升到「读过宿主源码」。 |
+
 ## 下一会话的前三条（按优先级）
 
 > **R43 结案 L-0001 / L-0002 / L-0010；R45 结案 L-0032（P-0034）与 L-0033 / L-0034 / L-0024；

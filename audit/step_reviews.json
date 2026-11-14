@@ -828,6 +828,24 @@
         "packages/plugin/cordis.patch.yml",
         "tests/governance/profile-patch-resolution.test.ts"
       ]
+    },
+    {
+      "id": "S47",
+      "gate": "size",
+      "title": "The id a delta-only stream proved, erased by the host",
+      "axes": {
+        "correctness": "The wrapper now keeps one id per tool-call index: a non-empty delta id is adopted, an empty one is replaced by the id that index already proved, and an index that never carried one gets a collision-checked synthetic id. The host's own rule is what makes this necessary and is quoted: assembler.ts:72 assigns partial.toolCallId = chunk.id with no guard while :73 guards the name, and :115 falls back only from null. Four new tests; the two that matter were red first (\"the second delta still carried id: \"\"\"), and two guards pin that a genuinely different real id is left alone and that a healthy stream is byte-identical.",
+        "reproducibility": "The shape is printed in upstream discussion #8653 and in the sandbaseai handbook's identity-clobber chain, and both agree with this machine's app.asar byte for byte. The reproduction is ./tmp/probe-identity.mjs: five chunks, and the second delta's id changes from \"\" to call_8f2 after the fix. The host half is source-read, so the patch is tested, not verified.",
+        "compliance": "The 96 resident bytes were paid, not borrowed: repair-stream.js and monitor.ts both lost prose while keeping every fact, and the final account is 82 957 of 83 000 (residency 41 595 of 44 000, CLI 41 362 of 42 000). The new registry record was compacted under P-0032's rule (registry.js 67 426 -> 67 710 of 68 000) rather than by raising a cap. No dependency was added, so the zero-dependency rule holds.",
+        "ssot": "One id per index is now the seam's stated invariant, written in the patch doc and in the branch comment. The refusal code empty-id-delta was added to monitor.ts's refusal-bucket comment, so the counter ledger still says why refused moved. docs/research/similar-projects-2026-11-14.md records what was learned from the four competing plugins and what was deliberately not taken.",
+        "adversarial": "Two adversaries. The first is the temptation to borrow: four plugins repair this same shape, and the honest position is that we adopt the mechanism (keep the proven id) and refuse theirs where it guesses — we do not import jsonrepair, we do not rewrite request history, we do not touch already-persisted sessions. The second is scope creep: a different real id on one index looks like the same bug (id-collision-split) but has its own proof and its own red test, so it is left exactly as broken as before and the limit says so."
+      },
+      "evidence": [
+        "docs/patches/P-0036-delta-identity.md",
+        "docs/research/similar-projects-2026-11-14.md",
+        "packages/plugin/src/repair-stream.ts",
+        "tests/unit/repair-stream.test.ts"
+      ]
     }
   ],
   "updated_at": "2026-11-14T16:05:00.000Z"

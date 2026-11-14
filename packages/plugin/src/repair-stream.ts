@@ -2,10 +2,9 @@
  * The `llm/stream` repair wrapper. Measured order (session 9045e2ec, seq 524):
  * `block-start` → `tool-call-delta`* → `usage` → `finish{kind:'error'}`, no
  * `block-end` for the fused call, so the terminal finish is the repair point
- * (throw path too); rc.3 closes the first block itself.
- *
- * Refusals: no unproven success; no `max-tokens` repair; no unnamed dispatch; no
- * commit while a later block could still reject; no dropped `replayState`.
+ * (throw path too); rc.3 closes the first block itself. Refusals: no unproven
+ * success; no `max-tokens` repair; no unnamed dispatch; no commit while a later
+ * block could still reject; no dropped `replayState`.
  */
 
 import {
@@ -181,10 +180,9 @@ export async function* repairStream(
       if (result.status === 'rejected') {
         refusedHere = true
         monitor.recordRejected(candidate.call.name, id, result.code, result.detail)
-        // One candidate was already proven splittable and the all-or-nothing rule
-        // drops the rescue: the proof is real, no call dispatched, so this is the
-        // one place that books `unrepaired`. The refusal above names the refused
-        // candidate, so the two counts never name the same one.
+        // One candidate was already proven splittable and the all-or-nothing rule drops
+        // the rescue: the proof is real, no call dispatched, so this is the one place that
+        // books `unrepaired`. The refusal above names a different candidate.
         if (fusedSeen && proven !== null) {
           monitor.recordAbandoned(
             proven.name,
@@ -277,8 +275,8 @@ export async function* repairStream(
       if (entry.resealed !== undefined) {
         if (withdrawing !== null) {
           // The rewrite was proven and then given back. Nothing was dispatched, so
-          // `withdrawn` alone carries it: `fused` would claim a second call existed,
-          // and `unrepaired` would claim bytes were lost.
+          // `withdrawn` alone carries it: `fused` would claim a second call, `unrepaired`
+          // would claim bytes were lost.
           if (withdrawing === 'rejected') {
             monitor.recordRejected(
               entry.resealed.tool,
@@ -352,7 +350,17 @@ export async function* repairStream(
         case 'tool-call-delta': {
           track(chunk.index)
           const call = open.get(chunk.index) ?? { id: '', name: '', text: '' }
-          if (chunk.id) call.id = chunk.id
+          let out: StreamChunk = chunk
+          if (chunk.id !== '') {
+            call.id = chunk.id
+          } else {
+            // P-0036: the host assigns the id unconditionally (assembler.ts:72) and its
+            // `??` fallback cannot fire for `''`, so a delta-only call assembles as unresumable.
+            if (call.id === '') call.id = syntheticId()
+            refusedHere = true
+            monitor.recordRejected(call.name, call.id, 'empty-id-delta', `index ${chunk.index} carried no id`)
+            out = { ...chunk, id: call.id }
+          }
           if (typeof chunk.name === 'string' && chunk.name !== '') {
             if (call.name !== '' && call.name !== chunk.name) {
               nameConflict = true
@@ -375,8 +383,8 @@ export async function* repairStream(
           }
           if (call.id !== '') seenIds.add(call.id)
           open.set(chunk.index, call)
-          if (holding) holdPlain(chunk)
-          else yield chunk
+          if (holding) holdPlain(out)
+          else yield out
           break
         }
         case 'text-delta':
@@ -433,7 +441,8 @@ export async function* repairStream(
               monitor.recordRejected(chunk.block.name, chunk.block.id, result.code, result.detail)
               // P-0033: an empty id/name is persisted and V4 then refuses to resume
               // (#13211). Send it under the refusal name with a traceable id:
-              // UNKNOWN_TOOL, turn continues.
+              // UNKNOWN_TOOL, turn continues. P-0036: an identity the same index's
+              // deltas already proved is the better answer than a fresh synthetic one.
               if (result.code === 'missing-id' || result.code === 'missing-name') {
                 const id = chunk.block.id.trim() === '' ? syntheticId() : chunk.block.id
                 const name = chunk.block.name.trim() === '' ? UNATTRIBUTED_NAME : chunk.block.name

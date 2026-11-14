@@ -586,6 +586,21 @@
         "tests/governance/profile-patch-resolution.test.ts",
         "scripts/gate_namespace.mjs"
       ]
+    },
+    {
+      "id": "P-0036",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.10",
+      "evidence": [
+        "docs/patches/P-0036-delta-identity.md",
+        "packages/plugin/src/repair-stream.ts",
+        "tests/unit/repair-stream.test.ts"
+      ],
+      "guards": [
+        "tests/unit/repair-stream.test.ts",
+        "scripts/gate_size.mjs"
+      ]
     }
   ]
 }

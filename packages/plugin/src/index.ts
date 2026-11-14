@@ -3,11 +3,10 @@
  *
  * One seam, two listeners:
  *
- *   1. `llm/stream` (waterfall) — wraps the chunk stream and repairs a fused
- *      tool call before the agent loop assembles it (P-0001);
- *   2. `agent/request-error` (waterfall) — an opt-in retry for
- *      `MALFORMED_RESPONSE`, off by default. It is a stop-gap for deployments
- *      that cannot take the repair, not the fix.
+ *   1. `llm/stream` (waterfall) — wraps the chunk stream and repairs a fused tool
+ *      call before the agent loop assembles it (P-0001);
+ *   2. `agent/request-error` (waterfall) — an opt-in retry for `MALFORMED_RESPONSE`,
+ *      off by default: a stop-gap for deployments that cannot take the repair.
  *
  * The plugin is resident but silent: no route, no tool, no writes unless
  * `journalPath` is configured. Its job is to make a known defect not happen,
@@ -72,12 +71,10 @@ function isThenable(value: unknown): value is PromiseLike<unknown> {
 }
 
 /**
- * `llm/stream` is a SYNCHRONOUS Cordis waterfall: the caller iterates the return
- * value immediately. Turning this listener into an `async` function wraps the
- * stream in a Promise and the agent loop fails with "stream is not async
- * iterable" — measured on a real headless run, not hypothesized. Wrap
- * synchronously; only re-enter through `.then` when `next()` itself was already
- * asynchronous.
+ * `llm/stream` is a SYNCHRONOUS Cordis waterfall: the caller iterates the return value
+ * immediately. Making this listener `async` wraps the stream in a Promise and the agent
+ * loop fails with "stream is not async iterable" — measured on a real headless run. Wrap
+ * synchronously; re-enter through `.then` only when `next()` was already asynchronous.
  */
 function wrapStream(
   stream: unknown,
@@ -135,9 +132,8 @@ function mount(ctx: RemedyContext, config: RemedyConfig, monitor: RemedyMonitor)
       )
     }
 
-    // P-0011 + P-0013 share one listener: naming a failure and retrying it are
-    // two decisions on the same dispatch, and a second listener would only pay
-    // twice for it. Naming is always on; the retry budget defaults to 0.
+    // P-0011 + P-0013 share one listener: naming a failure and retrying it are two
+    // decisions on one dispatch. Naming is always on; the retry budget defaults to 0.
     const retryMax = config.retryOnMalformed ?? 0
     disposers.push(
       ctx.on(

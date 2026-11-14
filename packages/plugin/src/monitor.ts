@@ -41,11 +41,10 @@ export class RemedyMonitor {
   /**
    * Book one bare-value reseal (P-0005).
    *
-   * Not a fusion: exactly one call was intended, it kept its id, and its bytes
-   * went out unchanged inside a JSON string. So it moves `resealed` only — never
-   * `fused` ("a fusion was observed") and never `repaired` ("a fused call was
-   * split"). The verdict reads it as a repair because a defect was seen and
-   * fixed, and `quiet` would be a lie.
+   * Not a fusion: exactly one call was intended, it kept its id, and its bytes went
+   * out unchanged inside a JSON string. So it moves `resealed` only — never `fused`
+   * ("a fusion was observed") and never `repaired` ("a fused call was split"). The
+   * verdict reads it as a repair, because a defect was seen and fixed.
    */
   recordResealed(tool: string, callId: string, key: string): void {
     this.resealed += 1
@@ -53,25 +52,20 @@ export class RemedyMonitor {
   }
 
   /**
-   * Book one refusal (P-0003 / BS-12). `fused` keeps its P-0001 meaning: a fusion
-   * was actually observed, so a plain bad JSON argument is not one (before P-0003
-   * it was, and such a stream read `degraded`). Three buckets, no fourth:
+   * Book one refusal (P-0003 / BS-12). `fused` keeps its P-0001 meaning: a fusion was
+   * actually observed, so a plain bad JSON argument is not one (before P-0003 it was,
+   * and such a stream read `degraded`). Three buckets, no fourth:
    *
-   *  - `refused` alone — the text was never proven to be a fusion:
-   *    `not-an-object-sequence`, `single-object`, `unparsable-fragment`,
-   *    `fragment-not-object`, `missing-id`, `missing-name`, `name-changed`. An
-   *    unknown code lands here too: a code this build does not know is not
-   *    assumed repairable.
-   *  - `fused` + `refused` + `unrepaired` — `too-many-calls`: the input was a
-   *    proven fusion and our own budget declined it. `fused` alone would report
-   *    "repaired", dropping it would report "quiet".
-   *  - `withdrawn` alone — `rolled-back`: a proven repair is given back, so the
-   *    run must not claim it; the abandoned proof is booked by `recordAbandoned`.
-   *  - `withdrawn` plus the P-0002 pair — `consumer-abort`: the consumer stopped
-   *    before any decision, which is neither `repaired` nor `quiet`.
+   *  - `refused` alone — never proven to be a fusion: `not-an-object-sequence`,
+   *    `single-object`, `unparsable-fragment`, `fragment-not-object`, `missing-id`,
+   *    `missing-name`, `name-changed`, `empty-id-delta`; an unknown code lands here too.
+   *  - `fused` + `refused` + `unrepaired` — `too-many-calls`: a proven fusion our own
+   *    budget declined ("repaired" would lie, "quiet" would hide it).
+   *  - `withdrawn` alone — `rolled-back`: a proven repair given back.
+   *  - `withdrawn` plus the P-0002 pair — `consumer-abort`: the consumer stopped before
+   *    any decision.
    *
-   * `truncated` never reaches this method: a cut stream is `recordTruncated()`,
-   * and a truncation withdrawal is not a failed repair.
+   * `truncated` never reaches this method: a cut stream is `recordTruncated()`.
    */
   recordRejected(tool: string, callId: string, code: string, detail: string): void {
     switch (code) {
@@ -98,13 +92,10 @@ export class RemedyMonitor {
   }
 
   /**
-   * Book a rescue that was proven for at least one candidate and then abandoned
-   * because another candidate in the same stream could not be split.
-   *
-   * The proof existed, so this is a fusion; the calls were never dispatched, so
-   * it is `unrepaired`. This is the only place `unrepaired` moves. The refused
-   * candidate is booked separately by `recordRejected`, so the two counts name
-   * two different candidates and never the same one twice.
+   * Book a rescue that was proven for one candidate and then abandoned because another
+   * could not be split. The proof existed, so this is a fusion; the calls never
+   * dispatched, so it is `unrepaired` — the only place that counter moves. The refused
+   * candidate is booked by `recordRejected`, so no candidate is counted twice.
    */
   recordAbandoned(tool: string, callId: string, detail: string): void {
     this.fused += 1

@@ -1678,11 +1678,15 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 
 ## 下一位 agent 的第一件事
 
-**A. 主线：0.4.2 已发布，两包 `latest = 0.4.2`，二十六补丁全部上线。**
-两包 0.4.2（P-0001 / P-0002 / P-0003 `verified`，其余 23 个 `tested`），基线
-**264 tests / 6 gates / `--mutate` 6-6**，emit 总量 82 505 / 83 000
-（常驻 41 143 / 44 000，CLI 41 362 / 42 000 —— 只剩 638 / 495 字节余量，下一个补丁要么先拆要么先删散文）。
-两个 profile 还装在 0.4.1 的 registry 字节上，切到 0.4.2 要重启桌面 App，见下面「下一个必须做的」。
+**A. 主线：0.4.5 已发布，两包 `latest = 0.4.5`，二十八补丁；两个 profile 与桌面 App 都在 0.4.5（DSH 0.2.2-rc.3）。**
+
+P-0001 / P-0002 / P-0003 `verified`，其余 25 个 `tested`；基线 **273 tests / 6 gates / `--mutate` 6-6**，
+emit 总量 **82 985 / 83 000**（常驻 41 623 / 44 000，CLI 41 362 / 42 000）——**只剩 15 B，
+下一个补丁必须先按加载路径拆模块（P-0012 的办法），不许抬 cap**。
+
+本轮（R40）修的是一条外部反馈：dshopen 收录时指出「发布样例里有本机路径」（P-0028），
+现在包内夹具写的是 `<home>`，并加了 `shipped-samples` 判据。市场那边：`awesome-dsh-plugin`
+页面已上线，描述与 `tarball:` 兜底在 PR #15072 等 check；dshopen 已收录（#472）并已回帖。
 
 **三道新判据（R22，别再退化）：**
 
@@ -1725,15 +1729,11 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 11. ~~BS-13：两个包内 README 进 copy 通道~~ **R34 已完成（P-0024）**。
 12. ~~`explain` 把未读 profile 报成 finding / 发布流程两个家~~ **R36 已完成（P-0025 / P-0026）**。
 
-**下一个必须做的：把两个 profile 切到 0.4.2，并重启桌面 App**（这一步只有人能点）：
+**下一个必须做的：先付字节账，再动行为。**
 
-- 取 registry 的 0.4.2 字节（`npm pack dsh-remedy@0.4.2` 与 `dsh-remedy-core@0.4.2`），先对 sha1/sha512，
-  再照上一轮的换装脚本改两个 profile 的 `package.json`；两个 profile 内 `verify` 都要回 `OK 6 fixture(s)`；
-- 重启桌面 App（它现在没在运行），重启后 `dsh plugin --profile desktop list` 必须列出 `dsh-remedy@0.4.2`；
-- 换完把「装机验收」那一行改成两个 profile 的实际版本，并记一次 `install-acceptance` 之外的读数来源。
-
-**发布之后仍要记住**：完整命令序列只在 `docs/PUBLISH.md`（`release-procedure` 判据会拦复述）；
-版本号读 404 四分钟是副本延迟，对已发布版本重发会回 409，两者都不是失败。
+- total 只剩 **15 B**：下一个补丁先按加载路径拆模块（P-0012 已经付过一次），或删散文，**不许抬 cap**；
+- 继任者可先做的小事：`awesome-dsh-plugin` 的 PR #15072 合并后核一次卡片（npm 安装行与 README 要等他们的 nightly 探针，push 构建不 probe）；
+- 行为上唯一还开着的窄口是 `BS-18` 的剩余部分（没有 `required` 声明的工具证明不了名字，P-0027 的 limits 写着）。
 
 **外部等待（不是待办）**：imsai catalog 巡检恢复（它自己的 #19）；dsh.so 维护者合并今天的提交；
 `awesome-dsh-plugin` #14942、dshopen #472、AllDSH #3 人工审。

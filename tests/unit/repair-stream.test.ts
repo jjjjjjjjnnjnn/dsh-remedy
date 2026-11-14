@@ -624,6 +624,43 @@ test('a synthesized identity never collides with an id already in the stream', a
   assert.ok(ids.includes('call_remedy_2'))
 })
 
+test('a thrown MALFORMED_RESPONSE that a refusal explained is counted once', async () => {
+  // The throw path takes the same P-0034 rule as the finish path, so the fix cannot
+  // be one-sided: an adapter that throws instead of finishing must not double-book.
+  async function* throwing(): AsyncGenerator<unknown> {
+    yield { type: 'block-start', index: 0, blockType: 'tool-call' }
+    yield { type: 'block-end', index: 0, block: { type: 'tool-call', id: 'call_bad', name: 'edit', arguments: '{"path":' } }
+    throw Object.assign(new Error('Unexpected end of JSON input'), { code: 'MALFORMED_RESPONSE' })
+  }
+  const monitor = new RemedyMonitor()
+  await assert.rejects(async () => {
+    for await (const _chunk of repairStream(throwing(), monitor)) {
+      // drain: the original failure must still be thrown, not swallowed
+    }
+  }, /Unexpected end of JSON input/)
+  assert.equal(monitor.counters().refused, 1, 'the refusal is booked once')
+  assert.equal(monitor.counters().errors, 0, 'the same failure is not also booked as an error')
+})
+
+test('a thrown MALFORMED_RESPONSE with no refusal is still an error', async () => {
+  // Negative control for the line above: the rule must not silence a thrown failure
+  // that nothing else on the ledger explains.
+  async function* throwing(): AsyncGenerator<unknown> {
+    yield { type: 'block-start', index: 0, blockType: 'reasoning' }
+    yield { type: 'block-end', index: 0, block: { type: 'reasoning', text: 'planning' } }
+    throw Object.assign(new Error('DeepSeek Messages stream: unsupported stop reason refusal'), {
+      code: 'MALFORMED_RESPONSE',
+    })
+  }
+  const monitor = new RemedyMonitor()
+  await assert.rejects(async () => {
+    for await (const _chunk of repairStream(throwing(), monitor)) {
+      // drain
+    }
+  }, /unsupported stop reason refusal/)
+  assert.equal(monitor.counters().errors, 1, 'a thrown failure nobody explained is an error')
+})
+
 test('a neutralized call does not withdraw a later proven fusion', async () => {
   const chunks: unknown[] = [
     { type: 'block-start', index: 0, blockType: 'tool-call' },
@@ -635,5 +672,51 @@ test('a neutralized call does not withdraw a later proven fusion', async () => {
   const { chunks: output, monitor } = await collect(fromChunks(chunks))
   assert.equal(output.filter((chunk) => chunk.type === 'block-end').length, 3, 'one neutralized block plus two split calls')
   assert.equal(monitor.counters().repaired, 1, 'the independent fusion is still repaired')
+})
+
+// --- P-0034 negative controls ------------------------------------------------
+
+test('a MALFORMED_RESPONSE with no tool-call evidence is an error, not a quiet stream', async () => {
+  // Measured upstream (deepseek-harness discussion #11337, deepseek-flash): a
+  // benign prompt produced a reasoning block, then the Messages stream closed with
+  // `stop_reason: refusal`, which the adapter reports as
+  //   finish{kind:'error', failure:{code:'MALFORMED_RESPONSE',
+  //          message:'DeepSeek Messages stream: unsupported stop reason refusal'}}
+  // and the turn dies. Before this patch the wrapper treated *every*
+  // MALFORMED_RESPONSE as "possibly fused arguments" (isFusionFailure reads the
+  // code alone) and so booked nothing: no `errors`, no `refused`. A turn that
+  // visibly failed left a journal that reads exactly like a healthy one.
+  const chunks: unknown[] = [
+    { type: 'block-start', index: 0, blockType: 'reasoning' },
+    { type: 'reasoning-delta', index: 0, text: 'the operator asked me to run the scheduled task' },
+    { type: 'block-end', index: 0, block: { type: 'reasoning', text: 'the operator asked me to run the scheduled task' } },
+    {
+      type: 'finish',
+      reason: {
+        kind: 'error',
+        failure: { code: 'MALFORMED_RESPONSE', message: 'DeepSeek Messages stream: unsupported stop reason refusal' },
+      },
+    },
+  ]
+  const { chunks: output, monitor } = await collect(fromChunks(chunks))
+  assert.deepEqual(output, chunks, 'nothing is repaired and nothing is rewritten')
+  assert.equal(monitor.counters().errors, 1, 'a failed stream must not be booked as a quiet one')
+  assert.equal(monitor.counters().fused, 0, 'no fusion was seen')
+  assert.equal(monitor.counters().refused, 0, 'nothing was refused')
+})
+
+test('a refusal that already explains the failure is not counted again as an error', async () => {
+  // The other half of the same decision: once a block-end refusal is on the ledger,
+  // the terminal MALFORMED_RESPONSE is the *same* failure, and two counts for one
+  // failure is the double-booking P-0030 removed from the repair counters.
+  const chunks: unknown[] = [
+    { type: 'block-start', index: 0, blockType: 'tool-call' },
+    { type: 'block-end', index: 0, block: { type: 'tool-call', id: 'call_bad', name: 'edit', arguments: '{"path":' } },
+    { type: 'finish', reason: { kind: 'error', failure: { code: 'MALFORMED_RESPONSE', message: 'fusion' } } },
+  ]
+  const { chunks: output, monitor } = await collect(fromChunks(chunks))
+  assert.deepEqual(output, chunks)
+  assert.equal(monitor.counters().refused, 1, 'the refusal is booked once')
+  assert.equal(monitor.counters().errors, 0, 'the refusal already explains this failure')
 })
 

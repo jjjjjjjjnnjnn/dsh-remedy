@@ -556,6 +556,36 @@
         "scripts/gate_size.mjs"
       ],
       "verified_at": "2026-11-14T16:02:00.000Z"
+    },
+    {
+      "id": "P-0034",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.9",
+      "evidence": [
+        "docs/patches/P-0034-unbooked-failure.md",
+        "packages/plugin/src/repair-stream.ts",
+        "tests/unit/repair-stream.test.ts"
+      ],
+      "guards": [
+        "tests/unit/repair-stream.test.ts",
+        "scripts/gate_size.mjs"
+      ]
+    },
+    {
+      "id": "P-0035",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.9",
+      "evidence": [
+        "docs/patches/P-0035-patch-row-resolution.md",
+        "packages/plugin/cordis.patch.yml",
+        "tests/governance/profile-patch-resolution.test.ts"
+      ],
+      "guards": [
+        "tests/governance/profile-patch-resolution.test.ts",
+        "scripts/gate_namespace.mjs"
+      ]
     }
   ]
 }

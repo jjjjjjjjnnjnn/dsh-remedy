@@ -3,6 +3,24 @@
 All notable changes to this project are documented here.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.4.9] - 2026-11-14
+### Fixed
+- A turn that failed with `MALFORMED_RESPONSE` is no longer booked as a quiet one (P-0034). `isFusionFailure` decides by the failure code alone, so every `MALFORMED_RESPONSE` inherited the fusion path's assumption that a refusal had already counted it. Upstream discussion #11337 shows the shape that exposed it: a benign prompt produced a reasoning block, the Messages stream then closed with `stop_reason: "refusal"`, the adapter raised `unsupported stop reason refusal` (upstream `stopReason()` accepts only `end_turn` / `stop_sequence` / `tool_use` / `max_tokens`), and the turn died while the journal recorded no error at all. Both failure exits now count an error unless a refusal at this seam already explained the failure. Nothing is repaired, retried or rewritten; the verdict vocabulary and the adapter are untouched.
+
+### Added
+- A patch-layer row can no longer promise a module nothing resolved (P-0035). Every `name:` in `cordis.patch.yml` is resolved against the package's `exports` and against the built file, with upstream discussion #12318 (a removed subpath export that reported `never started` and made every session resume fail) as the negative control. Three further controls cover the shipped row, an undeclared package, and a resolver that would otherwise pass everything. Zero runtime bytes.
+
+### Changed
+- Six leads closed with a written reason instead of a patch: L-0033 (empty tool-call identity, same shape as P-0033), L-0034 (the adapter replaces malformed arguments with `{}` before this seam can see them), L-0024 (`type:'json'` compiles to an untyped schema, which `valueFits` already treats as undecidable), and L-0036 stays `watching` because nothing here proves the host treats a finish-less stream as a success.
+
+### Package size
+- `dsh-remedy@0.4.9`: 39335 bytes compressed, 36 files, 125349 bytes unpacked (82877 of `dist/*.js`), shasum `24eaaaf51169adbfcb7d59add2340993dcc4a6ee`.
+- `dsh-remedy-core@0.4.9`: 40534 bytes compressed, 23 files, 130634 bytes unpacked (101313 of `dist/*.js`), shasum `f2b5593d588d9a06d31afa9e13c3d143c858b470`.
+
+### Notes
+- This release carries 35 patches: 4 `verified` and 31 `tested`.
+- Byte budget: residency 41515 of 44000, CLI 41362 of 42000, total 82877 of 83000 (123 bytes of headroom); engine 101313 of 104000, `registry.js` 67426 of 68000. No cap moved; P-0034's own bytes were paid by condensing comments in the file it changed.
+
 ## [0.4.8] - 2026-11-14
 ### Fixed
 - A tool call with no identity no longer poisons the session (P-0033). The adapter can end a stream with a block whose id and name are both empty (upstream discussion #13211); the plugin used to count the refusal and pass the block through, so the host wrote `tool/call` with an empty callId and the V4 log refused to resume the session on the matching result. The block is now rewritten in place with a traceable `call_remedy_N` id and the `remedy_unattributed` name: the runtime answers `UNKNOWN_TOOL`, the turn continues, and the session stays resumable. Nothing is repaired and nothing is retried, so the counter stays `refused`.

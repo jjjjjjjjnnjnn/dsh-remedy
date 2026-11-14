@@ -1,27 +1,46 @@
-## dsh-remedy 0.4.8
-
-### Fixed
-
-- **A tool call with no identity no longer poisons the session.** The adapter can end a stream with a block whose id and name are both empty (upstream discussion #13211). The plugin used to count the refusal and pass the block through, so the host wrote `tool/call` with an empty `callId` and the V4 log refused to resume the session on the matching result. The block is now rewritten in place: a traceable `call_remedy_N` id when the id is empty, and `remedy_unattributed` when the name is empty. The runtime answers `UNKNOWN_TOOL`, the turn continues, and the session stays resumable.
-- Measured on an isolated harness, with and without the plugin: without it the turn exits 1 with `format v4 tool/result at seq 18 requires toolCallId matching its tool source`; with it the assistant message carries `call_remedy_1 / remedy_unattributed`, the result cites that id, and the same session completes a second turn. The artifact is `data/results/live-empty-call-2026-11-14T16-02-00.000Z.json`.
+## dsh-remedy 0.4.9
 
 ### Added
 
-- A live probe for the empty-identity case: `scripts/record_empty_call_probe.mjs` runs an isolated `DSH_HOME` against a local OpenAI-compatible endpoint, with and without the plugin, and records both sessions, the journal and the resumed turn in one artifact.
+- **P-0035 — a patch-layer row can no longer promise a module nothing resolved.** Every `name:`
+  in `cordis.patch.yml` is resolved against the package's own `exports` and against the built
+  file. Upstream discussion #12318 is the negative control: a config that kept a removed subpath
+  export reported `never started`, and every session resume failed while the UI looked like
+  "one broken session". Four tests, three of them controls. Zero runtime bytes.
+
+### Fixed
+
+- **P-0034 — a turn that failed with `MALFORMED_RESPONSE` is no longer booked as a quiet one.**
+  `isFusionFailure` reads the failure *code*, and the finish path read that one answer as
+  "was this failure already counted?". So every `MALFORMED_RESPONSE` that had nothing to do with
+  arguments was booked as silence. Upstream discussion #11337 is the measured shape: a benign
+  prompt produced a reasoning block, the Messages stream closed with `stop_reason: "refusal"`,
+  the adapter raised `unsupported stop reason refusal`, the turn died — and the journal recorded
+  no error, no refusal, nothing. Both failure exits now count an error unless a refusal at this
+  seam already explained the failure; a refusal is still not counted twice.
 
 ### Changed
 
-- **The ledger stopped carrying the long form of every patch.** Each registry record repeated its patch document; the registry had 1697 bytes left against a record of 2107-2377 bytes. Eight of the longest records now keep one sentence per field and short limits, with the narrative staying in `docs/patches/`. `registry.js` fell from 66303 to 61509 bytes before the two new records, and the 68000-byte cap did not move.
-- Splitting the registry by seam was measured and rejected for payment: it moves the same bytes into other modules and still spends the same budget.
+- Six leads closed with a reason instead of a patch. L-0033 is the same empty-identity shape
+  P-0033 already fixes. L-0034 is out-of-seam: the adapter substitutes `{}` for malformed
+  arguments before this seam can see the original text. L-0024 needed no change, because
+  `type:'json'` compiles to an untyped schema and the attribution proof already treats an
+  undeclared type as undecidable. L-0036 stays `watching`: this machine measured six attempts
+  with no `finish` out of 9401, and nothing here proves the host treats such a stream as a
+  success.
 
 ### Package size
 
-- `dsh-remedy@0.4.8`: 39378 bytes compressed, 36 files, 125434 bytes unpacked (82872 of `dist/*.js`), shasum `6f42b442…`.
-- `dsh-remedy-core@0.4.8`: 39869 bytes compressed, 23 files, 128145 bytes unpacked (98824 of `dist/*.js`), shasum `2567629d…`.
+- `dsh-remedy@0.4.9`: 39335 bytes compressed, 36 files, 125349 bytes unpacked (82877 of
+  `dist/*.js`), shasum `24eaaaf51169adbfcb7d59add2340993dcc4a6ee`.
+- `dsh-remedy-core@0.4.9`: 40534 bytes compressed, 23 files, 130634 bytes unpacked (101313 of
+  `dist/*.js`), shasum `f2b5593d588d9a06d31afa9e13c3d143c858b470`.
 
 ### Notes
 
-- This release carries 33 patches: 4 `verified` and 29 `tested`.
-- Byte budget: residency 41510 of 44000, CLI 41362 of 42000, total 82872 of 83000 (128 bytes of headroom); engine 98824 of 104000, `registry.js` 64937 of 68000. No cap moved. Both unpacked totals are smaller than 0.4.7 even though two patches were added: one de-duplicated the ledger, the other paid its bytes by condensing comments.
-- The adapter that can emit an incomplete call is still not fixed; the plugin keeps the session usable and names what it refused. A call whose arguments parse to a non-object value is untouched.
-- Measured on DSH 0.2.2-rc.3 (Windows). The supported range is unchanged.
+- This release carries 35 patches: 4 `verified` and 31 `tested`.
+- Byte budget: residency 41515 of 44000, CLI 41362 of 42000, total 82877 of 83000 (123 bytes of
+  headroom); engine 101313 of 104000, `registry.js` 67426 of 68000. No cap moved.
+- P-0034 is `tested`, not `verified`: the reproduction is synthetic at the seam, built from the
+  chunk sequence the upstream report printed. What was read out of the shipped adapter is
+  `stopReason()` itself, not a live relay incident.

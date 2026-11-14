@@ -14,7 +14,10 @@
 | `PROJECT_RULES.md` | 硬规则（只读本机、失败即失败、证据由脚本产出） |
 | `docs/HANDOFF.md` | 交接：五分钟检查 / 当前批次 / 第一件事 / 坑 |
 | `docs/research/README.md` | 外部反馈 intake：来源、判据、四条约束、同类项目读法（R43 起） |
-| `docs/research/leads.md` | 首批 27 条 DSH discussion 线索（全部未复现）与下一步动作 |
+| `docs/research/leads.md` | 线索账本：31 条（27 条 DSH + 4 条 Reddit 摘要），带 `source_kind` / `read_depth` |
+| `docs/research/sources.md` | 七个来源的读法、频率、边界；Reddit 读不到正文的诚实规则 |
+| `docs/research/plan-0.4.9.md` | 社区面计划：来源 → 巡检 → 一条线索 → 一个补丁 |
+| `docs/research/community-2026-11-14.md` | 2026-11-14 的社区盘面事实底稿（star / issue / 下载 / Discussions） |
 
 ## 代码
 
@@ -111,6 +114,8 @@
 | `scripts/stress_repair.mjs` | 生成式压力（固定 seed）→ `stress-repair-*` |
 | `scripts/probe_withdrawn_reachability.mjs` | 实测 `withdrawn` 在本机是否可达 → `withdrawn-reachability-*` 产物 |
 | `scripts/sync_fixtures.mjs` | `prepack`：夹具进包 |
+| `scripts/collect_leads.mjs` | 一次社区巡检 → `intake-*` 产物（读不到的来源记 null，不记 0） |
+| `scripts/lib/intake.mjs` | 巡检的纯函数：`ok` / `unreadable` / 汇总 / 候选去重 |
 | `scripts/record_patch_registry.mjs` | 注册表快照 → `patch-registry-*` 产物 |
 | `audit/gate_ledger.json` | 门的清单与负对照 |
 | `audit/patch_ledger.json` | 补丁账本 |
@@ -148,8 +153,10 @@
 | `tests/unit/attribute.test.ts` | 归因三态：required / 闭合 schema / 声明类型，及「无法判定的关键字不产生拒绝」（P-0030） |
 | `tests/unit/preflight.test.ts` | reasoning effort 预检：9 例，全部取自本机数据 |
 | `tests/governance/budget-split.test.ts` | 预算的两份清单必须与真实模块图双向一致 |
+| `tests/unit/intake.test.ts` | 巡检记账：读不到的来源必须是 null 而不是 0 |
 | `tests/unit/agy-channel.test.ts` | 已退役通道的传输规则（P-0007 历史） |
 | `tests/governance/ledgers.test.ts` | 台账 / 六格披露行 / 唯一 SessionID / 快照一致 |
 | `tests/governance/public-copy.test.ts` | 对外文件 / 事实包 / 模板 / 元数据 |
+| `tests/governance/leads-shape.test.ts` | 线索账本的来源 / 读深 / 状态一致性（社区面） |
 | `tests/e2e/cli.test.ts` | 四条命令的退出码与产物 |
 | `tests/e2e/explain.test.ts` | `explain` 不造假：无输入就报 unknown、读 profile、输入不可读时退出 3 |

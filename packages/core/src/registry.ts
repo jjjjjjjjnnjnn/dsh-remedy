@@ -954,6 +954,52 @@ export const PATCHES: readonly PatchRecord[] = [
     ],
     failureClasses: [],
   },
+  {
+    id: 'P-0034',
+    title: 'A failed stream that no refusal explained was booked as a quiet one',
+    symptom:
+      'a turn ended with MALFORMED_RESPONSE and the journal booked nothing: no `errors`, no `refused`, no event (upstream #11337: a reasoning block, then "unsupported stop reason refusal", turn dies)',
+    rootCause:
+      '`isFusionFailure` reads the code alone, so every MALFORMED_RESPONSE inherited the fusion path\'s assumption that a refusal had already booked it',
+    surface: 'llm/stream',
+    status: 'tested',
+    severity: 'major',
+    evidence: [
+      'docs/patches/P-0034-unbooked-failure.md',
+      'packages/plugin/src/repair-stream.ts',
+      'tests/unit/repair-stream.test.ts',
+    ],
+    guards: ['tests/unit/repair-stream.test.ts', 'scripts/gate_size.mjs'],
+    limits: [
+      'the adapter is not fixed: `stopReason()` still rejects `refusal`, so the turn still ends; this seam names it',
+      'the verdict is untouched, so `quiet` still means the fusion defect was not seen',
+      'the reproduction is synthetic at the seam; the host half is the shipped `stopReason()` source',
+    ],
+    failureClasses: [],
+  },
+  {
+    id: 'P-0035',
+    title: 'A patch-layer row promised a module nothing resolved',
+    symptom:
+      'every `name:` in `cordis.patch.yml` promises an importable module and neither this repository nor the host checks before load time; #12318 shows the cost: `never started`, every resume fails',
+    rootCause:
+      'the namespace gate checked the shape of the rows but never resolved one against the exports it points into, so a rename in `src/` was only caught by a stranger installing the tarball',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'docs/patches/P-0035-patch-row-resolution.md',
+      'packages/plugin/cordis.patch.yml',
+      'tests/governance/profile-patch-resolution.test.ts',
+    ],
+    guards: ['tests/governance/profile-patch-resolution.test.ts', 'scripts/gate_namespace.mjs'],
+    limits: [
+      'it proves a row resolves against this manifest, not that the host loads it',
+      'a row naming another package is accepted when it is declared, which is not proof of its subpath',
+      'it runs in the test suite, not at load time; no live artifact is possible',
+    ],
+    failureClasses: [],
+  },
 ]
 
 /** Look up one patch by id. */

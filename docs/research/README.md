@@ -14,23 +14,18 @@
 - 不能复现的报告标 `unreproduced`，**不许**据此发补丁；可以据此写「诊断」类改动
   （P-0013 先例：先命名，不假装修）。
 
-## 1. 报告在哪里（2026-11-14 实查）
+## 1. 报告在哪里
 
-**最重要的一条：`deepseek-ai/deepseek-harness` 的 issue 是关闭的，只有 Discussions。**
-用 `search/issues` 查这个仓库会得到 0 条；不要因此得出「没有反馈」。
+**来源登记在 `sources.md`，每个来源的读法、频率和边界都写在那里。** 这里只保留两条判据：
 
-| 来源 | 怎么读 | 备注 |
-|---|---|---|
-| `deepseek-ai/deepseek-harness` Discussions | GraphQL：`repository(owner:"deepseek-ai", name:"deepseek-harness") { discussions(...) }`；关键词用 `search(type: DISCUSSION, query: "repo:... <term>")` | 分类 `General` / `Ideas` / `Q&A` / `Show Your Plugins!`；`MALFORMED`、`tool call`、`stream`、`JSON` 都有命中 |
-| 本机 census | `node packages/plugin/dist/cli.js scan ~/.dsh/sessions --json` | 外部报告的**镜像**：报告里的类如果本机也出现，优先级最高 |
-| dshopen（polang233/dsh-plugin-index） | issues / 收录条目 | 我们已被收录；维护者读过代码 |
-| awesome-dsh-plugin | issues / PR / 站点卡片 | 我们的条目已上线；描述与安装行可被它复核 |
-| imsai（awesome-deepseek-harness-plugins） | issues / 商店 API | 它的巡检停摆（#19）；不要重复提 PR |
-| AllDSH（alldsh/submissions） | issue 模板 | #3 仍 open |
-| dsh.so | 提交页 / artifact 页 | 0.4.7 已提交，等维护者合并 |
-| 社区市场 | `w2112515/dsh-plugin-marketplace`（#1 评分帖）、`AI-Scarlett/DSH-Store`（#148 自动更新报告） | 评论量大，适合扫「装了但坏了」的反馈 |
-| 同类项目代码 | `dsh-triage`（同级）、`ai-terminal-pet`、`dsh-remote-connect`、MCP/插件仓库 | 只读设计，不整段抄；见 §5 |
-| npm | `npm search dsh-plugin`、依赖我们的包 | 装到真实环境的路径最接近用户 |
+- `deepseek-ai/deepseek-harness` 的 issue 是关闭的，只有 Discussions；用 `search/issues` 会得到 0 条，
+  不要因此得出「没有反馈」。
+- 一件 2026-11-14 实测的小事：`fetch` 读 Reddit 会被 TLS 拒绝（`ECONNRESET`），
+  只有 `websearch` 摘要可用。所以 Reddit 线索一律 `read_depth: summary`，规则见 `sources.md` §2。
+
+一次巡检由 `scripts/collect_leads.mjs` 完成，产物是 `data/results/intake-<stamp>.json`；
+它不编辑 `leads.md`，只报"哪些来源答了、哪些没答、有几个候选还没进账本"。`README.md` 的 §0
+（报告不是证据）与 §3（线索到补丁的阶梯）不变。
 
 **用词建议**：`MALFORMED_RESPONSE`、`Unexpected non-whitespace character after JSON`、
 `tool input is invalid JSON`、`parallel tool calls`、`stream index`、`STREAM_CLOSED`、
@@ -108,8 +103,10 @@
 
 ## 6. 下一会话的第一件事
 
-1. 读 `docs/research/leads.md` 的 A 表 **decision 列**：L-0001 已结案为 P-0001 的 dup，
-   L-0002 已由 P-0033 覆盖；下一条从 L-0003 / L-0004 / L-0009 里选一条在本机复现；
-2. 复现成功 → 夹具 + 先红测试 + P-0034 起；
+1. 读 `docs/research/leads.md` 的 **F 表**（R45/R46 新读的五条）与 A 表 decision 列：
+   L-0032 已由 P-0034 覆盖，L-0033 / L-0034 / L-0024 已结案，L-0035 已由 P-0035 覆盖，
+   L-0036 是 `watching`（缺一个脚本化 provider 的实测）；下一条从 L-0003 / L-0004 / L-0009 里选；
+2. 复现成功 → 夹具 + 先红测试 + `P-0036` 起（编号只前进，不复用）；
 3. 复现失败 → 标 `unreproduced`，写清版本差异，换下一条；
-4. 动运行时字节前先付账：压散文或去重，**不抬 cap**（P-0032 的先例）。
+4. 动运行时字节前先付账：压散文或去重，**不抬 cap**（P-0032 的先例）。当前的余量：
+   plugin **123 B**、core **2 687 B**、registry **574 B**。

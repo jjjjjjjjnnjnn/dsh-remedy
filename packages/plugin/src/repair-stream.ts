@@ -1,9 +1,8 @@
 /**
- * The `llm/stream` repair wrapper. Measured ordering (session 9045e2ec, seq 524):
+ * The `llm/stream` repair wrapper. Measured order (session 9045e2ec, seq 524):
  * `block-start` → `tool-call-delta`* → `usage` → `finish{kind:'error'}`, no
- * `block-end` for the fused call — so the repair point is the terminal finish (the
- * throw path is handled too). DSH 0.2.2-rc.3 closes the first block itself and
- * leaves the surplus object to that same finish.
+ * `block-end` for the fused call, so the terminal finish is the repair point
+ * (throw path too); rc.3 closes the first block itself.
  *
  * Refusals: no unproven success; no `max-tokens` repair; no unnamed dispatch; no
  * commit while a later block could still reject; no dropped `replayState`.
@@ -59,7 +58,7 @@ function ceilingOf(options: RepairStreamOptions): number {
 }
 
 /** Sent when a fragment's name cannot be proven (P-0027); the runtime answers
- * `UNKNOWN_TOOL` and continues (measured 0.2.2-rc.3). */
+ * `UNKNOWN_TOOL` and continues (measured rc.3). */
 export const UNATTRIBUTED_NAME = 'remedy_unattributed'
 
 /** Core owns the proof (P-0030); this side finds the declaration. */
@@ -97,6 +96,8 @@ export async function* repairStream(
   let blockRejected = false
   let withdrawing: 'rejected' | 'truncated' | null = null
   let nameConflict = false
+  /** True once a refusal already accounts for this stream's failure (P-0034). */
+  let refusedHere = false
 
   const track = (index: number): void => {
     if (index > highestIndex) highestIndex = index
@@ -178,12 +179,12 @@ export async function* repairStream(
         { truncated, maxCalls: remaining() - planned, existingIds: seenIds },
       )
       if (result.status === 'rejected') {
+        refusedHere = true
         monitor.recordRejected(candidate.call.name, id, result.code, result.detail)
-        // One candidate was already proven splittable, but the all-or-nothing rule
-        // drops the whole rescue. The proof is real (a fusion was seen), the calls
-        // are never dispatched, so this is the one place that books `unrepaired`.
-        // `recordRejected` above books only the *refused candidate*, never this
-        // proven one, so the two counts name two different candidates.
+        // One candidate was already proven splittable and the all-or-nothing rule
+        // drops the rescue: the proof is real, no call dispatched, so this is the
+        // one place that books `unrepaired`. The refusal above names the refused
+        // candidate, so the two counts never name the same one.
         if (fusedSeen && proven !== null) {
           monitor.recordAbandoned(
             proven.name,
@@ -275,9 +276,9 @@ export async function* repairStream(
     for (const entry of blocks) {
       if (entry.resealed !== undefined) {
         if (withdrawing !== null) {
-          // The rewrite was proven and then given back. Nothing was dispatched,
-          // so `withdrawn` alone carries it: booking `fused` would claim a second
-          // call existed, and booking `unrepaired` would claim bytes were lost.
+          // The rewrite was proven and then given back. Nothing was dispatched, so
+          // `withdrawn` alone carries it: `fused` would claim a second call existed,
+          // and `unrepaired` would claim bytes were lost.
           if (withdrawing === 'rejected') {
             monitor.recordRejected(
               entry.resealed.tool,
@@ -355,6 +356,7 @@ export async function* repairStream(
           if (typeof chunk.name === 'string' && chunk.name !== '') {
             if (call.name !== '' && call.name !== chunk.name) {
               nameConflict = true
+              refusedHere = true
               monitor.recordRejected(
                 call.name,
                 call.id,
@@ -406,10 +408,9 @@ export async function* repairStream(
                 chunks.push({ type: 'block-start', index, blockType: 'tool-call' })
                 chunks.push(closeCall(index, call))
               }
-              // A reseal (P-0005) rewrites the one call in place: it keeps this
-              // block's index and id, synthesizes nothing, and must not consume
-              // the stream-wide call budget. It is booked as `resealed`, never as
-              // a fusion, because no second call existed.
+              // A reseal (P-0005) rewrites the one call in place: same index and id,
+              // no synthesized call, no budget. Booked as `resealed`, never as a
+              // fusion, because no second call existed.
               if (result.code === 'resealed') {
                 hold({
                   original: chunk,
@@ -428,10 +429,11 @@ export async function* repairStream(
                 spent: result.calls.length,
               })
             } else if (result.status === 'rejected') {
+              refusedHere = true
               monitor.recordRejected(chunk.block.name, chunk.block.id, result.code, result.detail)
-              // P-0033: no identity means no dispatch and no resumable log — the runtime
-              // persists an empty callId and V4 then refuses to resume (#13211). Send it
-              // under the refusal name with a traceable id: UNKNOWN_TOOL, turn continues.
+              // P-0033: an empty id/name is persisted and V4 then refuses to resume
+              // (#13211). Send it under the refusal name with a traceable id:
+              // UNKNOWN_TOOL, turn continues.
               if (result.code === 'missing-id' || result.code === 'missing-name') {
                 const id = chunk.block.id.trim() === '' ? syntheticId() : chunk.block.id
                 const name = chunk.block.name.trim() === '' ? UNATTRIBUTED_NAME : chunk.block.name
@@ -475,10 +477,10 @@ export async function* repairStream(
               yield stopFinish(chunk.replayState)
               return
             }
-            // A failure that passed through is still an observed error: the journal
-            // must not report zero errors for a stream that failed. A fusion failure
-            // that was refused is already counted as a rejection, not as an error.
-            if (!isFusionFailure(chunk.reason.failure)) monitor.recordError()
+            // A passed-through failure is still an error: the journal must never report
+            // zero for a stream that failed. A refusal that already explained this
+            // failure is not counted twice (P-0034).
+            if (!(refusedHere && isFusionFailure(chunk.reason.failure))) monitor.recordError()
           }
           yield chunk
           return
@@ -503,7 +505,8 @@ export async function* repairStream(
     }
     const plan = blockEndsSeen > 0 ? null : planRescue(failure)
     if (plan === null) {
-      monitor.recordError()
+      // One failure, one count (P-0034), same as the finish path.
+      if (!(refusedHere && isFusionFailure(failure))) monitor.recordError()
       yield* flushPending()
       throw error
     }
@@ -513,8 +516,8 @@ export async function* repairStream(
     const abandonedRepairs = pending.filter((entry) => entry.repaired !== null).length
     const abandonedOpen = open.size
     if (!finished && !failed && !exhausted && (abandonedOpen > 0 || abandonedRepairs > 0 || pending.length > 0)) {
-      // The consumer stopped reading before any finish: the held tail and buffered calls
-      // were abandoned, so this stream must not be reported as quiet.
+      // The consumer stopped reading before any finish, so the held tail and the
+      // buffered calls were abandoned: this stream must not read quiet.
       monitor.recordRejected(
         '<abandoned>',
         '',

@@ -794,6 +794,40 @@
         "data/results/live-empty-call-2026-11-14T16-02-00.000Z.json",
         "tests/unit/repair-stream.test.ts"
       ]
+    },
+    {
+      "id": "S45",
+      "gate": "size",
+      "title": "A failed turn the journal described as a quiet one",
+      "axes": {
+        "correctness": "The finish path and the throw path now book an error unless a refusal at this seam already explains the failure. `refusedHere` is set in the three places that call recordRejected for an argument refusal (name-changed, the finish rescue, the block-end path), so two counts never describe one failure. Four tests in tests/unit/repair-stream.test.ts pin it; the two that matter were red first: the #11337 shape booked errors=0, and the throw path booked errors=1 on top of refused=1.",
+        "reproducibility": "The shape is the one upstream printed in discussion #11337 (2026-10-28, deepseek-flash): a reasoning block, an optional block-end for it, then finish{kind:'error'} whose message is \"DeepSeek Messages stream: unsupported stop reason refusal\" with code MALFORMED_RESPONSE. The host half is quoted from the shipped adapter, not inferred: app.asar -> @deepseek-ai/dsh-llm-deepseek/lib/index.js, function stopReason(), which accepts end_turn/stop_sequence/tool_use/max_tokens and calls malformed() for anything else. The test builds that chunk sequence from literals, so no relay is needed.",
+        "compliance": "Nothing is repaired, retried or rewritten: the patch only writes down a fact the stream carried. The byte cost was paid: repair-stream.js grew by the new flag and two conditions, and five comment blocks in the same file were tightened with their facts intact. Final emit 82 877 of 83 000 (residency 41 515 of 44 000, CLI 41 362 of 42 000); the registry record is compact per P-0032. No cap moved and no new module appeared.",
+        "ssot": "One flag read at both failure exits, instead of two notions of \"already counted\". The limits say out loud what is not proven (synthetic reproduction, adapter untouched, verdict unchanged), and the patch doc carries the long form the compact registry record no longer repeats.",
+        "adversarial": "The adversary is the project's own habit: a counter that only moves for the defect the patch likes. isFusionFailure answered \"is this MALFORMED\" and was read as \"was this booked\"; the same class of mistake produced BS-12 and P-0030. The guard is symmetric on purpose: one test proves a thrown unexplained failure is still an error, another proves a refusal is not counted twice."
+      },
+      "evidence": [
+        "docs/patches/P-0034-unbooked-failure.md",
+        "packages/plugin/src/repair-stream.ts",
+        "tests/unit/repair-stream.test.ts"
+      ]
+    },
+    {
+      "id": "S46",
+      "gate": "namespace",
+      "title": "A patch-layer row that promised a module nobody resolved",
+      "axes": {
+        "correctness": "Every row name in packages/plugin/cordis.patch.yml is resolved against the package's exports map, and the file the export points at must exist in dist. Four tests, three of them negative controls: the #12318 row (a removed subpath export) must fail with the export message, its main-entry replacement must pass, an undeclared package must be refused before the host says \"never started\", and the shipped row must keep naming the bare package.",
+        "reproducibility": "The upstream failure is quoted from discussion #12318 (0.2.2-rc.1): a config row naming @deepseek-ai/dsh-tool-subagent-control/list-agents after that subpath was removed, reported as \"never started\", with every session resume failing. The resolver is exercised on that exact row and on a manifest shaped like the upstream package's exports.",
+        "compliance": "Zero runtime bytes: the patch only adds a governance test, and the tarball is unchanged. It reads the repository's own manifests instead of guessing, and it adds no dependency (node:fs and node:test only), so the gate stays zero-dependency.",
+        "ssot": "The exports map is the one promise a row makes, and the test reads it rather than restating it; tests/unit/package-files.test.ts already pins the same map on the other side (a subpath must have a source module), so the two checks meet at one manifest.",
+        "adversarial": "The vacuous-checker trap is the whole risk: a resolver that answers \"fine\" for every input passes the first test. That is why the negative control feeds the same function the known-bad upstream row, and why the first draft, which compared the quoted YAML scalar, was caught by it and fixed."
+      },
+      "evidence": [
+        "docs/patches/P-0035-patch-row-resolution.md",
+        "packages/plugin/cordis.patch.yml",
+        "tests/governance/profile-patch-resolution.test.ts"
+      ]
     }
   ],
   "updated_at": "2026-11-14T16:05:00.000Z"

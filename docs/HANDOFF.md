@@ -132,6 +132,9 @@ git -C .. log --oneline -3
   0.4.7 的 release notes 冻成 `release-notes-047-frozen`。`market-index.json` 与它的测试 pin 一起翻到 0.4.8
   （`publishTimestamp` 1794672443，实测自 `npm view dsh-remedy time`）。
 
+- 公开仓推到 `e97ca40`（tree 与容器 `main:dsh-remedy` 相同），CI 在 tag 与 main 上都 **success**；
+  GitHub release `v0.4.8` 的正文与 `docs/copy/release-notes/v0.4.8.md` 逐字节一致（读回 2830 B）。
+
 - 仍未做：适配器边界回放（L-0001 的可选动作）、社区面扩展（Reddit / DSH Store / 市场评论，下一版）；
   dsh.so 仍停在 0.4.7 的提交、等合并。
 

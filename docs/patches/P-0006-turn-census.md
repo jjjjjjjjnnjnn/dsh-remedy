@@ -12,7 +12,7 @@ turns". Every other way a turn can end is invisible. On this host that means the
 tool reports one number out of four:
 
 ```
-$ node packages/plugin/dist/cli.js scan "C:/Users/rongj/.dsh/sessions" --json
+$ node packages/plugin/dist/cli.js scan "<home>/.dsh/sessions" --json
 attempts=358 fused_calls=38 fusion_failures=44 repairable=39 unreadable_lines=0
 ```
 
@@ -129,7 +129,7 @@ census into a finding.
 
 ```
 # The gap, on this host, before the patch:
-node packages/plugin/dist/cli.js scan "C:/Users/rongj/.dsh/sessions" --json
+node packages/plugin/dist/cli.js scan "<home>/.dsh/sessions" --json
 #   -> fusion_failures 44, and nothing about the other 243 turns
 
 # The census, read straight off the events:

@@ -8,7 +8,7 @@
 
 [中文说明](README.zh-CN.md)
 
-dsh-remedy is a patch set for DeepSeek Harness (DSH) — twenty-seven defects, each registered with the seam it touches, the symptom it removes, the mechanism that was measured, and the limits it does not cross. Two of those seams are resident (`llm/stream` and `agent/request-error`); the rest are the CLI, the build side, and one seam that has been measured but deliberately not mounted.
+dsh-remedy is a patch set for DeepSeek Harness (DSH) — twenty-eight defects, each registered with the seam it touches, the symptom it removes, the mechanism that was measured, and the limits it does not cross. Two of those seams are resident (`llm/stream` and `agent/request-error`); the rest are the CLI, the build side, and one seam that has been measured but deliberately not mounted.
 
 ## What it fixes
 
@@ -40,7 +40,7 @@ The registry is the single source: `packages/core/src/registry.ts` for the claim
 | build side | P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019, P-0020, P-0021, P-0022, P-0023, P-0024, P-0026 | a copy channel that can name its failures; a byte budget a script checks; one cap per load path; the project's own description must be true; the two npm pages; a Windows exit code is not a registry answer; the outward pages described a project that had stopped existing; a listing that pins git bytes while advertising a registry version; an export that named a module that never existed; a drift test that repaired the drift; a doc rule no gate read; the two package pages finally inside the copy channel; the release procedure had two homes |
 | measured, not mounted | P-0015 | what a rejected `agent/pre-step` decision does, so a later patch can use that seam on measured ground |
 
-Three patches are `verified`: a real host ran them and left a `data/results/live-*` artifact. The other twenty-four are `tested`: unit tests, a negative control and a measured fixture, scan or corpus, but nothing a resident journal can witness. The status section below names which is which.
+Three patches are `verified`: a real host ran them and left a `data/results/live-*` artifact. The other twenty-five are `tested`: unit tests, a negative control and a measured fixture, scan or corpus, but nothing a resident journal can witness. The status section below names which is which.
 
 ## Install
 
@@ -197,8 +197,8 @@ The whole `MALFORMED_RESPONSE` corpus on one machine was replayed through the bu
 
 Three patches are `verified` on a real host: P-0001 on a headless profile and on the desktop app, P-0002 on a 2026-11-10 headless run that repaired a real two-call fusion and saw the synthesized call dispatched, and P-0003 on a 2026-11-10 headless run whose journal wrote a non-zero `refused` after the code declined to repair a budget refusal.
 
-The other twenty-four are `tested`, not `verified`. Each carries unit tests, a negative control and a measured artifact where one exists: P-0004, P-0006 and P-0009 change an offline reader; P-0005 has no live bare-value shape yet; P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019, P-0020, P-0024 and P-0026 are build-side; P-0010, P-0016 and P-0025 change text a command prints; P-0011 and P-0013 sit on a seam a live journal witnesses only when a turn fails in a class this plugin retries, which the default budget of 0 never triggers; and P-0015 is a measurement on an isolated profile rather than a mount.
-Release status: `0.4.4` is published and is the registry `latest` for both `dsh-remedy` and `dsh-remedy-core`; it carries twenty-seven patches and is measured on **DSH 0.2.2-rc.3**. A cold directory installed 0.4.4 from the registry and `dsh-remedy verify` printed `OK 6 fixture(s)`. The previous release is `0.4.3` with twenty-six patches, `0.4.2` with twenty-six, `0.4.1` with twenty-three, and `0.4.0` with twenty.
+The other twenty-five are `tested`, not `verified`. Each carries unit tests, a negative control and a measured artifact where one exists: P-0004, P-0006 and P-0009 change an offline reader; P-0005 has no live bare-value shape yet; P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019, P-0020, P-0024 and P-0026 are build-side; P-0010, P-0016 and P-0025 change text a command prints; P-0011 and P-0013 sit on a seam a live journal witnesses only when a turn fails in a class this plugin retries, which the default budget of 0 never triggers; and P-0015 is a measurement on an isolated profile rather than a mount.
+Release status: `0.4.5` is published and is the registry `latest` for both `dsh-remedy` and `dsh-remedy-core`; it carries twenty-eight patches and is measured on **DSH 0.2.2-rc.3**. A cold directory installed 0.4.5 from the registry and `dsh-remedy verify` printed `OK 6 fixture(s)`. The previous release is `0.4.4` with twenty-seven patches, `0.4.3` with twenty-six, `0.4.2` with twenty-six, and `0.4.1` with twenty-three.
 
 Package sizes:
 

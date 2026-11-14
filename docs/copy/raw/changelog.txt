@@ -3,6 +3,19 @@
 All notable changes to this project are documented here.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.4.5] - 2026-11-14
+### Fixed
+- The packaged fixtures no longer carry this machine's home path. `fixtures/toolcall-fusion/session-9045e2ec-seq-526.json` quotes the shell command a real session ran, and that command began with the account's workspace; every tarball since the first release shipped it. The account segment is now `<home>`, the same placeholder the redactor writes, and the fixture's own note says the file is no longer a byte-for-byte copy. Reported by the dshopen maintainer while accepting the plugin (polang233/dsh-plugin-index#472).
+- `scripts/record_adaptation.mjs` redacts the runtime path it records. The public repository also stops naming the account in six patch docs, the handoff, one step review and one artifact.
+
+### Added
+- `tests/governance/shipped-samples.test.ts`: no file that ships in a tarball, and no page npm renders, may contain an absolute `…:/Users/<name>` segment. It walks the canonical and packaged fixture directories plus the outward pages, and it carries an injected sample so a regex typo fails instead of passing quietly.
+
+### Notes
+- This release carries 28 patches: 3 `verified` and 25 `tested`.
+- The fixture is no longer byte-identical to the session it came from. That claim is what let the path survive six releases, so the note now states the redaction instead of the purity.
+- Redaction still happens where data is produced; what changed is that the corpus it was produced into is now checked on the way out.
+
 ## [0.4.4] - 2026-11-13
 ### Fixed
 - A fused text that glues two calls of **different** tools no longer runs the wrong tool. The stream carries one tool name for that index, so the fragments after the first inherited it; measured twice on DSH 0.2.2-rc.3, the surplus object was dispatched as `read` and the tool answered `invalid arguments: missing required property "file_path"`. The wrapper now receives the request's tool declarations and checks each synthesized fragment against the named tool's `required` fields; one that does not fit goes out as `remedy_unattributed`, which the runtime answers with `UNKNOWN_TOOL` while the turn continues. The `repaired` event records `unattributed: <n>`.

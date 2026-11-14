@@ -8,7 +8,7 @@ A windowed scan over a real session directory reported one unreadable line per
 file it read:
 
 ```
-$ node packages/plugin/dist/cli.js scan "C:/Users/rongj/.dsh/sessions" --since 2026-11-11T00:00:00Z
+$ node packages/plugin/dist/cli.js scan "<home>/.dsh/sessions" --since 2026-11-11T00:00:00Z
 files=78
 attempts=67 fused_calls=0 fusion_failures=0 repairable=0 unreadable_lines=78
 before_since=156131
@@ -104,7 +104,7 @@ to. Only the header has one.
 pnpm run build
 node --test tests/unit/session-scan.test.ts     # 16 pass
 node --test tests/e2e/cli.test.ts               # 14 pass
-node packages/plugin/dist/cli.js scan "C:/Users/rongj/.dsh/sessions" --since 2026-11-11T00:00:00Z
+node packages/plugin/dist/cli.js scan "<home>/.dsh/sessions" --since 2026-11-11T00:00:00Z
 # before: unreadable_lines=78   after: unreadable_lines=0
 ```
 

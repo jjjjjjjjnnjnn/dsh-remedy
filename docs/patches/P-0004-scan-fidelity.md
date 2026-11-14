@@ -17,7 +17,7 @@ Two symptoms, one command:
    was **not** broken; it was handed the compressed bytes as text.
 2. Every artifact that cited a session file carried the account name:
    `data/results/live-2026-11-10T14-45-00.000Z.json:57` still held
-   `C:/Users/rongj/.dsh/sessions/--C-Users-rongj-Desktop-…--/session-…`. The
+   `<home>/.dsh/sessions/--<home-encoded>-Desktop-…--/session-…`. The
    redactor matched only `C:\Users\<name>` with a single backslash.
 
 Both were found while promoting P-0003, not while building it: the evidence
@@ -37,9 +37,9 @@ could not see.
   not call it.
 - `packages/core/src/redact.ts` `windows-home` was
   `/\b[A-Za-z]:\\Users\\[^\\\s"']+/`, which cannot match an escaped path
-  (`C:\\Users\\rongj` inside JSON) or a slashed one (`C:/Users/rongj` in a file
+  (`C:\\Users\\rongj` inside JSON) or a slashed one (`<home>` in a file
   URL), and a DSH session directory encodes the home path with `-` separators
-  (`--C-Users-rongj-Desktop-…--`) so no path separator survives at all.
+  (`--<home-encoded>-Desktop-…--`) so no path separator survives at all.
 
 ## Counter-evidence (what stays broken on purpose)
 
@@ -90,8 +90,8 @@ could not see.
 
 ```powershell
 pnpm run build
-node packages/plugin/dist/cli.js scan "C:/Users/rongj/.dsh/sessions/--C-Users-rongj-Desktop-…--/session-949e359c-…/session.v4.jsonl.zstd"
-node packages/plugin/dist/cli.js scan "C:/Users/rongj/.dsh/sessions" --out .tmp/scan-all.json
+node packages/plugin/dist/cli.js scan "<home>/.dsh/sessions/--<home-encoded>-Desktop-…--/session-949e359c-…/session.v4.jsonl.zstd"
+node packages/plugin/dist/cli.js scan "<home>/.dsh/sessions" --out .tmp/scan-all.json
 node scripts/redact_artifacts.mjs
 node --test --test-reporter=spec tests/e2e/cli.test.ts tests/unit/session-scan.test.ts tests/unit/redact.test.ts
 ```

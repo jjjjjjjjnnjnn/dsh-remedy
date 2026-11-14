@@ -782,6 +782,33 @@ export const PATCHES: readonly PatchRecord[] = [
     ],
     failureClasses: [],
   },
+  {
+    id: 'P-0028',
+    title: 'A published sample carried this machine\'s home path',
+    symptom:
+      'every tarball since 0.1.0 shipped data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json with the real workspace path inside the fused arguments (cd "C:/Users/<account>/Desktop/…"), and the public repository carried the same account name in six patch docs and one evidence artifact. Reported by the dshopen maintainer on 2026-11-14 (issue #472): "发布样例里有本机路径"',
+    rootCause:
+      'redaction was wired into the artifact writers (record_*.mjs, scan --out, the journal) and never into the fixture corpus. P-0004 fixed the three shapes a home path reaches an artifact in, but it fixed the reader, not the files that were already tracked: a fixture is quoted evidence, so nobody treated it as outbound text. The rule lived where the data was produced, not where it leaves the machine',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json',
+      'tests/governance/shipped-samples.test.ts',
+      'scripts/record_adaptation.mjs',
+    ],
+    guards: [
+      'tests/governance/shipped-samples.test.ts',
+      'packages/core/src/redact.ts',
+    ],
+    limits: [
+      'the fixture now carries <home> instead of the account name, so it is no longer a byte-for-byte copy of the session; its note says so, and the JSON shape it exists for is untouched',
+      'the new rule scans the shipped set (fixtures, package pages, the fact pack, the root pages) and forbids an absolute Users/ segment; a path smuggled in another shape — an encoded directory, a POSIX home — is caught only by the P-0004 redactor, not by this test',
+      'docs and evidence artifacts were rewritten in place; their stamps are unchanged, so this is a redaction repair rather than a re-measurement',
+      'no live artifact is possible: this is a corpus and channel fix, not a resident seam',
+    ],
+    failureClasses: [],
+  },
 ]
 
 /** Look up one patch by id. */

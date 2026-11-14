@@ -117,7 +117,7 @@ exactly as asked, so a caller can print the truth instead of quietly rewriting i
 node --test tests/unit/preflight.test.ts        # 9 cases, all from the host's own data
 node --test tests/unit/request-error.test.ts    # naming once per (step, code)
 node packages/plugin/dist/cli.js explain \
-  --sessions "C:/Users/rongj/.dsh/sessions" \
-  --profile-file "C:/Users/rongj/.dsh/profiles/remedy-live/cordis.patch.yml"
+  --sessions "<home>/.dsh/sessions" \
+  --profile-file "<home>/.dsh/profiles/remedy-live/cordis.patch.yml"
 # UNSUPPORTED_REASONING_EFFORT  37  covered by P-0013  enabled here P-0013
 ```

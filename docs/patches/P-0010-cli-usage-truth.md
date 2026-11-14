@@ -15,7 +15,7 @@ Both omit the directory form, `--since` and `--max-files`, all of which P-0004
 shipped in 0.3.3:
 
 ```
-$ node packages/plugin/dist/cli.js scan "C:/Users/rongj/.dsh/sessions" --since 2026-11-11T00:00:00Z
+$ node packages/plugin/dist/cli.js scan "<home>/.dsh/sessions" --since 2026-11-11T00:00:00Z
 files=78
 attempts=68 fused_calls=0 fusion_failures=0 repairable=0 unreadable_lines=0
 turns=13 completed=5 max_tokens=2 aborted=3 error=3

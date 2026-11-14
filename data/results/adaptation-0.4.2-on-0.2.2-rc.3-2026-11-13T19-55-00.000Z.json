@@ -5,7 +5,7 @@
   "home": ".tmp/adapt-rc3-home",
   "runtime": {
     "version": "0.2.2-rc.3",
-    "source": "C:/Users/rongj/AppData/Local/Programs/DeepSeek Harness/resources/runtime/primary-runtime/runtime.json"
+    "source": "<home>/AppData/Local/Programs/DeepSeek Harness/resources/runtime/primary-runtime/runtime.json"
   },
   "plugin": {
     "profile": "adapt-rc3",

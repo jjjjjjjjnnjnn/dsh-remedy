@@ -1,10 +1,10 @@
 {
   "name": "session-9045e2ec-seq-526",
   "source": "DSH session 9045e2ec: assistant/attempt seq=524 (turn 3, step 15), turn/end seq=526",
-  "note": "real fused tool call: an ops_bash command object glued to a read object; arguments are the exact joined delta text",
+  "note": "real fused tool call: an ops_bash command object glued to a read object; the arguments are the exact joined delta text, with the home path replaced by <home> so the published fixture carries no account name (P-0028)",
   "tool": "ops_bash",
   "call_id": "call_00_rqvhmll81umeeb6l2hoz3hka",
-  "arguments": "{\"command\": \"cd \\\"C:/Users/rongj/Desktop/项目开发/DSH-Addition\\\" && ls scripts/lib/\", \"description\": \"List scripts/lib modules\"}{\"path\": \"data/results/remedy-probe-2026-11-05T08-37-27-222Z.json.sha256\"}",
+  "arguments": "{\"command\": \"cd \\\"<home>/Desktop/项目开发/DSH-Addition\\\" && ls scripts/lib/\", \"description\": \"List scripts/lib modules\"}{\"path\": \"data/results/remedy-probe-2026-11-05T08-37-27-222Z.json.sha256\"}",
   "expect": {
     "status": "repaired",
     "fragments": 2

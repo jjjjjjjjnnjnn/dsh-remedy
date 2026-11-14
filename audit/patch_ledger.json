@@ -456,6 +456,21 @@
         "tests/unit/attribution.test.ts",
         "packages/plugin/src/repair-stream.ts"
       ]
+    },
+    {
+      "id": "P-0028",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.5",
+      "evidence": [
+        "data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json",
+        "tests/governance/shipped-samples.test.ts",
+        "scripts/record_adaptation.mjs"
+      ],
+      "guards": [
+        "tests/governance/shipped-samples.test.ts",
+        "packages/core/src/redact.ts"
+      ]
     }
   ]
 }

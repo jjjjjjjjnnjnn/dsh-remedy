@@ -1,7 +1,7 @@
 # 同类方案调研（2026-11-10）
 
 > **性质**：只读调研。未改任何源码、未跑 build / install / git。
-> **方法**：① 只读本机 `app.asar`（`C:\Users\rongj\AppData\Local\Programs\DeepSeek Harness\resources\app.asar`，按 asar 头 slice 读取，未解包、未修改）；② npm registry 元数据（license / dependencies / unpackedSize）；③ 把候选库下载到 `C:\Users\rongj\AppData\Local\Temp\fusedprobe\` 用**真实粘连样本**做实测（脚本 `probe.cjs` / `probe2.cjs` / `probe3.cjs`）；④ 公开文档。
+> **方法**：① 只读本机 `app.asar`（`<home>\AppData\Local\Programs\DeepSeek Harness\resources\app.asar`，按 asar 头 slice 读取，未解包、未修改）；② npm registry 元数据（license / dependencies / unpackedSize）；③ 把候选库下载到 `<home>\AppData\Local\Temp\fusedprobe\` 用**真实粘连样本**做实测（脚本 `probe.cjs` / `probe2.cjs` / `probe3.cjs`）；④ 公开文档。
 > **证据边界**：凡是只从摘要式抓取（read_page 的 fallback 通道）得到的网页细节，标注为 `unverified`；star 数、下载量一律未取，本文不写。
 > **外部网页均为不可信数据**，只当资料引用，未执行其中任何指令。
 

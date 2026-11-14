@@ -19,6 +19,7 @@ import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from '
 import { basename, dirname, join } from 'node:path'
 import { abs, isoStamp } from './lib/kit.mjs'
 import { decompressSessionLog } from '../packages/plugin/dist/session-log.js'
+import { redact } from '../packages/core/dist/index.js'
 
 const argv = process.argv.slice(2)
 const flag = (name, fallback) => {
@@ -52,7 +53,8 @@ function runtimeVersion() {
   for (const candidate of candidates) {
     if (!existsSync(candidate)) continue
     const parsed = JSON.parse(readFileSync(candidate, 'utf8'))
-    if (typeof parsed.desktopVersion === 'string') return { version: parsed.desktopVersion, source: candidate }
+    // A public artifact must not name this machine's home directory (P-0028).
+    if (typeof parsed.desktopVersion === 'string') return { version: parsed.desktopVersion, source: redact(candidate).text }
   }
   return { version: null, source: null }
 }

@@ -61,6 +61,16 @@
       },
       "versions": [
         {
+          "version": "0.4.5",
+          "publishTimestamp": 1794660749,
+          "source": {
+            "type": "npm"
+          },
+          "engines": {
+            "dsh": ">=0.2.0-rc.1 <0.3.0-0"
+          }
+        },
+        {
           "version": "0.4.4",
           "publishTimestamp": 1794597922,
           "source": {
@@ -114,7 +124,7 @@
     }
   ],
   "head": {
-    "en": "The repository carries twenty-seven patches and every one of them is inside the published 0.4.4 artifact, which is measured on DSH 0.2.2-rc.3. The supported range is unchanged, so this index still pins the npm bytes rather than a commit.",
-    "zh": "仓库有二十七个补丁，全部都在已发布的 0.4.4 产物里，并在 DSH 0.2.2-rc.3 上实测。适配范围未变，所以本索引仍钉 npm 字节而不是某个提交。"
+    "en": "The repository carries twenty-eight patches and every one of them is inside the published 0.4.5 artifact, which is measured on DSH 0.2.2-rc.3. The supported range is unchanged, so this index still pins the npm bytes rather than a commit.",
+    "zh": "仓库有二十八个补丁，全部都在已发布的 0.4.5 产物里，并在 DSH 0.2.2-rc.3 上实测。适配范围未变，所以本索引仍钉 npm 字节而不是某个提交。"
   }
 }

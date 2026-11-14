@@ -12,7 +12,7 @@
 | 基线 | **320 tests / 6 gates / --mutate 6-6** |
 | 包体 | **已发布 0.4.9 = 39 335 B 压缩 / 36 文件 / 125 349 B 解包**（shasum `24eaaaf5…`），core **0.4.9 = 40 534 B / 23 文件 / 130 634 B 解包**（shasum `f2b5593d…`）。emit 总量 **82 957 / 83 000**（常驻 41 595 / 44 000，CLI 41 362 / 42 000）——**只剩 43 B**；core 的 dist 是 **101 597 / 104 000**（registry.js 67 710 / 68 000）——registry 剩 **290 B**。P-0036 的 96 B 由同两个文件里的散文付账，P-0036 的台账记录由 P-0032 同法去重付账，cap 一个没动。 |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1` / `v0.3.2` / `v0.3.3` / `v0.3.4` / `v0.3.5` / `v0.3.6` / `v0.3.7` / `v0.3.8` / `v0.4.0` / `v0.4.1` / `v0.4.2` / `v0.4.3` / `v0.4.4` / `v0.4.5` / `v0.4.6` / `v0.4.7` / `v0.4.8` / `v0.4.9` / **`v0.4.10`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release）；`v0.4.10` 的正文与 `docs/copy/release-notes/v0.4.10.md` 逐字节比对。 |
-| 装机验收 | **0.4.10 已从 registry 单装到空目录验过 `OK 6 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-14T22-15-00.000Z.json`（`ok: true`、三条命令 0/0/0）。两个 profile 仍装 **0.4.9**：`.tmp/pack0410-registry/` 的两个 tarball 已从 registry 拉回并核对 sha1（plugin `dcc33f65…` / core `75b4744e…`），换装要写 `~/.dsh`，只有人能点。 |
+| 装机验收 | **0.4.10 已从 registry 单装到空目录验过 `OK 6 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-14T22-15-00.000Z.json`（`ok: true`、三条命令 0/0/0）。两个 profile 也已换装 **0.4.10**：两包一致、pin 是 `0.4.10`、两边 `verify` 都 `OK 6 fixture(s)`。桌面 App 下次启动加载 0.4.10。 |
 | 下一件事 | **R47 又加了一条补丁：`P-0036`。** 主线仍是「外部反馈 → 稳定补丁」，这一轮先把同接缝的五个竞品与上游源码读完（`docs/research/similar-projects-2026-11-14.md`），再把拼得上的那一块做成补丁：纯 delta 协议的 tool call 不许落盘成 `id: ""`。319 tests / 6 gates / `--mutate` 6-6。**下一位第一件事**：发 **0.4.10**（P-0036 已在仓内、未发布），按 `docs/PUBLISH.md` 的流程走；发版前先决定 L-0036（无 `finish` 的流）要不要花常驻字节命名——它的宿主半边现在有源码（`assembler.ts:187`）。硬约束：plugin 82 957 / 83 000（**只剩 43 B**）、core 101 597 / 104 000、registry 67 710 / 68 000（**290 B**）。 |
 
 ## 五分钟检查
@@ -2236,7 +2236,8 @@ R43 结掉 L-0001 / L-0002；R45 把 #11337 做成 **P-0034**，把 #6035 / #906
 | `gates-2026-11-14T20-10-00.000Z.json` / `gates-mutate-2026-11-14T20-15-00.000Z.json` | 绿 | 门禁证据：R46 收尾（两个 profile 切到 0.4.9、override 删掉、公开仓与 release 之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，315 tests；已被 21-40 / 21-45 取代） |：R45 / R46（P-0034 + P-0035、六条线索结案、账本与交接同步之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，315 tests；sha256 `ed1e9b23…` / `c801cfcb…`） |
 | `gates-2026-11-14T21-40-00.000Z.json` / `gates-mutate-2026-11-14T21-45-00.000Z.json` | 绿 | 门禁证据：R47（P-0036 与同接缝调研之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，319 tests） |
 | `gates-2026-11-14T23-00-00.000Z.json` / `gates-mutate-2026-11-14T23-05-00.000Z.json` | 绿 | 门禁证据：R47 收尾（0.4.10 发布、copy 通道重登记之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，320 tests） |
-| `gates-2026-11-14T23-15-00.000Z.json` / `gates-mutate-2026-11-14T23-20-00.000Z.json` | 绿 | **当前**门禁证据：R47 收尾第二轮（core 解包尺寸按 registry 实测改正、templates 重登记、基线行改 320 之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`） |
+| `gates-2026-11-14T23-15-00.000Z.json` / `gates-mutate-2026-11-14T23-20-00.000Z.json` | 绿 | 门禁证据：R47 收尾第二轮（core 解包尺寸按 registry 实测改正、templates 重登记、基线行改 320 之后；已被 23-30 / 23-35 取代） |
+| `gates-2026-11-14T23-30-00.000Z.json` / `gates-mutate-2026-11-14T23-35-00.000Z.json` | 绿 | **当前**门禁证据：R47 收尾第三轮（市场索引翻 0.4.10、两个 profile 换装、copy 通道重登记之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，320 tests） |
 | `gates-2026-11-13T08-10-00.000Z` / `gates-mutate-2026-11-13T08-15-00.000Z` | 绿 | 门禁证据：R23 收尾（P-0015 台账 + 事实包加段 + 对外文件重登记） |
 | `gates-2026-11-13T09-30-00.000Z` / `gates-mutate-2026-11-13T09-35-00.000Z` | 绿 | 门禁证据：R25 收尾（P-0017 台账 + 事实包加段 + 全部对外文件重登记） |
 | `gates-2026-11-13T10-15-00.000Z` / `gates-mutate-2026-11-13T10-20-00.000Z` | 绿 | 门禁证据：R26 收尾（P-0018：Windows 退出码按异常命名） |
@@ -2333,7 +2334,7 @@ pnpm 的过滤发版路径（`publish_packages.mjs` 正是为替代它而写的�
 
 ## 明确边界
 
-- 两个 profile（桌面与 `remedy-live`）当前装的都是 **0.4.9**，用的是从 registry 取回、并已用
+- 两个 profile（桌面与 `remedy-live`）当前装的都是 **0.4.10**，用的是从 registry 取回、并已用
   sha1/sha512 对上 `dist.shasum` / `dist.integrity` 的那份 tarball；装到哪一份、什么时候装的、
   App 什么时候重启，都记在批次叙事与 `data/results/install-acceptance-*.json` 里，不写在这里 ——
   这台机器的 scratch 目录是 gitignored 的，写进来的是一个新克隆无法核对的断言。**0.4.10 的 registry

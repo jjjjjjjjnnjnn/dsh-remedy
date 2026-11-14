@@ -25,6 +25,7 @@
 | `packages/core/src/verdict.ts` | unmeasured / quiet / repaired / degraded |
 | `packages/core/src/preflight.ts` | reasoning effort 预检：ok / refuse / unknown + 建议档位（P-0013） |
 | `packages/core/src/redact.ts` | 证据脱敏（五种家目录形状） |
+| `packages/core/src/attribute.ts` | 归因证明：`fits` / `foreign` / `unproven`；只有声明的 violation 才拒（P-0030） |
 | `packages/plugin/src/repair-stream.ts` | `llm/stream` 包装器 + 计数 |
 | `packages/plugin/src/stream-types.ts` | P-0005 拆出的流类型（编译期擦除） |
 | `packages/plugin/src/failure-text.ts` | P-0005 拆出的失败消息助手 |
@@ -59,7 +60,7 @@
 | `data/results/install-acceptance-2026-11-11T19-30-00.000Z.json` | 0.3.6 空目录从 registry 单装 6/6（R17 首次落盘） |
 | `data/results/publish-2026-11-11T17-35-00.000Z.json` | 0.3.6 发布后两包 `latest`（`ok: true`） |
 | `docs/patches/P-0001-toolcall-fusion.md` … `P-0009-session-header-window.md` | 每个补丁的症状 / 机制 / 反证 / 边界 |
-| `docs/patches/P-0010-cli-usage-truth.md` … `P-0026-release-procedure-single-source.md` | 同上；P-0015 是 `agent/pre-step` 拒绝语义的实测记录；P-0016 的文档在 R31 补写；P-0024 把两个包内 README 收进 copy 通道；P-0025 让 `explain` 的三态落地；P-0026 把发布流程收成一个家 |
+| `docs/patches/P-0010-cli-usage-truth.md` … `P-0030-attribution-proof.md` | 同上；P-0015 是 `agent/pre-step` 拒绝语义的实测记录；P-0016 的文档在 R31 补写；P-0024 把两个包内 README 收进 copy 通道；P-0025 让 `explain` 的三态落地；P-0026 把发布流程收成一个家；P-0027 给「名字证不出来」的片段一个不可执行的名字；P-0028 把随包夹具里的本机路径换成 `<home>`；P-0029 把继任者的版本指针与字节账接上判据；P-0030 把归因证明搬进 core，按 schema 能证明的部分判定并记录 `unproven` |
 | `docs/adr/0001-stream-repair-over-asar-patch.md` | 为什么在 `llm/stream` 修 |
 
 ## 公开仓库（对外）
@@ -141,6 +142,7 @@
 | `tests/governance/package-readme-prose.test.ts` | 两个包内 README：不许有散文数字，围栏里的命令必须真能 dispatch（P-0017） |
 | `tests/governance/distribution-entry.test.ts` | 市场条目指向 `packages/plugin`、描述无数字、索引钉住提交与真实时间戳（R27） |
 | `tests/unit/request-error.test.ts` | 第二接缝的五种决定、`next()` 契约、有界缓存 |
+| `tests/unit/attribute.test.ts` | 归因三态：required / 闭合 schema / 声明类型，及「无法判定的关键字不产生拒绝」（P-0030） |
 | `tests/unit/preflight.test.ts` | reasoning effort 预检：9 例，全部取自本机数据 |
 | `tests/governance/budget-split.test.ts` | 预算的两份清单必须与真实模块图双向一致 |
 | `tests/unit/agy-channel.test.ts` | 已退役通道的传输规则（P-0007 历史） |

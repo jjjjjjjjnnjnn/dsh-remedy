@@ -13,7 +13,7 @@
 | 包体 | **已发布 0.4.6 = 39 877 B 压缩 / 36 文件 / 126 519 B 解包**，core **0.4.6 = 39 973 B / 23 文件 / 127 568 B 解包**（两包 shasum `1cd6d75a…` / `f18fb209…`；plugin 的 emit 少了 72 B，core 多了两个补丁记录与 `attribute.js`）。上一个发布 **0.4.5 = 39 715 B / 36 文件 / 126 033 B 解包**，core **35 960 B / 21 文件 / 115 821 B**（shasum `aedec369…` / `98f65652…`）。emit 总量 **82 913 / 83 000**（常驻 41 551 / 44 000，CLI 41 362 / 42 000）——**只剩 87 B**；core 的 dist 是 **98 247 B**，不受预算约束（P-0012 的已知边界）。 |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1` / `v0.3.2` / `v0.3.3` / `v0.3.4` / `v0.3.5` / `v0.3.6` / `v0.3.7` / `v0.3.8` / `v0.4.0` / `v0.4.1` / `v0.4.2` / `v0.4.3` / `v0.4.4` / `v0.4.5` / **`v0.4.6`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release）；`v0.4.6` 的正文与 `docs/copy/release-notes/v0.4.6.md` 逐字节比对。 |
 | 装机验收 | **0.4.6 已从 registry 单装到空目录验过 `OK 6 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-14T14-55-00.000Z.json`（`ok: true`、三条命令退出码 0/0/0）。**两个 profile 已切到 registry 的 0.4.6**：`.tmp/pack046/` 的两个 tarball 就是从 registry 拉回来的那一份（sha1 `1cd6d75a…` / `f18fb209…`），desktop 与 remedy-live 的 `node_modules` 两包都报 **0.4.6**、两边 `verify` 都 `OK 6 fixture(s)`；**桌面 App 于 2026-11-14 15:04 启动**（晚于安装），`dsh plugin --profile desktop list` 列出 `dsh-remedy@0.4.6`，`dsh --version` 是 **0.2.2-rc.3**。 |
-| 下一件事 | **0.4.6 已发布、两个 profile 与桌面 App 都在 0.4.6（DSH 0.2.2-rc.3）。** 剩下三件：①**字节只剩 87 B**（total 82 913 / 83 000，常驻 41 551 / 44 000，CLI 41 362 / 42 000）—— total 是两半之和，**拆模块只改归属、不改 total**，下一个补丁只能靠删/去重付账，不许抬 cap；②**core 的 dist 是 98 247 B，不受预算约束**（P-0012 的已知边界）——要不要给 core 立 cap 需要 owner 签署；③外部渠道：`awesome-dsh-plugin` 页面已正确（npm 安装行 + `tarball:` 兜底 + README）、dshopen #472 已关闭、AllDSH #3 仍 open、dsh.so 仍停在 0.4.1（本轮已重提 0.4.6）、imsai 的巡检仍未恢复。 |
+| 下一件事 | **0.4.6 已发布、两个 profile 与桌面 App 都在 0.4.6（DSH 0.2.2-rc.3）。** 剩下三件：①**字节只剩 87 B**（total 82 913 / 83 000，常驻 41 551 / 44 000，CLI 41 362 / 42 000）—— total 是两半之和，**拆模块只改归属、不改 total**，下一个补丁只能靠删/去重付账，不许抬 cap；②**core 的 dist 是 98 247 B，不受预算约束**（P-0012 的已知边界）——要不要给 core 立 cap 需要 owner 签署；③外部渠道：`awesome-dsh-plugin` 页面已正确（npm 安装行 + `tarball:` 兜底 + README）、dshopen #472 已关闭、AllDSH #3 仍 open、dsh.so 仍停在 0.4.1（重提需要人工：本机 browse 通道未连接）、imsai 的巡检仍未恢复。 |
 
 ## 五分钟检查
 
@@ -55,6 +55,63 @@ git -C .. log --oneline -3
 
 - 容器 `main` **没有**推到 `dsh-triage` 远端（推上去会破坏那个仓库的根布局）。不要顺手推。
 - `dsh-triage/` 只是同级项目，规则以它自己的 `AGENTS.md` 为准。
+
+## 当前批次（R41 → R1）
+
+**R41（2026-11-14）· 把继任者读的地图接上判据，并给归因一个诚实的边界。**
+
+> 触发：接手后按交接复跑基线，只读复核时量到三处版本指针与字节账都没有读者；随后按计划做 P-0029 / P-0030
+> 并发 0.4.6。
+
+**A. 基线复核（先绿再动）**
+
+- `pnpm run verify` → **273 tests / 0 fail / 6 gates**；`--mutate` → **6/6**；两包 `latest = 0.4.5`；
+  两个 profile 都装 0.4.5；公开仓 CI 在 `4261343` 绿。
+- 现量一次 census（未落产物）：113 文件 / 396 attempts / 47 `MALFORMED_RESPONSE`（11-11 那次是 78 / 393 / 44），
+  **没有新的故障类**，所以本轮没有「新缺陷」可捡，`BS-18` 是唯一有实测模式的窄口。
+
+**B. P-0029 · 三处指针 + 字节账（0 字节）**
+
+- 红在先：新判据对着旧文字报出三行 —— release 行说 `v0.4.2` 是最新（实际 v0.4.5），五分钟检查注释是 `# 0.4.1`，
+  `docs/PUBLISH.md` 的 `currently` 是 `0.4.2`。
+- 机制：`handoff-truth` 读活的 release 行与五分钟 `npm view` 注释；`release-procedure` 读 `currently`；
+  `gate_size` 新增 `handoff-bytes`（状态表三个字节数字必须等于实测，`--mutate` 用一个偏一字节的数证明它会红）。
+- 顺带量到的三件事：补丁状态行停在 P-0026（P-0027/P-0028 从未进表）；基线写 264（R40 已是 273）；
+  交接说「下一个补丁先拆模块付账」——**total 是两半之和，拆模块只改归属**，所以那句话是错的，已改成删/去重。
+- 文档同时改对：`v0.4.6` 正文与 `docs/copy/release-notes/v0.4.6.md` 逐字节比对（读回多一个末尾 LF，与历次一致）。
+
+**C. P-0030 · 归因的证明边界 + 每条修复各自计数**
+
+- 先读宿主源码再决定改法：`dsh-tools/lib/index.js:800-808` 把参数编译成
+  `{type:'object', properties, required?}`，**从不写 `additionalProperties`**，所以 schema 是开放的；
+  「键不在声明里」不是证据。计划里那半步（按 `properties` 判外来键）会过度断言，被否证。
+- 能证明的三种：缺 `required`、**闭合** schema 下的未声明键、声明字段违反自己的 `type`/`enum`/`const`。
+  证明搬进 core 的 `fragmentFit()`（`fits` / `foreign` / `unproven`）；plugin 只找声明，不再自己解析。
+- 第二件：`unattributed` 计数原先跨整个流累计，一个流里两个融合块会把第一块的数字记到第二条事件上；
+  现在每条修复各自记，事件还带 `unproven: <n>` 把「没证明但保留了名字」的残量上账。
+- 红在先：闭合 schema 用例仍以 `read` 派发；`unproven` 读到 `undefined`；双块用例在旧计数下报 `[1,1]` 而不是 `[1,0]`。
+- **反直觉的字节结果**：补丁加上后 plugin 反而少了 **72 B**（82 985 → 82 913），因为证明搬进了 core；
+  core 的 dist 现在是 **98 247 B**，不受预算约束 —— 这是 P-0012 的已知边界，写进 limits 而不是偷偷改 cap。
+
+**D. 发布 0.4.6**
+
+- 两包 `latest = 0.4.6`；`record_publish` `ok: true`、两包 `exact_ok` + `latest_ok`；空目录单装 `OK 6 fixture(s)`。
+  从 registry 拉回的 tarball 实测：plugin **39 877 B / 36 文件 / 126 519 B 解包**（sha1 `1cd6d75a…`），
+  core **39 973 B / 23 文件 / 127 568 B 解包**（sha1 `f18fb209…`）。
+- 事实包 / CHANGELOG / 两个根 README / 包内页面 / 模板 / metadata / market-index 全部走 copy 通道重登记；
+  0.4.5 的 release notes 冻成 `release-notes-045-frozen`（`--freeze` 只写 `frozen_at`，新条目会顶掉同名项，
+  已按旧例把冻结项改名回填）。
+- 两个 profile 用 App 自带的 pnpm 装 registry 的 0.4.6（`.tmp/pack046/`，sha1/sha512 对上），
+  两边 `verify` 都 `OK 6 fixture(s)`；桌面 App 于 **15:04** 启动（晚于安装），清单列出 `dsh-remedy@0.4.6`，
+  `dsh --version` 是 **0.2.2-rc.3**。
+- 公开仓推到 `9a82eb2`，CI 绿；release `v0.4.6` 正文读回与文件一致（多一个末尾 LF）。
+
+**实测**：`pnpm run verify` → **288 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` → **6/6**；
+快照 `patch-registry-2026-11-14T14-35-00.000Z.json`（三十补丁；sha256 `37ef0fec…`）；
+门禁证据 `gates-2026-11-14T15-05-00.000Z.json` / `gates-mutate-2026-11-14T15-10-00.000Z.json`。
+
+**仍未做**：`dsh.so` 的重提是人工动作（表单只需 npm 包名；本机 browse 通道未连接）；AllDSH #3 等人工；
+imsai 巡检未恢复（它自己的 #19）；core 没有 cap，要不要立需要 owner 签署。
 
 ## 当前批次（R40 → R1）
 
@@ -1739,7 +1796,8 @@ total 是两半之和，拆模块只改归属、不改 total，所以下一个�
 - ~~核 `awesome-dsh-plugin` 卡片~~ **R41 已完成**：PR #15072 已合并，页面已给 npm 安装行 + `tarball:` 兜底 + README（含中文）；
 - `BS-18` 已被 P-0030 收窄：闭合 schema 与声明类型现在能证明「不是这个工具」，开放 schema 仍不能；没证明的片段会记 `unproven`，不再沉默。
 
-**外部等待（不是待办）**：imsai catalog 巡检恢复（它自己的 #19）；dsh.so 仍停在 0.4.1，等重提后的维护者合并；
+**外部等待（不是待办）**：imsai catalog 巡检恢复（它自己的 #19）；dsh.so 仍停在 0.4.1，**重提是人工动作**
+（`https://dsh.so/submit/` 填 npm 包名即可，本机 browse 通道未连接）；
 `awesome-dsh-plugin` #14942 已合并、dshopen #472 已关闭、AllDSH #3 仍 open。
 
 **接缝利用率（别重新论证一遍）：**

@@ -12,7 +12,7 @@
 | 基线 | **315 tests / 6 gates / `--mutate` 6-6** |
 | 包体 | **已发布 0.4.9 = 39 335 B 压缩 / 36 文件 / 125 349 B 解包**，core **0.4.9 = 40 534 B / 23 文件 / 130 634 B 解包**（两包 shasum `24eaaaf5…` / `f2b5593d…`）。emit 总量 **82 877 / 83 000**（常驻 41 515 / 44 000，CLI 41 362 / 42 000）——**只剩 123 B**；core 的 dist 是 **101 313 / 104 000**（registry.js 67 426 / 68 000）——registry 只剩 **574 B**、core 只剩 **2 687 B**。 |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1` / `v0.3.2` / `v0.3.3` / `v0.3.4` / `v0.3.5` / `v0.3.6` / `v0.3.7` / `v0.3.8` / `v0.4.0` / `v0.4.1` / `v0.4.2` / `v0.4.3` / `v0.4.4` / `v0.4.5` / `v0.4.6` / `v0.4.7` / `v0.4.8` / **`v0.4.9`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release）；`v0.4.9` 的正文与 `docs/copy/release-notes/v0.4.9.md` 逐字节比对。 |
-| 装机验收 | **0.4.9 已从 registry 单装到空目录验过 `OK 6 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-14T19-05-00.000Z.json`（`ok: true`、三条命令退出码 0/0/0）。两个 profile 仍装着 0.4.8，换装到 0.4.9 的 registry tarball 已在 `.tmp/pack049-registry/`（sha1 与 registry 一致），换装动作留给下一位（要写 `~/.dsh`，只有人能点）。 |
+| 装机验收 | **0.4.9 已从 registry 单装到空目录验过 `OK 6 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-14T19-05-00.000Z.json`（`ok: true`、三条命令退出码 0/0/0）。两个 profile 都已切到 **0.4.9**（两包一致、两边 `verify` 都 `OK 6 fixture(s)`）；换装时发现 profile 里留着的 `overrides:` 把 core 钉在 0.4.8 的 `.tmp` tarball 上，删掉后两包才同时 0.4.9（见批次叙事 §E）。桌面 App 重启后即加载 0.4.9。 |
 | 下一件事 | **R45 / R46 已把社区面的两条线索做成补丁**：`P-0034`（未拒绝的 `MALFORMED_RESPONSE` 不再被记成安静的一轮，来自 #11337）与 `P-0035`（patch 层每个 `name:` 必须能在 manifest 里解析，来自 #12318，0 运行时字节）；四条线索结案（L-0033 / L-0034 / L-0024 判 `rejected` 并写明理由，L-0036 判 `watching` 并写清缺哪一条证据）。315 tests / 6 gates / `--mutate` 6-6。下一步按 `docs/research/plan-0.4.9.md` §3：**有补丁就发 0.4.9**（copy 通道 / 快照 / publish / 装机 / 两个 profile，同 0.4.8 的流程）。硬约束：plugin 82 877 / 83 000（**只剩 123 B**）、core 101 313 / 104 000、registry 67 426 / 68 000。 |
 
 ## 五分钟检查
@@ -1983,10 +1983,9 @@ R43 结掉 L-0001 / L-0002；R45 把 #11337 做成 **P-0034**，把 #6035 / #906
 
 **这一轮剩下的人工与外部动作：**
 
-1. **推送公开仓 + GitHub release `v0.4.9`**（`docs/PUBLISH.md` 的 `commit-tree` 过程；release 正文
-   用 `docs/copy/release-notes/v0.4.9.md`，读回逐字节比对）。这是发布流程的最后一步，本轮没做。
-2. **两个 profile 换装到 0.4.9**（registry tarball 已在 `.tmp/pack049-registry/`，sha1 已与 registry 对上；
-   换装要写 `~/.dsh`，只有人能点）。桌面 App 重启同理。
+1. ~~推送公开仓 + GitHub release `v0.4.9`~~ 本轮已做：公开仓推到 `b290cab`，CI 在 `main` 与 tag 上都 success，
+   release 正文读回与 `docs/copy/release-notes/v0.4.9.md` 相同（末尾多一个 LF）。
+2. **桌面 App 重启**（它下次启动会加载 0.4.9；App 当时没在运行，所以「启动后加载」这条只有安装完成，没有启动时间）。
 3. **L-0036 的那条实测**（脚本化 provider 在发完 `block-end` 后直接关连接，看 `turn/end` 是
    `completed` 还是 `error`）——做成之后才能决定它是不是第二个「安静的一轮」。
 
@@ -2177,7 +2176,8 @@ R43 结掉 L-0001 / L-0002；R45 把 #11337 做成 **P-0034**，把 #6035 / #906
 | `gates-2026-11-14T16-35-00.000Z.json` / `gates-mutate-2026-11-14T16-40-00.000Z.json` | 绿 | 门禁证据：R43（P-0032 + P-0033 与真机之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，295 tests）；已被 16-52 / 16-54 取代 |
 | `gates-2026-11-14T16-52-00.000Z.json` / `gates-mutate-2026-11-14T16-54-00.000Z.json` | 绿 | 门禁证据：R44（来源登记 + 巡检脚本 + 账本两列之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，307 tests）；已被 18-30 / 18-35 取代 |
 | `gates-2026-11-14T18-30-00.000Z.json` / `gates-mutate-2026-11-14T18-35-00.000Z.json` | 绿 | 门禁证据：R45 / R46 中间一轮（已被 19-30 / 19-35 取代） |
-| `gates-2026-11-14T19-30-00.000Z.json` / `gates-mutate-2026-11-14T19-35-00.000Z.json` | 绿 | **当前**门禁证据：R45 / R46（P-0034 + P-0035、六条线索结案、账本与交接同步之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，315 tests；sha256 `ed1e9b23…` / `c801cfcb…`） |
+| `gates-2026-11-14T19-30-00.000Z.json` / `gates-mutate-2026-11-14T19-35-00.000Z.json` | 绿 | 门禁证据：R46 发布后（已被 20-10 / 20-15 取代） |
+| `gates-2026-11-14T20-10-00.000Z.json` / `gates-mutate-2026-11-14T20-15-00.000Z.json` | 绿 | **当前**门禁证据：R46 收尾（两个 profile 切到 0.4.9、override 删掉、公开仓与 release 之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，315 tests） |：R45 / R46（P-0034 + P-0035、六条线索结案、账本与交接同步之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，315 tests；sha256 `ed1e9b23…` / `c801cfcb…`） |
 | `gates-2026-11-13T08-10-00.000Z` / `gates-mutate-2026-11-13T08-15-00.000Z` | 绿 | 门禁证据：R23 收尾（P-0015 台账 + 事实包加段 + 对外文件重登记） |
 | `gates-2026-11-13T09-30-00.000Z` / `gates-mutate-2026-11-13T09-35-00.000Z` | 绿 | 门禁证据：R25 收尾（P-0017 台账 + 事实包加段 + 全部对外文件重登记） |
 | `gates-2026-11-13T10-15-00.000Z` / `gates-mutate-2026-11-13T10-20-00.000Z` | 绿 | 门禁证据：R26 收尾（P-0018：Windows 退出码按异常命名） |

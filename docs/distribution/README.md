@@ -72,6 +72,15 @@ GitHub release `v0.4.1` 的正文与 `docs/copy/release-notes/v0.4.1.md` 逐字�
 `BS-17` 已在 R30 关闭：桌面渲染器把拒绝画成「已完成」且不显示任何内容，所以 `agent/pre-step` 只能用
 `{kind:'enter'}` 改写，不能拒绝；那条改写路径仍未测。
 
+## 6c. 2026-11-14 的读数（R42，0.4.7 已发布）
+
+- **npm**：两包 `latest = 0.4.7`（`npm view` 实读），发布产物 `data/results/publish-2026-11-14T16-00-00.000Z.json`。
+- **dsh.so**：本轮用 0.4.7 重提，表单检查 `Pass` / `SECURITY SCAN Pass`（0 Critical / 0 Warnings / 0 Info，29 文件）、
+  registry entry schema valid；点提交后页面 `✓ Submitted`。服务端会重新拉取扫描，条目等维护者合并。
+  本机 browse 扩展是 `disconnected`，所以用 Chrome 临时 profile + DevTools 协议驱动，没有碰默认浏览器配置。
+- 其余渠道与 6b 相同：awesome-dsh-plugin 页面正确；dshopen #472 已关闭；AllDSH #3 仍 open；
+  imsai 的巡检仍未恢复（它自己的 #19）；bradeGithub 仍读仓库根。
+
 ## 6b. 2026-11-14 的读数（R41，0.4.6 已发布）
 
 - **npm**：两包 `latest = 0.4.6`（`npm view` 实读），发布产物 `data/results/publish-2026-11-14T14-50-00.000Z.json`。

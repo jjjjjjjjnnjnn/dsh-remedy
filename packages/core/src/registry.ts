@@ -869,6 +869,35 @@ export const PATCHES: readonly PatchRecord[] = [
     ],
     failureClasses: [],
   },
+  {
+    id: 'P-0031',
+    title: 'The engine every mount loads had no budget, and a comment said it did',
+    symptom:
+      'P-0012 recorded that dsh-remedy-core sits outside the size gate, and tests/governance/budget-split.test.ts said the package has "its own budget"; no cap for it existed anywhere. By R41 the plugin half had 87 bytes left while the engine every mount also loads had grown to 98 247 emitted bytes, 64 360 of them the registry data that grows by one record per patch',
+    rootCause:
+      'the budget was written for one package before the 0.4.0 split, and the split added a second package without adding a second measurement. The governance test named the blind spot honestly but the sentence "its own budget" described a plan, not a file: nobody could point at the number',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: [
+      'docs/patches/P-0031-core-budget.md',
+      'scripts/lib/budgets.mjs',
+      'scripts/gate_size.mjs',
+      'tests/governance/budget-split.test.ts',
+    ],
+    guards: [
+      'scripts/gate_size.mjs',
+      'scripts/lib/budgets.mjs',
+      'tests/governance/budget-split.test.ts',
+    ],
+    limits: [
+      'the cap covers emitted core JavaScript only: .d.ts, fixtures and package-root files are outside it, exactly like the plugin budget',
+      'it caps the total and the registry file, not each of the other nine modules; a module below the registry can still grow inside the total',
+      'core is still not measured as part of residency: the plugin numbers remain plugin-only, so the startup account is the two rows read together, not one number',
+      'the registry is data, so the cap forces a decision (split the registry, or sign a raise) rather than describing a defect that was fixed once',
+    ],
+    failureClasses: [],
+  },
 ]
 
 /** Look up one patch by id. */

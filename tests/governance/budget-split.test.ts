@@ -85,6 +85,27 @@ test('the CLI entry does not import the resident seam', () => {
   assert.ok(!cliReach.has('retry-listener'), 'the CLI must not pull in the retry listener')
 })
 
+test('the engine has a cap of its own, with its measurement and its signature', () => {
+  // P-0031: the comment in this file said core "has its own budget" while no
+  // cap existed anywhere. A sentence is not a cap, and the engine is the half
+  // every mount also loads.
+  const budgets = read('scripts/lib/budgets.mjs')
+  const core = Number.parseInt(budgets.match(/CORE_CAP = (\d+)/)?.[1] ?? '0', 10)
+  const registry = Number.parseInt(budgets.match(/CORE_FILE_CAPS = \[\['registry\.js', (\d+)\]\]/)?.[1] ?? '0', 10)
+  assert.ok(core > 0, 'core must have a cap; a comment saying "its own budget" is not one')
+  assert.ok(registry > 0, 'the registry file must have a cap of its own, because it is the data that grows per patch')
+  assert.ok(registry < core, 'the registry cap must fit inside the engine cap')
+  assert.match(budgets, /100 190/, 'the measurement that justified the cap must be recorded beside it')
+  assert.match(budgets, /approved_by:/, 'a threshold change needs a signature')
+})
+
+test('the engine cap is measured by the gate, not only declared', () => {
+  const gate = read('scripts/gate_size.mjs')
+  assert.match(gate, /CORE_CAP/, 'gate_size must read the engine cap')
+  assert.match(gate, /CORE_FILE_CAPS/, 'gate_size must read the registry cap')
+  assert.match(gate, /core-total/, 'the gate must report the engine subtotal')
+})
+
 test('the budget caps add up and the owner signature is recorded', () => {
   const budgets = read('scripts/lib/budgets.mjs')
   const residency = Number.parseInt(budgets.match(/RESIDENCY_CAP = (\d+)/)?.[1] ?? '0', 10)

@@ -30,6 +30,17 @@
  *      before any command was added to it. Measured: residency 41 075, cli
  *      40 665, total 81 740 (now 81 585 after the `cli-args` usage text was
  *      trimmed).
+ *   3. R42 (2026-11-14), **the engine gets a budget of its own**: core <= 104000
+ *      and `registry.js` <= 68000. P-0012 recorded that core sits outside this
+ *      gate; by R41 the plugin had 87 bytes of headroom while the engine it
+ *      loads on every mount had grown to 98 247 bytes uncapped (registry.js
+ *      64 360 of it, and every patch adds a record of about 2.3 KB). The owner
+ *      approved a cap in session rather than leaving that half unmeasured.
+ *      Measured before this record: core 98 247, registry.js 64 360; including
+ *      the P-0031 record itself: core 100 190, registry.js 66 303. The registry
+ *      cap leaves less than one record of headroom on purpose: the next record
+ *      is paid by splitting the registry by seam or by a signed raise, because
+ *      registry data must not silently eat the engine.
  *
  * What this does NOT do: it drops no per-file cap, and it does not reclassify a
  * file into `cli` to dodge payment — the lists below are explicit, and
@@ -60,6 +71,14 @@ export const CLI_FILES = ['cli.js', 'cli-args.js', 'scan-command.js', 'session-s
 export const RESIDENCY_CAP = 44000
 export const CLI_CAP = 42000
 export const TOTAL_CAP = 83000
+
+/**
+ * The engine every mount loads. It sits outside the plugin budget above, so it
+ * needs its own cap or it is the one number nobody checks.
+ */
+export const CORE_CAP = 104000
+/** The registry is data that grows by one record per patch; cap it separately. */
+export const CORE_FILE_CAPS = [['registry.js', 68000]]
 
 /** Per-file caps. A file crossing its own number must split, not absorb. */
 export const FILE_CAPS = [

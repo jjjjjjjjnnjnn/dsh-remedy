@@ -3,6 +3,18 @@
 All notable changes to this project are documented here.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.4.7] - 2026-11-14
+### Fixed
+- The engine every mount loads had no byte budget. P-0012 recorded that `dsh-remedy-core` sits outside the size gate, and a governance test called the package "a separate package with its own budget", but no cap existed: the plugin half was down to 87 bytes of headroom while the engine had grown to 100190 emitted bytes, 66303 of them the registry data that gains a record per patch.
+
+### Added
+- `scripts/lib/budgets.mjs` and `scripts/gate_size.mjs`: core 104000 and `registry.js` 68000, with the measured pair and the owner's in-session signature recorded beside the caps. The size gate now reports `core-total` and `core-file:registry.js`, and `handoff-bytes` compares the live handoff's core row with the measurement.
+- `tests/governance/budget-split.test.ts` pins the two constants, the recorded measurement and the rule that the registry cap fits inside the engine cap.
+
+### Notes
+- This release carries 31 patches: 3 `verified` and 28 `tested`.
+- Byte budget: plugin residency 41551 of 44000, CLI 41362 of 42000, total 82913 of 83000; engine 100190 of 104000, `registry.js` 66303 of 68000. No existing cap moved; one was added, because the half every mount also loads was the half nobody measured.
+
 ## [0.4.6] - 2026-11-14
 ### Fixed
 - The live handoff told a successor three things that had already moved: it called `v0.4.2` the newest release after 0.4.3, 0.4.4 and 0.4.5 had shipped, it commented `# 0.4.1` on the five-minute `npm view` line, and `docs/PUBLISH.md` still said npm was at 0.4.2. Each is now compared with the shipping version instead of copied forward.

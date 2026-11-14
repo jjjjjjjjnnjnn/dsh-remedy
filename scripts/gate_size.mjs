@@ -19,6 +19,8 @@ import { abs, listDir, readText, runGate } from './lib/kit.mjs'
 import {
   CLI_CAP,
   CLI_FILES,
+  CORE_CAP,
+  CORE_FILE_CAPS,
   FILE_CAPS,
   RESIDENCY_CAP,
   RESIDENCY_FILES,
@@ -27,10 +29,19 @@ import {
 } from './lib/budgets.mjs'
 
 const DIST = 'packages/plugin/dist'
+const CORE_DIST = 'packages/core/dist'
 
 const bytesOf = (name) => {
   try {
     return statSync(abs(`${DIST}/${name}`)).size
+  } catch {
+    return null
+  }
+}
+
+const coreBytesOf = (name) => {
+  try {
+    return statSync(abs(`${CORE_DIST}/${name}`)).size
   } catch {
     return null
   }
@@ -58,6 +69,7 @@ function handoffClaim() {
   const flat = row.replace(/(\d)\s+(\d{3})/g, '$1$2')
   const match = flat.match(/emit 总量 \*\*(\d+) \/ (\d+)\*\*（常驻 (\d+) \/ (\d+)，CLI (\d+) \/ (\d+)）/)
   if (match === null) return null
+  const core = flat.match(/core 的 dist 是 \*\*(\d+) \/ (\d+)\*\*（registry\.js (\d+) \/ (\d+)）/)
   return {
     total: Number(match[1]),
     totalCap: Number(match[2]),
@@ -65,6 +77,15 @@ function handoffClaim() {
     residencyCap: Number(match[4]),
     cli: Number(match[5]),
     cliCap: Number(match[6]),
+    core:
+      core === null
+        ? null
+        : {
+            total: Number(core[1]),
+            totalCap: Number(core[2]),
+            registry: Number(core[3]),
+            registryCap: Number(core[4]),
+          },
   }
 }
 
@@ -115,7 +136,28 @@ await runGate('size', async ({ checks, mutate }) => {
   // The live handoff's byte row is what a successor acts on, so it is measured
   // rather than remembered. `--mutate` compares it against a number one byte off
   // the measurement, which proves the check is not vacuously green.
+  // The engine's own budget (P-0031). It is measured apart from the plugin
+  // numbers above because a mount pays both and only one of them had a cap.
+  const coreNames = listDir(CORE_DIST).filter((entry) => entry.isFile && entry.name.endsWith('.js'))
+  const coreTotal = coreNames.reduce((sum, entry) => sum + (coreBytesOf(entry.name) ?? 0), 0)
+  checks.require('core-dist-present', coreNames.length > 0, `no ${CORE_DIST}/*.js — run the build first`)
+  checks.add(
+    'core-total',
+    coreTotal <= (mutate ? Math.max(0, coreTotal - 1) : CORE_CAP),
+    `${coreTotal} of ${mutate ? coreTotal - 1 : CORE_CAP} bytes across ${coreNames.length} engine modules`,
+  )
+  for (const [name, cap] of CORE_FILE_CAPS) {
+    const found = coreBytesOf(name)
+    checks.add(
+      `core-file:${name}`,
+      found !== null && found <= cap,
+      found === null ? `${name} is missing from ${CORE_DIST}` : `${found} of ${cap} bytes`,
+    )
+  }
+
   const claim = handoffClaim()
+  const registryCap = CORE_FILE_CAPS.find(([name]) => name === 'registry.js')?.[1] ?? 0
+  const registryBytes = coreBytesOf('registry.js') ?? 0
   const expected = {
     total: mutate ? total + 1 : total,
     totalCap: TOTAL_CAP,
@@ -124,12 +166,25 @@ await runGate('size', async ({ checks, mutate }) => {
     cli: mutate ? cli + 1 : cli,
     cliCap: CLI_CAP,
   }
+  const coreExpected = {
+    total: mutate ? coreTotal + 1 : coreTotal,
+    totalCap: CORE_CAP,
+    registry: mutate ? registryBytes + 1 : registryBytes,
+    registryCap,
+  }
   const drift =
     claim === null
       ? ['the live handoff has no "emit 总量" row to compare']
-      : Object.entries(expected)
-          .filter(([key, value]) => claim[key] !== value)
-          .map(([key, value]) => `${key}: handoff ${claim[key]} vs measured ${value}`)
+      : [
+          ...Object.entries(expected)
+            .filter(([key, value]) => claim[key] !== value)
+            .map(([key, value]) => `${key}: handoff ${claim[key]} vs measured ${value}`),
+          ...(claim.core === null
+            ? ['the live handoff has no "core 的 dist" row to compare']
+            : Object.entries(coreExpected)
+                .filter(([key, value]) => claim.core[key] !== value)
+                .map(([key, value]) => `core.${key}: handoff ${claim.core[key]} vs measured ${value}`)),
+        ]
   checks.add(
     'handoff-bytes',
     drift.length === 0,

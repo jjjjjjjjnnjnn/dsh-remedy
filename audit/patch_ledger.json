@@ -506,6 +506,23 @@
         "tests/unit/attribution.test.ts",
         "packages/plugin/src/repair-stream.ts"
       ]
+    },
+    {
+      "id": "P-0031",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.7",
+      "evidence": [
+        "docs/patches/P-0031-core-budget.md",
+        "scripts/lib/budgets.mjs",
+        "scripts/gate_size.mjs",
+        "tests/governance/budget-split.test.ts"
+      ],
+      "guards": [
+        "scripts/gate_size.mjs",
+        "scripts/lib/budgets.mjs",
+        "tests/governance/budget-split.test.ts"
+      ]
     }
   ]
 }

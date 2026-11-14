@@ -723,7 +723,25 @@
         "tests/unit/attribute.test.ts",
         "tests/unit/attribution.test.ts"
       ]
+    },
+    {
+      "id": "S41",
+      "gate": "size",
+      "title": "The half every mount also loads was the half nobody measured",
+      "axes": {
+        "correctness": "gate_size now measures packages/core/dist/*.js, reports core-total and core-file:registry.js, and the live handoff's core row is compared with the measurement through handoff-bytes. The first calibration was measured rather than guessed: the registry cap was set at 64000 and the gate went red on the real build at 64360, because P-0029 and P-0030 had added records after that number was written. The cap moved to 68000 with the measured value recorded in budgets.mjs beside it.",
+        "reproducibility": "node scripts/gate_size.mjs needs only the built trees; --mutate lowers the engine total by one byte and reports core-total, so the check is not vacuously green. The governance test reads the constants and the gate source, so a cap that exists only in prose is caught. No host state is involved.",
+        "compliance": "The threshold change is recorded under approved_by with the measured pair (core 98 247, registry 64 360), the reason (the plugin had 87 bytes while the engine was uncapped) and the owner's in-session approval on 2026-11-14. No existing cap moved. The registry entry, ledger row and patch doc landed in the same round; the snapshot was re-recorded.",
+        "ssot": "One home for the engine caps (scripts/lib/budgets.mjs), one measurement (dist), and one row in the live handoff compared with it. The P-0012 comment that said core had a budget is now backed by constants it can point at, instead of being a sentence the test repeated.",
+        "adversarial": "The adversary is the blind spot that the project documented and then did not measure: a test comment can call something budgeted for two years without anyone writing the cap. The limit is stated rather than hidden: only emitted JS is capped, only the total and the registry get their own numbers, and core is still not folded into residency because that would require a new signature on the startup account."
+      },
+      "evidence": [
+        "docs/patches/P-0031-core-budget.md",
+        "scripts/lib/budgets.mjs",
+        "scripts/gate_size.mjs",
+        "tests/governance/budget-split.test.ts"
+      ]
     }
   ],
-  "updated_at": "2026-11-14T14:30:00.000Z"
+  "updated_at": "2026-11-14T15:40:00.000Z"
 }

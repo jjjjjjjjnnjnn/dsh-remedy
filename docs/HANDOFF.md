@@ -13,7 +13,7 @@
 | 包体 | **已发布 0.4.7 = 39 878 B 压缩 / 36 文件 / 126 519 B 解包**，core **0.4.7 = 40 504 B / 23 文件 / 129 511 B 解包**（两包 shasum `6c1a19a8…` / `68931b34…`；plugin 的 emit 与 0.4.6 相同，core 多了一条 P-0031 记录）。上一个发布 **0.4.6 = 39 877 B / 36 文件 / 126 519 B 解包**，core **39 973 B / 23 文件 / 127 568 B**（shasum `1cd6d75a…` / `f18fb209…`）。emit 总量 **82 913 / 83 000**（常驻 41 551 / 44 000，CLI 41 362 / 42 000）——**只剩 87 B**；core 的 dist 是 **100 190 / 104 000**（registry.js 66 303 / 68 000），P-0012 的盲区已由 P-0031 补上。 |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases `v0.1.0` / `v0.1.1` / `v0.3.2` / `v0.3.3` / `v0.3.4` / `v0.3.5` / `v0.3.6` / `v0.3.7` / `v0.3.8` / `v0.4.0` / `v0.4.1` / `v0.4.2` / `v0.4.3` / `v0.4.4` / `v0.4.5` / `v0.4.6` / **`v0.4.7`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release）；`v0.4.7` 的正文与 `docs/copy/release-notes/v0.4.7.md` 逐字节比对。 |
 | 装机验收 | **0.4.7 已从 registry 单装到空目录验过 `OK 6 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-14T16-05-00.000Z.json`（`ok: true`、三条命令退出码 0/0/0）。**两个 profile 已切到 registry 的 0.4.7**：`.tmp/pack047/` 的两个 tarball 就是从 registry 拉回来的那一份（sha1 `6c1a19a8…` / `68931b34…`），desktop 与 remedy-live 的 `node_modules` 两包都报 **0.4.7**、两边 `verify` 都 `OK 6 fixture(s)`；**桌面 App 于 2026-11-14 15:52 启动**（晚于安装），`dsh plugin --profile desktop list` 列出 `dsh-remedy@0.4.7`，`dsh --version` 是 **0.2.2-rc.3**。 |
-| 下一件事 | **0.4.7 已发布、两个 profile 与桌面 App 都在 0.4.7（DSH 0.2.2-rc.3）。** 剩下三件：①**plugin 只剩 87 B**（total 82 913 / 83 000，常驻 41 551 / 44 000，CLI 41 362 / 42 000）—— total 是两半之和，拆模块只改归属，下一个补丁只能删/去重；②**core 已有 cap**（100 190 / 104 000，registry.js 66 303 / 68 000），registry 只剩不到一条记录的空间，下一条记录必须拆 registry 或签署提额；③外部渠道：`awesome-dsh-plugin` 页面正确、dshopen #472 已关闭、AllDSH #3 仍 open、dsh.so 已于本轮用 0.4.7 重提（`✓ Submitted`，等维护者合并）、imsai 的巡检仍未恢复。 |
+| 下一件事 | **R43 主线：外部反馈 → 稳定补丁。** 从 `docs/research/leads.md` 的 A 类三条开始复现（#12901 / #13211 / #12064），报告只是线索，复现后才有补丁。硬约束：plugin 87 B、core 100 190 / 104 000、registry 66 303 / 68 000（1 697 B，先决定拆 registry 还是提额）。渠道：dsh.so 已用 0.4.7 提交、等合并；awesome-dsh-plugin 页面正确；dshopen #472 已关闭；AllDSH #3 仍 open；imsai 巡检未恢复。 |
 
 ## 五分钟检查
 
@@ -55,6 +55,23 @@ git -C .. log --oneline -3
 
 - 容器 `main` **没有**推到 `dsh-triage` 远端（推上去会破坏那个仓库的根布局）。不要顺手推。
 - `dsh-triage/` 只是同级项目，规则以它自己的 `AGENTS.md` 为准。
+
+## 下一批次（R43，计划）
+
+**主线换了：从「自己发现的缺陷」扩到「外部反馈 → 稳定补丁」。**
+
+- **入口**：`docs/research/README.md`（怎么收、怎么判、四条约束、同类项目怎么读）+
+  `docs/research/leads.md`（2026-11-14 的首批 27 条真实 discussion 线索，全部 `lead` 未复现）。
+- **先知道的一件事**：`deepseek-ai/deepseek-harness` 的 **issue 是关闭的，反馈都在 Discussions**；
+  用 issues 搜索会得到 0 条，不要误判「没有反馈」。
+- **前三条**：L-0001（#12901，reused index 合并，最接近 P-0001）→ L-0002（#13211，rc.3 空 tool call，
+  同版本最好复现）→ L-0010（#12064，adapter 静默吞错，可能 out-of-seam，做「命名但不修」）。
+- **先决条件**：registry 只剩 1 697 B。下一个补丁记录**必须先拆 registry（按接缝分文件）或由 owner
+  签署提额**，不许就地吸收。plugin 只剩 87 B，新增常驻字节同样要先付账。
+- **同类项目**：`dsh-triage`、`ai-terminal-pet`、`dsh-remote-connect` 等只读设计；不整段抄，
+  借用必须过许可证并在 patch doc 写来源。
+- **验收**：每条线索要么复现成夹具 + 先红测试 + `P-NNNN`，要么标 `rejected` 并写清为什么；
+  `data/results/` 仍然只收脚本产物。
 
 ## 当前批次（R42 → R1）
 
@@ -1777,12 +1794,16 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 
 ## 下一位 agent 的第一件事
 
-**A. 主线：0.4.7 已发布，两包 `latest = 0.4.7`，三十一补丁；两个 profile 与桌面 App 都在 0.4.7（DSH 0.2.2-rc.3）。**
+**A. 主线（R43+）：外部反馈 → 稳定补丁。** 0.4.7 已发布（两包 `latest`，三十一补丁；两个 profile 与
+桌面 App 都在 0.4.7，DSH 0.2.2-rc.3）。
 
-P-0001 / P-0002 / P-0003 `verified`，其余 28 个 `tested`；基线 **290 tests / 6 gates / `--mutate` 6-6**，
-emit 总量 **82 913 / 83 000**（常驻 41 551 / 44 000，CLI 41 362 / 42 000）——**只剩 87 B，
-total 是两半之和，拆模块只改归属、不改 total，所以下一个补丁只能靠删/去重付账，不许抬 cap**。
-core 的 dist 是 **100 190 / 104 000**（registry.js 66 303 / 68 000），由 P-0031 单独测量。
+**接手第一件事：读 `docs/research/README.md` → `docs/research/leads.md`，从 A 类三条开始复现** ——
+#12901（reused index 合并）、#13211（rc.3 空 tool call）、#12064（adapter 静默吞错）。
+**报告是线索，不是证据**：复现之后才有夹具 / 先红测试 / `P-0032` 起；不能复现的标 `unreproduced`，
+不许据此发补丁。同类项目只读设计，不整段抄；借用要过许可证。
+
+硬约束：plugin **82 913 / 83 000**（87 B）、core **100 190 / 104 000**、registry **66 303 / 68 000**
+（1 697 B —— **下一条记录前先拆 registry 或签提额**）。基线 **290 tests / 6 gates / `--mutate` 6-6**。
 
 本轮（R42）给**引擎**立了 cap：P-0031 把 `packages/core/dist/*.js` 纳入门禁（总 104 000、`registry.js`
 68 000），并把实测与 owner 签署写进 `budgets.mjs`；同时在浏览器里用 0.4.7 重提了 dsh.so。

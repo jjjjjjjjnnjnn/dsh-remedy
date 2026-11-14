@@ -13,6 +13,8 @@
 | `AGENTS.md` | agent 入口：分工、结构、工作流、机器强制项 |
 | `PROJECT_RULES.md` | 硬规则（只读本机、失败即失败、证据由脚本产出） |
 | `docs/HANDOFF.md` | 交接：五分钟检查 / 当前批次 / 第一件事 / 坑 |
+| `docs/research/README.md` | 外部反馈 intake：来源、判据、四条约束、同类项目读法（R43 起） |
+| `docs/research/leads.md` | 首批 27 条 DSH discussion 线索（全部未复现）与下一步动作 |
 
 ## 代码
 

@@ -13,7 +13,8 @@
 > R27（2026-11-13，对外页面按补丁集重写）｜R26（P-0018 Windows 退出码）｜
 > R23（P-0015 `agent/pre-step` 拒绝语义）｜R22（交接审计：facts-truth / handoff-truth / cli-usage）｜
 > R21（0.3.8 发布 + copy 通道改本会话直写）｜R17（0.3.6 收尾）｜R15…R1（P-0008…P-0001）
-> **接手先读**：`docs/HANDOFF.md` → `PROJECT_RULES.md` → `INDEX.md`
+> **接手先读**：`docs/HANDOFF.md` → `docs/research/README.md` → `docs/research/leads.md` → `PROJECT_RULES.md` → `INDEX.md`
+> **R43 起的主线**是外部反馈 → 稳定补丁：报告只是线索，本机复现后才有补丁；来源与方法见 `docs/research/`。
 >
 > **基线（2026-11-14）**：`pnpm run verify` = **290 tests / 6 gates**；
 > `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.7`（latest）+

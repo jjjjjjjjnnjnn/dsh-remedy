@@ -96,6 +96,8 @@ dsh-remedy/
 │   ├── record_publish.mjs      # 发布后 registry 状态 → publish 产物
 │   ├── record_session_sample.mjs      # 本机故障样本（必须带 --until）
 │   ├── record_install_acceptance.mjs  # 空目录从 registry 单装 → 落盘验收
+│   ├── record_prestep_enter.mjs       # agent/pre-step 的 enter 分支实测 → prestep-enter-*（R53）
+│   ├── record_linux_r53.mjs           # Linux 半边证据 → live-linux-*（没重测的项记 null + 原因）
 │   ├── sync_fixtures.mjs       # prepack：夹具进包
 │   └── record_patch_registry.mjs
 ├── tests/                  # unit / governance / e2e

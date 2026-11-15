@@ -123,6 +123,9 @@
 | `scripts/record_session_sample.mjs` | 本机故障样本（必须带 `--until`；会话根走 `lib/session-root.mjs`） |
 | `scripts/record_install_acceptance.mjs` | 空目录从 registry 单装 → `install-acceptance-*` 产物 |
 | `scripts/record_prestep_probe.mjs` | 隔离 `DSH_HOME` 里 `agent/pre-step` 拒绝语义的会话 → `prestep-probe-*` 产物（P-0015） |
+| `scripts/record_prestep_enter.mjs` | `agent/pre-step` 的 `enter` 分支实测 → `prestep-enter-*`（R53：`enter` 能带消息、换不了 selection） |
+| `scripts/record_linux_r53.mjs` | Linux 半边的发布证据 → `live-linux-*`（冷装与 `npx` 没重测就记 null + 原因，不借上一轮的数） |
+| `scripts/lib/runtime-version.mjs` | runtime 版本读自 `runtime.json`，缺字段答 null 不猜（P-0042 的附带修正） |
 | `scripts/replay_malformed_corpus.mjs` | 全部真实 `MALFORMED_RESPONSE` 回放 → `malformed-replay-*` |
 | `scripts/stress_repair.mjs` | 生成式压力（固定 seed）→ `stress-repair-*` |
 | `scripts/probe_withdrawn_reachability.mjs` | 实测 `withdrawn` 在本机是否可达 → `withdrawn-reachability-*` 产物 |

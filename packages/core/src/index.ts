@@ -28,6 +28,9 @@ export type {
 } from './toolcall-repair.js'
 export { DEFAULT_MAX_CALLS, repairToolCallArguments, wouldRepair } from './toolcall-repair.js'
 
+export type { CloserAccepted, CloserRefused, CloserRejectionCode, CloserResult } from './closer.js'
+export { closeMissingDelimiter } from './closer.js'
+
 export type { ResealAccepted, ResealRefused, ResealRejectionCode, ResealResult } from './reseal.js'
 export { resealToolCallArguments } from './reseal.js'
 

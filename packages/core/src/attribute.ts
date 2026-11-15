@@ -1,29 +1,15 @@
 /**
  * P-0030 — what a fragment's name can actually prove.
  *
- * P-0027 checks a synthesized fragment against the named tool's `required` list.
- * The obvious next step — "every key must be declared" — is **not sound on this
- * host**: `dsh-tools` compiles every first-party parameter map to
- * `{type:'object', properties, required?}` and never sets `additionalProperties`
- * (`dsh-tools/lib/index.js:800-808`). Its schemas are open, so an undeclared key
- * is explicitly allowed and proves nothing. The one-line version of the obvious
- * fix would have been an over-claim of exactly the kind this repository keeps
- * finding in its own prose.
+ * P-0027 checks a fragment against the named tool's `required` list; "every key
+ * must be declared" is not sound on this host (`dsh-tools/lib/index.js:800-808`
+ * never sets `additionalProperties`), so an undeclared key proves nothing. What
+ * the declaration can still prove, each source, and the over-claim this avoided
+ * are in `docs/patches/P-0030-attribution-proof.md`.
  *
- * What the schema can still prove, and what this module returns:
- *
- *  - `foreign`: the host would reject these arguments for this tool. Three
- *    sources of proof, each read from the declaration itself:
- *      1. a `required` field is missing;
- *      2. the schema is **closed** (`additionalProperties: false`) and a key is
- *         undeclared — which first-party tools do not send, but a raw or MCP
- *         declaration may;
- *      3. a declared field's value violates its own `type`, `enum` or `const`.
- *  - `fits`: the schema found nothing against the call. This is "no evidence
- *    against", not identity: a foreign call with the same shape still passes.
- *  - `unproven`: there was nothing to check (no parameters, or an open object
- *    with no `required` and no `properties`). The plugin keeps the stream's name
- *    and books the residue, so the journal cannot imply the name was proven.
+ * Returns `foreign` (the host would reject these arguments), `fits` ("nothing
+ * against", not identity) or `unproven` (nothing to check; the plugin keeps the
+ * stream's name and books the residue).
  */
 
 export type FragmentFit = 'fits' | 'foreign' | 'unproven'

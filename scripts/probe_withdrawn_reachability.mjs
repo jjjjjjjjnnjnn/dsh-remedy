@@ -28,6 +28,7 @@ import { createHash } from 'node:crypto'
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
 import { basename, dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { sessionRoot } from './lib/session-root.mjs'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(HERE, '..')
@@ -43,7 +44,7 @@ if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(stamp)) {
   process.exit(2)
 }
 
-const sessionsRoot = process.env.DSH_SESSIONS ?? join(process.env.USERPROFILE ?? '', '.dsh', 'sessions')
+const sessionsRoot = sessionRoot()
 if (!existsSync(sessionsRoot)) {
   console.error(`probe_withdrawn_reachability: no session directory at ${sessionsRoot}`)
   process.exit(3)

@@ -3,6 +3,107 @@
 All notable changes to this project are documented here.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.4.12] - 2026-11-15
+
+### Fixed
+
+- **P-0041 — the installed CLI was silent on Linux, and exited 0.**
+  `./node_modules/.bin/dsh-remedy verify` printed nothing and exited 0 on Linux and macOS
+  while `node dist/cli.js verify` printed every fixture. The entry guard compared
+  `import.meta.url` (the resolved file) with `pathToFileURL(process.argv[1])` (what the
+  caller named), and npm installs a POSIX `bin` as a symlink, so the two differ and
+  `main()` never ran. Both sides are realpath'd now, and an unreachable `argv[1]`
+  answers `false` instead of throwing. Windows installs a `.cmd` shim that passes the
+  real path, which is why 0.1.0–0.4.11 never saw it. The installed shape is checked
+  where the platform allows a link and the guard is also asserted as a pure function.
+  `0.4.11` carries the old guard; install `0.4.12` to get the fix.
+
+- **P-0040 — the acceptance recorder owned a fixture count the package owns.**
+  The cold-directory install of `0.4.11` printed eight `PASS` lines and `OK 8 fixture(s)`
+  with three zero exit codes, and the recorder wrote `ok: false` because it looked for
+  the literal `OK 6 fixture(s)`. The count is now derived from
+  `data/fixtures/toolcall-fusion/*.json` and judged by `scripts/lib/acceptance.mjs`
+  (count agree, every line a `PASS`, every fixture line present). The artifact records
+  `canonical_fixtures` beside the claim, so it can be re-checked instead of re-believed.
+
+### Changed
+
+- The engine's `closed` counter and the `redact()` platform rules from 0.4.11 are
+  unchanged; this release only carries the two CLI/build-side patches above.
+
+### Package size
+
+- `dsh-remedy@0.4.12`: 39694 bytes compressed, 38 files, 126181 bytes unpacked (82919 of
+  `dist/*.js`), shasum `b9122c89b04a4c18a92b0404dfe939af3ba8f54e`.
+- `dsh-remedy-core@0.4.12`: 40118 bytes compressed, 25 files, 131670 bytes unpacked
+  (103702 of `dist/*.js`), shasum `d58321d7ad1087b2937fad53f3f91231c7948fc8`.
+
+### Notes
+
+- This release carries 41 patches: 6 `verified` and 35 `tested`.
+- Byte budget: residency 41494 of 44000, CLI 41425 of 42000, total 82919 of 83000 (81
+  bytes of headroom); engine 103702 of 104000, `registry.js` 67903 of 68000. No cap
+  moved: the two new records were paid by compacting five long ones under P-0032.
+- Verified on Windows (this machine) and on Linux (WSL2 Ubuntu 26.04, node 24.10.0):
+  334 tests, 6 gates, 6/6 negative controls, `OK 8 fixture(s)` through the installed
+  `bin` (a symlink) and through `npx`. macOS is **not** measured: there is no Apple
+  hardware here, so the POSIX branch it shares with Linux is the only evidence.
+
+## [0.4.11] - 2026-11-15
+
+### Added
+
+- **P-0037 — one dropped closing delimiter is restored only when the proof is unique.**
+  A nested tool-call argument one `]` short (upstream #12819) used to be refused as
+  `single-object` and re-thrown, so the whole turn died. The repair inserts exactly one
+  bracket at the only **interior** site that parses; end-of-text is never a candidate
+  (a cut tail looks identical) and two candidates is an ambiguity, not a fix — 604 of
+  1687 generated dropped-closer shapes had two or more. The call keeps its id and name,
+  and the journal books `closed` with `key` = `]@<offset>`.
+- A tenth counter, `closed`, on the same contract as `resealed`: one call rewritten in
+  place, nothing synthesized, so neither `fused` nor `repaired` moves.
+
+### Fixed
+
+- **P-0038 — the redaction was written on one platform and shipped to three.**
+  `/Users/<name>`, `file:///Users/<name>` and the macOS/Linux session keys
+  (`--Users-…--`, `--home-…--`) passed through `redact()` untouched while the Windows
+  shapes were covered, so the account name could leave the machine in an artifact. The
+  key is not a path — `projectKey` in the host turns every separator into one `-` and
+  wraps the slug in `--…--` — so the rule now recognises all three and requires the
+  wrapper. Measured: 5 of 8 shapes leaked before, 0 after; on Linux the same six shapes
+  were measured live.
+- **P-0039 — three recorders only worked on Windows.**
+  They computed `.dsh/sessions` from `USERPROFILE`, which is unset on Linux and macOS,
+  so the path became relative and the recorder exited 3 with "no session directory";
+  an empty `DSH_SESSIONS=` was accepted as the root. One portable resolver
+  (`scripts/lib/session-root.mjs`) answers for all three platforms.
+
+### Changed
+
+- `L-0036` (a stream with no `finish`) is closed as `rejected (no defect)`: two
+  scripted providers on Linux showed that such a stream ends with an explicit
+  `TRANSPORT` error finish or with `turn/end error` and exit 1 — not as a silent
+  success. `L-0003` is `rejected (out-of-seam)` (the deepseek adapter never echoes the
+  argument text) and `L-0009` is `rejected (no defect)` (a case-mismatched name only
+  ever lands on `unproven`, never on a wrong tool).
+
+### Package size
+
+- `dsh-remedy@0.4.11`: 39631 bytes compressed, 38 files, 126185 bytes unpacked (82856 of
+  `dist/*.js`), shasum `884693a5584eb2d8b39902b56296bb34ea1f130c`.
+- `dsh-remedy-core@0.4.11`: 40354 bytes compressed, 25 files, 131692 bytes unpacked
+  (103724 of `dist/*.js`), shasum `2a528bb1c232fa287d3ea78cbb1babbcb57ac14b`.
+
+### Notes
+
+- This release carries 39 patches: 5 `verified` and 34 `tested`.
+- Byte budget: residency 41494 of 44000, CLI 41362 of 42000, total 82856 of 83000 (144
+  bytes of headroom); engine 103724 of 104000, `registry.js` 67925 of 68000.
+- P-0037 is `verified` on Linux: the one-delimiter-short shape was repaired inside a
+  real DSH 0.2.2-rc.3 process and the repaired call was dispatched. The shape is
+  synthesized by a scripted provider, not produced by a real model turn.
+
 ## [0.4.10] - 2026-11-14
 
 ### Added

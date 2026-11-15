@@ -39,7 +39,7 @@ Pending (human):
 
 - Protect `main`: require the `verify` and `verify (windows, node 24)` checks
   after the first CI run names them.
-- ~~Publish npm~~ done: both packages are published (currently `0.4.10`) and the
+- ~~Publish npm~~ done: both packages are published (currently `0.4.12`) and the
   install section is updated through the copy channel.
 
 ## Publishing a release

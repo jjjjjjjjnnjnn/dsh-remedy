@@ -1,40 +1,19 @@
 /**
  * P-0013 — the reasoning-effort preflight (pure decision, no I/O).
  *
- * The defect this exists for is measured, not supposed: 37 turns on this host
- * died with `UNSUPPORTED_REASONING_EFFORT`, all of them the same sentence —
+ * This host died 37 times on `UNSUPPORTED_REASONING_EFFORT` in two days: a
+ * profile declared a level the adapter's own metadata does not contain, so the
+ * request was refused before a token was spent and nothing in the journal said
+ * why. The adapter's resolution rule (`resolveReasoningLevel` /
+ * `getSupportedThinkingLevels`), the eleven sessions it was measured across and
+ * the full table live in `docs/patches/P-0013-named-refusals.md`; this module
+ * re-derives that set from the same inputs and answers one question: given a
+ * declared effort and a model's capabilities, will the request be refused?
  *
- *   provider "opendesign" model "deepseek-v4.1-flash-eco"
- *   does not support reasoning effort "xhigh"
- *
- * across three workspaces, eleven sessions, and two days. A profile declared
- * `xhigh` for a model whose declared efforts were `off/high/xhigh/max`, so the
- * deployment advertised a level the adapter then refused at request time.
- *
- * Where the refusal comes from (read out of the shipped `app.asar`):
- *
- *   resolveReasoningLevel(model, effort):
- *     if (getSupportedThinkingLevels(model).includes(effort)) return effort
- *     throw new LlmError(..., 'UNSUPPORTED_REASONING_EFFORT')
- *
- *   getSupportedThinkingLevels(model):
- *     if (!model.reasoning) return ['off']
- *     return THINKING_LEVELS.filter(level => {
- *       const mapped = model.thinkingLevelMap?.[level]
- *       if (mapped === null) return false
- *       if (level === 'xhigh' || level === 'max') return mapped !== undefined
- *       return true
- *     })
- *
- * So the effective set is the adapter's own metadata, not the profile's prose.
- * This module re-derives that set from the same inputs and answers one question:
- * given a declared effort and a model's capabilities, will the request be
- * refused before a token is spent?
- *
- * It never writes, never guesses, and never silently substitutes a level. The
- * decision is `ok` / `refuse` / `unknown`, and `unknown` is a first-class answer:
- * a model with no reasoning metadata may still accept `off` (the adapter returns
- * `['off']`), which is a fact this module reports rather than assumes.
+ * `ok` / `refuse` / `unknown`, and `unknown` is a first-class answer: a model
+ * with no reasoning metadata still accepts `off` (the adapter returns `['off']`),
+ * which is a fact this module reports rather than assumes. It never writes,
+ * never guesses and never silently substitutes a level.
  */
 
 export type EffortLevel = 'off' | 'low' | 'high' | 'xhigh' | 'max'

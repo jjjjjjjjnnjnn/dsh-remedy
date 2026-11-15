@@ -1,24 +1,26 @@
 /**
- * Tool-call fusion repair (P-0001).
+ * Tool-call argument repair (P-0001), with two in-place exceptions.
  *
- * One function, one decision: given a single tool call whose `arguments` text
- * failed to parse, either return the original call untouched or return the
- * proven list of calls it should have been. There is no third outcome.
+ * One decision: a call whose `arguments` text failed to parse is either handed
+ * back untouched or handed back as the proven list of calls it should have been.
  *
  * SAFETY PROPERTIES (each one has a negative-control test):
  *  - a value that already parses is never rewritten;
- *  - a single object that fails to parse is never "repaired" (the defect is
- *    something else and splitting would fabricate a second call) — the one
- *    exception is a proven bare-value reseal, which returns that same call with
- *    its own bytes intact (P-0005);
- *  - a `max-tokens` truncation is never repaired (the tail is missing, not fused);
+ *  - a single object that fails to parse is never split (that would fabricate a
+ *    second call). The two exceptions rewrite the same call in place, keeping
+ *    its id and name: a proven bare-value reseal (P-0005) and a proven single
+ *    missing closer (P-0037). Two different proven repairs of one text is an
+ *    ambiguity, and both proofs are disjoint by construction, so the closer runs
+ *    first and a reseal only happens when it did not fire;
+ *  - a `max-tokens` truncation is never repaired (the tail is missing);
  *  - every fragment must parse to a plain object before any call is returned;
- *  - a call without an id or without a tool name is rejected: a synthetic call
- *    that cannot be traced or dispatched is worse than the original failure;
- *  - the first call keeps the original id, so the transcript stays traceable;
- *  - synthetic ids are suffixed and collision-checked.
+ *  - a call without an id or without a tool name is rejected: an untraceable or
+ *    undispatched call is worse than the original failure;
+ *  - the first call keeps the original id; synthetic ids are suffixed and
+ *    collision-checked.
  */
 
+import { closeMissingDelimiter } from './closer.js'
 import { splitTopLevelJsonObjects } from './json-split.js'
 import { resealToolCallArguments } from './reseal.js'
 import type { ToolCallInput } from './types.js'
@@ -50,11 +52,11 @@ export interface RepairUnchanged {
 
 export interface RepairRepaired {
   readonly status: 'repaired'
-  readonly code: 'split' | 'resealed'
+  readonly code: 'split' | 'resealed' | 'closed'
   readonly calls: readonly ToolCallInput[]
-  /** Number of top-level objects found in the fused text (1 when resealed). */
+  /** Number of top-level objects found in the fused text (1 when resealed or closed). */
   readonly fragments: number
-  /** Set only when `code` is `resealed`: the member key whose value was bare. */
+  /** `resealed`: the member key whose value was bare. `closed`: `<delimiter>@<offset>`. */
   readonly key?: string
 }
 
@@ -116,12 +118,29 @@ export function repairToolCallArguments(
     JSON.parse(text)
     return { status: 'unchanged', code: 'already-valid', calls: [call] }
   } catch {
-    // Fall through: the only accepted reason to touch the text is a proven split.
+    // Fall through: an unparseable text is inspected, never re-serialised.
+  }
+
+  // P-0037: one dropped closing delimiter, proven by uniqueness. It runs before
+  // the splitter because the dropped `]` also makes the depth scanner end at
+  // depth 1: the text is one object exactly one character short of parsing.
+  const closer = closeMissingDelimiter(text)
+  if (closer.status === 'closed') {
+    return {
+      status: 'repaired',
+      code: 'closed',
+      calls: [{ id: call.id, name: call.name, arguments: closer.text }],
+      fragments: 1,
+      key: `${closer.delimiter}@${closer.at}`,
+    }
   }
 
   const split = splitTopLevelJsonObjects(text)
   if (!split.ok) {
-    return reject('not-an-object-sequence', `${split.code}: ${split.detail}`)
+    // The closer proof already knows more than the depth scanner does, and a
+    // refusal that drops that knowledge is the defect P-0003 removed elsewhere.
+    const why = closer.status === 'refused' ? `${split.code}: ${split.detail}; closer: ${closer.detail}` : `${split.code}: ${split.detail}`
+    return reject('not-an-object-sequence', why)
   }
   if (split.slices.length === 1) {
     // One object that does not parse is not a fusion, but it can still be the
@@ -129,7 +148,8 @@ export function repairToolCallArguments(
     // without quotes. Resealing is accepted only when exactly one segment
     // proves, so this stays a refusal for every other single-object shape.
     // Truncation is already refused above, so the reseal pass cannot be reached
-    // with a cut tail: no second truncation guard is needed here.
+    // with a cut tail: no second truncation guard is needed here. The closer
+    // proof already ran above and did not fire, so the two never meet.
     const reseal = resealToolCallArguments(text)
     if (reseal.status !== 'resealed') {
       return reject('single-object', `the text is one object; ${reseal.detail}`)

@@ -1,0 +1,12 @@
+{
+  "name": "missing-array-closer",
+  "source": "upstream discussion #12819 (2026-11-10, DSH 0.2.2-rc.1, pi-ai route), shortened and re-spelled",
+  "note": "the model closed options/props/Choice/root but dropped components' `]`, so the text is one character short and JSON reports the error at its last position; restoring that one delimiter is the only interior insertion that parses",
+  "tool": "ui_render",
+  "call_id": "call_00_missingcloser000000000",
+  "arguments": "{\"root\":\"c1\",\"components\":[{\"id\":\"c1\",\"type\":\"Choice\",\"props\":{\"question\":\"pick one\",\"options\":[{\"id\":\"a\",\"label\":\"A\",\"prompt\":\"describe a\"}]}}}",
+  "expect": {
+    "status": "repaired",
+    "fragments": 1
+  }
+}

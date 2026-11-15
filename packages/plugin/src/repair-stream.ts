@@ -165,8 +165,8 @@ export async function* repairStream(
       index: number
       calls: readonly ToolCallInput[]
       fused: boolean
-      /** Set when this decision is a bare-value reseal (P-0005), not a split. */
-      reseal: { tool: string; callId: string; key: string } | null
+      /** Set when this decision rewrites one call in place (P-0005, P-0037). */
+      reseal: { tool: string; callId: string; key: string; closed: boolean } | null
     }> = []
     let planned = 0
     let proven: { name: string; id: string } | null = null
@@ -194,8 +194,8 @@ export async function* repairStream(
       }
       if (result.status === 'repaired') {
         fusedSeen = true
-        // A reseal (P-0005) rewrites one call in place: it synthesizes nothing,
-        // so it must not consume the stream-wide call budget.
+        // A reseal (P-0005) or a closer restore (P-0037) rewrites one call in
+        // place: it synthesizes nothing, so it must not consume the call budget.
         if (result.code === 'split') planned += result.calls.length
         // Write the synthesized ids back so the next candidate cannot mint the same one.
         for (const call of result.calls) seenIds.add(call.id)
@@ -208,9 +208,9 @@ export async function* repairStream(
           calls: result.calls,
           fused: true,
           reseal:
-            result.code === 'resealed'
-              ? { tool: candidate.call.name, callId: id, key: result.key ?? '' }
-              : null,
+            result.code === 'split'
+              ? null
+              : { tool: candidate.call.name, callId: id, key: result.key ?? '', closed: result.code === 'closed' },
         })
         continue
       }
@@ -257,7 +257,7 @@ export async function* repairStream(
       const first = decision.calls[0]
       if (!first) continue
       if (decision.reseal !== null) {
-        monitor.recordResealed(decision.reseal.tool, decision.reseal.callId, decision.reseal.key)
+        monitor.recordInPlace(decision.reseal.tool, decision.reseal.callId, decision.reseal.key, decision.reseal.closed)
         continue
       }
       monitor.recordRepaired(first.name, first.id, decision.calls.length, counts[at]!.unattributed, counts[at]!.unproven)
@@ -288,7 +288,7 @@ export async function* repairStream(
           yield entry.original
           continue
         }
-        monitor.recordResealed(entry.resealed.tool, entry.resealed.callId, entry.resealed.key)
+        monitor.recordInPlace(entry.resealed.tool, entry.resealed.callId, entry.resealed.key, entry.resealed.closed === true)
         if (entry.synthesized !== null) yield* entry.synthesized
         continue
       }
@@ -416,15 +416,16 @@ export async function* repairStream(
                 chunks.push({ type: 'block-start', index, blockType: 'tool-call' })
                 chunks.push(closeCall(index, call))
               }
-              // A reseal (P-0005) rewrites the one call in place: same index and id,
-              // no synthesized call, no budget. Booked as `resealed`, never as a
-              // fusion, because no second call existed.
-              if (result.code === 'resealed') {
+              // A reseal (P-0005) or a closer restore (P-0037) rewrites the one call
+              // in place: same index and id, no synthesized call, no budget. Booked
+              // as that in-place rewrite, never as a fusion, because no second call
+              // existed.
+              if (result.code !== 'split') {
                 hold({
                   original: chunk,
                   synthesized: chunks,
                   repaired: null,
-                  resealed: { tool: chunk.block.name, callId: chunk.block.id, key: result.key ?? '' },
+                  resealed: { tool: chunk.block.name, callId: chunk.block.id, key: result.key ?? '', closed: result.code === 'closed' },
                   spent: 0,
                 })
                 break

@@ -846,7 +846,79 @@
         "packages/plugin/src/repair-stream.ts",
         "tests/unit/repair-stream.test.ts"
       ]
+    },
+    {
+      "id": "S48",
+      "gate": "size",
+      "title": "One dropped delimiter, paid for out of prose and compacted records",
+      "axes": {
+        "correctness": "The closer proof restores exactly one closing bracket (`]` or `}`) at exactly one interior site, and refuses everything else. Four tests: the pipeline case was red first (the same bytes were rejected as `not-an-object-sequence` before the patch), and three guards pin the limits — the genuine ambiguity tie from the fuzz run stays rejected, a cut tail stays rejected, and a missing final delimiter stays rejected. The direct unit tests of the module were collapsed into those four once the module was compacted: the pipeline is the contract, so every claim about the module is asserted through it.",
+        "reproducibility": "One command: `node --test tests/unit/closer.test.ts` (4 tests). `node packages/plugin/dist/cli.js verify` now reads eight fixtures, including `missing-array-closer.json` (repaired) and `ambiguous-closer.json` (rejected). The ambiguity number is reproducible: `.tmp/experiment-closer2.mjs` is seeded and printed 762 unique / 604 ambiguous / 321 unfixable out of 1687 generated dropped-closer shapes.",
+        "compliance": "No cap moved. The payment was prose: `preflight.ts` lost 785 bytes of narrative that `docs/patches/P-0013` already carried, `attribute.ts` lost 917 that P-0030 carried, `verdict.ts` lost 300, `monitor.ts` lost 299; `registry.js` came down 391 net beyond the new record by compacting P-0018, P-0022, P-0025 and P-0029 under P-0032. Final: plugin 82 856 of 83 000 (144 left), core 103 702 of 104 000, `registry.js` 67 903 of 68 000 (97 left). Zero dependencies added.",
+        "ssot": "The rule lives in `docs/patches/P-0037-missing-closer.md`; the module carries a pointer to it instead of a copy. The counter `closed` is declared once in `verdict.ts` with its own meaning, printed only when the build knows it, and booked through the one in-place path shared with `resealed` in `monitor.ts`. The registry record is the ledger form; both new fixtures are canonical under `data/fixtures` and synced into the package.",
+        "adversarial": "Two adversaries were taken seriously. (1) The temptation to repair a missing FINAL delimiter: it looks identical to a cut tail, and one character would \"fix\" it, so end-of-text insertion is excluded by construction and a truncation flag refuses outright. (2) The temptation to call every dropped closer fixable: 35.8 % of measured shapes have two interior sites that both parse, and the tied sample used as the negative control came out of the seeded fuzz run rather than being invented for the test."
+      },
+      "evidence": [
+        "docs/patches/P-0037-missing-closer.md",
+        "tests/unit/closer.test.ts",
+        "data/fixtures/toolcall-fusion/missing-array-closer.json",
+        "data/fixtures/toolcall-fusion/ambiguous-closer.json"
+      ]
+    },
+    {
+      "id": "S49",
+      "gate": "registry",
+      "title": "A redaction written for one platform, shipped to three",
+      "axes": {
+        "correctness": "Three measured shapes now redact and one over-broad draft was rejected. The macOS `/Users/<name>` and `file:///Users/<name>` shapes and the two encoded session keys (`--Users-…--`, `--home-…--`) leaked before this patch; the new rules anchor to a boundary before the slash, keep every byte after the account name, and require the `--…--` wrapper the host itself writes. The first draft of the encoded rule matched `a-Users-alice-b`, and the over-redaction negative control caught it before the patch was written.",
+        "reproducibility": "`node --test tests/unit/redact-platform.test.ts` (6 tests) and `.tmp/probe-redact-macos.mjs`, which prints replacements and the leak flag for eight shapes: 5 of 8 leaked before, 0 of 8 after. The encoding is not assumed — `projectKey` was read out of `dsh-session-persistence-jsonl/src/format.ts` in app.asar (0.2.2-rc.3), and `.tmp/probe-platform-audit.mjs` shows the shipped packages contain no `process.platform` branch at all.",
+        "compliance": "Zero resident bytes: the change is in `packages/core/src/redact.ts`, and the file went down once its rule narrative moved to the patch doc (P-0032 applied to a module). No cap moved. The four records used to pay for the extra registry bytes were compacted to the ledger form, with the long text already in `docs/patches/`.",
+        "ssot": "The rule lives in `docs/patches/P-0038-cross-platform-home-paths.md` and `redact.ts` keeps a pointer, so the measurement table has one home. The registry record names the same evidence and guards the test file asserts, and the ledger row was added in the same commit so `gate_registry`'s ids match on both sides.",
+        "adversarial": "Two adversaries. (1) The temptation to drop every absolute path: it would delete the part of an excerpt that says what failed, which is why the rules keep the tail and only remove the account name. (2) The temptation to claim platform support: the three shapes are tested as strings, not produced on their own OS, so the patch says `tested` and its limits state that this is not \"tested on macOS\"."
+      },
+      "evidence": [
+        "docs/patches/P-0038-cross-platform-home-paths.md",
+        "tests/unit/redact-platform.test.ts",
+        "packages/core/src/redact.ts"
+      ]
+    },
+    {
+      "id": "S50",
+      "gate": "ssot",
+      "title": "The tree on a second platform, and the probe that closes three rounds of watching",
+      "axes": {
+        "correctness": "Linux (WSL2 Ubuntu 26.04, node 24.10.0, pnpm 12.15.0) runs the same suite: 334 tests, 0 fail, 6 gates, 6/6 negative controls, 8 fixtures. Two live probes with scripted providers: P-0037 repairs a one-delimiter-short tool call inside a real DSH process and the host dispatches it (journal `closed:1`, `key ]@143`, `tool/call` carries the repaired JSON, `turn/end completed`); the no-finish stream ends with `TRANSPORT` and exit 1 (probe B) or an explicit error finish (probe A), so \"silently counted as success\" is disproved rather than assumed.",
+        "reproducibility": "`scripts/record_linux_host.mjs` reads only files under `.tmp/linux-evidence/` (copied from the Linux run by `.tmp/r50-collect*.sh`) and hashes every one of them into the artifact. Each probe is a plain scripted endpoint (`.tmp/r50-fake-openai*.mjs`) plus one `dsh --profile l6 \"<prompt>\"` call in an isolated `DSH_HOME`.",
+        "compliance": "No cap moved: plugin 82 856 of 83 000, core 103 724 of 104 000, registry 67 925 of 68 000. The P-0039 fix lives in `scripts/` (not packed), so the tarballs are unchanged. Two registry records were compacted under P-0032 to pay for the new ones.",
+        "ssot": "The Linux facts live in one artifact (`live-linux-*`), referenced by P-0037 evidence, the handoff and the leads ledger; the session-root rule has one home (`scripts/lib/session-root.mjs`) with a `.d.mts` so the test exercises the function three recorders call rather than a copy.",
+        "adversarial": "Three adversaries. (1) The temptation to write \"verified on macOS\" because the POSIX branch passes: there is no Apple hardware here, so the limits say \"Linux only\" and the README keeps the same boundary. (2) The temptation to accept probe A as proof of #13069: it is the same shape and a different outcome, so the lead is closed as `rejected (no defect)` with both probes printed. (3) The temptation to call the first closer run a failure of the patch: it failed because pnpm had resolved the plugin to the LOCAL tarball and its core to the REGISTRY tarball, and the instrumented trace proved it before any code was changed."
+      },
+      "evidence": [
+        "data/results/live-linux-2026-11-15T10-00-00.000Z.json",
+        "docs/patches/P-0039-portable-session-root.md",
+        "tests/unit/session-root.test.ts",
+        "scripts/record_linux_host.mjs"
+      ]
+    },
+    {
+      "id": "S51",
+      "gate": "copy",
+      "title": "Two releases: the recorded install was red, and the installed binary was silent",
+      "axes": {
+        "correctness": "0.4.11 went out, then the cold-directory acceptance recorded it as a failed install while the same directory printed eight PASS lines and exited 0 (P-0040), and on Linux the installed bin printed nothing and exited 0 (P-0041). Both are fixed and both have a test that names the failure: `acceptanceProblem()` refuses a count that disagrees with the repository, and `isEntryPoint()` realpaths both sides. Windows and Linux (WSL2 Ubuntu 26.04) both report 344 tests, 6 gates and 6/6 negative controls; the Linux artifact records the installed-symlink run as `OK 8 fixture(s)`, exit 0.",
+        "reproducibility": "The Linux half is `.tmp/r51-linux-final2.sh` + `.tmp/r51-linux-coldfinal.sh`, whose outputs are hashed into `data/results/live-linux-2026-11-15T15-00-00.000Z.json` by `scripts/record_linux_host.mjs`. The publish numbers are measured from the registry copies via `npm pack <name>@<version>` (`data/results/publish-2026-11-15T14-20-00.000Z.json`), and the acceptance is `install-acceptance-2026-11-15T14-25-00.000Z.json` (`canonical_fixtures: 8`).",
+        "compliance": "No cap moved. 0.4.12 ships 82 919 of 83 000 (CLI 41 425 of 42 000), engine 103 702 of 104 000, `registry.js` 67 903 of 68 000 (97 bytes). The two new records were paid by compacting seven long ones under P-0032; the CLI grew by the guard and paid for itself by condensing two headers in the same subtotal. Every outward file was re-registered through the copy channel after the fact pack moved, and the release notes for 0.4.11 and 0.4.12 were registered with their own frozen history entries.",
+        "ssot": "The fixture count has one source (`data/fixtures/toolcall-fusion/*.json`), the entry guard one implementation (`isEntryPoint`), the session root one resolver, and the market index one newest-version rule that reads the timestamps it stores. The Linux facts live in one artifact and the handoff cites it from the evidence index rather than restating numbers.",
+        "adversarial": "Three adversaries. (1) The first Cold-install run looked like a product failure and was actually pnpm resolving the plugin to the local tarball and its core to the registry one; the trace (`IMPORT_TRACE`, `createRequire(...).resolve`) proved which file ran before any code changed. (2) 0.4.11 is already on the registry carrying the silent bin, so the honest fix was a second release (0.4.12) rather than a rewritten story: the notes say it plainly. (3) The temptation to call the tree \"verified on macOS\" because the POSIX branch passes on Linux is refused: there is no Apple hardware here, so the limits and the notes say Linux only."
+      },
+      "evidence": [
+        "data/results/live-linux-2026-11-15T15-00-00.000Z.json",
+        "data/results/publish-2026-11-15T14-20-00.000Z.json",
+        "data/results/install-acceptance-2026-11-15T14-25-00.000Z.json",
+        "docs/patches/P-0040-acceptance-fixture-count.md",
+        "docs/patches/P-0041-cli-bin-symlink.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-14T16:05:00.000Z"
+  "updated_at": "2026-11-15T15:20:00.000Z"
 }

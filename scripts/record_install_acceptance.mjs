@@ -16,11 +16,12 @@
  */
 
 import { createHash } from 'node:crypto'
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
 import { basename, dirname, join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { acceptanceExpectation, acceptanceProblem } from './lib/acceptance.mjs'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(HERE, '..')
@@ -40,6 +41,12 @@ const stamp = flag('stamp', '')
 if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(stamp)) {
   console.error('record_install_acceptance: --stamp must be ISO-8601 like 2026-11-11T19:30:00.000Z')
   process.exit(2)
+}
+
+const canonicalFixtures = readdirSync(join(ROOT, 'data', 'fixtures', 'toolcall-fusion')).filter((name) => name.endsWith('.json')).length
+if (canonicalFixtures === 0) {
+  console.error('record_install_acceptance: no canonical fixtures under data/fixtures/toolcall-fusion')
+  process.exit(3)
 }
 
 const packageJson = JSON.parse(readFileSync(join(ROOT, 'packages', 'plugin', 'package.json'), 'utf8'))
@@ -92,8 +99,11 @@ try {
     steps.push(run(dir, ['exec', '--', 'dsh-remedy', 'verify']))
     verifyOutput = `${steps[2].stdout}${steps[2].stderr}`
     if (steps[2].status !== 0) blocked = 'verify exited non-zero'
-    else if (!/OK\s+6 fixture\(s\)/.test(verifyOutput)) blocked = 'verify did not print OK 6 fixture(s)'
-    else ok = true
+    else {
+      const problem = acceptanceProblem(verifyOutput, canonicalFixtures)
+      if (problem !== null) blocked = problem
+      else ok = true
+    }
   }
 } finally {
   rmSync(dir, { recursive: true, force: true })
@@ -113,7 +123,8 @@ const payload = {
   },
   claimed: {
     command: `npm install dsh-remedy@${version} && dsh-remedy verify`,
-    expected: 'OK 6 fixture(s)',
+    expected: acceptanceExpectation(canonicalFixtures),
+    canonical_fixtures: canonicalFixtures,
   },
   steps: steps.map((step) => ({
     args: step.args,

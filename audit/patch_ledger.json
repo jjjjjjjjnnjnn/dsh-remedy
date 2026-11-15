@@ -601,6 +601,85 @@
         "tests/unit/repair-stream.test.ts",
         "scripts/gate_size.mjs"
       ]
+    },
+    {
+      "id": "P-0037",
+      "status": "verified",
+      "owner": "remedy",
+      "since": "0.4.11",
+      "evidence": [
+        "docs/patches/P-0037-missing-closer.md",
+        "data/fixtures/toolcall-fusion/missing-array-closer.json",
+        "data/fixtures/toolcall-fusion/ambiguous-closer.json",
+        "tests/unit/closer.test.ts"
+      ],
+      "guards": [
+        "tests/unit/closer.test.ts",
+        "tests/unit/toolcall-repair.test.ts",
+        "scripts/gate_size.mjs"
+      ],
+      "verified_at": "2026-11-15T10:00:00.000Z"
+    },
+    {
+      "id": "P-0038",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.11 (unreleased on the tree)",
+      "evidence": [
+        "docs/patches/P-0038-cross-platform-home-paths.md",
+        "packages/core/src/redact.ts",
+        "tests/unit/redact-platform.test.ts"
+      ],
+      "guards": [
+        "tests/unit/redact-platform.test.ts",
+        "tests/unit/redact.test.ts"
+      ]
+    },
+    {
+      "id": "P-0039",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.11 (unreleased on the tree)",
+      "evidence": [
+        "docs/patches/P-0039-portable-session-root.md",
+        "scripts/lib/session-root.mjs",
+        "tests/unit/session-root.test.ts",
+        "data/results/live-linux-2026-11-15T10-00-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/session-root.test.ts"
+      ]
+    },
+    {
+      "id": "P-0040",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.12 (unreleased on the tree)",
+      "evidence": [
+        "docs/patches/P-0040-acceptance-fixture-count.md",
+        "scripts/lib/acceptance.mjs",
+        "tests/unit/acceptance.test.ts",
+        "data/results/install-acceptance-2026-11-15T12-20-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/acceptance.test.ts"
+      ]
+    },
+    {
+      "id": "P-0041",
+      "status": "verified",
+      "owner": "remedy",
+      "since": "0.4.12 (unreleased on the tree)",
+      "evidence": [
+        "docs/patches/P-0041-cli-bin-symlink.md",
+        "packages/plugin/src/cli.ts",
+        "tests/unit/cli-entry.test.ts",
+        "data/results/live-linux-2026-11-15T10-00-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/cli-entry.test.ts",
+        "tests/e2e/cli.test.ts"
+      ]
     }
   ]
 }

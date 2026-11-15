@@ -23,6 +23,7 @@ export class RemedyMonitor {
   private refused = 0
   private withdrawn = 0
   private resealed = 0
+  private closed = 0
   /** Failures named but deliberately not repaired (P-0013). */
   private diagnoses = 0
   private readonly listeners = new Set<(event: RepairEvent) => void>()
@@ -38,33 +39,23 @@ export class RemedyMonitor {
     this.emit({ kind: 'repaired', tool, callId, fragments, ...(unattributed > 0 ? { unattributed } : {}), ...(unproven > 0 ? { unproven } : {}) })
   }
 
-  /**
-   * Book one bare-value reseal (P-0005).
-   *
-   * Not a fusion: exactly one call was intended, it kept its id, and its bytes went
-   * out unchanged inside a JSON string. So it moves `resealed` only — never `fused`
-   * ("a fusion was observed") and never `repaired` ("a fused call was split"). The
-   * verdict reads it as a repair, because a defect was seen and fixed.
-   */
-  recordResealed(tool: string, callId: string, key: string): void {
-    this.resealed += 1
-    this.emit({ kind: 'resealed', tool, callId, key })
+  /** Book one in-place rewrite: same call, same id, one proven segment fixed
+   * inside its own bytes. `resealed` (P-0005) and `closed` (P-0037) are different
+   * defects with the same shape, so they get separate counters (one meaning
+   * each), and neither is a fusion: nothing was synthesized. */
+  recordInPlace(tool: string, callId: string, detail: string, closed: boolean): void {
+    if (closed) this.closed += 1
+    else this.resealed += 1
+    this.emit({ kind: closed ? 'closed' : 'resealed', tool, callId, key: detail } as RepairEvent)
   }
 
   /**
-   * Book one refusal (P-0003 / BS-12). `fused` keeps its P-0001 meaning: a fusion was
-   * actually observed, so a plain bad JSON argument is not one (before P-0003 it was,
-   * and such a stream read `degraded`). Three buckets, no fourth:
-   *
-   *  - `refused` alone — never proven to be a fusion: `not-an-object-sequence`,
-   *    `single-object`, `unparsable-fragment`, `fragment-not-object`, `missing-id`,
-   *    `missing-name`, `name-changed`, `empty-id-delta`; an unknown code lands here too.
-   *  - `fused` + `refused` + `unrepaired` — `too-many-calls`: a proven fusion our own
-   *    budget declined ("repaired" would lie, "quiet" would hide it).
-   *  - `withdrawn` alone — `rolled-back`: a proven repair given back.
-   *  - `withdrawn` plus the P-0002 pair — `consumer-abort`: the consumer stopped before
-   *    any decision.
-   *
+   * Book one refusal (P-0003 / BS-12). `fused` keeps its P-0001 meaning — a fusion
+   * actually observed — so a plain bad JSON argument is not one. Buckets:
+   * `refused` alone (never proven to be a fusion, including an unknown code),
+   * `fused`+`refused`+`unrepaired` (`too-many-calls`, a proven fusion our budget
+   * declined), `withdrawn` alone (`rolled-back`), `withdrawn` plus the P-0002 pair
+   * (`consumer-abort`). The full table is in `docs/patches/P-0003-refusal-observability.md`.
    * `truncated` never reaches this method: a cut stream is `recordTruncated()`.
    */
   recordRejected(tool: string, callId: string, code: string, detail: string): void {
@@ -143,6 +134,7 @@ export class RemedyMonitor {
       refused: this.refused,
       withdrawn: this.withdrawn,
       resealed: this.resealed,
+      closed: this.closed,
       diagnoses: this.diagnoses,
     }
   }

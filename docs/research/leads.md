@@ -24,13 +24,13 @@ gh api graphql -f query='{ search(type: DISCUSSION, query: "repo:deepseek-ai/dee
 |---|---|---|---|---|---|---|---|---|---|
 | L-0001 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12901> | `dsh` | `full` | 2026-11 | ? | `MALFORMED_RESPONSE`? | `llm/stream` | **rejected (dup)** | R43：与 P-0001 同形状——报告里两条都是同一个工具（`bash`），粘连文本在 `block-end`/`finish` 被拆成两个调用，用户可见的失败已由 P-0001 的夹具与 live 产物覆盖。第二个调用的真 id 在 `pi-ai` 的 `ensureToolCallBlock`（本机 `@earendil-works/pi-ai@0.82.1` 副本逐字确认：先按 index 找 block，没有结构闭合守卫）里就丢了，属上游；我们修不到那一半。适配器边界回放留作下一步（未在本轮重测，见 decision 的诚实边界）。 |
 | L-0002 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13211> | `dsh` | `full` | 2026-11 | **0.2.2-rc.3** | `MALFORMED_RESPONSE`? | `llm/stream` | **patched** | R43：本机接缝复现了同一形状（`block {id:'', name:'', arguments:'{}'}` + 正常 finish），旧构建只记 `refused` 然后原样放行，宿主把空 callId 写进 V4、会话不可 resume。**P-0033** 改为合成可追踪 id + `remedy_unattributed`；四条新测试先红后绿，见 `docs/patches/P-0033-empty-identity.md`。上游「提交前校验完整调用」的部分仍是 out-of-seam。 |
-| L-0003 | <https://github.com/deepseek-ai/deepseek-harness/discussions/11843> | `dsh` | `full` | 2026-11 | ? | `MALFORMED_RESPONSE` | `llm/stream` | lead | 大参数导致 invalid JSON；抽最小形状，确认是截断、粘连还是裸值（P-0005 已覆盖后者）。 |
-| L-0004 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12819> | `dsh` | `full` | 2026-11 | 0.2.2-rc.1 | `MALFORMED_RESPONSE` | `llm/stream` | lead | 尾部多一个 `"]"`；这是「单个坏对象」还是「粘连后截断」？前者 P-0003 拒绝、后者 P-0001 拆——先归类。 |
+| L-0003 | <https://github.com/deepseek-ai/deepseek-harness/discussions/11843> | `dsh` | `full` | 2026-11-02 | 0.2.2-rc.1 桌面 | `MALFORMED_RESPONSE` | **out-of-seam**（adapter） | **rejected (out-of-seam)** | R49：从本机 `app.asar` 逐行读到 `dsh-llm-deepseek/lib/index.js` 的 `catch (_invalidProviderToolJson) { return malformed("tool input is invalid JSON") }`——**出错的那段参数文本不在失败消息里**（同一文件全库搜 `Received arguments` 为 0 命中），所以本接缝拿不到可修的字节。它要的「默认重试 MALFORMED_RESPONSE」已由 P-0011 的有界重试覆盖（`retryOnMalformed`，默认 0、按 `(turn,step)` 计数）。剩下的只有上游改写；`fixes` 里不写补丁号。 |
+| L-0004 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12819> | `dsh` | `full` | 2026-11-10 | 0.2.2-rc.1（pi-ai 路由） | `MALFORMED_RESPONSE` | `llm/stream` | **patched** | R49：报告的尾部形状是「`components` 少一个 `]`，报错位置 = 长度 − 1」，本机 `pi-ai/dist/utils/json-parse.js` 逐字确认它把原文写进 `argumentsError`（`…\n\nReceived arguments:\n${json}`），也就是 P-0001 已经在读的那个标记——所以字节到得了接缝。**P-0037**：只在「恰好一个内部插入点能 parse」时补一个闭合符，末尾插入一律拒（切尾与它形状相同）。实测 1 687 个生成形状里 604 个（35.8 %）有两个以上合法插入点，全部拒绝。 |
 | L-0005 | <https://github.com/deepseek-ai/deepseek-harness/discussions/10195> | `dsh` | `full` | 2026-11 | 0.2.1-rc.2 (Windows) | `MALFORMED_RESPONSE` | `llm/stream` | lead | Windows 流式参数损坏；在 0.2.2-rc.3 上重试，记录工具名与 index。 |
 | L-0006 | <https://github.com/deepseek-ai/deepseek-harness/discussions/11577> | `dsh` | `full` | 2026-11 | 0.2.1-rc.5 | `MALFORMED_RESPONSE` | `llm/stream` | lead | 汇总帖（#7705/#8920/#8976/#9402/#9503/#10406），附补丁建议；先读它引用的六条，去重后再复现。 |
 | L-0007 | <https://github.com/deepseek-ai/deepseek-harness/discussions/8976> | `dsh` | `full` | 2026-11 | ? | `MALFORMED_RESPONSE` / `STREAM_CLOSED` | `llm/stream` + `agent/request-error` | lead | 46 turns lost；对照我们本机 census 的 47 次 `MALFORMED_RESPONSE`，看是不是同一类。 |
 | L-0008 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12628> | `dsh` | `full` | 2026-11 | ? | `MALFORMED_RESPONSE` | `llm/stream` | lead | 提议「降级为工具错误」；我们的立场是「修不了就抛」，评估能否用 `remedy_unattributed` 或命名诊断表达，而不是吞掉。 |
-| L-0009 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12769> | `dsh` | `full` | 2026-11 | ? | `UNKNOWN_TOOL` | `llm/stream` | lead | relay 改工具名大小写；检查我们的名字/声明查找是否大小写敏感，以及 P-0027 的归因会不会误判。 |
+| L-0009 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12769> | `dsh` | `full` | 2026-11 | ? | `UNKNOWN_TOOL` | `llm/stream` | **rejected (no defect)** | R49：R49 读 `repair-stream.ts` 的 `tools.find((tool) => tool.name === call.name)` 与 `core/attribute.ts`：名字大小写不同只会得到 `unproven`（片段照流里给的名字发出、记账 `unproven`），**不会**把片段挂到别的工具名下——最坏情况和转发原名一样，是我们能给出的最保守答案。本机 census 里也没有「名字只差大小写」的形状可复现，`unreproduced` 与 `no defect` 同时成立，按更窄的那条记。 |
 | L-0010 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12064> | `dsh` | `full` | 2026-11 | ? | `MALFORMED_RESPONSE`（被吞） | **out-of-seam**（adapter） | watching | R43：`dsh-agent-loop` 的 `parseArguments` 逐字确认是 `catch { return raw }`，宿主把字符串交给工具——不修宿主。我们这条接缝能看到的下半截是「参数能 parse 但不是对象」（字符串/数组/null），可以命名并送去 `remedy_unattributed`；那是独立补丁（P-0034 候选），不塞进 P-0033。 |
 
 ## B. 流 / 会话稳定性（相邻，先判断是否本接缝）
@@ -86,7 +86,7 @@ gh api graphql -f query='{ search(type: DISCUSSION, query: "repo:deepseek-ai/dee
 | L-0033 | <https://github.com/deepseek-ai/deepseek-harness/discussions/6035> | `dsh` | `full` | 2026-09-09 | 0.1.2-rc.1（0.1.5-alpha.1 未修） | `UNKNOWN_TOOL` | `llm/stream` | **rejected (dup)** | R45：报告里的会话证据是 `tool-call` 的 `id` 与 `name` 都是空字符串，adapter 的 `closeBlock()` 把 `block.name ?? ""` 原样写出——与本机 P-0033 的形状同族（#13211，rc.3 实测）。P-0033 已经把这种调用改成 `call_remedy_<n>` + `remedy_unattributed`，并把 turn 留在可继续的状态；报告版本更早，不额外发补丁。 |
 | L-0034 | <https://github.com/deepseek-ai/deepseek-harness/discussions/9066> | `dsh` | `full` | 2026-10-07 | 0.2.0-rc.2（pi-ai 0.87.x） | `MALFORMED_RESPONSE`（被吞） | out-of-seam（adapter） | **rejected (out-of-seam)** | R45：报告描述的是 **adapter 在我们看见之前**就把坏参数换成 `{}`（`pi-ai` 的 `arguments` 解析把它们编成空对象），于是工具带空输入运行。接缝这一侧收到的已经是合法的 `{}`——那是模型可能真的发过的形状，我们无法诚实地指认它。修法只能在上游（携带 `rawArguments`），不在这里假装。**同时记下边界**：P-0033 的 limits 已经写明「解析成非对象的 arguments 不动」，本轮不改。 |
 | L-0035 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12318> | `dsh` | `full` | 2026-11-05 | **0.2.2-rc.1** | unknown | `profile` | **patched** | R46：`cordis.patch.yml` 里指向已被删除的子路径导出（`…/list-agents`），插件加载失败报 `never started`，于是**每一次 resume 都失败**，而界面看起来只是「某个会话坏了」。我们的 patch 层现在只挂裸包名，但没有任何判据检查这条承诺。**P-0035** 把「每个 row 的 `name:` 必须能在 manifest 的 exports 里解析、目标文件必须已构建」变成测试，并用这条上游 row 做负对照；0 运行时字节。 |
-| L-0036 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13069> | `dsh` | `full` | 2026-11 | ? | unknown（无 finish 的流） | `agent/request-error` | watching | R45：报告说「无 finish 的流被当正常结束」。本机 9 401 条 attempt 记录里确有 **6 条无 finish**（`docs/research/failure-map-2026-11-10.md`），但我们**没能证明**宿主把这种流当成功——上游 `translate()` 在 `message_stop` 之前结束会抛 `STREAM_CLOSED`，那会走 throw 路径（已记 `errors`）。还缺的证据：一个脚本化 provider 在发完 `block-end` 后直接关连接，看 `turn/end` 是 `completed` 还是 `error`。没有这条证据就不发补丁。 |
+| L-0036 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13069> | `dsh` | `full` | 2026-11 | ? | unknown（无 finish 的流） | `agent/request-error` | **rejected (no defect)** | R50：在 Linux 真机（WSL2 + DSH 0.2.2-rc.3）上做了两个脚本化 provider 探针。**A**：发完 tool-call delta 后直接关流（无 `finish_reason`）——适配器在 `toStreamChunks` 末尾抛 `LlmError(..., "STREAM_CLOSED")`，这一轮被转成 `finish{kind:'error', failure:{code:"TRANSPORT"}}`，`turn/end` 仍是 `completed`（这是「静默」的一半，但不是 #13069 说的那一种）。**B**：每次请求都无 `finish_reason`、永不恢复——宿主重试 6 次后放弃，stderr `dsh: TRANSPORT: Stream ended without finish_reason`、退出码 1、`turn/end` `error`、journal `errors: 7`。所以「无 finish 的流被当成成功」**不成立**：它要么变成显式的 error finish，要么以 error 收尾。剩下一半（一轮静默成功）不是本接缝能修的；证据见 `data/results/live-linux-2026-11-15T10-00-00.000Z.json`。 |
 
 ## G. 同接缝的其他项目与上游源码（2026-11-14 读到的）
 
@@ -98,14 +98,18 @@ gh api graphql -f query='{ search(type: DISCUSSION, query: "repo:deepseek-ai/dee
 ## 下一会话的前三条（按优先级）
 
 > **R43 结案 L-0001 / L-0002 / L-0010；R45 结案 L-0032（P-0034）与 L-0033 / L-0034 / L-0024；
-> R46 结案 L-0035（P-0035）。** 下一条候选从 A 表与 F 表里取：
-> L-0003（大参数 invalid JSON，先判截断/粘连/裸值）、L-0004（尾部多 `"]"`）、L-0009（relay 改工具名大小写）。
+> R46 结案 L-0035（P-0035）；R49 结案 L-0004（P-0037）、L-0003 与 L-0009。**
+> 下一条候选从 A 表与 F 表里取：**L-0005**（Windows 流式损坏）、**L-0007**（46 turns lost）、
+> **L-0036**（无 finish 的流，缺一个脚本化 provider 的实测）。
 
-1. **L-0001（#12901，reused index 合并）**：已结案为 dup；剩余动作只有适配器边界回放（可选）。
-2. **L-0002（#13211，rc.3 空 tool call）**：已由 P-0033 覆盖，`patched`。
-3. **L-0010（#12064，adapter 静默吞错）**：out-of-seam，保留 `watching`；接缝内的下半截
-   （非对象参数）仍是候选，但 L-0034 已经说明为什么它和「被 adapter 换成 `{}`」不是同一件事。
+1. **L-0003（#11843，deepseek 路由的非法参数）**：`rejected (out-of-seam)`，原文不在失败消息里；
+   默认重试已由 P-0011 覆盖（R49 读宿主源码确认）。
+2. **L-0004（#12819，少一个 `]`）**：已由 P-0037 覆盖，`patched`；实测 35.8 % 的同类形状是歧义的，
+   所以唯一性证明不是装饰。
+3. **L-0009（#12769，relay 改工具名大小写）**：`rejected (no defect)`。大小写不同只会让片段落到
+   `unproven`（照原名发出 + 记账），不会误挂到别的工具；本机也没有该形状可复现。
 4. **L-0036（#13069，无 finish 的流）**：`watching`，缺一个脚本化 provider 的实测。
 
-复现任何一条之前，先看**字节账**：plugin 82 957 / 83 000（只剩 43 B），core 101 597 / 104 000，
-registry 67 710 / 68 000（只剩 290 B）。新的常驻字节必须先付账（压散文或去重），不许抬 cap。
+复现任何一条之前，先看**字节账**：plugin 82 856 / 83 000（只剩 144 B），core 103 702 / 104 000，
+registry 67 982 / 68 000（只剩 18 B —— **下一条记录之前必须先压一条老记录，不是先写**）。
+新的常驻字节必须先付账（压散文或去重），不许抬 cap。

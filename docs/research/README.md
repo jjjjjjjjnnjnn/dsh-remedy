@@ -103,10 +103,15 @@
 
 ## 6. 下一会话的第一件事
 
-1. 读 `docs/research/leads.md` 的 **F 表**（R45/R46 新读的五条）与 A 表 decision 列：
-   L-0032 已由 P-0034 覆盖，L-0033 / L-0034 / L-0024 已结案，L-0035 已由 P-0035 覆盖，
-   L-0036 是 `watching`（缺一个脚本化 provider 的实测）；下一条从 L-0003 / L-0004 / L-0009 里选；
-2. 复现成功 → 夹具 + 先红测试 + `P-0037` 起（编号只前进，不复用；`P-0036` 已经在 0.4.10 里出去了）；
-3. 复现失败 → 标 `unreproduced`，写清版本差异，换下一条；
-4. 动运行时字节前先付账：压散文或去重，**不抬 cap**（P-0032 的先例）。当前的余量：
-   plugin **43 B**、core **2 403 B**、registry **290 B**（下一条记录写之前先确认能塞进 290 B）。
+1. 读 `docs/research/leads.md` 的 A 表与 F 表 decision 列：R49 结案了 **L-0004（`patched`，P-0037）**、
+   **L-0003（`rejected (out-of-seam)`）** 与 **L-0009（`rejected (no defect)`）**；
+   剩下的是 **L-0005**（Windows 流式损坏）与 **L-0007**（46 turns lost）；**L-0036** 已在 R50 结案为
+   `rejected (no defect)`：两个脚本化 provider 探针证明「无 `finish_reason` 的流」要么变成显式的 error finish、
+   要么以 `TRANSPORT` + 退出码 1 收尾，不会静默成功（证据 `data/results/live-linux-2026-11-15T10-00-00.000Z.json`）；
+2. **先发 0.4.11**：P-0037 已在树上、判据绿（324 tests / 6 gates / mutate 6-6），发版动作（copy 通道、
+   `record_publish`、装机验收、两个 profile、市场索引）一个都没做；
+3. 复现成功 → 夹具 + 先红测试 + `P-0038` 起（编号只前进，不复用）；
+4. 复现失败 → 标 `unreproduced`，写清版本差异，换下一条；
+5. 动运行时字节前先付账：压散文或去重，**不抬 cap**（P-0032 的先例）。当前的余量：
+   plugin **144 B**、core **298 B**、registry **97 B（下一条记录写之前先压一条老记录）。
+

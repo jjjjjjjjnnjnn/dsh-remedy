@@ -89,6 +89,13 @@ export type RepairEvent =
       readonly key: string
     }
   | {
+      readonly kind: 'closed'
+      readonly tool: string
+      readonly callId: string
+      /** `<delimiter>@<offset>`: the one interior site a missing closer was restored at (P-0037). */
+      readonly key: string
+    }
+  | {
       readonly kind: 'rejected'
       readonly tool: string
       readonly callId: string
@@ -141,8 +148,14 @@ export interface PendingBlock {
   /** What is emitted when it is; `null` means "the original, unchanged". */
   readonly synthesized: readonly StreamChunk[] | null
   readonly repaired: { readonly tool: string; readonly callId: string; readonly fragments: number } | null
-  /** A proven bare-value reseal (P-0005): one call, rewritten in place. */
-  readonly resealed?: { readonly tool: string; readonly callId: string; readonly key: string }
+  /** A proven in-place rewrite: reseal (P-0005) or closer restore (P-0037). */
+  readonly resealed?: {
+    readonly tool: string
+    readonly callId: string
+    readonly key: string
+    /** Present only when this is the P-0037 closer restore. */
+    readonly closed?: boolean
+  }
   /** Calls this entry took from the stream-wide budget, returned if it is withdrawn. */
   readonly spent: number
 }

@@ -1,10 +1,9 @@
 /**
- * Redaction for evidence that leaves the machine.
- *
- * Evidence is quoted from real sessions, and real sessions contain keys, tokens,
- * email addresses and home paths. Every artifact written under `data/` goes
- * through here; the scanner counts replacements so a reader can see that
- * redaction ran instead of trusting that it did.
+ * Redaction for evidence that leaves the machine: keys, tokens, emails and home
+ * paths, in every shape the three platforms write them. Each rule's measurement
+ * (and the two platform shapes P-0038 added) is in
+ * `docs/patches/P-0038-cross-platform-home-paths.md`; a scanner counts
+ * replacements so a reader can see redaction ran instead of trusting it did.
  */
 
 import type { RedactionSummary } from './types.js'
@@ -25,27 +24,28 @@ const RULES: readonly Rule[] = [
   },
   { kind: 'email', pattern: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g, replacement: '***@***' },
   {
-    // MEASURED: a home path reaches an artifact in three shapes, and only the
-    // first one was redacted. A path quoted inside JSON doubles its separators
-    // (`C:\\Users\\rongj`), and a file URL writes them as slashes
-    // (`C:/Users/rongj`) — both leaked the account name until this rule
-    // matched one-or-two backslashes or a forward slash. The username is the
-    // sensitive part, so only it is dropped.
+    // Drive-letter shape, raw or JSON-escaped or slashed (`C:/Users/x`), which is
+    // what a Windows session writes; the account name is the sensitive part.
     kind: 'windows-home',
     pattern: /\b[A-Za-z]:(?:\\{1,2}|\/)(?:Users|users)(?:\\{1,2}|\/)[^\\/\s"']+/gi,
     replacement: '<home>',
   },
   {
-    // MEASURED: DSH names a session directory after the absolute workspace
-    // path with `-` as the separator and `~XXXX` for each escaped code point,
-    // so `C:/Users/rongj/Desktop/x` appears as `--C-Users-rongj-Desktop-…--`.
-    // No separator survived to match, and the account name leaked through the
-    // directory name in every artifact that cited a session path.
-    kind: 'encoded-home',
-    pattern: /\b[A-Za-z]-Users-[A-Za-z0-9._]+(?:~[0-9A-Fa-f]{4})*(?=-)/,
-    replacement: '<home-encoded>',
+    // P-0038: `/home/<name>` (Linux) and `/Users/<name>` (macOS) are the same
+    // host code on other platforms, and both used to pass through untouched.
+    kind: 'posix-home',
+    pattern: /(^|[\s"'(=,:;\/])\/(?:home|Users)\/[^\/\s"']+/g,
+    replacement: '$1<home>',
   },
-  { kind: 'posix-home', pattern: /\/home\/[^/\s"']+/g, replacement: '<home>' },
+  {
+    // P-0038: DSH renames the session directory after the workspace path
+    // (`projectKey` in app.asar: 0.2.2-rc.3), so the same project encodes as
+    // `--home-x--`, `--Users-x--` or `--C-Users-x--`. No separator survives to
+    // match a path rule, so the account name leaked on two of the three.
+    kind: 'encoded-home',
+    pattern: /--(?:[A-Za-z]-)?(?:Users|home)-[A-Za-z0-9._]+(?:~[0-9A-Fa-f]{4})*(?=-)/g,
+    replacement: '--<home-encoded>',
+  },
 ]
 
 export interface RedactResult {

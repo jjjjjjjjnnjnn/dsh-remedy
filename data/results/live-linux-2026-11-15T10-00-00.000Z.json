@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_linux_host.mjs",
+  "generated_at": "2026-11-15T10:00:00.000Z",
+  "question": "Does the same tree pass on a POSIX host, does the evidence layer redact POSIX home paths, and what does the host do with a stream that ends without a finish_reason?",
+  "host": {
+    "kernel": "Linux rjjRobert 6.6.114.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Mon Dec  1 20:46:23 UTC 2025 x86_64 GNU/Linux",
+    "distro": "Ubuntu 26.04 LTS",
+    "node": "24.10.0",
+    "pnpm": "12.15.0",
+    "how": "WSL2 Ubuntu, workspace copied into the Linux filesystem (never tested through /mnt/c)",
+    "sources": {
+      "host.txt": "41e157a13e252bff8c167158ff28ea65538ecc9df0d4907be82e0a308d46f172",
+      "verify.log": "7f3100a09b96e80ad4be99235460389812231fabd783472bb031ab600495a763",
+      "mutate.log": "cd3874ea02d453a179b6be8017ea21432cbcd3eea37a9b04dd26835348dd1dfb",
+      "size.log": "28f865904305967f3f9e7ecdf99b011694c9ec2cd9633b70fe414d0691c5b745",
+      "cli-verify.log": "65b2f45ff39c79d2581d9b590179cbb173b08738b11c6308fd50a07df2c8223d",
+      "redact-shapes.log": "f818a7b13f9e156c2619eaca58458eb34e3e8378a5a758485143f9d3b66b55bd"
+    }
+  },
+  "verify": {
+    "tests": "334",
+    "pass": "334",
+    "fail": "0",
+    "gates": "6",
+    "negative_control": "6/6",
+    "fixtures": "8",
+    "cli_verify_exit": "0",
+    "byte_account": {
+      "total": 82856,
+      "cap": 83000
+    },
+    "core_total": {
+      "bytes": 103502,
+      "cap": 104000
+    },
+    "registry": {
+      "bytes": 67703,
+      "cap": 68000
+    }
+  },
+  "redaction": {
+    "shapes": [
+      {
+        "shape": "macos raw path",
+        "replacements": 1,
+        "leaks": false
+      },
+      {
+        "shape": "macos file url",
+        "replacements": 1,
+        "leaks": false
+      },
+      {
+        "shape": "macos encoded dir",
+        "replacements": 1,
+        "leaks": false
+      },
+      {
+        "shape": "linux encoded dir",
+        "replacements": 1,
+        "leaks": false
+      },
+      {
+        "shape": "windows encoded dir",
+        "replacements": 1,
+        "leaks": false
+      },
+      {
+        "shape": "windows encoded no-drive",
+        "replacements": 1,
+        "leaks": false
+      }
+    ],
+    "measured": 6,
+    "leaks": 0,
+    "note": "the P-0038 rules measured on a real POSIX host; the macOS strings are not produced here, they are the same strings the unit test asserts"
+  },
+  "live_closer": {
+    "what": "a tool call whose argument text is one `]` short (the #12819 shape), streamed by a local OpenAI-compatible endpoint",
+    "exit": 0,
+    "event": {
+      "at": "2026-11-15T09:07:09.330Z",
+      "kind": "closed",
+      "tool": "ui_render",
+      "callId": "call_closer_1",
+      "key": "]@143",
+      "counters": {
+        "streams": 2,
+        "fused": 0,
+        "repaired": 0,
+        "unrepaired": 0,
+        "truncated": 0,
+        "errors": 0,
+        "refused": 0,
+        "withdrawn": 0,
+        "resealed": 0,
+        "closed": 1,
+        "diagnoses": 0
+      }
+    },
+    "counters": {
+      "streams": 3,
+      "fused": 0,
+      "repaired": 0,
+      "unrepaired": 0,
+      "truncated": 0,
+      "errors": 0,
+      "refused": 0,
+      "withdrawn": 0,
+      "resealed": 0,
+      "closed": 1,
+      "diagnoses": 0
+    },
+    "tool_call": {
+      "type": "tool/call",
+      "seq": 15,
+      "time": 1794733629333,
+      "data": {
+        "turn": 1,
+        "step": 1,
+        "callId": "call_closer_1",
+        "name": "ui_render",
+        "arguments": "{\"root\":\"c1\",\"components\":[{\"id\":\"c1\",\"type\":\"Choice\",\"props\":{\"question\":\"pick one\",\"options\":[{\"id\":\"a\",\"label\":\"A\",\"prompt\":\"describe a\"}]}}]}"
+      }
+    },
+    "tool_result": {
+      "type": "tool/result",
+      "seq": 17,
+      "time": 1794733629351,
+      "data": {
+        "turn": 1,
+        "step": 1,
+        "message": {
+          "role": "tool",
+          "source": {
+            "kind": "tool",
+            "callId": "call_closer_1"
+          },
+          "toolCallId": "call_closer_1",
+          "content": [
+            {
+              "type": "text",
+              "text": "Error: unknown tool \"ui_render\""
+            }
+          ],
+          "isError": true,
+          "id": "8ce5eea4-90d9-4e19-b3b7-5c83aaed6f79"
+        },
+        "error": {
+          "name": "ToolNotFoundError",
+          "code": "UNKNOWN_TOOL"
+        }
+      },
+      "sourceEventSeqs": [
+        15
+      ],
+      "surfaceOp": "append"
+    },
+    "turn_end": {
+      "type": "turn/end",
+      "seq": 22,
+      "time": 1794733629383,
+      "data": {
+        "turn": 1,
+        "reason": {
+          "kind": "completed"
+        }
+      }
+    },
+    "session_sha256": "e446cfe2699af1c26d5ecb2c1e507e585b307e336c7da6962fbf26f1aa9009e7",
+    "journal_sha256": "81ca7ef7124ace7c566f7207346a3699de0f6773a29e42ab9f15f07b715f52c7"
+  },
+  "live_no_finish": {
+    "what": "a provider that closes every tool-call stream without a finish_reason and never recovers (the L-0036 shape)",
+    "exit": 1,
+    "stderr": "dsh: TRANSPORT: Stream ended without finish_reason",
+    "finish_chunk": {
+      "type": "finish",
+      "reason": {
+        "kind": "error",
+        "failure": {
+          "message": "Stream ended without finish_reason",
+          "code": "TRANSPORT"
+        }
+      }
+    },
+    "turn_end": {
+      "type": "turn/end",
+      "seq": 31,
+      "time": 1794733625517,
+      "data": {
+        "turn": 1,
+        "reason": {
+          "kind": "error",
+          "error": {
+            "message": "Stream ended without finish_reason",
+            "code": "TRANSPORT"
+          }
+        }
+      }
+    },
+    "counters": {
+      "streams": 7,
+      "fused": 0,
+      "repaired": 0,
+      "unrepaired": 0,
+      "truncated": 0,
+      "errors": 7,
+      "refused": 0,
+      "withdrawn": 0,
+      "resealed": 0,
+      "closed": 0,
+      "diagnoses": 0
+    },
+    "attempts": 7,
+    "session_sha256": "9dcecb7eb7e514918260bef33febf7ab317cc9f5f960f6fa98f82c4400cc2b9e",
+    "journal_sha256": "063148136de731c52db3b766ca4f9c5352bb80f39e25c183d06ed4b3c5f6a1e2"
+  }
+}

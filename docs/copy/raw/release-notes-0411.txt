@@ -1,0 +1,45 @@
+## dsh-remedy 0.4.11
+
+### Added
+
+- **P-0037 — one dropped closing delimiter is restored only when the proof is unique.** A nested
+  tool-call argument one `]` short (upstream #12819) used to be refused as `single-object` and
+  re-thrown, so the whole turn died. The repair inserts exactly one bracket at the only **interior**
+  site that parses; end-of-text is never a candidate (a cut tail looks identical) and two candidates
+  is an ambiguity, not a fix — 604 of 1687 generated dropped-closer shapes had two or more. The call
+  keeps its id and name, and the journal books `closed` with `key` = `]@<offset>`.
+
+### Fixed
+
+- **P-0038 — the redaction was written on one platform and shipped to three.** `/Users/<name>`,
+  `file:///Users/<name>` and the macOS/Linux session keys (`--Users-…--`, `--home-…--`) passed
+  through `redact()` untouched while the Windows shapes were covered. The key is not a path —
+  `projectKey` in the host turns every separator into one `-` and wraps the slug in `--…--` — so the
+  rule now recognises all three and requires the wrapper. Measured: 5 of 8 shapes leaked before,
+  0 after; the same six shapes were measured live on Linux.
+- **P-0039 — three recorders only worked on Windows.** They computed `.dsh/sessions` from
+  `USERPROFILE`, which is unset on Linux and macOS, so the path became relative and the recorder
+  exited 3 with "no session directory". One portable resolver answers for all three platforms.
+
+### Changed
+
+- `L-0036` (a stream with no `finish`) is closed as `rejected (no defect)`: two scripted providers on
+  Linux showed that such a stream ends with an explicit `TRANSPORT` error finish or with
+  `turn/end error` and exit 1. `L-0003` is `rejected (out-of-seam)` and `L-0009` is
+  `rejected (no defect)`.
+
+### Package size
+
+- `dsh-remedy@0.4.11`: 39631 bytes compressed, 38 files, 126185 bytes unpacked (82856 of `dist/*.js`),
+  shasum `884693a5584eb2d8b39902b56296bb34ea1f130c`.
+- `dsh-remedy-core@0.4.11`: 40354 bytes compressed, 25 files, 131692 bytes unpacked (103724 of
+  `dist/*.js`), shasum `2a528bb1c232fa287d3ea78cbb1babbcb57ac14b`.
+
+### Notes
+
+- This release carries 39 patches: 5 `verified` and 34 `tested`.
+- Byte budget: residency 41494 of 44000, CLI 41362 of 42000, total 82856 of 83000 (144 bytes of
+  headroom); engine 103724 of 104000, `registry.js` 67925 of 68000.
+- P-0037 is `verified` on Linux: the one-delimiter-short shape was repaired inside a real DSH
+  0.2.2-rc.3 process and the repaired call was dispatched. The shape is synthesized by a scripted
+  provider, not produced by a real model turn.

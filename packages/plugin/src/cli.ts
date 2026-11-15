@@ -12,7 +12,7 @@
  *             2 usage · 3 unavailable (missing file)
  */
 
-import { existsSync, readFileSync, readdirSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs'
 import process from 'node:process'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import {
@@ -242,8 +242,24 @@ function main(argv: readonly string[]): number {
   }
 }
 
-const invokedDirectly =
-  process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href
+/**
+ * Is this module the process entry point? (P-0041)
+ *
+ * `import.meta.url` is the resolved file; `argv[1]` is what the caller named. npm
+ * installs a POSIX bin as a symlink, so the two differ and the old equality guard
+ * skipped `main()`: `npx dsh-remedy verify` exited 0 silently. Realpath both sides.
+ * A plain `import` never sets `argv[1]` to this file, so tests stay inert.
+ */
+export function isEntryPoint(metaUrl: string, argv1: string | undefined): boolean {
+  if (argv1 === undefined || argv1 === '') return false
+  try {
+    return realpathSync(fileURLToPath(metaUrl)) === realpathSync(argv1)
+  } catch {
+    return false
+  }
+}
+
+const invokedDirectly = isEntryPoint(import.meta.url, process.argv[1])
 if (invokedDirectly) process.exitCode = main(process.argv.slice(2))
 
 export { main }

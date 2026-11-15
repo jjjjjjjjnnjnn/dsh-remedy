@@ -1,51 +1,45 @@
-## dsh-remedy 0.4.10
-
-### Added
-
-- A research note on the seam's neighbours (`docs/research/similar-projects-2026-11-14.md`): the five plugins that
-  already repair this shape, which of their mechanisms was borrowed, and which of their trade-offs was refused —
-  no `jsonrepair` dependency, no request-side history rewrite, no offline session editing.
-- A numeric version comparison in the governance layer: `localeCompare` called `0.4.9` newer than `0.4.10`,
-  which only shows up when a minor version crosses into two digits. Not registered as a patch — the registry has
-  290 bytes free and a record costs about 550 — so it is described here rather than given an id with no ledger row.
+## dsh-remedy 0.4.12
 
 ### Fixed
 
-- **P-0036 — a delta-only tool call keeps the id the stream proved.** A provider that never
-  emits `block-end` reaches the host as pure `tool-call-delta` chunks, and the host's own
-  assembler assigns `partial.toolCallId = chunk.id` with **no guard**
-  (`dsh-llm/src/assembler.ts:72`, DSH 0.2.2-rc.3) while the name one line below
-  (`:73`) is guarded. Its only fallback (`:115`) is `??`, which cannot fire for an empty
-  string. A continuation delta spelled `id: ""` therefore erases an id that already arrived,
-  and a call that never carried one assembles as `id: ""`. The V4 log then refuses the
-  matching result: `format v4 tool/result … requires toolCallId matching its tool source`,
-  and every later turn repeats it. `P-0033` covered the half where the adapter *does* send a
-  `block-end`; this is the half where it never does. The wrapper now keeps one id per index:
-  a non-empty id is adopted, an empty one becomes the id that index already proved, and an
-  index that never carried one mints a collision-checked `call_remedy_<n>`.
+- **P-0041 — the installed CLI was silent on Linux, and exited 0.** `./node_modules/.bin/dsh-remedy verify`
+  printed nothing and exited 0 on Linux and macOS while `node dist/cli.js verify` printed every fixture. The
+  entry guard compared `import.meta.url` (the resolved file) with `pathToFileURL(process.argv[1])` (what the
+  caller named), and npm installs a POSIX `bin` as a symlink, so the two differ and `main()` never ran. Both
+  sides are realpath'd now. Windows installs a `.cmd` shim that passes the real path, which is why
+  0.1.0–0.4.11 never saw it. `0.4.11` carries the old guard; install `0.4.12` to get the fix.
+- **P-0040 — the acceptance recorder owned a fixture count the package owns.** The cold-directory install of
+  `0.4.11` printed eight `PASS` lines and `OK 8 fixture(s)` with three zero exit codes, and the recorder wrote
+  `ok: false` because it looked for the literal `OK 6 fixture(s)`. The count is derived from
+  `data/fixtures/toolcall-fusion/*.json` and judged by `scripts/lib/acceptance.mjs`.
+
+### Added
+
+- Two tests that pin the shapes this release repairs: `tests/unit/acceptance.test.ts` judges the
+  acceptance output against the repository's own fixture count, and `tests/unit/cli-entry.test.ts`
+  asserts the installed `bin` shape (a symlink) and the direct path through the same guard.
 
 ### Changed
 
-- Six leads closed with a source or a reason: `L-0037` is the same `empty-id-clobber` shape
-  reported against a competing plugin and became `P-0036`; `L-0038` is the handbook page whose
-  `assembler.ts:187` line gives `L-0036` (a stream that ends with no `finish` reads as a clean
-  `stop`) its host half, which is recorded rather than patched: adding `stop` repeats the
-  host's assumption and adding `error` invents one.
-- `docs/research/similar-projects-2026-11-14.md` records the five plugins on this seam, what
-  was borrowed as a mechanism, and what was refused: no `jsonrepair` dependency, no request-side
-  history rewrite, no offline session editing.
+- `record_install_acceptance.mjs` no longer owns a fixture count: it counts
+  `data/fixtures/toolcall-fusion/*.json` and judges with `scripts/lib/acceptance.mjs`, so adding a
+  canonical fixture can never turn a green install into a recorded failure again.
+- The market index names the two new releases and their measured publish timestamps, and its
+  governance rule now follows the newest entry instead of the number that happened to be newest when
+  the rule was written.
 
 ### Package size
 
-- `dsh-remedy@0.4.10`: 39183 bytes compressed, 36 files, 124916 bytes unpacked (82957 of
-  `dist/*.js`), shasum `dcc33f65e7e0401800348c7f992830879f290ed7`.
-- `dsh-remedy-core@0.4.10`: 40494 bytes compressed, 23 files, 130919 bytes unpacked (101597 of
-  `dist/*.js`), shasum `75b4744e4681ad1e752308671889312a5006c20e`.
+- `dsh-remedy@0.4.12`: 39694 bytes compressed, 38 files, 126181 bytes unpacked (82919 of `dist/*.js`), shasum
+  `b9122c89b04a4c18a92b0404dfe939af3ba8f54e`.
+- `dsh-remedy-core@0.4.12`: 40118 bytes compressed, 25 files, 131670 bytes unpacked (103702 of `dist/*.js`),
+  shasum `d58321d7ad1087b2937fad53f3f91231c7948fc8`.
 
 ### Notes
 
-- This release carries 36 patches: 4 `verified` and 32 `tested`.
-- Byte budget: residency 41595 of 44000, CLI 41362 of 42000, total 82957 of 83000 (43 bytes of
-  headroom); engine 101597 of 104000, `registry.js` 67710 of 68000. No cap moved.
-- P-0036 is `tested`, not `verified`: the red is at the seam and the host half is source-read
-  from this machine's `app.asar`, not a live turn this round.
+- This release carries 41 patches: 6 `verified` and 35 `tested`.
+- Byte budget: residency 41494 of 44000, CLI 41425 of 42000, total 82919 of 83000 (81 bytes of headroom);
+  engine 103702 of 104000, `registry.js` 67903 of 68000. No cap moved.
+- Verified on Windows and on Linux (WSL2 Ubuntu 26.04, node 24.10.0): 334 tests, 6 gates, 6/6 negative
+  controls, `OK 8 fixture(s)` through the installed `bin` (a symlink) and through `npx`. macOS is **not**
+  measured: there is no Apple hardware here, so the POSIX branch it shares with Linux is the only evidence.

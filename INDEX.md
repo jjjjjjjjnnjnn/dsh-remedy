@@ -27,6 +27,10 @@
 | `packages/core/src/json-split.ts` | 顶层 JSON 对象切分；`}{` 在字符串里不是边界 |
 | `packages/core/src/toolcall-repair.ts` | unchanged / repaired / rejected 三态判定 |
 | `packages/core/src/reseal.ts` | 裸值成员值只在唯一候选时 reseal，否则拒（P-0005） |
+| `packages/core/src/closer.ts` | 缺一个闭合 `]`/`}` 时只在唯一内部插入点补回，末尾与歧义一律拒（P-0037） |
+| `packages/core/src/redact.ts` | 脱敏：密钥/token/邮箱 + 三个平台的家目录形状与三种会话目录键（P-0004 / P-0038） |
+| `scripts/lib/session-root.mjs` | 会话目录在三个平台上的唯一定义（`DSH_SESSIONS` 优先，否则 HOME/USERPROFILE/homedir）；P-0039 |
+| `scripts/lib/acceptance.mjs` | 装机验收的判据：夹具数从 `data/fixtures/` 数出来，数量一致 + 每行 PASS；P-0040 |
 | `packages/core/src/registry.ts` | `PATCHES`：补丁的单一真相源 |
 | `packages/core/src/verdict.ts` | unmeasured / quiet / repaired / degraded |
 | `packages/core/src/preflight.ts` | reasoning effort 预检：ok / refuse / unknown + 建议档位（P-0013） |
@@ -55,9 +59,12 @@
 | `data/fixtures/toolcall-fusion/braces-in-string.json` | `}{` 在字符串里不是边界 |
 | `data/fixtures/toolcall-fusion/bare-code-value.json` | 裸值 reseal 的实测夹具（P-0005） |
 | `data/fixtures/toolcall-fusion/truncated.json` | 截断不修 |
+| `data/fixtures/toolcall-fusion/missing-array-closer.json` | 缺一个 `]` 的实测形状：只补那一个字符（P-0037） |
+| `data/fixtures/toolcall-fusion/ambiguous-closer.json` | 两个插入点都能 parse：拒绝而不是猜（P-0037 的负对照） |
 | `data/fixtures/toolcall-fusion/single-broken.json` | 单个坏对象不拆 |
 | `data/results/patch-registry-*.json` | 注册表快照（SSOT） |
 | `data/results/live-2026-11-09T17-00-00.000Z.json` | headless 真机：10 流 / 1 修复 / `completed` |
+| `data/results/live-linux-2026-11-15T10-00-00.000Z.json` | **Linux 真机（WSL2）**：334 tests / 6 gates / 6-6；#12819 形状被修好并派发；无 finish 的流以 `TRANSPORT` 收尾 |
 | `data/results/live-desktop-2026-11-09T19-10-00.000Z.json` | 桌面真机：39 流 / 2 修复 / `aborted`（人工停止） |
 | `data/results/live-2026-11-10T14-45-00.000Z.json` | 0.3.0 headless 真机：合成 id 被派发并回答（P-0002） |
 | `data/results/live-2026-11-10T16-30-00.000Z.json` | 0.3.0 headless 真机拒绝：`refused:1`（P-0003） |
@@ -67,7 +74,7 @@
 | `data/results/publish-2026-11-11T17-35-00.000Z.json` | 0.3.6 发布后两包 `latest`（`ok: true`） |
 | `docs/patches/P-0001-toolcall-fusion.md` … `P-0009-session-header-window.md` | 每个补丁的症状 / 机制 / 反证 / 边界 |
 | `docs/patches/P-0010-cli-usage-truth.md` … `P-0030-attribution-proof.md` | 同上；P-0015 是 `agent/pre-step` 拒绝语义的实测记录；P-0016 的文档在 R31 补写；P-0024 把两个包内 README 收进 copy 通道；P-0025 让 `explain` 的三态落地；P-0026 把发布流程收成一个家；P-0027 给「名字证不出来」的片段一个不可执行的名字；P-0028 把随包夹具里的本机路径换成 `<home>`；P-0029 把继任者的版本指针与字节账接上判据；P-0030 把归因证明搬进 core，按 schema 能证明的部分判定并记录 `unproven` |
-| `docs/patches/P-0031-core-budget.md` … `P-0036-delta-identity.md` | P-0031 给引擎立 cap；P-0032 把台账的长叙述搬回补丁文档（registry.js 66 303 → 63 217，cap 不动）；P-0033 让空 id/空名的 tool call 不再被持久化（合成 id + `remedy_unattributed`）；P-0034 让「没有一个拒绝记账解释过的失败」记成 error 而不是安静的一轮；P-0035 把 patch 层每个 `name:` 解析到 manifest exports 与已构建文件（0 运行时字节）；P-0036 让纯 delta 协议的 tool call 保留流里已经证过的 id（宿主 `assembler.ts:72` 无条件写 id、`:115` 的 `??` 不兜空串） |
+| `docs/patches/P-0031-core-budget.md` … `P-0041-cli-bin-symlink.md` | P-0031 给引擎立 cap；P-0032 把台账的长叙述搬回补丁文档（registry.js 66 303 → 63 217，cap 不动）；P-0033 让空 id/空名的 tool call 不再被持久化（合成 id + `remedy_unattributed`）；P-0034 让「没有一个拒绝记账解释过的失败」记成 error 而不是安静的一轮；P-0035 把 patch 层每个 `name:` 解析到 manifest exports 与已构建文件（0 运行时字节）；P-0036 让纯 delta 协议的 tool call 保留流里已经证过的 id（宿主 `assembler.ts:72` 无条件写 id、`:115` 的 `??` 不兜空串）；P-0037 让「单个对象少一个闭合符」在唯一插入点上被补回，末尾与歧义一律拒（上游 #12819，`pi-ai` 回显 `Received arguments:` 才让字节到得了接缝） |
 | `docs/adr/0001-stream-repair-over-asar-patch.md` | 为什么在 `llm/stream` 修 |
 
 ## 公开仓库（对外）
@@ -108,7 +115,7 @@
 | `scripts/redact_artifacts.mjs` | 已落盘产物的脱敏重写（P-0004） |
 | `scripts/record_live_mount.mjs` | 真机 journal/session → `live-*` 产物 |
 | `scripts/record_publish.mjs` | 发布后 registry 状态 → `publish-*` 产物 |
-| `scripts/record_session_sample.mjs` | 本机故障样本（必须带 `--until`） |
+| `scripts/record_session_sample.mjs` | 本机故障样本（必须带 `--until`；会话根走 `lib/session-root.mjs`） |
 | `scripts/record_install_acceptance.mjs` | 空目录从 registry 单装 → `install-acceptance-*` 产物 |
 | `scripts/record_prestep_probe.mjs` | 隔离 `DSH_HOME` 里 `agent/pre-step` 拒绝语义的会话 → `prestep-probe-*` 产物（P-0015） |
 | `scripts/replay_malformed_corpus.mjs` | 全部真实 `MALFORMED_RESPONSE` 回放 → `malformed-replay-*` |
@@ -118,6 +125,7 @@
 | `scripts/collect_leads.mjs` | 一次社区巡检 → `intake-*` 产物（读不到的来源记 null，不记 0） |
 | `scripts/lib/intake.mjs` | 巡检的纯函数：`ok` / `unreadable` / 汇总 / 候选去重 |
 | `scripts/record_patch_registry.mjs` | 注册表快照 → `patch-registry-*` 产物 |
+| `scripts/record_linux_host.mjs` | WSL/Linux 真机证据 → `live-linux-*` 产物（含跨平台脱敏与无 finish 的实测） |
 | `audit/gate_ledger.json` | 门的清单与负对照 |
 | `audit/patch_ledger.json` | 补丁账本 |
 | `audit/step_reviews.json` | 每步五轴 |
@@ -131,6 +139,10 @@
 | `tests/unit/json-split.test.ts` | 切分器正反例 |
 | `tests/unit/toolcall-repair.test.ts` | 三态判定 + 真实夹具 + 负对照 |
 | `tests/unit/reseal.test.ts` | 裸值 reseal：唯一候选才修，0 或 ≥2 都拒 |
+| `tests/unit/closer.test.ts` | 缺一个闭合符：唯一插入点才修；歧义、切尾、末尾插入都拒（P-0037） |
+| `tests/unit/redact-platform.test.ts` | 三个平台的家目录与三种会话目录键；过度删除是负对照（P-0038） |
+| `tests/unit/acceptance.test.ts` | 装机验收判据：旧的字面 6 与正确的 8 必须被区分（P-0040） |
+| `tests/unit/cli-entry.test.ts` | 入口守卫：差一跳的 bin 路径必须能跑；import 不等于运行（P-0041） |
 | `tests/unit/repair-stream.test.ts` | 真实 error-finish 序列 / 抛错 / 截断 / 全有或全无 |
 | `tests/unit/verdict.test.ts` | 四态 + 第九计数器可选 |
 | `tests/unit/redact.test.ts` | 密钥 / token / 邮箱 / 五种家目录形状 |

@@ -1,28 +1,16 @@
 #!/usr/bin/env node
 /**
- * `dsh-remedy explain` — what is this plugin doing in *this* profile?
+ * `dsh-remedy explain` (P-0016 / P-0025): what is this plugin doing in *this* profile?
  *
- * The plugin ships a patch registry, but the registry answers "what patches
- * exist", not "which of them are mounted here and which failure classes they
- * cover". A user who just saw a dead turn needs the second question, and until
- * now the only way to answer it was to read `docs/HANDOFF.md`.
+ * Reads three things, all read-only: the registry (what each patch claims), the
+ * profile patch layer when `--profile-file` is given (what is mounted here), and a
+ * session scan when `--sessions` is given (which classes this host really hits).
+ * The table is class -> how often -> which patch covers it -> whether it is on
+ * here, and nothing is invented: counts come from the scan, "on here" from the file.
  *
- * This command reads three things, all read-only:
- *
- *   1. the registry (`PATCHES`) — what each patch claims and its status;
- *   2. the profile patch layer, if a path is given with `--profile-file` — what
- *      the mounted plugin is actually configured to do;
- *   3. a scan of the session directory, if `--sessions` is given — which failure
- *      classes this host really hits, ranked by how often.
- *
- * The output is a table: failure class → how often → which patch covers it →
- * whether that patch is on here. It never invents a number: every count comes
- * from the scan, and every "on here" comes from the profile file.
- *
- * Exit codes: 0 when no class this host hits is covered-and-switched-off in a
- * profile that was read, 1 when one is, 3 when an input is unreadable. With no
- * `--profile-file` nothing was measured, so `enabled here` reads `unknown` and
- * no class can be a finding (P-0025).
+ * Exit codes: 0 when no hit class is covered-but-switched-off in a profile that was
+ * read, 1 when one is, 3 when an input is unreadable. With no profile nothing was
+ * measured, so `enabled here` reads `unknown` and no class is a finding (P-0025).
  */
 
 import { existsSync, readFileSync } from 'node:fs'

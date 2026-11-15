@@ -2,23 +2,25 @@
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
 > **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.10`（已发布，两包 `latest`）
-> **Stand**：R48（2026-11-15，**交接轮：把三份旧账本对齐到 0.4.10**，判据与阈值一字未动——`AGENTS.md`
-> 说的还是 0.4.7 / R43 / 290 tests，`INDEX.md` 的补丁文档区间停在 P-0035，`docs/research/` 的字节账停在
-> 0.4.9 之前的余量。**320 测试 / 6 门 / `--mutate` 6-6**）。
-> R47 是**去互联网上读同接缝的五个竞品与上游源码**，把拼得上的那一块做成 P-0036（纯 delta 协议的 tool call
-> 不许落盘成 `id: ""`），0.4.10 发布。R46 是 P-0035（patch 层的每一行都必须能在 manifest 里解析，0 运行时字节）。
+> **Stand**：R51（2026-11-15，**发版之后把它拆开看：一个绿的包被记成失败，一个装好的 CLI 什么都不打印**——
+> 0.4.11 带 P-0037/P-0038/P-0039，0.4.12 带 P-0040（验收不再自己拥有夹具数）与 P-0041（POSIX 上的 bin 是
+> 符号链接，旧守卫让 `main()` 根本没跑、退出 0）。**344 测试 / 6 门 / `--mutate` 6-6**（Windows 与 Linux 同值）。
+> **平台边界：Windows 与 Linux 实测，macOS 未实测**；P-0038 的 `/Users` 形状在 Linux 上是字符串）。
+> R49 是 P-0037（少一个闭合符）与 P-0038（脱敏按一个平台写却发到三个）；R48 是交接轮（三份旧账本对齐）；
+> R47 是**去互联网上读同接缝的五个竞品与上游源码**，把拼得上的
+> 那一块做成 P-0036（纯 delta 协议的 tool call 不许落盘成 `id: ""`），0.4.10 发布。R46 是 P-0035（patch 层的每一行都必须能在 manifest 里解析，0 运行时字节）。
 > R45 是 P-0034（未拒绝的 `MALFORMED_RESPONSE` 不再被记成安静的一轮）；R44 是社区面（七个来源 + 巡检脚本）。
 > R43 是 P-0032 台账去重与 P-0033 空身份；R42 是引擎的字节账（P-0031）；R41 是继任者的地图（P-0029）与归因证明（P-0030）。
 > 更早的 R40…R1 见 `docs/HANDOFF.md` 的批次叙事。｜
 > **接手先读**：`docs/HANDOFF.md` → `docs/research/README.md` → `docs/research/leads.md` → `PROJECT_RULES.md` → `INDEX.md`
 > **R43 起的主线**是外部反馈 → 稳定补丁：报告只是线索，本机复现后才有补丁；来源与方法见 `docs/research/`。
 >
-> **基线（2026-11-15）**：`pnpm run verify` = **320 tests / 6 gates**；
-> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.10`（latest）+
-> `dsh-remedy-core@0.4.10`（latest）。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
-> `v0.4.10`。三十六补丁：4 `verified` + 32 `tested`，在 DSH 0.2.2-rc.3 上实测过。
-> **字节余量（下一轮的第一个约束）**：plugin **82 957 / 83 000（43 B）**、core **101 597 / 104 000**、
-> registry **67 710 / 68 000（290 B —— 下一条记录写之前先确认能塞进 290 B，否则按 P-0032 的先例压短或签提额）**。
+> **基线（2026-11-15）**：`pnpm run verify` = **344 tests / 6 gates**（Windows 与 Linux 同值）；
+> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.12`（latest）+
+> `dsh-remedy-core@0.4.12`（latest）。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
+> `v0.4.12`。四十一补丁：**6 `verified` + 35 `tested`**，在 DSH 0.2.2-rc.3 上实测过（Windows + Linux WSL2）。
+> **字节余量（下一轮的第一个约束）**：plugin **82 919 / 83 000（81 B）**、core **103 702 / 104 000（298 B）**、
+> registry **67 903 / 68 000（97 B —— 下一条记录之前先压一条老记录，按 P-0032 的先例，不许抬 cap）**。
 > **本目录不是 git 根**：提交在 `..`（容器），公开仓库由
 > `git subtree split --prefix=dsh-remedy` 切出。
 

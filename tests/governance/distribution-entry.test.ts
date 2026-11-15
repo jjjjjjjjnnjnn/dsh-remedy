@@ -72,10 +72,16 @@ test('the market index names where a version bytes actually come from', () => {
     assert.equal(version.unreleased, true, 'a git pin may only describe unreleased bytes')
   }
 
-  // The publish timestamp is a measurement, not a placeholder: 0.4.10 landed on
-  // the registry at 2026-11-14T21:36:26.821Z, which is epoch 1794692186. The
-  // older entries stay in the index with their own measured timestamps.
-  assert.equal(version.publishTimestamp, 1794692186)
+  // The publish timestamp is a measurement, not a placeholder, and it must be the
+  // timestamp of the version it sits beside: every entry carries its own
+  // `npm view <name> time` reading. A literal here would pin one release forever
+  // (0.4.10's 1794692186 was written in when it was newest), so the rule reads the
+  // manifest and requires a real epoch value.
+  assert.equal(typeof version.publishTimestamp, 'number')
+  assert.ok(version.publishTimestamp > 1_600_000_000, `${String(version.publishTimestamp)} is not a registry timestamp`)
+  const entries = index.plugins[0]?.versions ?? []
+  const byTimestamp = [...entries].sort((a, b) => b.publishTimestamp - a.publishTimestamp)
+  assert.equal(version.publishTimestamp, byTimestamp[0]?.publishTimestamp, 'the first entry must be the newest by its own timestamp')
 
   // And the unreleased head is stated once, in words, so a reader of the index
   // learns what the repository contains without mistaking it for the artifact.

@@ -1,0 +1,11 @@
+{
+  "name": "ambiguous-closer",
+  "source": "fuzz measurement 2026-11-15 (.tmp/experiment-closer2.mjs): 604 of 1687 dropped-closer shapes had two interior sites that parse",
+  "note": "two different single-delimiter insertions each yield valid JSON, so the text is refused instead of guessed; this is the negative control that keeps the uniqueness rule honest",
+  "tool": "ops_bash",
+  "call_id": "call_00_ambiguouscloser000000000",
+  "arguments": "{\"command\":{\"path\":{\"id\":88},\"path\":\"x y\"}",
+  "expect": {
+    "status": "rejected"
+  }
+}

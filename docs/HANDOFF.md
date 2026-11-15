@@ -2462,30 +2462,32 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 
 ## 下一位 agent 的第一件事
 
-**A. 现在是哪一版。** **0.4.12 已发布**（两包 `latest`，四十一补丁：**6 `verified` + 35 `tested`**；
-在 DSH 0.2.2-rc.3 上实测，Windows 与 Linux WSL2 同值）。公开仓 `main` 推到 `76584fd`，
-`v0.4.11` / `v0.4.12` 的 tag 与 release 都发了，正文与 `docs/copy/release-notes/` 逐字节相同；
-CI 在 `main` 与两个 tag 上都 success。两个 profile 已换装 0.4.12。
+**A. 现在是哪一版。** **0.4.13 已发布**（两包 `latest`，四十二补丁：**6 `verified` + 36 `tested`**；
+在 DSH 0.2.2-rc.3 上实测，Windows 与 Linux WSL2 同值 **361 tests / 6 gates / 6-6**）。
+公开仓 `main` 推到 `d1e9a6d`（release 提交），`v0.4.13` 的 tag 与 release 都发了、正文与
+`docs/copy/release-notes/v0.4.13.md` 逐字节相同；CI 在 `main` 与 `v0.4.13` 上都 success。
+两个 profile 已换装 0.4.13（两边 `verify` 都是 `OK 8 fixture(s)`）；**桌面 App 要重启才会加载它**。
 
 **B. 主线（R43+）：外部反馈 → 稳定补丁。** R43 结掉 L-0001 / L-0002；R45 把 #11337 做成 **P-0034**，
 把 #6035 / #9066 / #11190 判 `rejected`；R46 把 #12318 做成 **P-0035**；R47 读完同接缝的五个竞品，
 把 `empty-id-clobber` 那一半做成 **P-0036**；R49 把 #12819 做成 **P-0037**；R50 用两个探针把
-`L-0036` 判成 `rejected (no defect)`。**38 条线索的结论全部在 `docs/research/leads.md` 的 decision 列。**
+`L-0036` 判成 `rejected (no defect)`；**R53 把最后的 L-0005 / L-0007 判成 `rejected (out-of-seam)`**，
+理由是本机 adapter 源码里那句失败消息不带参数原文。**39 条线索的结论全部在 `docs/research/leads.md`
+的 decision 列，A 表已空。**
 
-**C. 接手第一件事：读 `docs/research/leads.md`，再决定下一条线索。**
-A 表里还没动的只剩 **L-0005**（Windows 流式损坏）与 **L-0007**（46 turns lost）；其余都在 decision 列
-写了结局。**报告是线索，不是证据**：复现之后才有夹具 / 先红测试 / **P-0042 起**；
-不能复现的标 `unreproduced`，不许据此发补丁。
+**C. 接手第一件事：不要再去追线索表里的旧条目，先做一次巡检。**
+`node scripts/collect_leads.mjs` 会产出 `data/results/intake-<stamp>.json`（只说哪些来源答了、哪些没答、
+有几个候选还没进账本）。R53 读过 2026-11-15 的最新一批讨论：大多是 out-of-seam（桌面、sandbox、前端），
+唯一一条看得上的是 #11620（`dsh-llm-pi-ai` 的 stream-idle watchdog 忽略 SSE `: ping`），
+但那是 **adapter 的接缝**——`llm/stream` 看不到注释帧，追它之前先把这一条写清楚。
 
-**D. 硬约束（下一条补丁之前先付账）：** plugin **82 919 / 83 000（81 B）**、
-core **103 702 / 104 000（298 B）**、registry **67 903 / 68 000（97 B —— 下一条记录写之前
-先压一条老记录，按 P-0032 的先例，不许抬 cap）**。基线 **344 tests / 6 gates / `--mutate` 6-6**。
+**D. 下一件事的三个方向（按顺序挑一个）。**
+1. **重启桌面 App 加载 0.4.13**（只有人能点），跑一轮真实 turn，用 `record_live_mount` 记成
+   `live-desktop-*`。这一条是唯一「没做就永远缺」的证据。
+2. **`remedy-live` 仍写着 `xhigh`**：`explain --sessions <dir> --profile-file <layer>` 现在会打一行
+   `CONFLICT` 并退出 1。改不改 profile 是用户的决定，不是本项目的；本项目只负责指名。
+3. **`registry.js` 只剩 150 B**：下一条记录之前先压一条老记录（P-0032 先例），**不许抬 cap**。
 
-**E. 这一轮之后仍开着的人工动作（只有人能点）：**
-
-1. **桌面 App 要重启才会加载 0.4.12**（R51 记录它当时没有运行，所以只有「安装完成」这条证据）；
-2. 若要「App 里跑过一个真实 turn」的证据，同样只有人能点；
-3. **macOS 仍未实测**：本机没有 Apple 硬件/许可宿主，CI 只有 ubuntu 与 windows 两个 job。
 
 **治理判据（R22 起，别再退化）：**
 
@@ -2535,6 +2537,10 @@ core **103 702 / 104 000（298 B）**、registry **67 903 / 68 000（97 B ——
 
 **下一个必须做的：先付字节账，再动行为。**
 
+- plugin 的 total 只剩 **283 B**（82 717 / 83 000）：拆模块只改归属、不改 total（total 是两半之和），所以下一个补丁只能**压散文 / 去重**，**不许抬 cap**；
+- core 的 `registry.js` 只剩 **150 B**（67 850 / 68 000）：下一条补丁记录之前先压一条老记录（P-0032 先例），**不许就地吸收**；
+- ~~核 `awesome-dsh-plugin` 卡片~~ **R41 已完成**：PR #15072 已合并；~~dsh.so 重提~~ **R42 已完成**（0.4.7 提交，`✓ Submitted`）；
+- `BS-18` 已被 P-0030 收窄：闭合 schema 与声明类型能证明「不是这个工具」，开放 schema 仍不能；没证明的片段记 `unproven`，不再沉默。
 - total 只剩 **87 B**：拆模块只改归属、不改 total（total 是两半之和），所以下一个补丁只能**删/去重**，**不许抬 cap**；
 - core 的 registry 只剩 **1 697 B**（66 303 / 68 000）：下一条补丁记录必须先拆 registry（按接缝分文件）或由 owner 签署提额，**不许就地吸收**；
 - ~~核 `awesome-dsh-plugin` 卡片~~ **R41 已完成**：PR #15072 已合并，页面已给 npm 安装行 + `tarball:` 兜底 + README（含中文）；
@@ -2545,27 +2551,19 @@ core **103 702 / 104 000（298 B）**、registry **67 903 / 68 000（97 B ——
 （`https://dsh.so/submit/` 填 npm 包名即可，本机 browse 通道未连接）；
 `awesome-dsh-plugin` #14942 已合并、dshopen #472 已关闭、AllDSH #3 仍 open。
 
+
 **接缝利用率（别重新论证一遍）：**
 
 | 接缝 | 上游契约（引自其自带文档） | 用途 | 状态 |
 |---|---|---|---|
 | `llm/stream` | 同步 waterfall，listener 必须立即返回流 | 拆粘连 / reseal | ✅ 生产 |
 | `agent/request-error` | handler 返回 `{kind:'retry'}` 时**不调 `next()`**；不拥有决定必须 `next()` | 有界重试 + 命名诊断 | ✅ 生产（默认不重试） |
-| `agent/pre-step` | `{kind:'reject'}` 或 `{kind:'enter', messages, …}`；被拒不开启 step | preflight 改写消息（尚未挂） | ⚠️ **不挂**：拒绝写 `turn/end blocked`、丢输入、退出码 1；桌面把 `blocked` 画成「已完成」且无内容（R30，BS-17 已关）；`return next()` 以 `next is not a function` 结束；只剩 `{kind:'enter'}` 未测 |
+| `agent/pre-step` | `{kind:'reject'}` 或 `{kind:'enter', messages, …}`；被拒不开启 step | preflight 的落点 | ⛔ **不挂，R53 量过为什么**：`enter` 在 0.2.2-rc.3 上能带消息（`user/message` 被接受、turn `completed`、退出 0），但 loop 在 waterfall 之前就定好 `selection`、返回时用自己的覆盖，所以同一个改写加在 `xhigh` 上仍死在 `prepareCall`；`reject` 在桌面被画成「已完成」且丢输入（R30）。证据 `data/results/prestep-enter-2026-11-15T17-55-00.000Z.json` |
 | `agent/request` | **已 deprecated**，不能改 messages | — | ⛔ 不碰 |
 | `agent/assistant-stream` | 每 attempt 的 start/chunk/end | 观测 | ⛔ 价值低于成本 |
 | `tools/pre-execute` / `guard()` | guard 同步；要 await 就 `ask` | 拦工具参数 | ⛔ 另一族缺陷 |
 | `agent/turn-stopping` | turn 关闭前可改写结局 | — | ⛔ 风险高 |
 | `system-prompt/assemble` | **文档明确禁止**在此增删 tools/text | — | ⛔ 禁止 |
-
-验收：
-
-1. `pnpm run verify` 绿；`node scripts/gate.mjs --mutate` 6/6 红；
-2. 新补丁的证据/守卫路径都能解析，`verified` 必须有 `data/results/live-*`；
-3. 对外文字只经 `copy_record` 登记，`node scripts/gate_copy.mjs` 绿；
-4. 装机验收必须是 `data/results/install-acceptance-*.json`；
-5. `node packages/plugin/dist/cli.js explain --sessions <dir> --profile-file <yml>` 能跑通并退出 0。
-
 ## 证据索引（`data/results/`）
 
 | 文件 | 状态 | 说明 |

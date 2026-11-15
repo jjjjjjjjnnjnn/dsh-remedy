@@ -1,17 +1,5 @@
 #!/usr/bin/env node
-/**
- * `dsh-remedy explain` (P-0016 / P-0025): what is this plugin doing in *this* profile?
- *
- * Reads three things, all read-only: the registry (what each patch claims), the
- * profile patch layer when `--profile-file` is given (what is mounted here), and a
- * session scan when `--sessions` is given (which classes this host really hits).
- * The table is class -> how often -> which patch covers it -> whether it is on
- * here, and nothing is invented: counts come from the scan, "on here" from the file.
- *
- * Exit codes: 0 when no hit class is covered-but-switched-off in a profile that was
- * read, 1 when one is, 3 when an input is unreadable. With no profile nothing was
- * measured, so `enabled here` reads `unknown` and no class is a finding (P-0025).
- */
+/** P-0016 / P-0025 / P-0042: what this plugin is doing in this profile. Exit 1 names a finding. */
 
 import { existsSync, readFileSync } from 'node:fs'
 import process from 'node:process'
@@ -22,22 +10,7 @@ import { readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { PATCHES } from 'dsh-remedy-core'
 
-/**
- * Which failure class each patch answers — read from the registry, never restated
- * here (P-0016).
- *
- * This table used to live in this file as two constants, `COVERAGE` and
- * `SWITCHES`. That made "which patch covers which failure class" a fact with two
- * homes: adding a patch meant remembering this command, and the two could drift
- * with nothing to catch it. The patches themselves now carry `failureClasses`
- * and `switchKey`, so a patch added tomorrow is covered by `explain` the moment
- * it lands in `PATCHES`.
- */
-function coverageOfPatch(patchId: string): readonly string[] {
-  return PATCHES.find((patch) => patch.id === patchId)?.failureClasses ?? []
-}
-
-/** The covering patch ids for one failure class, in registry order. */
+/** The covering patch ids for one failure class, in registry order — from the registry (P-0016). */
 function coverersOf(failure: string): readonly string[] {
   return PATCHES.filter((patch) => (patch.failureClasses ?? []).includes(failure)).map((patch) => patch.id)
 }
@@ -47,6 +20,39 @@ function switchOf(patchId: string): string | undefined {
   return PATCHES.find((patch) => patch.id === patchId)?.switchKey
 }
 
+/** The provider/model/level a profile fixes for the next turn. */
+interface ProfileSelection {
+  readonly provider: string
+  readonly model: string
+  readonly reasoningEffort?: string
+}
+
+/** P-0042 — the profile's selection, read flat; a missing row or key stays missing. */
+function selectionOf(text: string): ProfileSelection | null {
+  const start = text.split(/\r?\n/).findIndex((line) => line === '- id: agent-default-model')
+  if (start === -1) return null
+  const flat: Record<string, string> = {}
+  for (const line of text.split(/\r?\n/).slice(start + 1)) {
+    if (/^- /.test(line)) break
+    const match = /^\s{2,}([a-zA-Z][a-zA-Z0-9]*):\s*(.*)$/.exec(line)
+    if (match?.[2] !== undefined && match[2].trim() !== '') flat[String(match[1])] = match[2].trim()
+  }
+  const provider = flat['provider']
+  const model = flat['model']
+  if (provider === undefined || model === undefined) return null
+  const effort = flat['reasoningEffort']
+  return { provider, model, ...(effort === undefined ? {} : { reasoningEffort: effort }) }
+}
+
+/** P-0042 — a conflict needs both halves and an exact match; never clamps (P-0013). */
+function conflicts(refused: Readonly<Record<string, number>>, selection: ProfileSelection | null): string[] {
+  const level = selection?.reasoningEffort
+  if (selection === null || level === undefined) return []
+  const count = refused[`${selection.provider}/${selection.model} ${level}`] ?? 0
+  return count <= 0
+    ? []
+    : [`CONFLICT — ${selection.provider}/${selection.model} fixes reasoningEffort "${level}"; the host refused that exact level ${count} time(s). Change it in the profile or stop selecting it; this plugin does not clamp it.`]
+}
 /** Classes this project decided never to repair, with the reason. */
 const BY_DESIGN: Readonly<Record<string, string>> = {
   'max-tokens': 'upstream by design: a cut tail is missing bytes, not a quote',
@@ -80,9 +86,7 @@ function isPatchOn(patchId: string, config: Record<string, unknown> | null): boo
   const key = switchOf(patchId)
   if (key === undefined) return false
   const value = config[key]
-  if (key === 'repair') return value !== false
-  if (key === 'retryOnMalformed') return typeof value === 'number' && value > 0
-  return value !== false
+  return key === 'retryOnMalformed' ? typeof value === 'number' && value > 0 : value !== false
 }
 
 function collectSessions(directory: string): string[] {
@@ -158,9 +162,11 @@ export function cmdExplain(args: Args): number {
       return EXIT_UNAVAILABLE
     }
   }
+  const selection = profileFile === undefined ? null : selectionOf(readFileSync(profileFile, 'utf8'))
 
   let census: ScanTurnCensus = { completed: 0, max_tokens: 0, aborted: 0, error: 0 }
   let errorCodes: Record<string, number> = {}
+  let refusedEfforts: Record<string, number> = {}
   let files = 0
   if (sessions !== undefined) {
     const inputs = collectSessions(sessions)
@@ -177,6 +183,7 @@ export function cmdExplain(args: Args): number {
     const report = redactReport(batch.report)
     census = report.turns
     errorCodes = { ...report.error_codes }
+    refusedEfforts = { ...report.refused_efforts }
   }
 
   const rows = explainRows(census, errorCodes, config)
@@ -216,5 +223,10 @@ export function cmdExplain(args: Args): number {
   for (const row of rows) {
     if (row.byDesign !== undefined) process.stdout.write(`by design: ${row.failure} — ${row.byDesign}\n`)
   }
-  return uncovered === 0 ? EXIT_OK : EXIT_FINDING
+  // P-0042: the two halves meet here. `agent/pre-step` cannot change a selection
+  // (measured: data/results/prestep-enter-2026-11-15T17-55-00.000Z.json), so the
+  // only honest lever is naming the conflict before the next turn.
+  const findings = conflicts(refusedEfforts, selection)
+  for (const line of findings) process.stdout.write(`${line}\n`)
+  return uncovered === 0 && findings.length === 0 ? EXIT_OK : EXIT_FINDING
 }

@@ -1,9 +1,4 @@
-/**
- * CLI argument plumbing; moved out of `cli.ts` by the P-0004 seam split.
- *
- * Every command shares the same exit codes, usage text and flag reader, so they
- * live here instead of growing the entry module.
- */
+/** CLI argument plumbing, moved out of `cli.ts` by the P-0004 seam split. */
 import { readFileSync } from 'node:fs'
 
 export const EXIT_OK = 0

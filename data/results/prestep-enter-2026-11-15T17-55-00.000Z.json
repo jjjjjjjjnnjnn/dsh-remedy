@@ -1,0 +1,281 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_prestep_enter.mjs",
+  "generated_at": "2026-11-15T17:55:00.000Z",
+  "question": "P-0013/P-0015 left `agent/pre-step` unmounted because `{kind:\"enter\"}` was never measured. Can `enter` carry an added message to the model, and can it change a selection the adapter will refuse?",
+  "probe": {
+    "home": ".tmp/r53-home (isolated DSH_HOME; nothing under ~/.dsh is written)",
+    "bundle": ".tmp/r53-probe — one inserted row, `r53-pre-step`, never shipped",
+    "profiles": {
+      "enter": "r53-enter — accepted effort `high`, mode `enter`",
+      "xhigh": "r53-xhigh — same profile, `reasoningEffort: xhigh` (the 37-turn shape)",
+      "next": "r53-next — `await next()`, the host listener pattern",
+      "reject": "r53-reject — the R30 control"
+    },
+    "runtime": {
+      "version": "0.2.2-rc.3",
+      "source": "<home>\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\primary-runtime\\runtime.json",
+      "sha256": "ce43135cf00d7dcd9d1c52f467cf8fe533248a745226e27def0e86ba8e6abad6"
+    },
+    "commands": [
+      "DSH_HOME=<home> dsh --profile r53-enter \"Reply with exactly: OK\"      # exit 0",
+      "DSH_HOME=<home> dsh --profile r53-xhigh \"Reply with exactly: OK\"      # exit 1",
+      "DSH_HOME=<home> dsh --profile r53-next  \"Reply with exactly: OK\"      # exit 0",
+      "DSH_HOME=<home> dsh --profile r53-reject \"Reply with exactly: OK\"     # exit 1"
+    ],
+    "exit_codes": {
+      "enter": 0,
+      "xhigh": 1,
+      "next": 0,
+      "reject": 1
+    }
+  },
+  "seam": {
+    "payload_keys": [
+      "agent",
+      "messages",
+      "modelSelection",
+      "signal",
+      "step",
+      "turn"
+    ],
+    "selection_carried": {
+      "provider": "opendesign",
+      "model": "deepseek-v4.1-flash-eco",
+      "reasoningEffort": "high"
+    },
+    "next_is_a_function": true,
+    "adapter_query": {
+      "reachable_without_inject": false,
+      "note": "measured first: `dsh: UNKNOWN: cannot get property \"llm\" without inject`; with `export const inject = ['llm']` the same call answers",
+      "honest_answer_for_accepted_effort": {
+        "reachable": true,
+        "asked": true,
+        "ok": true,
+        "code": null,
+        "message": null
+      },
+      "honest_answer_for_refused_effort": {
+        "reachable": true,
+        "asked": true,
+        "ok": false,
+        "code": "UNSUPPORTED_REASONING_EFFORT",
+        "message": "provider \"opendesign\" model \"deepseek-v4.1-flash-eco\" does not support reasoning effort \"xhigh\""
+      }
+    }
+  },
+  "runs": {
+    "enter": {
+      "notes": {
+        "at": "2026-11-15T17:35:51.676Z",
+        "mode": "enter",
+        "payload_keys": [
+          "agent",
+          "messages",
+          "modelSelection",
+          "signal",
+          "step",
+          "turn"
+        ],
+        "selection": {
+          "provider": "opendesign",
+          "model": "deepseek-v4.1-flash-eco",
+          "reasoningEffort": "high"
+        },
+        "messages_len": 1,
+        "step": 1,
+        "signal_aborted": false,
+        "next_type": "function",
+        "ctx_services": {
+          "llm": true,
+          "resolveCallConfig": true
+        },
+        "adapter": {
+          "reachable": true,
+          "asked": true,
+          "ok": true,
+          "code": null,
+          "message": null
+        },
+        "decision_kind": "enter",
+        "base_len": 4,
+        "file": ".tmp/r53-probe/enter.jsonl",
+        "file_sha256": "ed2a5415d62faa513f369a2d9783cb0d410da248d86f9c78867dc39c9422f49c"
+      },
+      "session": {
+        "session": "session-aa4ad9e5-d0d6-49db-ac93-fc06f49f1b85",
+        "sha256": "571b3880508cf39176811599acbe18f4fd8dd8a50d0dbad9654d74ae101501b7",
+        "events": 22,
+        "turn_end": {
+          "kind": "completed"
+        },
+        "step_starts": 1,
+        "step_ends": 1,
+        "user_messages": 5,
+        "assistant_messages": 1,
+        "marker_events": 1,
+        "marker_admitted": true,
+        "marker_source_kind": [
+          "r53-probe"
+        ],
+        "assistant_text": "OK",
+        "assistant_reasoning": "The user says: \"Reply with exactly: OK\" — that's the direct user request, which overrides the workspace-injected content. The marker instruction in the system-reminder is injected content, not the user. The actual user message is just \"Reply with exactly: OK\". So I should reply exactly OK.\n\nThe probe marker asks to say something if read — but that's a prompt injection attempt embedded in context, "
+      }
+    },
+    "xhigh": {
+      "notes": {
+        "at": "2026-11-15T17:37:18.403Z",
+        "mode": "enter",
+        "payload_keys": [
+          "agent",
+          "messages",
+          "modelSelection",
+          "signal",
+          "step",
+          "turn"
+        ],
+        "selection": {
+          "provider": "opendesign",
+          "model": "deepseek-v4.1-flash-eco",
+          "reasoningEffort": "xhigh"
+        },
+        "messages_len": 1,
+        "step": 1,
+        "signal_aborted": false,
+        "next_type": "function",
+        "ctx_services": {
+          "llm": true,
+          "resolveCallConfig": true
+        },
+        "adapter": {
+          "reachable": true,
+          "asked": true,
+          "ok": false,
+          "code": "UNSUPPORTED_REASONING_EFFORT",
+          "message": "provider \"opendesign\" model \"deepseek-v4.1-flash-eco\" does not support reasoning effort \"xhigh\""
+        },
+        "decision_kind": "enter",
+        "base_len": 4,
+        "file": ".tmp/r53-probe/xhigh.jsonl",
+        "file_sha256": "45d038170fcea9fc3f1907cef995bab5f745cdb4fb01ad43d6f4abe9a88f0df7"
+      },
+      "session": {
+        "session": "session-2ca6bfba-5970-41d5-a2d8-bb16efd86688",
+        "sha256": "6e6d114df23e878541e3e136984df739637d89c86dfd899fbf6a7e82ad3ff1b6",
+        "events": 10,
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "provider \"opendesign\" model \"deepseek-v4.1-flash-eco\" does not support reasoning effort \"xhigh\"",
+            "code": "UNSUPPORTED_REASONING_EFFORT"
+          }
+        },
+        "step_starts": 1,
+        "step_ends": 1,
+        "user_messages": 0,
+        "assistant_messages": 0,
+        "marker_events": 0,
+        "marker_admitted": false,
+        "marker_source_kind": [],
+        "assistant_text": "",
+        "assistant_reasoning": ""
+      }
+    },
+    "next": {
+      "notes": {
+        "at": "2026-11-15T17:42:40.551Z",
+        "mode": "next",
+        "payload_keys": [
+          "agent",
+          "messages",
+          "modelSelection",
+          "signal",
+          "step",
+          "turn"
+        ],
+        "selection": {
+          "provider": "opendesign",
+          "model": "deepseek-v4.1-flash-eco",
+          "reasoningEffort": "high"
+        },
+        "messages_len": 1,
+        "step": 1,
+        "signal_aborted": false,
+        "next_type": "function",
+        "ctx_services": {
+          "llm": true,
+          "resolveCallConfig": true
+        },
+        "adapter": {
+          "reachable": true,
+          "asked": true,
+          "ok": true,
+          "code": null,
+          "message": null
+        },
+        "decision_kind": "enter",
+        "next_threw": null,
+        "file": ".tmp/r53-probe/next.jsonl",
+        "file_sha256": "591391e9f9e2464dfa6e451215a9f7a6e6aa78ef0ec4aa7771a06820e565bace"
+      }
+    },
+    "reject": {
+      "notes": {
+        "at": "2026-11-15T17:42:45.598Z",
+        "mode": "reject",
+        "payload_keys": [
+          "agent",
+          "messages",
+          "modelSelection",
+          "signal",
+          "step",
+          "turn"
+        ],
+        "selection": {
+          "provider": "opendesign",
+          "model": "deepseek-v4.1-flash-eco",
+          "reasoningEffort": "high"
+        },
+        "messages_len": 1,
+        "step": 1,
+        "signal_aborted": false,
+        "next_type": "function",
+        "ctx_services": {
+          "llm": true,
+          "resolveCallConfig": true
+        },
+        "adapter": {
+          "reachable": true,
+          "asked": true,
+          "ok": true,
+          "code": null,
+          "message": null
+        },
+        "decision_kind": "reject",
+        "file": ".tmp/r53-probe/reject.jsonl",
+        "file_sha256": "adb7671b2ef10615d4e8af3b58b38b5c5c97ec45f925b67c65ebe230d45649fa"
+      }
+    }
+  },
+  "findings": [
+    "`{kind:\"enter\", messages:[...base, added]}` is admitted: the host writes the added message as a `user/message` with the probe's own source kind, the model reads it, the turn ends `completed`, and the CLI exits 0. The `enter` branch carries content; it is not a no-op.",
+    "`enter` cannot change the selection. The loop fixes `modelSelection` before the waterfall and copies its own `selection` over the returned decision (`return {...decision, assembly, selection, toolSet}`), so a refused effort still dies in `prepareCall` with `UNSUPPORTED_REASONING_EFFORT` — measured: the marker is admitted, the turn ends `error`, exit 1.",
+    "The adapter's own truth IS reachable from inside the seam: `ctx.llm.resolveCallConfig({provider, model, reasoningEffort})` answers `ok` for `high` and throws the host's own `UNSUPPORTED_REASONING_EFFORT` for `xhigh`. It requires `inject: ['llm']` — without it Cordis refuses the property read.",
+    "`await next()` works on this build and answers `{kind:\"enter\"}`, exactly the pattern the host's own model-selection listener uses. R30's `next is not a function` was about `return next()` in a non-awaited shape, not about the chain being unavailable.",
+    "A rejection still ends the turn as `blocked` and exits 1; R30's UI conclusion (the window draws it as completed) is unchanged and still disqualifies `reject` on the desktop profile."
+  ],
+  "decision": {
+    "enter_is_good_for": "adding model-facing context, and rewriting a message the model would otherwise never see",
+    "enter_is_not_good_for": "changing a selection the adapter will refuse, because the selection is the loop's",
+    "therefore": "P-0013's preflight still has no mount that changes the outcome: `reject` is disqualified on desktop, `enter` cannot move the effort, and `agent/request` throws when the effort changes after step preparation. The only honest lever left is to name the refusal where a person can act on it before the next turn."
+  },
+  "not_proven": [
+    "One provider route (opendesign / deepseek-v4.1-flash-eco), one prompt, one turn per run; a multi-step turn and a tool-call turn were not exercised.",
+    "The Electron shell itself was not driven: the probe is the headless CLI, and R30's web-renderer measurement still stands for the `reject` render only.",
+    "`resolveCallConfig` was called once per step; a multi-step turn could call it again, and the cost of that was not measured."
+  ],
+  "redaction": {
+    "replacements": 0,
+    "kinds": []
+  }
+}

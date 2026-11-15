@@ -1,10 +1,4 @@
-/**
- * The `scan` command; moved out of `cli.ts` by the P-0004 seam split.
- *
- * The directory walk, the log reader and the artifact writer are the offline
- * surface of the CLI; `cli.ts` only dispatches to them.
- */
-
+/** The `scan` command: the directory walk, log reader and artifact writer (P-0004). */
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
 import { basename, join, resolve } from 'node:path'
@@ -69,10 +63,9 @@ export function cmdScan(args: Args): number {
     return EXIT_USAGE
   }
 
-  // A live session log is `session.v4.jsonl.zstd`: several concatenated zstd
-  // frames, not text. Reading it as utf8 counted every line as unreadable and
-  // reported a 28-event session as zero attempts, so the same reader the
-  // plugin ships is used here. Plain JSONL passes through untouched.
+  // A live log is `session.v4.jsonl.zstd`: concatenated zstd frames, not text.
+  // Reading it as utf8 counted every line unreadable (P-0004), so the plugin's
+  // own reader is used; plain JSONL passes through untouched.
   const inputs: { label: string; text: string }[] = []
   const failures: string[] = []
   const files = statSync(target).isDirectory() ? collectSessions(target).slice(0, maxFiles) : [target]

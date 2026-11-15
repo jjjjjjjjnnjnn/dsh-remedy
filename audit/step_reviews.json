@@ -936,7 +936,26 @@
         "README.md",
         "data/results/gates-2026-11-15T17-00-00.000Z.json"
       ]
+    },
+    {
+      "id": "S53",
+      "gate": "size",
+      "title": "The seam could not move the level, so the level moved to where it can be named",
+      "axes": {
+        "correctness": "P-0042 adds two facts the plugin could not state before: `scan` now keeps `provider/model level` for a refusal the host itself named (only when its sentence names all three), and `explain --sessions … --profile-file …` prints one CONFLICT line and exits 1 when the profile still fixes exactly that level. Measured on this host: 37 refusals across 11 sessions, and `remedy-live` still declares `xhigh`. The shipped 0.4.12 build prints exit 0 with no CONFLICT on the same fixture (`.tmp/r53-red-first.mjs`), so the test is red before and green after.",
+        "reproducibility": "`node --test tests/unit/refused-effort.test.ts` (6 cases, one negative control that refuses to invent a key from a code alone) and `node --test tests/e2e/explain-conflict.test.ts` (5 cases: match, already-fixed, no-refusal, no-level, other-route). The pre-step claim comes from `data/results/prestep-enter-2026-11-15T17-55-00.000Z.json`, produced by `scripts/record_prestep_enter.mjs` over four isolated runs in `.tmp/r53-home`, each session hashed.",
+        "compliance": "Caps did not move: plugin 82 717 / 83 000 (residency 41 494 / 44 000, CLI 41 223 / 42 000), core 103 649 / 104 000, `registry.js` 67 850 / 68 000. The P-0042 record was paid by compacting P-0012 / P-0024 / P-0025 / P-0009 under P-0032 and by deleting `coverageOfPatch`, a function nothing called; the CLI bytes were paid out of prose the patch docs already carry. No dependency added, nothing writes to `~/.dsh`.",
+        "ssot": "The patch doc is `docs/patches/P-0042-profile-effort-conflict.md`; the ledger, the registry snapshot (`data/results/patch-registry-2026-11-15T18-40-00.000Z.json`) and the disclosure row are recorded in this round. The artifact is `data/results/prestep-enter-2026-11-15T17-55-00.000Z.json` with its `.sha256`.",
+        "adversarial": "The negative controls are the whole point: a code without a sentence produces no key; a profile on an accepted level produces no finding; a session with no refusal produces no finding; another route never matches. The seam claim is also adversarial — `enter` was expected to be the promising branch and the measurement says it cannot move a selection, so the patch that ships is the one the evidence supports, not the one the plan wanted."
+      },
+      "evidence": [
+        "docs/patches/P-0042-profile-effort-conflict.md",
+        "data/results/prestep-enter-2026-11-15T17-55-00.000Z.json",
+        "data/results/patch-registry-2026-11-15T20-20-00.000Z.json",
+        "tests/unit/refused-effort.test.ts",
+        "tests/e2e/explain-conflict.test.ts"
+      ]
     }
   ],
-  "updated_at": "2026-11-15T17:20:00.000Z"
+  "updated_at": "2026-11-15T18:55:00.000Z"
 }

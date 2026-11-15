@@ -21,6 +21,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSy
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import { abs, isoStamp, sha256 } from './lib/kit.mjs'
+import { readRuntimeVersion, runtimeCandidates } from './lib/runtime-version.mjs'
 
 const argv = process.argv.slice(2)
 const flag = (name, fallback) => {
@@ -233,13 +234,23 @@ const redactText = (text) => {
 }
 const redactedSession = redactText(sessionFile)
 const redactedTarball = redactText(tarballPath)
+
+// P-0042: the runtime's version is read from the runtime's own file. The literal
+// `0.2.2-rc.1` this line used to carry outlived three runtime upgrades and put a
+// wrong version into every artifact that quoted it.
+const runtime = readRuntimeVersion([
+  ...runtimeCandidates(process.env, homedir()),
+  join(homedir(), '.dsh', 'dsh-runtimes', 'dsh-primary-runtime', 'runtime.json'),
+])
 const payload = {
   schema_version: 1,
   produced_by: 'scripts/record_live_mount.mjs',
   generated_at: stamp,
   profile: {
     name: profileName,
-    dsh_version: '0.2.2-rc.1',
+    dsh_version: runtime.version,
+    dsh_version_source: runtime.source === null ? null : redactText(runtime.source),
+    dsh_version_sha256: runtime.sha256,
     install: `dsh plugin --profile ${profileName} add <tarball>`,
     package: `${pluginPkg.name}@${pluginPkg.version}`,
     tarball: redactedTarball,
@@ -291,10 +302,16 @@ const payload = {
     answer_after_repair: redactText(answerAfterRepair).slice(0, 800),
   },
   task:
-    'Two independent reads requested in one message; the model emitted them as parallel tool calls, which is the shape that fuses at the relay.',
+    flag('task', null) ??
+    'one scripted turn: the session tail quoted in `session.assistant_tail` is the only description of what was asked',
   limits: [
     'one machine, one provider route, one profile; not a population estimate',
-    'the live profile is a headless profile with the desktop provider block copied; the desktop UI was not restarted',
+    // R53: this sentence used to be the literal "the desktop UI was not restarted",
+    // which became false the moment someone did restart it. It now states which
+    // process wrote the journal, and nothing it cannot see.
+    profileName === 'desktop'
+      ? 'the desktop app was running and this journal was written by that process; the app start time is not in this artifact'
+      : 'the profile is headless with the desktop provider block copied; the desktop UI was not part of this run',
     'the plugin build is the tarball named above; its sha256 is recorded, not inferred',
   ],
 }

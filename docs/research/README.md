@@ -103,14 +103,19 @@
 
 ## 6. 下一会话的第一件事
 
-1. 读 `docs/research/leads.md` 的 A 表与 F 表 decision 列：R49 结案了 **L-0004（`patched`，P-0037）**、
-   **L-0003（`rejected (out-of-seam)`）** 与 **L-0009（`rejected (no defect)`）**；R50 结案 **L-0036**
-   （`rejected (no defect)`：两个脚本化 provider 探针证明无 `finish_reason` 的流要么转成显式 error finish、
-   要么以 `TRANSPORT` + 退出码 1 收尾）。剩下的是 **L-0005**（Windows 流式损坏）与 **L-0007**（46 turns lost）；
-2. **0.4.11 与 0.4.12 都已发布**（P-0037 / P-0038 / P-0039 在前一版，P-0040 / P-0041 在后一版），
-   公开仓、tag、release 与 CI 都已完成，两个 profile 也已换装；**下一件事是线索，不是发版**；
-3. 复现成功 → 夹具 + 先红测试 + **P-0042 起**（编号只前进，不复用）；
-4. 复现失败 → 标 `unreproduced`，写清版本差异，换下一条；
-5. 动运行时字节前先付账：压散文或去重，**不抬 cap**（P-0032 的先例）。当前的余量：
-   plugin **81 B**、core **298 B**、registry **97 B**（下一条记录写之前先压一条老记录）。
-
+1. **A 表已空**：R53 结案了最后两条 —— **L-0005** 与 **L-0007** 都是 `rejected (out-of-seam)`，
+   理由是同一条 adapter 代码（本机 0.2.2-rc.3 的 `dsh-llm-deepseek/lib/index.js:2057-2066` 逐字读到：
+   `catch (_invalidProviderToolJson) { return malformed("tool input is invalid JSON") }`，句子不带参数原文，
+   同一文件里 `Received arguments` 命中 0 次）。所以「修参数」这一半本接缝拿不到字节，
+   「默认不重试」那一半已由 P-0011 的有界重试与宿主的 `retryPolicy.retryableCodes` 覆盖。
+   不要把时间再花在这两条上。
+2. **新线索从一次巡检开始**：`node scripts/collect_leads.mjs` 产出 `data/results/intake-<stamp>.json`，
+   它只说哪些来源答了、哪些没答、有几个候选还没进账本。R53 读过 2026-11-15 的最新一批讨论：
+   其中 #11620（`dsh-llm-pi-ai` 的 stream-idle watchdog 忽略 SSE `: ping`）是 **adapter 的接缝**，
+   本插件的 `llm/stream` 看不到那些注释帧；如果下一位要追它，先写清楚这一条。
+3. **0.4.13 已发布**（P-0042：`scan` 记住被拒档位 + `explain` 指名 profile 冲突），0.4.12 带 P-0040/P-0041；
+   两个 profile 仍装 0.4.12，换装是下一件事的机械动作，不是产品。
+4. 复现成功 → 夹具 + 先红测试 + **P-0043 起**（编号只前进，不复用）。
+5. 复现失败 → 标 `unreproduced`，写清版本差异，换下一条。
+6. 动运行时字节前先付账：压散文或去重，**不抬 cap**（P-0032 的先例）。当前的余量：
+   plugin **283 B**、core **351 B**、registry **150 B**（下一条记录写之前先压一条老记录）。

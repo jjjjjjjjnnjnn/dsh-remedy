@@ -1,15 +1,7 @@
 #!/usr/bin/env node
 /**
- * `dsh-remedy` CLI.
- *
- * Commands:
- *   status              registry + live counters (optionally from a journal)
- *   repair [file]       run P-0001 on one tool-call argument text (file or stdin)
- *   scan <session>      offline forensic scan of a DSH `.jsonl` session log
- *   verify              run the bundled fixtures through the same engine
- *
- * Exit codes: 0 ok · 1 finding (rejected / fusion found / verify failed) ·
- *             2 usage · 3 unavailable (missing file)
+ * `dsh-remedy` CLI: status · repair · scan · explain · verify.
+ * Exit codes: 0 ok · 1 finding · 2 usage · 3 unavailable (missing file).
  */
 
 import { existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs'

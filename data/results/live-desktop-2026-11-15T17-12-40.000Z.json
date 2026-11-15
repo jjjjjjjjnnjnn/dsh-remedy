@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_live_mount.mjs",
+  "generated_at": "2026-11-15T17:12:40.000Z",
+  "profile": {
+    "name": "desktop",
+    "dsh_version": "0.2.2-rc.3",
+    "dsh_version_source": "<home>\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\primary-runtime\\runtime.json",
+    "dsh_version_sha256": "ce43135cf00d7dcd9d1c52f467cf8fe533248a745226e27def0e86ba8e6abad6",
+    "install": "dsh plugin --profile desktop add <tarball>",
+    "package": "dsh-remedy@0.4.12",
+    "tarball": ".tmp/pack0412/dsh-remedy-0.4.12.tgz",
+    "tarball_sha256": "21ed1e80f5a23c40c5593de991165da0422515110c99ffe28007dd1055da97af",
+    "bundle_row": "remedy-stream",
+    "surface": "llm/stream"
+  },
+  "journal": {
+    "file": ".tmp/desktop-live/journal.jsonl",
+    "events": 2,
+    "stream_events": 2,
+    "repaired_events": 0,
+    "rejected_events": 0
+  },
+  "counters": {
+    "streams": 2,
+    "fused": 0,
+    "repaired": 0,
+    "unrepaired": 0,
+    "truncated": 0,
+    "errors": 0,
+    "refused": 0,
+    "withdrawn": 0
+  },
+  "cross_check": {
+    "match": true,
+    "from": "journal",
+    "mode": "desktop-session (one long-lived process)",
+    "journal_totals": {
+      "streams": 2,
+      "fused": 0,
+      "repaired": 0,
+      "unrepaired": 0,
+      "truncated": 0,
+      "errors": 0,
+      "refused": 0,
+      "withdrawn": 0
+    },
+    "journal_groups": 1
+  },
+  "verdict": {
+    "state": "quiet",
+    "headline": "seam live, defect not seen",
+    "reasons": [
+      "2 stream(s) observed, no fused tool call"
+    ]
+  },
+  "attempts": [],
+  "session": {
+    "file": "<home>/.dsh/sessions/--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--/session-f7fbf4a2-512f-478d-bc33-ab09e6d38d83/session.v4.jsonl.zstd",
+    "sha256": "9994b7064d8ef21fcef822504d23b909b03980902d1dddca0e1c18a1e37d56c9",
+    "events": 25,
+    "turn_end": "completed",
+    "tool_calls": 0,
+    "tool_results": 0,
+    "fused_calls": 0,
+    "fusion_failures": 0,
+    "repairable_failures": 0,
+    "attempt_events": 0,
+    "attempt_logs": false,
+    "note": "this profile does not persist assistant/attempt streams; the fusion is evidenced by the journal and the synthetic id",
+    "synthetic_ids": [],
+    "repaired_step": null,
+    "journal_scope": "journal and session agree on the repaired count",
+    "turn_note": "",
+    "assistant_tail": "REMEDY-R53-OK",
+    "answer_after_repair": ""
+  },
+  "task": "one scripted turn: the session tail quoted in `session.assistant_tail` is the only description of what was asked",
+  "limits": [
+    "one machine, one provider route, one profile; not a population estimate",
+    "the desktop app was running and this journal was written by that process; the app start time is not in this artifact",
+    "the plugin build is the tarball named above; its sha256 is recorded, not inferred"
+  ],
+  "redaction": {
+    "replacements": 3,
+    "kinds": [
+      "encoded-home",
+      "windows-home"
+    ]
+  }
+}

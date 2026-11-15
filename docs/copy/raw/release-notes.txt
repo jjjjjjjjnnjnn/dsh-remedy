@@ -1,45 +1,50 @@
-## dsh-remedy 0.4.12
-
-### Fixed
-
-- **P-0041 — the installed CLI was silent on Linux, and exited 0.** `./node_modules/.bin/dsh-remedy verify`
-  printed nothing and exited 0 on Linux and macOS while `node dist/cli.js verify` printed every fixture. The
-  entry guard compared `import.meta.url` (the resolved file) with `pathToFileURL(process.argv[1])` (what the
-  caller named), and npm installs a POSIX `bin` as a symlink, so the two differ and `main()` never ran. Both
-  sides are realpath'd now. Windows installs a `.cmd` shim that passes the real path, which is why
-  0.1.0–0.4.11 never saw it. `0.4.11` carries the old guard; install `0.4.12` to get the fix.
-- **P-0040 — the acceptance recorder owned a fixture count the package owns.** The cold-directory install of
-  `0.4.11` printed eight `PASS` lines and `OK 8 fixture(s)` with three zero exit codes, and the recorder wrote
-  `ok: false` because it looked for the literal `OK 6 fixture(s)`. The count is derived from
-  `data/fixtures/toolcall-fusion/*.json` and judged by `scripts/lib/acceptance.mjs`.
+## dsh-remedy 0.4.13
 
 ### Added
 
-- Two tests that pin the shapes this release repairs: `tests/unit/acceptance.test.ts` judges the
-  acceptance output against the repository's own fixture count, and `tests/unit/cli-entry.test.ts`
-  asserts the installed `bin` shape (a symlink) and the direct path through the same guard.
+- **P-0042 — the profile and the refusal never met, and the seam cannot move the level.** The host
+  refused `reasoningEffort: "xhigh"` 37 times across eleven sessions while the profile still fixed
+  that level: `scan` had the count, the profile had the level, and nothing compared them. `scan` now
+  keeps `provider/model level` for a refusal the host itself named, and
+  `explain --sessions … --profile-file …` prints one `CONFLICT` line and exits 1 when the profile
+  still fixes exactly that level. Nothing is clamped and nothing is rewritten: the choice stays the
+  user's (P-0013).
+- The shape came from a measurement, not a preference. `agent/pre-step` `{kind:"enter"}` is admitted
+  by the host — the added message becomes a real `user/message` and the turn completes — but it
+  cannot change a selection the loop fixed, so the same rewrite on `xhigh` still dies in
+  `prepareCall`. `reject` stays disqualified on the desktop profile, where the window draws it as a
+  completed turn. Four isolated runs are recorded in
+  `data/results/prestep-enter-2026-11-15T17-55-00.000Z.json`.
+
+### Fixed
+
+- `record_live_mount.mjs` carried `dsh_version: '0.2.2-rc.1'` as a literal, so every artifact it
+  wrote from the runtime upgrade onward named a version that had not run. It now reads the version
+  from the runtime's own `runtime.json` and records that file's hash beside it. The desktop
+  artifact of this round is the first one that says `0.2.2-rc.3` because the file says so.
+- A helper in `explain-command.ts` that nothing called is deleted; the CLI budget paid for the new
+  field by dropping dead code and duplicated prose, not by moving a cap.
 
 ### Changed
 
-- `record_install_acceptance.mjs` no longer owns a fixture count: it counts
-  `data/fixtures/toolcall-fusion/*.json` and judges with `scripts/lib/acceptance.mjs`, so adding a
-  canonical fixture can never turn a green install into a recorded failure again.
-- The market index names the two new releases and their measured publish timestamps, and its
-  governance rule now follows the newest entry instead of the number that happened to be newest when
-  the rule was written.
+- `session-scan` reports one new field, `refused_efforts`; it stays empty unless the host's own
+  sentence names provider, model and level, so a bare code never becomes a guessed level.
+- The emitted prose in five CLI modules was compacted to pay for the addition; the caps did not move.
 
 ### Package size
 
-- `dsh-remedy@0.4.12`: 39694 bytes compressed, 38 files, 126181 bytes unpacked (82919 of `dist/*.js`), shasum
-  `b9122c89b04a4c18a92b0404dfe939af3ba8f54e`.
-- `dsh-remedy-core@0.4.12`: 40118 bytes compressed, 25 files, 131670 bytes unpacked (103702 of `dist/*.js`),
-  shasum `d58321d7ad1087b2937fad53f3f91231c7948fc8`.
+- `dsh-remedy@0.4.13`: 38762 bytes compressed, 38 files, 124050 bytes unpacked (82717 of `dist/*.js`),
+  shasum `02d0747ac766408c0525bfcfb09df4581039af9d`.
+- `dsh-remedy-core@0.4.13`: 39968 bytes compressed, 25 files, 131617 bytes unpacked (103649 of
+  `dist/*.js`), shasum `b825fe0b8b523411a17714abf41cc916c14e6273`.
 
 ### Notes
 
-- This release carries 41 patches: 6 `verified` and 35 `tested`.
-- Byte budget: residency 41494 of 44000, CLI 41425 of 42000, total 82919 of 83000 (81 bytes of headroom);
-  engine 103702 of 104000, `registry.js` 67903 of 68000. No cap moved.
-- Verified on Windows and on Linux (WSL2 Ubuntu 26.04, node 24.10.0): 334 tests, 6 gates, 6/6 negative
-  controls, `OK 8 fixture(s)` through the installed `bin` (a symlink) and through `npx`. macOS is **not**
-  measured: there is no Apple hardware here, so the POSIX branch it shares with Linux is the only evidence.
+- This release carries 42 patches: 6 `verified` and 36 `tested`.
+- Byte budget: residency 41494 of 44000, CLI 41223 of 42000, total 82717 of 83000; engine 103649 of
+  104000, `registry.js` 67850 of 68000. No cap moved.
+- 361 tests, 6 gates, 6/6 negative controls on Windows and on Linux (WSL2 Ubuntu 26.04, node
+  24.10.0); `OK 8 fixture(s)` through the installed bin. macOS is **not** measured.
+- The desktop app was started for the first time since 0.4.12 was installed, and one real turn
+  completed with the plugin writing two journal stream events.
+

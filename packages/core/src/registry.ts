@@ -179,9 +179,9 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0012',
     title: 'One byte cap for two load paths is a cap that taxes the wrong half',
     symptom:
-      'the single 68000-byte ceiling counted a mounted plugin and a CLI invocation as the same thing. P-0009 landed with three bytes of headroom, and the next patch (P-0011) needed 4263 bytes of new module that simply did not fit: the only way to pay for it under the old cap was to delete prose from files a daemon loads at startup',
+      'one 68000-byte ceiling counted a mounted plugin and a CLI invocation as the same thing; P-0011 needed 4 263 bytes that did not fit, and paying meant deleting prose a daemon loads',
     rootCause:
-      'scripts/gate_size.mjs summed every emitted module and compared one number. It never asked which of those modules a running plugin imports, so 31425 bytes of CLI-only code (cli, cli-args, scan-command, session-scan) sat inside the same budget as the 38073 bytes that actually load on every session, and every resident byte had to be financed out of the CLI half',
+      'gate_size summed every emitted module into one number and never asked which of them a running plugin imports: 31 425 bytes of CLI-only code sat beside the 38 073 that load on every session',
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
@@ -374,9 +374,9 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0009',
     title: 'A windowed scan called the one dated line every session starts with unreadable',
     symptom:
-      'scan --since over a real session directory reported unreadable_lines equal to the number of files it read: 78 files produced 78 unreadable lines while every byte of them parsed. The tool answered "I could not read this" about the single most reliable event in the log',
+      '`scan --since` reported one unreadable line per file read: 78 files gave 78 unreadable lines while every byte of them parsed, so the tool said "I could not read this" about the one line every session starts with',
     rootCause:
-      'packages/plugin/src/session-scan.ts:178 required a numeric `time` before it would apply the window and counted anything else as unreadable. A session log opens with a `{"type":"session",…}` header whose instant is `createdAt`, not `time`, so every header fell into that branch. The scanner was reading the file correctly and reporting the schema wrong',
+      '`session-scan.ts` required a numeric `time` before applying the window and counted anything else as unreadable; the `session` header carries `createdAt`, not `time`, so every header fell into that branch',
     surface: 'cli',
     status: 'tested',
     severity: 'minor',
@@ -392,10 +392,8 @@ export const PATCHES: readonly PatchRecord[] = [
       'packages/plugin/src/session-scan.ts',
     ],
     limits: [
-      'only the `session` header is dated by createdAt; an ordinary event with no instant is still an unreadable line, because there is no second field to fall back to',
-      'the fix does not make the scan faster or smaller — it changes which bucket a header lands in',
-      'a header inside the window contributes its instant to the reported window but adds no attempts or turns, so the census does not move',
-      'it does not validate createdAt against the wall clock of the file; a hand-edited session can still claim any date',
+      'only the `session` header is dated by createdAt; an event with no instant stays unreadable, because there is no second field to fall back to',
+      'a header inside the window adds its instant but no attempts or turns, so the census does not move',
     ],
   },
   {
@@ -663,9 +661,9 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0024',
     title: 'The two pages npm renders were outside the copy channel',
     symptom:
-      'packages/plugin/README.md and packages/core/README.md were hand-written and absent from docs/copy/manifest.json, so gate_copy never checked their bytes, their fact-pack hash or their writer. P-0017 had narrowed the exposure to "no prose number and every fenced command exists", which is not the same as the channel that every other outward page goes through',
+      'both package READMEs were hand-written and absent from docs/copy/manifest.json, so gate_copy never checked their bytes, fact-pack hash or writer; P-0017 had only narrowed it to "no prose number, every fenced command exists"',
     rootCause:
-      'the copy channel was described as "the outward files at the repository root", and the two package pages were treated as package metadata rather than outward text. A page can be hand-written and still be the first thing a stranger reads; the location of the file was mistaken for the audience',
+      'the copy channel was defined as "the outward files at the repository root", so the two package pages were read as package metadata rather than as the first thing a stranger opens',
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
@@ -692,9 +690,9 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0025',
     title: 'An unread profile was reported as a finding',
     symptom:
-      '`dsh-remedy explain --sessions <dir>` printed `(no)` in the "enabled here" column for every covered class and exited 1, while its own footer said `enabled-here is unknown: pass --profile-file`; measured: `MALFORMED_RESPONSE 47 P-0001,P-0002,P-0003,P-0005,P-0011 (no)`, exit 1, no profile argument anywhere, and the same command with the desktop profile exited 0',
+      '`explain --sessions <dir>` printed `(no)` in the "enabled here" cell for every covered class and exited 1, while its own footer said `enabled-here is unknown: pass --profile-file`; measured `MALFORMED_RESPONSE 47 … (no)`, exit 1, with no profile argument anywhere',
     rootCause:
-      '`enabled` had two states where the domain has three. `isPatchOn` answered false when the config was null, so "nobody read a profile" became "every coverer is switched off", the cell printed the same `(no)` a measured profile prints, and `uncovered` counted it into the exit code. This project already separates unmeasured from quiet; the command collapsed them',
+      '`enabled` had two states where the domain has three: `isPatchOn` answered false when the config was null, so "nobody read a profile" became "every coverer is switched off" and `uncovered` counted it into the exit code',
     surface: 'cli',
     status: 'tested',
     severity: 'minor',
@@ -1127,6 +1125,28 @@ export const PATCHES: readonly PatchRecord[] = [
       'the fix makes the command run; it adds no output of its own',
     ],
     failureClasses: [],
+  },
+  {
+    id: 'P-0042',
+    title: 'The profile and the refusal never met, and the seam cannot move the level',
+    symptom:
+      'the host refused `reasoningEffort: xhigh` 37 times on one route while the profile still fixed it: the census had the count and the profile had the level, and nothing compared them',
+    rootCause:
+      'P-0013 named the class and `scan` counted it by code, but the level lived only inside the host sentence; `agent/pre-step` `{kind:"enter"}` is admitted yet cannot change a selection the loop fixed, and `reject` is disqualified on desktop',
+    surface: 'cli',
+    status: 'tested',
+    severity: 'major',
+    evidence: [
+      'docs/patches/P-0042-profile-effort-conflict.md',
+      'packages/plugin/src/explain-command.ts',
+      'tests/unit/refused-effort.test.ts',
+      'data/results/prestep-enter-2026-11-15T17-55-00.000Z.json',
+    ],
+    guards: ['tests/unit/refused-effort.test.ts'],
+    limits: [
+      'it names the conflict and exits 1; only changing the profile stops the next dead turn, and it never clamps',
+      'a profile that omits reasoningEffort produces no finding, even when the UI selected a refused level',
+    ],
   },
 ]
 

@@ -1,16 +1,4 @@
-/**
- * Offline scanner for DSH session logs.
- *
- * It answers three questions with the same engine the plugin uses:
- *  - how many tool calls were fused in this session (`assistant/attempt` deltas)?
- *  - how many turns died on `MALFORMED_RESPONSE`, and how many of those the
- *    patch would have repaired (`turn/end` failures)?
- *  - how did *every* turn end, including the classes this layer cannot repair
- *    (P-0006: a map with one road is not a map)?
- *
- * The scanner never writes and never trusts a log line it cannot parse: an
- * unreadable line is counted, not skipped silently.
- */
+/** Offline scanner: fused calls, `MALFORMED_RESPONSE` deaths, every ending (P-0006). */
 
 import { isFusedJsonObjectText, redact, redactValue, splitTopLevelJsonObjects, wouldRepair } from 'dsh-remedy-core'
 import type { RedactionSummary } from 'dsh-remedy-core'
@@ -74,6 +62,12 @@ export interface ScanReport {
   readonly turns: ScanTurnCensus
   /** `reason.error.code` for error turns (P-0006), redaction-safe names only. */
   readonly error_codes: Readonly<Record<string, number>>
+  /**
+   * P-0042: `provider/model level` -> turns the host refused for that exact
+   * effort. Only filled when the host's own message names all three, so a key
+   * here is a measured refusal rather than an inference from a code.
+   */
+  readonly refused_efforts: Readonly<Record<string, number>>
   readonly by_tool: Readonly<Record<string, number>>
   readonly examples: readonly ScanExample[]
   readonly redaction: RedactionSummary
@@ -121,12 +115,13 @@ function fragmentsOf(text: string): number {
   return split.ok ? split.slices.length : 1
 }
 
-/**
- * Scan one session file's text.
- *
- * `source` is a label, not necessarily a path; `since` drops older events but
- * counts them, because a window that hides its own exclusions is a lie.
- */
+/** P-0042 — `provider/model level` from the host's refusal sentence, or null. */
+function refusedKeyOf(message: string): string | null {
+  const named = /provider "([^"]+)" model "([^"]+)" does not support reasoning effort "([^"]+)"/.exec(message)
+  return named === null ? null : `${named[1]}/${named[2]} ${named[3]}`
+}
+
+/** Scan one session file; `since` drops older events but counts them. */
 export function scanSessionText(text: string, source: string, options: ScanOptions = {}): ScanReport {
   let attempts = 0
   let fusedCalls = 0
@@ -142,6 +137,7 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
   let redactions = 0
   let turns: ScanTurnCensus = emptyCensus()
   const errorCodes: Record<string, number> = {}
+  const refusedEfforts: Record<string, number> = {}
 
   const addExample = (example: ScanExample): void => {
     if (examples.length >= MAX_EXAMPLES) return
@@ -262,6 +258,12 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
       // A code is a closed-vocabulary identifier and `redactReport` sanitises
       // the whole report, so it is counted by name rather than per-line.
       if (rawCode !== '') errorCodes[rawCode] = (errorCodes[rawCode] ?? 0) + 1
+      // P-0042: a refusal that names provider, model and level is a measured
+      // fact; a code alone is not, so nothing is inferred from one.
+      if (rawCode === 'UNSUPPORTED_REASONING_EFFORT') {
+        const key = refusedKeyOf(asString(error.message))
+        if (key !== null) refusedEfforts[key] = (refusedEfforts[key] ?? 0) + 1
+      }
       if (rawCode !== 'MALFORMED_RESPONSE') continue
       fusionFailures += 1
       const message = asString(error.message)
@@ -299,6 +301,7 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
     window: { oldest, newest },
     turns,
     error_codes: sortedCounts(errorCodes),
+    refused_efforts: sortedCounts(refusedEfforts),
     by_tool: sortedCounts(byTool),
     examples,
     redaction: { replacements: redactions, kinds: [...redactionKinds].sort() },
@@ -325,6 +328,7 @@ function addReport(into: ScanReport, from: ScanReport, source: string): ScanRepo
       error: into.turns.error + from.turns.error,
     },
     error_codes: mergeCounts(into.error_codes, from.error_codes),
+    refused_efforts: mergeCounts(into.refused_efforts, from.refused_efforts),
     by_tool: mergeCounts(into.by_tool, from.by_tool),
     examples: [...into.examples, ...from.examples].slice(0, MAX_EXAMPLES),
     redaction: {
@@ -353,17 +357,7 @@ export interface ScanBatch {
   readonly rows: readonly ScanRow[]
 }
 
-/**
- * Scan several session files at once.
- *
- * The source becomes a label, not a path: a directory has no single path, and
- * inventing one would cite a file that was never read. Every file also keeps
- * its own row, because a total that cannot be broken down cannot be audited.
- *
- * @param files - pairs of label and text, in the caller's order.
- * @param source - the label for the merged report.
- * @param options - passed to every file (`since` applies to all of them).
- */
+/** Scan several files at once; every file keeps its own row so a total stays auditable. */
 export function scanSessions(
   files: readonly { readonly label: string; readonly text: string }[],
   source: string,
@@ -384,6 +378,7 @@ export function scanSessions(
     window: { oldest: null, newest: null },
     turns: emptyCensus(),
     error_codes: {},
+    refused_efforts: {},
     by_tool: {},
     examples: [],
     redaction: { replacements: 0, kinds: [] },
@@ -391,20 +386,10 @@ export function scanSessions(
   let report = empty
   const rows: ScanRow[] = []
   for (const file of files) {
-    // Per-file reports are built with a redacted label so an example can never
-    // carry one file's path into another file's summary.
+    // A per-file row keeps the fields a reader audits; the whole report is the
+    // merged one, so a row never carries a second copy of it.
     const one = scanSessionText(file.text, file.label, options)
-    rows.push({
-      source: one.source,
-      files: one.files,
-      attempts: one.attempts,
-      fused_calls: one.fused_calls,
-      fusion_failures: one.fusion_failures,
-      repairable_failures: one.repairable_failures,
-      unreadable_lines: one.unreadable_lines,
-      before_since: one.before_since,
-      turns: one.turns,
-    })
+    rows.push({ source: one.source, files: one.files, attempts: one.attempts, fused_calls: one.fused_calls, fusion_failures: one.fusion_failures, repairable_failures: one.repairable_failures, unreadable_lines: one.unreadable_lines, before_since: one.before_since, turns: one.turns })
     report = addReport(report, one, empty.source)
   }
   return { report, rows }

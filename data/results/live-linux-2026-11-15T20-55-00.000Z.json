@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_linux_r53.mjs",
+  "generated_at": "2026-11-15T20:55:00.000Z",
+  "question": "Does 0.4.13 pass on a POSIX host, does the installed bin run through its symlink there, and does the tree ship the same byte account it measured on Windows?",
+  "host": {
+    "kernel": "Linux rjjRobert 6.6.114.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Mon Dec  1 20:46:23 UTC 2025 x86_64 GNU/Linux",
+    "distro": "Ubuntu 26.04 LTS",
+    "node": null,
+    "how": "WSL2 Ubuntu, the tracked tree copied into the Linux filesystem (never run through /mnt/c)"
+  },
+  "verify": {
+    "tests": "361",
+    "pass": "361",
+    "fail": "0",
+    "gates": "6",
+    "negative_control": "6/6",
+    "fixtures": "8",
+    "byte_account": {
+      "total": 82717,
+      "cap": 83000
+    },
+    "core_total": {
+      "bytes": 103649,
+      "cap": 104000
+    },
+    "registry": {
+      "bytes": 67850,
+      "cap": 68000
+    }
+  },
+  "installed_bin": {
+    "what": "pnpm writes a shell shim at node_modules/.bin/dsh-remedy on POSIX, and the shim resolved its own link so the CLI ran",
+    "mode": "shell shim",
+    "printed": "OK 8 fixture(s)",
+    "exit": "0",
+    "bytes": "3b374297b31bf86b01e73ee808161c68e3cbcb4556118c5be3e745caab817d11"
+  },
+  "stranger_install": {
+    "measured_this_round": false,
+    "why": "(cold install measured in R51 against 0.4.12; R53 published from Windows)\nexit 3",
+    "registry_versions": [
+      "0.4.13",
+      "0.4.13"
+    ],
+    "installed": "0.4.13"
+  },
+  "npx": {
+    "measured_this_round": false,
+    "why": "(npx in this sandbox resolves to the same bin; measured once in R51)\nnot re-run in R53\nexit 3"
+  },
+  "sources": {
+    "host.txt": "9ab82684fffe1d435fd258036f06b61af9cc2db4074c4f6b0b3efe2849277b90",
+    "verify.log": "afa586a4cab224bd005069846f5aa76468870c6294142011a17a7172b1f24ff1",
+    "mutate.log": "f9a7a2e8c5f4e13c7e8e91fe401d471978c5a71ef4bb32f1ecf7512c4f031804",
+    "size.log": "06186e8e342b2d81acf0f046a328cb17c8077d04bcc404515beb3409169f45da",
+    "cli-bin.log": "3b374297b31bf86b01e73ee808161c68e3cbcb4556118c5be3e745caab817d11"
+  },
+  "limits": [
+    "one Linux host (WSL2 Ubuntu 26.04) and one node build; not a distribution matrix",
+    "the cold install and npx were measured in R51 on 0.4.12 and are not re-measured here, so they are null with the reason rather than borrowed",
+    "the tree is the Windows working tree copied across; no build artifact was carried over, so both platforms compiled the same sources"
+  ]
+}

@@ -680,6 +680,24 @@
         "tests/unit/cli-entry.test.ts",
         "tests/e2e/cli.test.ts"
       ]
+    },
+    {
+      "id": "P-0042",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.13",
+      "evidence": [
+        "docs/patches/P-0042-profile-effort-conflict.md",
+        "packages/plugin/src/explain-command.ts",
+        "packages/plugin/src/session-scan.ts",
+        "tests/unit/refused-effort.test.ts",
+        "tests/e2e/explain-conflict.test.ts",
+        "data/results/prestep-enter-2026-11-15T17-55-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/refused-effort.test.ts",
+        "tests/e2e/explain-conflict.test.ts"
+      ]
     }
   ]
 }

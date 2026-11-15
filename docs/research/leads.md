@@ -112,6 +112,6 @@ gh api graphql -f query='{ search(type: DISCUSSION, query: "repo:deepseek-ai/dee
    不恢复的那一支以 `dsh: TRANSPORT: Stream ended without finish_reason`、退出码 1、`turn/end error`
    收尾，而不是静默成功；能静默的只有「先失败一次、重试成功」那一支，那不是同一件事。
 
-复现任何一条之前，先看**字节账**：plugin 82 919 / 83 000（只剩 **81 B**），core 103 702 / 104 000
-（298 B），registry 67 903 / 68 000（只剩 **97 B** —— **下一条记录之前先压一条老记录，不是先写**）。
+复现任何一条之前，先看**字节账**：plugin 82 717 / 83 000（只剩 **283 B**），core 103 649 / 104 000
+（351 B），registry 67 850 / 68 000（只剩 **150 B** —— **下一条记录之前先压一条老记录，不是先写**）。
 新的常驻字节必须先付账（压散文或去重），不许抬 cap。

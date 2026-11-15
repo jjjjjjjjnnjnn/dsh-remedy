@@ -65,7 +65,7 @@
 | `data/results/patch-registry-*.json` | 注册表快照（SSOT） |
 | `data/results/live-2026-11-09T17-00-00.000Z.json` | headless 真机：10 流 / 1 修复 / `completed` |
 | `data/results/live-linux-2026-11-15T10-00-00.000Z.json` | **Linux 真机（WSL2）**：329 tests / 6 gates / 6-6；#12819 形状被修好并派发；无 finish 的流以 `TRANSPORT` 收尾 |
-| `data/results/live-linux-2026-11-15T15-00-00.000Z.json` | **Linux 真机终态**：344 tests / 6 gates / 6-6；安装后的 `bin`（符号链接）真的运行，冷装 0.4.12 |
+| `data/results/live-linux-2026-11-15T15-00-00.000Z.json` | **Linux 真机终态（0.4.12）**：344 tests / 6 gates / 6-6；安装后的 `bin`（符号链接）真的运行，冷装 0.4.12 |
 | `data/results/publish-2026-11-15T14-20-00.000Z.json` / `install-acceptance-2026-11-15T14-25-00.000Z.json` | **0.4.12 发布 + 空目录装机**（两包 `ok`、`OK 8 fixture(s)`） |
 | `data/results/publish-2026-11-15T19-30-00.000Z.json` / `install-acceptance-2026-11-15T19-35-00.000Z.json` | **0.4.13 发布 + 空目录装机**（两包 `ok`、`OK 8 fixture(s)`、`canonical_fixtures: 8`） |
 | `data/results/live-desktop-2026-11-15T17-12-40.000Z.json` | **桌面真机：0.4.12 第一次被 App 加载**（一次真实 turn `completed`，journal 两个 stream 事件，verdict `quiet`；runtime 版本读自 `runtime.json`） |

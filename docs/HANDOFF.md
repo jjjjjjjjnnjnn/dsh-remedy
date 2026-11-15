@@ -3,7 +3,7 @@
 > **下一会话从 `dsh-remedy/` 开始。** 读本文件 → `PROJECT_RULES.md` → `AGENTS.md` 即可开工。
 > 本目录是**公开仓库根**；`dsh-triage/` 在父目录，是另一个项目，不属于本仓库。
 
-## 三十秒状态（2026-11-15 · R53 发布）
+## 三十秒状态（2026-11-15 · R53 已发布并交接）
 
 | 项 | 值 |
 |---|---|
@@ -14,6 +14,7 @@
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases … `v0.4.10` / `v0.4.11` / `v0.4.12` / **`v0.4.13`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release）。`v0.4.13` 的正文从 `gh release view --json body` 读回、与 `docs/copy/release-notes/v0.4.13.md` **逐字节相同**（2 900 B）；0.4.12 及以前的正文都与各自的冻结稿比对过。`main` 推到 **`d1e9a6d`**（release 提交，tree 与容器 `main:dsh-remedy` 相同）；**本段文字所在的提交比它再晚，所以「当前 HEAD」永远等于「本段所在的提交」**（不写死交接哈希，写死了下一个提交就让它变成假话）。tag `v0.4.13` 打在 `d1e9a6d` 那棵树上。CI 在 `main` release（`43756468495`）与 `v0.4.13`（`43757019561`）上都是 **success**；此后每一次 `main` 推送都由同一条 `verify` workflow 跑过、全部 success（要核对就跑 `gh run list --repo jjjjjjjjnnjnn/dsh-remedy`，不在这行里堆一串会过期的 run id）。每次三个 job：ubuntu node 22、ubuntu node 24、windows node 24。 |
 | 装机验收 | **0.4.13 已从 registry 单装到空目录验过 `OK 8 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-15T19-35-00.000Z.json`（`ok: true`、三条命令 0/0/0、`canonical_fixtures: 8`）。Linux 侧的 0.4.12 冷装仍是 `live-linux-2026-11-15T15-00-00.000Z.json`（`bin` 是符号链接且真的运行）；R53 在 Linux 上另记一份 `live-linux-2026-11-15T20-55-00.000Z.json`（361 tests、`node_modules/.bin/dsh-remedy` 是 shim 且跑起来打 `OK 8 fixture(s)`；冷装与 `npx` 没重测，记 null + 原因，不借 R51 的数）。**两个 profile 已换装 0.4.13**（`pnpm why` 读作 `dsh-remedy@0.4.13`，两边 `verify` 都是 `OK 8 fixture(s)`）。**桌面 App 在 21:46 重启、真的加载了 0.4.13**，21:51 一轮真实 turn `completed`、journal 两个 stream 事件、verdict `quiet`（`data/results/live-desktop-2026-11-15T21-51-38.000Z.json`；0.4.12 的那份 `live-desktop-2026-11-15T17-12-40.000Z.json` 是同一形状的前一版）；两份产物的 runtime 版本都读自 `runtime.json`。 |
 | 下一件事 | **0.4.13 已发布、两个 profile 已换装 0.4.13、桌面 App 已重启并真的加载了它**（空转一轮，产物 `data/results/live-desktop-2026-11-15T21-51-38.000Z.json`）。剩下三条，按顺序挑一条：**(a)** `explain` 现在会指名 profile 与实测拒绝的冲突，`remedy-live` 仍写着 `xhigh` —— 改 profile 是用户的决定，不是本项目的；**(b)** 线索账本 A 表已空，新线索从一次巡检开始（`scripts/collect_leads.mjs`），L-0005 / L-0007 已结案，不要再追；**(c)** `registry.js` 只剩 **150 B**，下一条记录之前先压一条老记录（P-0032 先例），不许抬 cap。 |
+| 交接边界 | 这一轮**没有**留下半成品：工作树干净、每个 push 的 CI 都 success、`data/results/` 里每份产物都带 `.sha256` 且与文件逐字节一致。**唯一没做的事**是 `remedy-live` 里那个 `xhigh` —— 改 profile 是用户的决定，本项目的职责到「指名」为止（`explain` 会打 `CONFLICT` 并退出 1）。Linux 侧冷装与 `npx` 本轮没重测，写进产物里的是 null + 原因，不是借来的数字。 |
 
 ## 五分钟检查
 

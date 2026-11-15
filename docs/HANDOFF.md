@@ -2572,7 +2572,7 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | 文件 | 状态 | 说明 |
 |---|---|---|
 | `publish-2026-11-15T19-30-00.000Z.json` | 绿 | **0.4.13 发布**：两包 `exact_ok` + `latest_ok`（`ok: true`；sha256 `580558d1…`） |
-| `gates-2026-11-15T21-55-00.000Z.json` / `gates-mutate-2026-11-15T21-57-00.000Z.json` | 绿 | **当前**门禁证据：R53 终态（361 tests / 6 gates ALL GREEN 与 6-6 CAUGHT；sha256 `354e4bdd…` / `310b1e33…`） |
+| `gates-2026-11-15T22-40-00.000Z.json` / `gates-mutate-2026-11-15T22-42-00.000Z.json` | 绿 | **当前**门禁证据：R53 交接终态（361 tests / 6 gates ALL GREEN 与 6-6 CAUGHT，在交接提交之前最后一次跑的门（此后只改了交接文字，三个字节数字没动）；sha256 `41d0bf62…` / `1b774fd0…`） |
 | `install-acceptance-2026-11-15T19-35-00.000Z.json` | 绿 | **0.4.13 装机验收**：空目录从 registry 单装，三条命令 0/0/0，`OK 8 fixture(s)`（`canonical_fixtures: 8`；sha256 `f75dff9d…`） |
 | `live-desktop-2026-11-15T21-51-38.000Z.json` | 绿 | **桌面真机：0.4.13 第一次被 App 加载**（App 2026-11-15 21:46 重启，一个真实 turn `completed`，插件 journal 两个 stream 事件，verdict `quiet`；tarball sha256 指 0.4.13 的包，runtime 版本读自 `runtime.json`；shasum `7c0dc5e4…`） |
 | `live-desktop-2026-11-15T17-12-40.000Z.json` | 绿 | **桌面真机（0.4.12 第一次被 App 加载）**：一次真实 turn 完成，journal 两个 stream 事件，verdict `quiet`；runtime 版本读自 `runtime.json`（shasum `3f19c587…`） |

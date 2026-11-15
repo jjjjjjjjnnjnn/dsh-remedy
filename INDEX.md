@@ -14,9 +14,10 @@
 | `PROJECT_RULES.md` | 硬规则（只读本机、失败即失败、证据由脚本产出） |
 | `docs/HANDOFF.md` | 交接：五分钟检查 / 当前批次 / 第一件事 / 坑 |
 | `docs/research/README.md` | 外部反馈 intake：来源、判据、四条约束、同类项目读法（R43 起） |
-| `docs/research/leads.md` | 线索账本：36 条（31 条 DSH + 4 条 Reddit 摘要 + 1 条新读），带 `source_kind` / `read_depth`；R45/R46 在 F 表结案 L-0032…L-0036 |
+| `docs/research/leads.md` | 线索账本：38 条（31 条 DSH + 4 条 Reddit 摘要 + 3 条同接缝/手册），带 `source_kind` / `read_depth`；F 表结案 L-0032…L-0036，G 表结案 L-0037/L-0038 |
 | `docs/research/sources.md` | 七个来源的读法、频率、边界；Reddit 读不到正文的诚实规则 |
-| `docs/research/plan-0.4.9.md` | 社区面计划：来源 → 巡检 → 一条线索 → 一个补丁 |
+| `docs/research/plan-0.4.9.md` | 0.4.9 计划与结案：来源 → 巡检 → 一条线索 → 一个补丁；§2 记着这一版实际结掉的六条线索 |
+| `docs/research/similar-projects-2026-11-14.md` | 同接缝的五个竞品与上游源码：借了什么机制、拒了什么取舍、每条指回本机 `app.asar` 的行号（R47） |
 | `docs/research/community-2026-11-14.md` | 2026-11-14 的社区盘面事实底稿（star / issue / 下载 / Discussions） |
 
 ## 代码
@@ -66,7 +67,7 @@
 | `data/results/publish-2026-11-11T17-35-00.000Z.json` | 0.3.6 发布后两包 `latest`（`ok: true`） |
 | `docs/patches/P-0001-toolcall-fusion.md` … `P-0009-session-header-window.md` | 每个补丁的症状 / 机制 / 反证 / 边界 |
 | `docs/patches/P-0010-cli-usage-truth.md` … `P-0030-attribution-proof.md` | 同上；P-0015 是 `agent/pre-step` 拒绝语义的实测记录；P-0016 的文档在 R31 补写；P-0024 把两个包内 README 收进 copy 通道；P-0025 让 `explain` 的三态落地；P-0026 把发布流程收成一个家；P-0027 给「名字证不出来」的片段一个不可执行的名字；P-0028 把随包夹具里的本机路径换成 `<home>`；P-0029 把继任者的版本指针与字节账接上判据；P-0030 把归因证明搬进 core，按 schema 能证明的部分判定并记录 `unproven` |
-| `docs/patches/P-0031-core-budget.md` … `P-0035-patch-row-resolution.md` | P-0031 给引擎立 cap；P-0032 把台账的长叙述搬回补丁文档（registry.js 66 303 → 63 217，cap 不动）；P-0033 让空 id/空名的 tool call 不再被持久化（合成 id + `remedy_unattributed`）；P-0034 让「没有一个拒绝记账解释过的失败」记成 error 而不是安静的一轮；P-0035 把 patch 层每个 `name:` 解析到 manifest exports 与已构建文件（0 运行时字节） |
+| `docs/patches/P-0031-core-budget.md` … `P-0036-delta-identity.md` | P-0031 给引擎立 cap；P-0032 把台账的长叙述搬回补丁文档（registry.js 66 303 → 63 217，cap 不动）；P-0033 让空 id/空名的 tool call 不再被持久化（合成 id + `remedy_unattributed`）；P-0034 让「没有一个拒绝记账解释过的失败」记成 error 而不是安静的一轮；P-0035 把 patch 层每个 `name:` 解析到 manifest exports 与已构建文件（0 运行时字节）；P-0036 让纯 delta 协议的 tool call 保留流里已经证过的 id（宿主 `assembler.ts:72` 无条件写 id、`:115` 的 `??` 不兜空串） |
 | `docs/adr/0001-stream-repair-over-asar-patch.md` | 为什么在 `llm/stream` 修 |
 
 ## 公开仓库（对外）

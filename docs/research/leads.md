@@ -107,5 +107,5 @@ gh api graphql -f query='{ search(type: DISCUSSION, query: "repo:deepseek-ai/dee
    （非对象参数）仍是候选，但 L-0034 已经说明为什么它和「被 adapter 换成 `{}`」不是同一件事。
 4. **L-0036（#13069，无 finish 的流）**：`watching`，缺一个脚本化 provider 的实测。
 
-复现任何一条之前，先看**字节账**：plugin 82 877 / 83 000（只剩 123 B），core 101 313 / 104 000，
-registry 67 426 / 68 000（只剩 574 B）。新的常驻字节必须先付账（压散文或去重），不许抬 cap。
+复现任何一条之前，先看**字节账**：plugin 82 957 / 83 000（只剩 43 B），core 101 597 / 104 000，
+registry 67 710 / 68 000（只剩 290 B）。新的常驻字节必须先付账（压散文或去重），不许抬 cap。

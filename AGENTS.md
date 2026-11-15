@@ -1,7 +1,7 @@
 # dsh-remedy AGENTS.md
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
-> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.13`（已发布，两包 `latest`；两个 profile 已换装 0.4.13，App 需重启才加载）
+> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.13`（已发布，两包 `latest`；两个 profile 已换装 0.4.13，App 已在 2026-11-15 重启并加载过）
 > **Stand**：R53（2026-11-15，**先量接缝再决定产品**——`agent/pre-step` 的 `{kind:"enter"}` 在 0.2.2-rc.3 上能带消息、
 > 却改不了 loop 已经定下的 selection，`reject` 又被桌面渲染成「已完成」，所以 P-0013 的 preflight 没有诚实的挂载点；
 > 补丁因此落在离线侧：**P-0042** 让 `scan` 记住宿主拒绝的那个档位、让 `explain` 在 profile 仍写着它时打一行 CONFLICT 并退出 1。

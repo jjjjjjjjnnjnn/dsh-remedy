@@ -2571,7 +2571,7 @@ core **103 702 / 104 000（298 B）**、registry **67 903 / 68 000（97 B ——
 | 文件 | 状态 | 说明 |
 |---|---|---|
 | `publish-2026-11-15T19-30-00.000Z.json` | 绿 | **0.4.13 发布**：两包 `exact_ok` + `latest_ok`（`ok: true`；sha256 `580558d1…`） |
-| `gates-2026-11-15T21-10-00.000Z.json` / `gates-mutate-2026-11-15T21-12-00.000Z.json` | 绿 | **当前**门禁证据：R53 收尾（361 tests / 6 gates ALL GREEN 与 6-6 CAUGHT；sha256 `04fe2a97…` / `0b572a49…`） |
+| `gates-2026-11-15T21-25-00.000Z.json` / `gates-mutate-2026-11-15T21-27-00.000Z.json` | 绿 | **当前**门禁证据：R53 收尾（361 tests / 6 gates ALL GREEN 与 6-6 CAUGHT；sha256 `98a631ba…` / `12072bd1…`） |
 | `install-acceptance-2026-11-15T19-35-00.000Z.json` | 绿 | **0.4.13 装机验收**：空目录从 registry 单装，三条命令 0/0/0，`OK 8 fixture(s)`（`canonical_fixtures: 8`；sha256 `f75dff9d…`） |
 | `live-desktop-2026-11-15T17-12-40.000Z.json` | 绿 | **桌面真机（0.4.12 第一次被 App 加载）**：一次真实 turn 完成，journal 两个 stream 事件，verdict `quiet`；runtime 版本读自 `runtime.json`（shasum `3f19c587…`） |
 | `prestep-enter-2026-11-15T17-55-00.000Z.json` | 绿 | **`agent/pre-step` 的 `enter` 分支实测**（P-0042 的形状由来）：四条隔离运行 + `resolveCallConfig` 查询；`enter` 能带消息、不能换 selection（shasum `e12bc9f4…`） |

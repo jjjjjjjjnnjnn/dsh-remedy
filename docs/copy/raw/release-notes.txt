@@ -47,4 +47,3 @@
   24.10.0); `OK 8 fixture(s)` through the installed bin. macOS is **not** measured.
 - The desktop app was started for the first time since 0.4.12 was installed, and one real turn
   completed with the plugin writing two journal stream events.
-

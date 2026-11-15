@@ -64,7 +64,9 @@
 | `data/fixtures/toolcall-fusion/single-broken.json` | 单个坏对象不拆 |
 | `data/results/patch-registry-*.json` | 注册表快照（SSOT） |
 | `data/results/live-2026-11-09T17-00-00.000Z.json` | headless 真机：10 流 / 1 修复 / `completed` |
-| `data/results/live-linux-2026-11-15T10-00-00.000Z.json` | **Linux 真机（WSL2）**：334 tests / 6 gates / 6-6；#12819 形状被修好并派发；无 finish 的流以 `TRANSPORT` 收尾 |
+| `data/results/live-linux-2026-11-15T10-00-00.000Z.json` | **Linux 真机（WSL2）**：329 tests / 6 gates / 6-6；#12819 形状被修好并派发；无 finish 的流以 `TRANSPORT` 收尾 |
+| `data/results/live-linux-2026-11-15T15-00-00.000Z.json` | **Linux 真机终态**：344 tests / 6 gates / 6-6；安装后的 `bin`（符号链接）真的运行，冷装 0.4.12 |
+| `data/results/publish-2026-11-15T14-20-00.000Z.json` / `install-acceptance-2026-11-15T14-25-00.000Z.json` | **0.4.12 发布 + 空目录装机**（两包 `ok`、`OK 8 fixture(s)`） |
 | `data/results/live-desktop-2026-11-09T19-10-00.000Z.json` | 桌面真机：39 流 / 2 修复 / `aborted`（人工停止） |
 | `data/results/live-2026-11-10T14-45-00.000Z.json` | 0.3.0 headless 真机：合成 id 被派发并回答（P-0002） |
 | `data/results/live-2026-11-10T16-30-00.000Z.json` | 0.3.0 headless 真机拒绝：`refused:1`（P-0003） |

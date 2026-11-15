@@ -918,7 +918,25 @@
         "docs/patches/P-0040-acceptance-fixture-count.md",
         "docs/patches/P-0041-cli-bin-symlink.md"
       ]
+    },
+    {
+      "id": "S52",
+      "gate": "copy",
+      "title": "The handover stopped describing the version that shipped",
+      "axes": {
+        "correctness": "Ten claims were wrong in the files a successor reads first: the fact pack said 36 patches / 4 verified / 334 tests while the registry has 41 / 6 / 344; both root READMEs described 0.4.10 and OK 6 fixture(s); the handoff status table carried 0.4.10 tarballs and two headroom numbers from before the release; its patch row had lost P-0008 and P-0039 in two earlier edits; the next-thing row still told a successor to publish and to move the profiles, both done in R51; the research ledgers quoted the 0.4.9-era byte account. Every one is now the measured value, and no criterion, threshold or cap was touched.",
+        "reproducibility": "node .tmp/r52-audit.mjs lists the stale claims file by file; the counts come from PATCHES in the built registry, the byte account from node scripts/gate_size.mjs, the versions from npm view, the tarball sizes from npm pack <name>@<version>, and the profile pins from their own package.json. The re-registration is one pass of scripts/copy_record.mjs over every live entry plus the --split templates.",
+        "compliance": "Zero runtime bytes: nothing under packages/ changed, so plugin 82 919 / 83 000, core 103 702 / 104 000 and registry.js 67 903 / 68 000 are exactly what they were. Every outward file went through the copy channel after the fact pack moved; two registrations were refused first because the pack no longer carried the older releases numbers, and the pack was extended rather than the numbers dropped.",
+        "ssot": "The registry is the single source for patch status and the seam counts; the fact pack is the single source for every outward number; the handoff evidence index and first-thing section are the single source for what a successor acts on. The 5 KB patch row was replaced by one clause per patch plus a pointer to docs/patches/, which is where the long form already lived (P-0032 applied to the handoff).",
+        "adversarial": "Three adversaries. (1) The temptation to edit the outward pages by hand: the copy channel refused the first two registrations because the pack lacked numbers, which is exactly the behaviour that stops a human from inventing a figure. (2) The temptation to keep the patch row as a 5 KB history: it had already been corrupted twice by ordinary edits, so it was cut to a line that cannot rot, and the narrative stayed in the batch sections. (3) The temptation to claim the App loaded 0.4.12: it did not run, so the boundary says installed, no start time."
+      },
+      "evidence": [
+        "docs/copy/facts/public-repo-facts.md",
+        "docs/HANDOFF.md",
+        "README.md",
+        "data/results/gates-2026-11-15T17-00-00.000Z.json"
+      ]
     }
   ],
-  "updated_at": "2026-11-15T15:20:00.000Z"
+  "updated_at": "2026-11-15T17:20:00.000Z"
 }

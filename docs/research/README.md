@@ -71,8 +71,8 @@
 - 全有或全无：任何片段不能 parse，就原样抛回；永不把失败改成 `stop`。
 - 不改有效流：只在证明有缺陷的 finish / block 上动手。
 - 插件默认零写盘、零网络；新依赖一律不加（门禁本身也是零依赖）。
-- 新增运行时字节必须付账：plugin 只剩 **43 B**（82 957 / 83 000），core 总账 **2 403 B**
-  （101 597 / 104 000），其中 registry 有 **290 B**（67 710 / 68 000）。
+- 新增运行时字节必须付账：plugin 只剩 **81 B**（82 919 / 83 000），core 总账 **298 B**
+  （103 702 / 104 000），其中 registry 有 **97 B**（67 903 / 68 000）。
   新记录只写台账字段 + 一句 symptom / 一句 rootCause / 短 limits，长文进 `docs/patches/`（P-0032）。
 
 **安全性**
@@ -104,14 +104,13 @@
 ## 6. 下一会话的第一件事
 
 1. 读 `docs/research/leads.md` 的 A 表与 F 表 decision 列：R49 结案了 **L-0004（`patched`，P-0037）**、
-   **L-0003（`rejected (out-of-seam)`）** 与 **L-0009（`rejected (no defect)`）**；
-   剩下的是 **L-0005**（Windows 流式损坏）与 **L-0007**（46 turns lost）；**L-0036** 已在 R50 结案为
-   `rejected (no defect)`：两个脚本化 provider 探针证明「无 `finish_reason` 的流」要么变成显式的 error finish、
-   要么以 `TRANSPORT` + 退出码 1 收尾，不会静默成功（证据 `data/results/live-linux-2026-11-15T10-00-00.000Z.json`）；
-2. **先发 0.4.11**：P-0037 已在树上、判据绿（324 tests / 6 gates / mutate 6-6），发版动作（copy 通道、
-   `record_publish`、装机验收、两个 profile、市场索引）一个都没做；
-3. 复现成功 → 夹具 + 先红测试 + `P-0038` 起（编号只前进，不复用）；
+   **L-0003（`rejected (out-of-seam)`）** 与 **L-0009（`rejected (no defect)`）**；R50 结案 **L-0036**
+   （`rejected (no defect)`：两个脚本化 provider 探针证明无 `finish_reason` 的流要么转成显式 error finish、
+   要么以 `TRANSPORT` + 退出码 1 收尾）。剩下的是 **L-0005**（Windows 流式损坏）与 **L-0007**（46 turns lost）；
+2. **0.4.11 与 0.4.12 都已发布**（P-0037 / P-0038 / P-0039 在前一版，P-0040 / P-0041 在后一版），
+   公开仓、tag、release 与 CI 都已完成，两个 profile 也已换装；**下一件事是线索，不是发版**；
+3. 复现成功 → 夹具 + 先红测试 + **P-0042 起**（编号只前进，不复用）；
 4. 复现失败 → 标 `unreproduced`，写清版本差异，换下一条；
 5. 动运行时字节前先付账：压散文或去重，**不抬 cap**（P-0032 的先例）。当前的余量：
-   plugin **144 B**、core **298 B**、registry **97 B（下一条记录写之前先压一条老记录）。
+   plugin **81 B**、core **298 B**、registry **97 B**（下一条记录写之前先压一条老记录）。
 

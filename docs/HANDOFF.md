@@ -2574,6 +2574,7 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | `live-desktop-2026-11-15T21-51-38.000Z.json` | 绿 | **桌面真机：0.4.13 第一次被 App 加载**（App 2026-11-15 21:46 重启，一个真实 turn `completed`，插件 journal 两个 stream 事件，verdict `quiet`；tarball sha256 指 0.4.13 的包，runtime 版本读自 `runtime.json`；shasum `7c0dc5e4…`） |
 | `live-desktop-2026-11-15T17-12-40.000Z.json` | 绿 | **桌面真机（0.4.12 第一次被 App 加载）**：一次真实 turn 完成，journal 两个 stream 事件，verdict `quiet`；runtime 版本读自 `runtime.json`（shasum `3f19c587…`） |
 | `prestep-enter-2026-11-15T17-55-00.000Z.json` | 绿 | **`agent/pre-step` 的 `enter` 分支实测**（P-0042 的形状由来）：四条隔离运行 + `resolveCallConfig` 查询；`enter` 能带消息、不能换 selection（shasum `e12bc9f4…`） |
+| `scan-r53-2026-11-15T22-05-00.000Z.json` | 绿 | **本机 census（R53）**：114 文件 / 396 attempts / 393 turns；`refused_efforts` 就是 P-0042 的输入——`opendesign/deepseek-v4.1-flash-eco xhigh` **37 次**（sha256 `0dcf0e12…`） |
 | `patch-registry-2026-11-15T20-20-00.000Z.json` | 绿 | **当前**快照（四十二补丁：P-0042 的台账与文档落地之后重录；6 `verified` + 36 `tested`；sha256 `0a054d20…`） |
 | `publish-2026-11-15T14-20-00.000Z.json` | 绿 | **0.4.12 发布**：两包 `exact_ok` + `latest_ok`（`ok: true`；sha256 `fd5df0b9…`） |
 | `install-acceptance-2026-11-15T14-25-00.000Z.json` | 绿 | **0.4.12 装机验收**：空目录从 registry 单装，三条命令 0/0/0，`OK 8 fixture(s)`（`canonical_fixtures: 8`） |

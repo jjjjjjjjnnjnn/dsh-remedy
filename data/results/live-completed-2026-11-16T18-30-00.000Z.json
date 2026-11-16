@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_completed_answer.mjs",
+  "generated_at": "2026-11-16T18:30:00.000Z",
+  "question": "Upstream #13169 reports a turn whose only delivered content is reasoning and whose `turn/end` still says `completed`. This machine had produced 0 of them, so nothing could say whether it happens here. Does a local endpoint that streams one reasoning block and a normal stop reproduce the shape, and does the scanner count it?",
+  "probe": {
+    "homes": ".tmp/r57-runs/reasoning and .tmp/r57-runs/text (isolated DSH_HOME; nothing under ~/.dsh is written)",
+    "endpoint": ".tmp/r57-fake-openai.mjs — `reasoning-only` streams two `reasoning_content` deltas then `finish_reason: \"stop\"`; `text` streams one content delta then `stop`",
+    "why_the_shape_survives": "the adapter's empty-response guard counts blocks, not usable content (`dsh-llm-pi-ai` `mapStopReason`: `if (message.content.length === 0)`), so one reasoning block passes and the loop ends the turn as `completed`",
+    "runtime": {
+      "version": "0.2.2-rc.3",
+      "source": "<home>\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\primary-runtime\\runtime.json",
+      "sha256": "ce43135cf00d7dcd9d1c52f467cf8fe533248a745226e27def0e86ba8e6abad6"
+    },
+    "note": "the endpoint is local and synthetic: it reproduces the adapter shape, not a relay incident"
+  },
+  "runs": {
+    "reasoning": {
+      "endpoint": "reasoning-only",
+      "exit_code": 0,
+      "requests": 2,
+      "session": {
+        "file": "<home>\\Desktop\\项目开发\\DSH-Addition\\dsh-remedy\\.tmp\\r57-runs\\reasoning\\evidence\\0-session.v4.jsonl.zstd",
+        "sha256": "30b2d82edcd5bf3310bf186162302c17173efa6f347f1d058f4840cae4109ff8",
+        "events": 21,
+        "turn_ends": [
+          "completed"
+        ],
+        "last_blocks": [
+          "reasoning"
+        ],
+        "last_text": ""
+      }
+    },
+    "control": {
+      "endpoint": "text",
+      "exit_code": 0,
+      "requests": 2,
+      "session": {
+        "file": "<home>\\Desktop\\项目开发\\DSH-Addition\\dsh-remedy\\.tmp\\r57-runs\\text\\evidence\\0-session.v4.jsonl.zstd",
+        "sha256": "c557abd2ebe2b2241c8ca0eec347812db73628d19914756bd64ed858c6579123",
+        "events": 21,
+        "turn_ends": [
+          "completed"
+        ],
+        "last_blocks": [
+          "text"
+        ],
+        "last_text": "OK"
+      }
+    }
+  },
+  "scan": {
+    "completed": 2,
+    "completed_without_answer": 1,
+    "truncated_without_answer": 0,
+    "rows": [
+      {
+        "source": "<home>\\Desktop\\项目开发\\DSH-Addition\\dsh-remedy\\.tmp\\r57-runs\\reasoning\\evidence\\0-session.v4.jsonl.zstd",
+        "completed": 1,
+        "completed_without_answer": 1
+      },
+      {
+        "source": "<home>\\Desktop\\项目开发\\DSH-Addition\\dsh-remedy\\.tmp\\r57-runs\\text\\evidence\\0-session.v4.jsonl.zstd",
+        "completed": 1,
+        "completed_without_answer": 0
+      }
+    ]
+  },
+  "claims": {
+    "the_shape_reproduces_here": true,
+    "the_control_differs_only_in_content": true,
+    "the_scanner_counts_exactly_one": true,
+    "the_census_itself_did_not_move": true
+  },
+  "findings": [
+    "A turn that delivered only reasoning ends `completed` on this host, exactly as upstream #13169 describes, and the endpoint delivered it as a normal `stop` — so the shape is not a truncation and not an error.",
+    "The control run, same endpoint and same prompt with a text delta, ends the same way; the only difference a reader can see is the block type in the transcript.",
+    "The scanner counts the reasoning run and not the control, which is the rule P-0047 added; the completion census itself stays two."
+  ],
+  "not_proven": [
+    "The endpoint is local and synthetic. It reproduces the adapter output, not a relay incident.",
+    "One route, one model, one prompt, one step per turn; a multi-step turn was not exercised.",
+    "The desktop app was not driven for this probe: both runs are headless CLI runs on the same host."
+  ],
+  "redaction": {
+    "replacements": 0,
+    "kinds": []
+  }
+}

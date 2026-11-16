@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_linux_r57.mjs",
+  "generated_at": "2026-11-16T19:10:00.000Z",
+  "question": "Does the R57 tree pass on a POSIX host, does the installed dist CLI run there, and does P-0047 report the same `completed_without_answer` answer on a POSIX payload?",
+  "host": {
+    "kernel": "Linux rjjRobert 6.6.114.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Mon Dec  1 20:46:23 UTC 2025 x86_64 GNU/Linux",
+    "node": "24.10.0",
+    "pnpm": "12.15.0",
+    "how": "WSL2 Ubuntu 26.04; the tracked tree copied into the Linux filesystem and never run through /mnt/c",
+    "note": "the `pnpm` shim on this box looks for pnpm.cjs, which is absent; a one-line wrapper points it at pnpm.mjs, so package.json scripts run unchanged. That is a harness fix, not a product claim."
+  },
+  "verify": {
+    "tests": 382,
+    "pass": 382,
+    "fail": 0,
+    "gates": 6,
+    "negative_control": "6/6"
+  },
+  "installed_dist_cli": {
+    "what": "node packages/plugin/dist/cli.js verify on this host, against the fixture set the package ships",
+    "printed": "OK  8 fixture(s)",
+    "exit": 0
+  },
+  "p0047_on_linux": {
+    "payload": "the reasoning-only session the Windows probe recorded, scanned by this host's dist scanner",
+    "printed": "turns=1 completed=1 max_tokens=0 aborted=0 error=0 truncated_without_answer=0 completed_without_answer=1",
+    "note": "the same rule the Windows run measured: the reasoning-only completion is counted, the text control is not"
+  },
+  "byte_account": {
+    "total": {
+      "bytes": 82698,
+      "cap": 83000
+    },
+    "residency": {
+      "bytes": 40902,
+      "cap": 44000
+    },
+    "cli": {
+      "bytes": 41796,
+      "cap": 42000
+    },
+    "core_total": {
+      "bytes": 103868,
+      "cap": 104000
+    },
+    "registry": {
+      "bytes": 66425,
+      "cap": 68000
+    }
+  },
+  "install": {
+    "exit": 0
+  },
+  "not_measured": {
+    "cold_directory_install": "not re-run this round: 0.4.17 is unpublished; the install path is measured at publish time.",
+    "npx": "not re-run this round for the same reason.",
+    "desktop_app": "the desktop profile is not on this host; it stays on 0.4.16."
+  },
+  "sources": {
+    "versions.log": "823e354884b955ff5f6afde6a366ce7ef90090315970c5be51510d7e1b4d9f48",
+    "verify.log": "4b286eda7e256fb372789a79df6cd0dcda192bf890c12770ba452f420d67a41c",
+    "mutate.log": "7871ab8182121beb855c4e4a51ff9955594b1a94bcf391cee751527823b4f7ca",
+    "size.log": "c3710256574e9e5c2737d2e8d7272b759770074501206e494cf96422dcba51c6",
+    "cli.log": "2765c9612db9161b8d0eecb46cfbbba6e1be9458729a889d47eb8a78c1d9b757",
+    "install.log": "4dfde69a2a45ed14834cc74a64a39a3e7323c4b0736faf0e904ac71056835cce",
+    "scan-p0047.log": "e526ab435f40facfe891e605e1d51f4225b8b59266c4587f922341d18b71a3a1"
+  },
+  "limits": [
+    "one Linux host (WSL2 Ubuntu 26.04) and one node build; this is not a distribution matrix",
+    "the P-0047 scan reads a session produced on Windows, not a session produced here: the rule is platform-independent, the payload is not",
+    "no cold install and no npx this round, and the desktop app was not driven here"
+  ]
+}

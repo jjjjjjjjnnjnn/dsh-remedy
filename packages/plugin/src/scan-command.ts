@@ -1,4 +1,4 @@
-/** The `scan` command: the directory walk, log reader and artifact writer (P-0004). */
+/** `scan`: directory walk, log reader, artifact writer (P-0004). */
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
 import { basename, join, resolve } from 'node:path'
@@ -14,7 +14,7 @@ function writeArtifact(path: string, report: ScanReport, rows: readonly ScanRow[
   writeFileSync(`${path}.sha256`, `${digest}  ${basename(path)}\n`, 'utf8')
 }
 
-/** Every `session.v4.jsonl.zstd` below a directory, newest first. */
+/** Every session log below a directory, newest first. */
 function collectSessions(directory: string): string[] {
   const files: string[] = []
   const walk = (current: string): void => {
@@ -96,10 +96,10 @@ export function cmdScan(args: Args): number {
     process.stdout.write(
       `attempts=${report.attempts} fused_calls=${report.fused_calls} fusion_failures=${report.fusion_failures} repairable=${report.repairable_failures} unreadable_lines=${report.unreadable_lines}\n`,
     )
-    // P-0006 is the census; P-0044 asks whether a truncated turn answered.
+    // P-0006 census; P-0044 and P-0047 ask whether an ending answered anyone.
     const t = report.turns
     process.stdout.write(
-      `turns=${t.completed + t.max_tokens + t.aborted + t.error} completed=${t.completed} max_tokens=${t.max_tokens} aborted=${t.aborted} error=${t.error} truncated_without_answer=${report.truncated_without_answer}\n`,
+      `turns=${t.completed + t.max_tokens + t.aborted + t.error} completed=${t.completed} max_tokens=${t.max_tokens} aborted=${t.aborted} error=${t.error} truncated_without_answer=${report.truncated_without_answer} completed_without_answer=${report.completed_without_answer}\n`,
     )
     const codes = Object.entries(report.error_codes)
     if (codes.length > 0) {

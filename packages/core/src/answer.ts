@@ -1,15 +1,11 @@
 /**
- * P-0044 — did a turn actually answer the user?
+ * P-0044 / P-0047 — did a turn answer the user?
  *
- * The turn census (P-0006) counts *how* a turn ended. It never asked whether the
- * user saw anything: a `max-tokens` turn whose whole budget went into a
- * `reasoning` block ends exactly like one that wrote half an answer, and the
- * transcript shows an empty bubble in either case. Upstream #12347 reports that
- * shape from a headless run and #13169 the same shape on a `completed` turn.
- *
- * These are pure functions: no I/O, no session directory. The scanner and the
- * build-side sampler both call them, so one rule answers the question for the
- * product and for the evidence artifacts.
+ * The census counts how a turn ended and never asked whether the user saw
+ * anything: a `max-tokens` cut and a `completed` stop both look the same in the
+ * transcript when the last step carried only `reasoning`. Pure functions, no I/O,
+ * so the scanner and the evidence samplers share one rule. The measured shapes and
+ * the reports are in docs/patches/P-0044-turn-answered.md and P-0047.
  */
 
 /** The ending kinds the census knows. Anything else is not a question here. */

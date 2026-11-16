@@ -1,19 +1,10 @@
 /**
  * P-0013 — the reasoning-effort preflight (pure decision, no I/O).
  *
- * This host died 37 times on `UNSUPPORTED_REASONING_EFFORT` in two days: a
- * profile declared a level the adapter's own metadata does not contain, so the
- * request was refused before a token was spent and nothing in the journal said
- * why. The adapter's resolution rule (`resolveReasoningLevel` /
- * `getSupportedThinkingLevels`), the eleven sessions it was measured across and
- * the full table live in `docs/patches/P-0013-named-refusals.md`; this module
- * re-derives that set from the same inputs and answers one question: given a
- * declared effort and a model's capabilities, will the request be refused?
- *
- * `ok` / `refuse` / `unknown`, and `unknown` is a first-class answer: a model
- * with no reasoning metadata still accepts `off` (the adapter returns `['off']`),
- * which is a fact this module reports rather than assumes. It never writes,
- * never guesses and never silently substitutes a level.
+ * Given a declared effort and a model's declared capabilities, answer `ok`,
+ * `refuse` or `unknown`. `unknown` is a first-class answer, it never guesses and
+ * never substitutes a level. The adapter rule this mirrors, the 37 measured turns
+ * and the full table are in docs/patches/P-0013-named-refusals.md.
  */
 
 export type EffortLevel = 'off' | 'low' | 'high' | 'xhigh' | 'max'

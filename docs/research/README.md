@@ -103,21 +103,17 @@
 
 ## 6. 下一会话的第一件事
 
-1. **A 表已空**：R53 结案了最后两条 —— **L-0005** 与 **L-0007** 都是 `rejected (out-of-seam)`，
-   理由是同一条 adapter 代码（本机 0.2.2-rc.3 的 `dsh-llm-deepseek/lib/index.js:2057-2066` 逐字读到：
-   `catch (_invalidProviderToolJson) { return malformed("tool input is invalid JSON") }`，句子不带参数原文，
-   同一文件里 `Received arguments` 命中 0 次）。所以「修参数」这一半本接缝拿不到字节，
-   「默认不重试」那一半已由 P-0011 的有界重试与宿主的 `retryPolicy.retryableCodes` 覆盖。
-   不要把时间再花在这两条上。
-2. **新线索从一次巡检开始**：`node scripts/collect_leads.mjs` 产出 `data/results/intake-<stamp>.json`，
-   它只说哪些来源答了、哪些没答、有几个候选还没进账本。R53 读过 2026-11-15 的最新一批讨论：
-   其中 #11620（`dsh-llm-pi-ai` 的 stream-idle watchdog 忽略 SSE `: ping`）是 **adapter 的接缝**，
-   本插件的 `llm/stream` 看不到那些注释帧；如果下一位要追它，先写清楚这一条。
-3. **0.4.15 已发布**（P-0044：截断的 turn 现在也说它有没有回答）；0.4.14 带 P-0043（为夹具写的那条守卫看不见夹具的 JSON 转义形状，0.4.13 因此把账号名发进了 tarball）。R56 把 P-0011 / P-0013 的真机见证补上（P-0045：准备阶段的拒绝只抵达 `agent/error`），并把公开页缺的那一行变成 P-0046 的判据；0.4.13 带 P-0042，0.4.12 带 P-0040/P-0041。
-   0.4.13 带 P-0042（`scan` 记住被拒档位 + `explain` 指名 profile 冲突），0.4.12 带 P-0040/P-0041。
-   R55 把两个 profile 换到 0.4.15（`pnpm why` 与 `verify` 都读 0.4.15），并把 `remedy-live` 的 `xhigh` 改成 `high`；
-   换装与改档位是机械动作，不是产品。R55 的产品是 **P-0044**（截断的 turn 有没有回答），已随 0.4.15 发出。
-4. 复现成功 → 夹具 + 先红测试 + **P-0043 起**（编号只前进，不复用）。
+1. **A 表仍空；R55 的 79 个候选已在 R57 逐桶判读**（`docs/research/intake-r57-triage.md`）：只有两条
+   进过账本语义——#11151 / #10732 是 P-0033/P-0036 的同族（不新增行），#13169 是 **P-0047**（本机探针
+   复现后才落补丁）。#12741（工具循环结束后没有可见回复）**故意没数**：它的最后一步是 tool-call，本项目把
+   tool-call 当作「转写里看得见的工作」，要数它就得先有探针与另一条规则。#12348（跨 profile resume 的
+   capability drift）是 P-0042 的邻居，便宜的做法是让 `explain` 多打一行，不是改接缝。
+2. **新线索从一次巡检开始**：`node scripts/collect_leads.mjs --stamp <ISO> --dsh --self --npm` 产出
+   `data/results/intake-<stamp>.json`；它只说哪些来源答了、哪些没答、有几个候选还没进账本。
+3. **0.4.16 已发布**（P-0045 + P-0046，并把 P-0011/P-0013 升成 `verified`）；本树在它之上有 **P-0047**
+   （`completed` 却没有回答的 turn，探针 `live-completed-2026-11-16T18-30-00.000Z.json`）与 **P-0048**
+   （macOS CI 判据），都未发布。
+4. 复现成功 → 夹具 + 先红测试 + 编号只前进（下一个是 **P-0049**）。
 5. 复现失败 → 标 `unreproduced`，写清版本差异，换下一条。
-6. 动运行时字节前先付账：压散文或去重，**不抬 cap**（P-0032 的先例）。当前的余量：
-   plugin **136 B**（CLI **38 B**）、core **456 B**、registry **3 007 B**（R56 之后：82 864 / 103 544 / 64 993；下一条记录写之前仍建议先压一条老记录）。
+6. 动运行时字节前先付账：压散文或去重，**不抬 cap**（P-0032 的先例）。R57 付完之后：plugin **136 B**
+   （CLI **204 B**）、core **132 B**、registry **3 007 B** —— 下一轮写记录之前必须先压一条老记录。

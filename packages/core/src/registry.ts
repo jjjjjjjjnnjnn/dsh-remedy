@@ -16,8 +16,7 @@ import type { PatchRecord } from './types.js'
 export const PATCHES: readonly PatchRecord[] = [
   {
     id: 'P-0001',
-    title:
-      'Split fused tool-call arguments into separate calls',
+    title: 'Split fused tool-call arguments into separate calls',
     symptom:
       'a tool call fails with `Unexpected non-whitespace character after JSON` because the relay streamed two calls into one index',
     rootCause:
@@ -55,8 +54,7 @@ export const PATCHES: readonly PatchRecord[] = [
   },
   {
     id: 'P-0002',
-    title:
-      'A rescue must be provable, attributable and atomic',
+    title: 'A rescue must be provable, attributable and atomic',
     symptom:
       'a split-out call could run under an empty or wrong tool name, replay without replayState, or commit before a later block of the same stream was rejected',
     rootCause:
@@ -113,8 +111,7 @@ export const PATCHES: readonly PatchRecord[] = [
   },
   {
     id: 'P-0005',
-    title:
-      'A bare value after a member key must be resealed, or refused — never guessed',
+    title: 'A bare value after a member key must be resealed, or refused — never guessed',
     symptom:
       'a tool call fails with `Unexpected token` or `Unexpected end of JSON input` because the model wrote a program, not a JSON string, after `"code":`',
     rootCause:
@@ -144,8 +141,7 @@ export const PATCHES: readonly PatchRecord[] = [
   },
   {
     id: 'P-0011',
-    title:
-      'A second seam with no test is a seam nobody has ever run',
+    title: 'A second seam with no test is a seam nobody has ever run',
     symptom:
       'agent/request-error shipped in 0.2.0 behind retryOnMalformed with zero tests, and was wrong three ways: it called next() then overrode the answer, never pruned its budget Map, and would have retried image-offload and credential failures',
     rootCause:
@@ -173,8 +169,7 @@ export const PATCHES: readonly PatchRecord[] = [
   },
   {
     id: 'P-0012',
-    title:
-      'One byte cap for two load paths is a cap that taxes the wrong half',
+    title: 'One byte cap for two load paths is a cap that taxes the wrong half',
     symptom:
       'one 68000-byte ceiling counted a mounted plugin and a CLI invocation as the same thing; P-0011 needed 4 263 bytes that did not fit, and paying meant deleting prose a daemon loads',
     rootCause:
@@ -191,16 +186,15 @@ export const PATCHES: readonly PatchRecord[] = [
       'tests/governance/budget-split.test.ts',
     ],
     limits: [
-      'the caps are recorded rather than assumed: they moved twice in one session with the owner signature, in budgets.mjs',
-      'the class lists are explicit; the governance test reads only the relative import graph, so a core or dynamic import is not caught',
-      'a split budget cannot tell good growth from bad; it only says which half pays',
+      'the caps are recorded, not assumed: they moved twice in one session with the owner signature (budgets.mjs)',
+      'the lists are explicit; the test reads only the relative import graph, so a dynamic import is not caught',
+      'a split budget cannot tell good growth from bad, only which half pays',
       'it caps emitted JavaScript only, not declarations, fixtures or package-root files',
     ],
   },
   {
     id: 'P-0013',
-    title:
-      'The failure class this host hits most after fusion was named by nobody',
+    title: 'The failure class this host hits most after fusion was named by nobody',
     symptom:
       '37 turns on this host died with UNSUPPORTED_REASONING_EFFORT (one sentence, three workspaces, eleven sessions) while the resident layer said nothing; INVALID_REQUEST, MISSING_CREDENTIAL and EMPTY_RESPONSE were silent too',
     rootCause:
@@ -223,17 +217,15 @@ export const PATCHES: readonly PatchRecord[] = [
     failureClasses: ['UNSUPPORTED_REASONING_EFFORT', 'INVALID_REQUEST', 'MISSING_CREDENTIAL', 'EMPTY_RESPONSE'],
     switchKey: 'repair',
     limits: [
-      'naming is always on and never repairs or retries: one named line instead of one dead turn',
-      'preflight is a pure decision, not a mount; nothing wires it into agent/pre-step yet, because the seam was measured first',
-      'it never silently downgrades a level: the adapter would, the user decides, so it reports a suggestion instead',
-      'a model whose metadata lives only in the adapter is reported as unknown, never assumed',
-      '`agent/error` is an emit, not a waterfall: it can name a failure and cannot decide anything about it',
+      'naming is always on, never repairs or retries: one named line instead of one dead turn',
+      'preflight is a pure decision, not a mount: nothing wires it into agent/pre-step yet',
+      'a refused level is reported with a suggestion, never silently downgraded',
+      'a model whose metadata lives only in the adapter reads unknown, never assumed',
     ],
   },
   {
     id: 'P-0004',
-    title:
-      'A scan must read the log it is pointed at, and a redaction must see every path shape',
+    title: 'A scan must read the log it is pointed at, and a redaction must see every path shape',
     symptom:
       '`dsh-remedy scan <session.v4.jsonl.zstd>` reported 0 attempts and one unreadable line per compressed byte, and artifacts citing a session carried the account name in three shapes the redactor could not match',
     rootCause:
@@ -385,8 +377,7 @@ export const PATCHES: readonly PatchRecord[] = [
   },
   {
     id: 'P-0014',
-    title:
-      'The project describing itself is the part nothing checked',
+    title: 'The project describing itself is the part nothing checked',
     symptom:
       'the fact pack pinned core 0.3.7 and called 0.3.6 the previous release while 0.3.8 shipped, quoted a hash no file hashed to, and the npm page documented four commands after explain shipped',
     rootCause:
@@ -413,8 +404,7 @@ export const PATCHES: readonly PatchRecord[] = [
   },
   {
     id: 'P-0015',
-    title:
-      'The seam nobody mounted because nobody measured what refusing looks like',
+    title: 'The seam nobody mounted because nobody measured what refusing looks like',
     symptom:
       'agent/pre-step stayed unmounted on one sentence repeated in three places: "a rejected step opens no step, but what the user sees has not been measured"; a seam that can refuse before a token was blocked by an unchecked assumption',
     rootCause:
@@ -494,9 +484,9 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0018',
     title: 'A Windows exit code printed as a bare number sent an operator hunting the wrong cause',
     symptom:
-      'the publish wrapper printed "npm exited 3221226505 in packages/core" and then HTTP-shaped advice, so the operator hunted a credentials problem; that number is Windows 0xC0000409, raised before npm spoke to the registry',
+      'the publish wrapper printed "npm exited 3221226505" and HTTP-shaped advice, so the operator hunted a credentials problem; that number is Windows 0xC0000409',
     rootCause:
-      'npmFailureAdvice only understands 401/403/404/402/429; a process killed by the Windows runtime has no HTTP answer and fell through to the generic branch. Measured: both debug logs of that attempt stop after the tarball notice with no request',
+      'npmFailureAdvice only understands HTTP codes; a process killed by the Windows runtime has no HTTP answer and fell through to the generic branch',
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
@@ -514,8 +504,7 @@ export const PATCHES: readonly PatchRecord[] = [
   },
   {
     id: 'P-0019',
-    title:
-      'The page strangers read first described a project that had stopped existing',
+    title: 'The page strangers read first described a project that had stopped existing',
     symptom:
       'README.md and README.zh-CN.md still opened as "a resident repair layer that mounts on llm/stream" while the project had become eighteen patches across two resident seams, the CLI and the build side; both also said agent/pre-step was unmounted because nobody had measured a rejection',
     rootCause:
@@ -545,12 +534,11 @@ export const PATCHES: readonly PatchRecord[] = [
   },
   {
     id: 'P-0020',
-    title:
-      'A listing that pins git bytes while advertising a registry version installs neither',
+    title: 'A listing that pins git bytes while advertising a registry version installs neither',
     symptom:
-      'docs/market-index.json declared version 0.3.8 and a git commit in one entry; that commit carried nineteen patches while 0.3.8 ships thirteen, so a market trusting it would clone bytes the version does not describe',
+      'docs/market-index.json declared version 0.3.8 and a git commit in one entry, and that commit carried nineteen patches while 0.3.8 ships thirteen',
     rootCause:
-      'the guard checked the shape of the pin and never its meaning: any hex commit and a packages/plugin path passed, and the index could not name the commit containing it, so every document commit forced a re-pin',
+      'the guard checked the shape of the pin and never its meaning: any hex commit passed, so every document commit forced a re-pin',
     surface: 'scripts',
     status: 'tested',
     severity: 'major',
@@ -661,8 +649,7 @@ export const PATCHES: readonly PatchRecord[] = [
   },
   {
     id: 'P-0025',
-    title:
-      'An unread profile was reported as a finding',
+    title: 'An unread profile was reported as a finding',
     symptom:
       '`explain --sessions <dir>` printed `(no)` in the "enabled here" cell for every covered class and exited 1, while its footer said the answer was unknown without a profile',
     rootCause:
@@ -680,10 +667,9 @@ export const PATCHES: readonly PatchRecord[] = [
       'tests/governance/coverage-single-source.test.ts',
     ],
     limits: [
-      'covers "no profile was read"; a profile that is read but declares no switch key still falls back to the command default, unmeasured',
+      'covers "no profile was read"; a profile read without a switch key still falls back to the default, unmeasured',
       'exit 0 without a profile means "nothing found", not "nothing wrong": pass --profile-file for the old strictness',
-      'the table row is tested, not the column widths; a longer patch id still shifts the layout',
-      'no live artifact is possible: this is the CLI answering from the registry and an optional file',
+      'the row is tested, not the column widths: a longer patch id still shifts the layout',
     ],
     failureClasses: [],
   },
@@ -731,10 +717,10 @@ export const PATCHES: readonly PatchRecord[] = [
       'packages/plugin/src/repair-stream.ts',
     ],
     limits: [
-      'the proof (widened since) needs a required list, a closed schema, or a declared value that breaks its own type: an open schema proves nothing and books the residue',
-      'the fallback name is not a tool, so the model pays one UNKNOWN_TOOL round trip before it can retry: that is the cost of not running the wrong tool',
-      'a fragment that satisfies the wrong tool schema is still dispatched as that tool; a schema is a filter, not a proof',
-      'the declarations come from options.tools; a hand-built call or a CLI repair carries none',
+      'the proof needs a required list, a closed schema, or a declared value that breaks its own type; an open schema books the residue',
+      'the fallback name is not a tool, so the model pays one UNKNOWN_TOOL round trip: the cost of not running the wrong tool',
+      'a fragment that satisfies the wrong tool schema is still dispatched as that tool; a schema is a filter',
+      'the declarations come from options.tools; a hand-built call carries none',
     ],
     failureClasses: [],
   },
@@ -790,8 +776,7 @@ export const PATCHES: readonly PatchRecord[] = [
   },
   {
     id: 'P-0030',
-    title:
-      'The name check read required and nothing else, and its counter was a running total',
+    title: 'The name check read required and nothing else, and its counter was a running total',
     symptom:
       'a declaration with no required list proved nothing, so a fragment kept the stream name even when its schema rejected it; and one repair\'s unattributed count landed on every later repair in the same stream ([1,1] instead of [1,0])',
     rootCause:
@@ -863,17 +848,16 @@ export const PATCHES: readonly PatchRecord[] = [
       'tests/governance/ledgers.test.ts',
     ],
     limits: [
-      'the first batch compacts 8 of 31 records; the rest keep their long form until they are touched',
-      'the 68 000 registry cap did not move: measured 66 303 before and 61 509 after, so this is de-duplication',
-      'no per-record length threshold was added: a threshold needs the owner signature PROJECT_RULES section 1 requires',
-      'the prose removed from a record is only safe while its doc still says it, and gate_registry checks that a doc exists (BS-19)',
+      'the batch compacts 8 of 31 records; the rest keep their long form until touched',
+      'the 68 000 registry cap did not move: measured 66 303 before and 61 509 after',
+      'no per-record threshold was added: that needs the owner signature PROJECT_RULES section 1 requires',
+      'the prose removed is safe only while its doc says it, and gate_registry checks a doc exists (BS-19)',
     ],
     failureClasses: [],
   },
   {
     id: 'P-0033',
-    title:
-      'A tool call with no identity was refused and then dispatched anyway',
+    title: 'A tool call with no identity was refused and then dispatched anyway',
     symptom:
       'a block whose id and name were both empty (measured `0.2.2-rc.3`, #13211) was counted as refused and passed through, so the host persisted a call with an empty callId and the V4 session could never resume',
     rootCause:
@@ -893,8 +877,8 @@ export const PATCHES: readonly PatchRecord[] = [
     limits: [
       'the adapter that emits an incomplete call is not fixed: this seam names it and keeps the session resumable',
       'a block that is both fused and empty is refused before any split (missing-id fires first)',
-      'the verdict stays quiet because no fusion was seen; the rejected event is the only record',
-      'arguments that parse to a non-object are untouched: that is the other half of #12064',
+      'the verdict stays quiet: the rejected event is the only record',
+      'arguments that parse to a non-object are untouched (the other half of #12064)',
     ],
     failureClasses: [],
   },
@@ -1145,8 +1129,7 @@ export const PATCHES: readonly PatchRecord[] = [
   },
   {
     id: 'P-0045',
-    title:
-      'A refusal thrown before the stream starts never reaches the seam that names it',
+    title: 'A refusal thrown before the stream starts never reaches the seam that names it',
     symptom:
       'a requested effort the adapter does not map dies in prepareCall with UNSUPPORTED_REASONING_EFFORT; the loop catch emits `agent/error` (never `agent/request-error`), so a listener on the latter alone names nothing (37 such turns on this host)',
     rootCause:
@@ -1161,20 +1144,19 @@ export const PATCHES: readonly PatchRecord[] = [
     ],
     guards: ['tests/unit/agent-error-naming.test.ts', 'tests/unit/request-error.test.ts'],
     limits: [
-      '`agent/error` has no decision: it names a failure and cannot retry, repair or change the turn',
+      '`agent/error` has no decision: it names a failure and cannot retry or change the turn',
       'one `(turn, step, code)` set is shared with `agent/request-error`, so a failure both seams see is named once',
-      'measured on one route; another adapter may throw the refusal after opening a stream, where the other seam still names it once',
+      'one route measured; another adapter may throw the refusal after opening a stream',
     ],
     failureClasses: [],
   },
   {
     id: 'P-0046',
-    title:
-      'The first screens were one patch short and one release behind',
+    title: 'The first screens were one patch short and one release behind',
     symptom:
-      'README.md and README.zh-CN.md both claim forty-four patches and both enumerate the tested ones, but P-0043 appeared in neither; both also put 0.4.14 first under a status sentence that calls 0.4.15 the published release',
+      'both READMEs claimed forty-four patches and enumerated the tested ones, but P-0043 appeared in neither; both also put 0.4.14 first under a status sentence calling 0.4.15 published',
     rootCause:
-      'gate_copy checks numbers, bytes and provenance but has no opinion about completeness: nothing read the registry and asked whether a page that advertises the count names every patch, and nothing compared the status version with the first size row',
+      'gate_copy checks numbers, bytes and provenance, not completeness: nothing asked whether a page that advertises the count names every patch',
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
@@ -1184,10 +1166,54 @@ export const PATCHES: readonly PatchRecord[] = [
     ],
     guards: ['tests/governance/public-pages-complete.test.ts'],
     limits: [
-      'it reads ids, not sentences: a patch named in a wrong table row still satisfies the rule (presence, not placement)',
-      "it pins only the published version; a number for an unpublished release stays the fact pack's business",
-      'the status sentence is parsed with two fixed shapes (English and Chinese), so a rewrite must keep one of them',
-      'it cannot see the two npm package pages: they carry no patch enumeration, so the rule would be vacuous there',
+      'it reads ids, not sentences: a patch named in a wrong row still satisfies the rule (presence, not placement)',
+      "it pins only the published version; an unpublished release's numbers stay the fact pack's business",
+      'the status sentence is parsed with two fixed shapes, so a rewrite must keep one of them',
+      'it cannot see the two npm package pages: they carry no enumeration, so the rule is vacuous there',
+    ],
+    failureClasses: [],
+  },
+  {
+    id: 'P-0047',
+    title: 'A turn that finished without answering anyone was never counted',
+    symptom:
+      'P-0044 counted truncations that answered nobody and left the other ending out: a `completed` turn whose last message is one `reasoning` block (upstream #13169) produced 0 cases here, so nothing in the scanner could even say whether it happened',
+    rootCause:
+      'the census asks how a turn ended and the answer rule asks what the last step showed, but only the max-tokens branch joined them; the adapter guard counts blocks rather than usable content, so a reasoning-only message passes as a normal stop',
+    surface: 'cli',
+    status: 'tested',
+    severity: 'major',
+    evidence: [
+      'docs/patches/P-0047-completed-without-answer.md',
+      'packages/plugin/src/session-scan.ts',
+      'tests/unit/completed-answer.test.ts',
+      'tests/e2e/cli.test.ts',
+    ],
+    guards: ['tests/unit/completed-answer.test.ts', 'tests/e2e/cli.test.ts'],
+    limits: [
+      'it counts `completed` only: an error already names its code and an abort was the operator decision',
+      'a reasoning block a client renders to the user still counts as no answer: the rule is what the transcript gives a reader',
+      'the adapter guard that lets the shape through is upstream; this patch names the consequence, it does not repair it',
+    ],
+    failureClasses: [],
+  },
+  {
+    id: 'P-0048',
+    title: 'The platform boundary was prose, and prose is not a criterion',
+    symptom:
+      'every page said macOS not measured while the workflow had two jobs, so no darwin process ran the suite and a darwin-only break would land green',
+    rootCause:
+      'the sentence described a CI that did not exist: nothing recorded which platforms run, so not measured meant three different things',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: ['docs/patches/P-0048-macos-ci-criterion.md', '.github/workflows/ci.yml'],
+    guards: ['docs/patches/P-0048-macos-ci-criterion.md'],
+    limits: [
+      'CI is not a host: no `data/results/live-*`, so no patch may claim `verified` on it',
+      'it proves the suite and gates pass on darwin, not that the desktop app mounts there',
+      'weaker than the hand-run Linux evidence, which also measures the byte account and the installed bin',
+      'the first push that carries it is the measurement',
     ],
     failureClasses: [],
   },

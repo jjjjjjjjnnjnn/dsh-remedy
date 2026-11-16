@@ -760,6 +760,34 @@
       "guards": [
         "tests/governance/public-pages-complete.test.ts"
       ]
+    },
+    {
+      "id": "P-0047",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.17 (unreleased on the tree)",
+      "evidence": [
+        "docs/patches/P-0047-completed-without-answer.md",
+        "packages/plugin/src/session-scan.ts",
+        "tests/unit/completed-answer.test.ts"
+      ],
+      "guards": [
+        "tests/unit/completed-answer.test.ts",
+        "tests/e2e/cli.test.ts"
+      ]
+    },
+    {
+      "id": "P-0048",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.17 (unreleased on the tree)",
+      "evidence": [
+        "docs/patches/P-0048-macos-ci-criterion.md",
+        ".github/workflows/ci.yml"
+      ],
+      "guards": [
+        "docs/patches/P-0048-macos-ci-criterion.md"
+      ]
     }
   ]
 }

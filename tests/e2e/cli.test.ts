@@ -270,6 +270,7 @@ test('scan reports every way a turn ended, and exit stays quiet for a census', (
     error_codes: Record<string, number>
     fusion_failures: number
     truncated_without_answer: number
+    completed_without_answer: number
   }
   assert.deepEqual(report.turns, { completed: 1, max_tokens: 1, aborted: 0, error: 1 })
   assert.deepEqual(report.error_codes, { SERVER: 1 })
@@ -283,4 +284,9 @@ test('scan reports every way a turn ended, and exit stays quiet for a census', (
   // truncation that answered nobody. The field is on the human line and in JSON.
   assert.match(human.stdout, /truncated_without_answer=1/)
   assert.equal(report.truncated_without_answer, 1, 'a truncated turn with no message answered nothing')
+  // P-0047: the completed turn above is the same shape for the other ending, and
+  // it was counted by the same rule; the two counters stay separate.
+  assert.equal(report.completed_without_answer, 1, 'a completed turn with no message answered nothing')
+  assert.match(human.stdout, /completed_without_answer=1/)
+  assert.equal(report.turns.completed, 1, 'the completion census itself did not move')
 })

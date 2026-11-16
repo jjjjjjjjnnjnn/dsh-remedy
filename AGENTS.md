@@ -7,7 +7,7 @@
 > **0.4.13 的 tarball 里带着账号名**；守卫放宽到任意层（仍拒 `file:///Users/<name>`）并新增「产物里不许出现本机账号」
 > 一条，夹具改用 `<home>`，发 **0.4.14**。R53 是先量接缝再决定产品（`agent/pre-step` 的 `enter` 能带消息、
 > 换不了 selection，所以 P-0013 的 preflight 落成离线的 P-0042）；R52 是交接轮（旧数字对齐到 0.4.12）。
-> **376 测试 / 6 门 / `--mutate` 6-6**（Windows 与 Linux WSL2 同值）；registry 剩 **3 007 B**、CLI 半边剩 **38 B**（下一处 CLI 字节必须先付账）。
+> **382 测试 / 6 门 / `--mutate` 6-6**（Windows；Linux 本轮未重跑）；registry 剩 **1 575 B**、core 剩 **132 B**、CLI 半边剩 **204 B**（下一条记录之前先压一条老记录）。
 > **平台边界：Windows 与 Linux 实测，macOS 未实测**；P-0038 的 `/Users` 形状在 Linux 上是字符串。
 > R49 是 P-0037（少一个闭合符）与 P-0038（脱敏按一个平台写却发到三个）；R48 是交接轮（三份旧账本对齐）；
 > R47 是**去互联网上读同接缝的五个竞品与上游源码**，把拼得上的
@@ -18,12 +18,12 @@
 > **接手先读**：`docs/HANDOFF.md` → `docs/research/README.md` → `docs/research/leads.md` → `PROJECT_RULES.md` → `INDEX.md`
 > **R43 起的主线**是外部反馈 → 稳定补丁：报告只是线索，本机复现后才有补丁；来源与方法见 `docs/research/`。R56 的教训：**接缝名写在补丁里不算数，要在宿主源码里核对接缝真的会被派发**。
 >
-> **基线（2026-11-16）**：`pnpm run verify` = **376 tests / 6 gates**（Windows 与 Linux WSL2 同值）；
+> **基线（2026-11-16）**：`pnpm run verify` = **382 tests / 6 gates**（Windows；Linux 上一轮的 376/6 在 `live-linux-2026-11-16T16-40-00.000Z.json`）；
 > `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.16`（latest）+
 > `dsh-remedy-core@0.4.16`（latest）。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
-> `v0.4.13` / `v0.4.14` / `v0.4.15` / `v0.4.16`。四十六补丁：**9 `verified` + 37 `tested`**，在 DSH 0.2.2-rc.3 上实测过（Windows 与 Linux WSL2 同值，R56）。
-> **字节余量（下一轮的第一个约束）**：plugin **82 864 / 83 000（136 B；CLI 半边只剩 38 B）**、core **103 544 / 104 000（456 B）**、
-> registry **64 993 / 68 000（3 007 B —— 下一条记录可以直写，但仍建议按 P-0032 的先例先压一条老记录）**。
+> `v0.4.13` / `v0.4.14` / `v0.4.15` / `v0.4.16`。四十八补丁：**9 `verified` + 39 `tested`**，在 DSH 0.2.2-rc.3 上实测过（R57 树上 Windows 382/6；Linux 待重跑）。
+> **字节余量（下一轮的第一个约束）**：plugin **82 698 / 83 000（136 B；CLI 半边 204 B）**、core **103 868 / 104 000（132 B）**、
+> registry **66 425 / 68 000（1 575 B —— 下一条记录之前必须先压一条老记录，不许抬 cap）**。
 > **本目录不是 git 根**：提交在 `..`（容器），公开仓库由
 > `git subtree split --prefix=dsh-remedy` 切出。
 

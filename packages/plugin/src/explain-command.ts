@@ -10,12 +10,12 @@ import { readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { PATCHES } from 'dsh-remedy-core'
 
-/** The covering patch ids for one failure class, in registry order — from the registry (P-0016). */
+/** Covering patch ids for a class, from the registry (P-0016). */
 function coverersOf(failure: string): readonly string[] {
   return PATCHES.filter((patch) => (patch.failureClasses ?? []).includes(failure)).map((patch) => patch.id)
 }
 
-/** The config key that switches one patch's coverage on, if it has one. */
+/** The switch key for a covering patch, if it has one. */
 function switchOf(patchId: string): string | undefined {
   return PATCHES.find((patch) => patch.id === patchId)?.switchKey
 }
@@ -27,7 +27,7 @@ interface ProfileSelection {
   readonly reasoningEffort?: string
 }
 
-/** P-0042 — the profile's selection, read flat; a missing row or key stays missing. */
+/** P-0042: the profile selection, read flat; anything missing stays missing. */
 function selectionOf(text: string): ProfileSelection | null {
   const start = text.split(/\r?\n/).findIndex((line) => line === '- id: agent-default-model')
   if (start === -1) return null

@@ -1,16 +1,10 @@
 /**
- * Tool-call argument resealing (P-0005).
+ * Tool-call argument resealing (P-0005): one unquoted blob as a member value.
  *
- * One question: a single-object argument text that does not parse — is there
- * exactly one place where the model emitted a *bare, unquoted blob* as a JSON
- * value, such that quoting that one segment turns the whole text into one
- * plain object whose payload is byte-for-byte what the model wrote?
- *
- * That is the only shape this module will touch. It is the failure the model
- * produces when it hands a code block to `run_code`: it writes the program
- * after `"code": ` and forgets the quotes, and JSON reports
- * `Unexpected token 'c'`. Quoting it back is not a guess about intent — the
- * segmentation is proven by the fact that exactly one candidate parses.
+ * The question is whether exactly one segment, when quoted, turns the whole text
+ * into one plain object whose payload is byte-for-byte what the model wrote. That
+ * is the only shape this module touches; anything ambiguous is refused rather than
+ * guessed, and the measured failure is in docs/patches/P-0005-bare-value-reseal.md.
  *
  * SAFETY PROPERTIES (each one has a negative-control test):
  *  - a text that already parses is never resealed (the caller checks that first);

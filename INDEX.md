@@ -19,6 +19,7 @@
 | `docs/research/plan-0.4.9.md` | 0.4.9 计划与结案：来源 → 巡检 → 一条线索 → 一个补丁；§2 记着这一版实际结掉的六条线索 |
 | `docs/research/similar-projects-2026-11-14.md` | 同接缝的五个竞品与上游源码：借了什么机制、拒了什么取舍、每条指回本机 `app.asar` 的行号（R47） |
 | `docs/research/community-2026-11-14.md` | 2026-11-14 的社区盘面事实底稿（star / issue / 下载 / Discussions） |
+| `docs/research/intake-r57-triage.md` | R55 巡检留下的 **79 个候选**的逐桶判读：每个桶的接缝决定、三家值得再读的、以及「这只是判读不是复现」 |
 
 ## 代码
 
@@ -32,7 +33,7 @@
 | `scripts/lib/session-root.mjs` | 会话目录在三个平台上的唯一定义（`DSH_SESSIONS` 优先，否则 HOME/USERPROFILE/homedir）；P-0039 |
 | `scripts/lib/acceptance.mjs` | 装机验收的判据：夹具数从 `data/fixtures/` 数出来，数量一致 + 每行 PASS；P-0040 |
 | `packages/core/src/registry.ts` | `PATCHES`：补丁的单一真相源 |
-| `packages/core/src/answer.ts` | P-0044：一个 turn 到底有没有回答（tool-call / 非空白 text 算，未知块不算，只看最后一步） |
+| `packages/core/src/answer.ts` | P-0044 / P-0047：一个 turn 到底有没有回答（tool-call / 非空白 text 算，未知块不算，只看最后一步） |
 | `packages/core/src/verdict.ts` | unmeasured / quiet / repaired / degraded |
 | `packages/core/src/preflight.ts` | reasoning effort 预检：ok / refuse / unknown + 建议档位（P-0013） |
 | `packages/core/src/redact.ts` | 证据脱敏（五种家目录形状） |

@@ -1066,6 +1066,60 @@
         "data/results/gates-2026-11-16T16-10-00.000Z.json",
         "scripts/record_request_error_seam.mjs"
       ]
+    },
+    {
+      "id": "S60",
+      "gate": "registry",
+      "title": "The question P-0044 asked of a truncated turn was never asked of a completed one",
+      "axes": {
+        "correctness": "Measured before it was written. `.tmp/r57-fake-openai.mjs` streams two `reasoning_content` deltas and `finish_reason: \"stop\"`; the adapter guard counts blocks (`mapStopReason`: `message.content.length === 0`), so the turn ends `completed` with an assistant message whose only block is `reasoning`. A second run against the same endpoint, same prompt, with a text delta, ends the same way with `[\"text\"]` — so the endings are identical and only the transcript differs. `scan` counted the first shape nowhere before this round; it now reports `completed_without_answer` beside `truncated_without_answer`, by the same `answer.ts` rule and the same last-step decision.",
+        "reproducibility": "`node .tmp/r57-setup.mjs --home .tmp/r57-home` builds two profiles against one endpoint; `node .tmp/r57-run.mjs` runs each and copies its session, request log and journal; `node scripts/record_completed_answer.mjs` refuses to write (`exit 4`) unless both runs exit 0, both end `completed`, the block shapes differ as claimed, and the scanner counts exactly one. Artifacts: `live-completed-2026-11-16T18-30-00.000Z.json` and `scan-r57-2026-11-16T18-30-00.000Z.json`.",
+        "compliance": "No repair path, verdict or exit code moved: the counter is a reader. No cap moved and no status was upgraded on synthetic evidence. The bytes were paid before the field was written: 38 B of CLI headroom became 204 B by compacting comments whose long form is in the patch docs (checked afterwards with `.tmp/r56-token-check.mjs`).",
+        "ssot": "The rule lives in `packages/core/src/answer.ts`, which the scanner and the evidence samplers both call, so the probe cannot drift from the product. The artifact records both runs and both rows, and the row that answered and the row that did not are not the same row.",
+        "adversarial": "The honest limit is that this is a synthetic endpoint and one route; the patch says so, and it does not claim the adapter is fixed. The stronger adversarial reading — that counting a shape nobody has seen in production is bookkeeping — is answered by the probe: the shape reproduces here, so the counter is not a guess."
+      },
+      "evidence": [
+        "data/results/live-completed-2026-11-16T18-30-00.000Z.json",
+        "data/results/scan-r57-2026-11-16T18-30-00.000Z.json",
+        "tests/unit/completed-answer.test.ts",
+        "docs/patches/P-0047-completed-without-answer.md"
+      ]
+    },
+    {
+      "id": "S61",
+      "gate": "size",
+      "title": "The CLI half had 38 bytes and the new field needed 574: the debt was paid in comments, not in caps",
+      "axes": {
+        "correctness": "Before: CLI 41 962 of 42 000, total 82 864 of 83 000, core 103 544 of 104 000. After: CLI 41 796, total 82 698, core 103 868, registry 66 425 of 68 000. Two new records added 2 721 bytes to the engine and 1 626 came back from nine compacted records, three of whose headers duplicate their docs.",
+        "reproducibility": "`node scripts/gate_size.mjs` measures every module and compares the live handoff row with the build; `--mutate` proves that comparison fails on a number one byte off.",
+        "compliance": "No cap moved: 44 000 / 42 000 / 83 000 / 104 000 / 68 000 are the signed numbers. Nothing was reclassified between load paths, and no `data/results/live-*` path left a record it proves.",
+        "ssot": "The handoff byte row, the fact pack and the snapshot carry the same figures, and `gate_size` fails when the row and the build disagree.",
+        "adversarial": "Compacting comments is exactly the trade P-0012 once refused: prose in the emitted plugin is the record of why the code looks the way it does. The answer here is that every removed sentence already lives in the patch doc it names, and the check was run record by record rather than asserted. What remains open is BS-19: nothing compares a record with its doc automatically."
+      },
+      "evidence": [
+        "scripts/lib/budgets.mjs",
+        "scripts/gate_size.mjs",
+        "data/results/patch-registry-2026-11-16T18-10-00.000Z.json",
+        "docs/HANDOFF.md"
+      ]
+    },
+    {
+      "id": "S62",
+      "gate": "copy",
+      "title": "The macOS sentence was a promise CI did not keep, and two pages were one patch short again",
+      "axes": {
+        "correctness": "The workflow had two jobs, so no darwin process ran the suite; the pages said \"macOS not measured\" while nothing recorded which platforms execute. P-0048 adds a `macos` job (install, `verify`, `--mutate`) and writes the criterion down: it proves the repo builds and the suite plus gates pass on darwin, and it proves nothing about a mounted desktop app. P-0046's rule then caught both pages missing the two new ids, which is the mechanism working on its author.",
+        "reproducibility": "`node --test tests/governance/public-pages-complete.test.ts` fails with the exact sentence when a page is short; `gh run list` shows the macos job beside the two ubuntu jobs and the windows one after the push that carries the workflow.",
+        "compliance": "No runtime byte changed and no cap moved. The two pages and the rest of the live entries were re-registered in one pass after the fact pack moved.",
+        "ssot": "The fact pack carries 48 patches (9 verified, 39 tested) and the byte account; the pages quote only what it carries, and `copy_record` refused the release notes until the new numbers were in the pack.",
+        "adversarial": "A green macOS job is weaker than the hand-run Linux evidence, which also measures the byte account and the installed bin; the patch says so and keeps `not measured on hardware` in the limits. The CI job also cannot become a `verified` artifact: it leaves no `data/results/live-*`."
+      },
+      "evidence": [
+        ".github/workflows/ci.yml",
+        "docs/patches/P-0048-macos-ci-criterion.md",
+        "docs/copy/facts/public-repo-facts.md",
+        "README.md"
+      ]
     }
   ],
   "updated_at": "2026-11-16T14:00:00.000Z"

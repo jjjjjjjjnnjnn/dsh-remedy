@@ -227,7 +227,7 @@ Package sizes:
 - 0.3.8 plugin: 35898 bytes compressed, 35 files, 117750 bytes unpacked, shasum `3bc47df12f21fe7d68336f595d397ff868b3d4d7`; core: 26551 bytes compressed, 21 files, 83461 bytes unpacked, shasum `0df993f85589e101b15b830fa105e7ef8c66c5d5`.
 - No sourcemaps are shipped; that removal is worth 41926 bytes of unpacked payload.
 
-The emitted plugin budget is three checks: residency 40895 of 44000 bytes (the modules a mounted plugin loads), cli 41962 of 42000 bytes (the modules only a command loads), and a total of 82857 of 83000 bytes. Per-file caps: `repair-stream.js` 28000, `session-scan.js` 14000, `cli.js` 12000. A patch that crosses a per-file number splits that file instead of absorbing it. These three are measured on the working tree after P-0044; the 0.4.14 tarball ships 82717 of those bytes, so the two figures differ by the unreleased patch. The engine has its own two numbers, measured on the same tree: core 103867 of 104000 bytes, and `registry.js` 65316 of 68000.
+The emitted plugin budget is three checks: residency 40895 of 44000 bytes (the modules a mounted plugin loads), cli 41962 of 42000 bytes (the modules only a command loads), and a total of 82857 of 83000 bytes. Per-file caps: `repair-stream.js` 28000, `session-scan.js` 14000, `cli.js` 12000. A patch that crosses a per-file number splits that file instead of absorbing it. These three are measured on the working tree and the 0.4.15 tarball ships 82857 of those bytes, so a reader checking the published package sees the same figure. The engine has its own two numbers, measured on the same tree: core 103867 of 104000 bytes, and `registry.js` 65316 of 68000.
 
 ## Development
 

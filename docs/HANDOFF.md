@@ -2797,7 +2797,7 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | `publish-2026-11-16T06-52-00.000Z.json` | 绿 | **0.4.14 发布**：两包 `exact_ok` + `latest_ok`（`ok: true`；sha256 `834e371d…`） |
 | `install-acceptance-2026-11-16T06-55-00.000Z.json` | 绿 | **0.4.14 装机验收**：空目录从 registry 单装，三条命令 0/0/0，`OK 8 fixture(s)`（`canonical_fixtures: 8`；sha256 `7d24aee6…`） |
 | `publish-2026-11-15T19-30-00.000Z.json` | 绿 | **0.4.13 发布**：两包 `exact_ok` + `latest_ok`（`ok: true`；sha256 `580558d1…`） |
-| `gates-2026-11-16T14-50-00.000Z.json` / `gates-mutate-2026-11-16T14-55-00.000Z.json` | 绿 | **当前**门禁证据：交接轮终态（0.4.15 发布、市场索引、公开仓 release、两个 README、台账 `since`、INDEX 证据行都对齐）之后，368 tests / 6 gates ALL GREEN 与 6-6 CAUGHT |
+| `gates-2026-11-16T15-10-00.000Z.json` / `gates-mutate-2026-11-16T15-15-00.000Z.json` | 绿 | **当前**门禁证据：交接轮终态（0.4.15 发布、市场索引、公开仓 release、两个 README 的发布状态与字节句、台账 `since`、INDEX 证据行都对齐）之后，368 tests / 6 gates ALL GREEN 与 6-6 CAUGHT |
 | `gates-2026-11-16T09-50-00.000Z.json` / `gates-mutate-2026-11-16T09-55-00.000Z.json` | （已删） | 历史门禁证据：registry 付款之后、P-0044 之前（362 tests / 6 gates）；已被 11:10 / 11:15 取代 |
 | `gates-2026-11-16T07-30-00.000Z.json` / `gates-mutate-2026-11-16T07-32-00.000Z.json` | 绿 | 历史门禁证据：0.4.14 发布后、R54 交接终态（362 tests / 6 gates ALL GREEN 与 6-6 CAUGHT；sha256 `b9ac39a8…` / `685615bf…`） |
 | `install-acceptance-2026-11-15T19-35-00.000Z.json` | 绿 | **0.4.13 装机验收**：空目录从 registry 单装，三条命令 0/0/0，`OK 8 fixture(s)`（`canonical_fixtures: 8`；sha256 `f75dff9d…`） |

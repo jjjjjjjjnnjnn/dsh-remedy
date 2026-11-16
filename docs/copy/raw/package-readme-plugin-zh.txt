@@ -36,7 +36,8 @@ dsh-remedy verify  [--json]
 ```
 
 `scan` 读一份普通 `.jsonl`、一个多帧 `session.v4.jsonl.zstd`、或整个目录；`--since` 丢掉更早的事件
-并报告丢了多少，`--max-files` 限制遍历。它还会打印每种 turn 结束方式与每个错误码。
+并报告丢了多少，`--max-files` 限制遍历。它还会打印每种 turn 结束方式与每个错误码，
+以及有多少个被截断的 turn 既没有 text 也没有 tool call——这个计数只报告，不升级为结论。
 `explain` 按失败类回答：本机命中多少次、哪个补丁覆盖它、以及它在你指定的 profile 里是否启用；
 **没给 `--profile-file` 时那一列写 `unknown`、退出码是 0**——没测过的 profile 不算发现。
 `repair` 不给文件就读 stdin，给 `.json` 夹具则读它的 `arguments` 字段。

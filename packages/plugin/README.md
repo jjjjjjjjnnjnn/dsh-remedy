@@ -64,7 +64,9 @@ dsh-remedy verify  [--json]
 `scan` takes one plain `.jsonl` file, a multi-frame `session.v4.jsonl.zstd` log,
 or a directory of them; `--since` drops older events and reports how many it
 dropped, `--max-files` caps the walk. It also prints the turn census and the
-error codes it counted. `repair` reads stdin when no file is given, and a `.json`
+error codes it counted, and how many of the truncated turns produced no text and
+no tool call — that counter is reported, never promoted. `repair` reads
+stdin when no file is given, and a `.json`
 fixture through its `arguments` field. `explain` prints, per failure class this
 machine actually hit, how often, which patch covers it, and whether that patch is
 switched on in the profile named by `--profile-file`. Three answers are possible

@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_linux_r55.mjs",
+  "generated_at": "2026-11-16T12:45:00.000Z",
+  "question": "Does the R55 tree pass on a POSIX host, does the installed bin run there, and does P-0044 report the same answer census on a POSIX payload?",
+  "host": {
+    "kernel": "Linux rjjRobert 6.6.114.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Mon Dec  1 20:46:23 UTC 2025 x86_64 GNU/Linux",
+    "distro": "Ubuntu 26.04 LTS",
+    "node": "24.10.0",
+    "pnpm": "12.15.0",
+    "how": "WSL2 Ubuntu 26.04, the tracked tree (working tree, uncommitted R55 changes included) copied into the Linux filesystem and never run through /mnt/c"
+  },
+  "verify": {
+    "tests": 368,
+    "pass": 368,
+    "fail": 0,
+    "gates": 6,
+    "negative_control": "6/6"
+  },
+  "installed_bin": {
+    "what": "node_modules/dsh-remedy/dist/cli.js on this host, with the fixture set the package ships",
+    "printed": "OK 8 fixture(s)",
+    "exit": 0
+  },
+  "p0044_on_linux": {
+    "synthetic_session": "data/fixtures-driven: one truncated turn with reasoning only, one truncated turn with text, one completed turn",
+    "printed": [
+      3,
+      1,
+      2,
+      0,
+      0,
+      1
+    ],
+    "note": "the same rule the Windows run measured: the reasoning-only truncation is counted, the one that wrote text is not"
+  },
+  "byte_account": {
+    "total": {
+      "bytes": 82857,
+      "cap": 83000
+    },
+    "residency": {
+      "bytes": 40895,
+      "cap": 44000
+    },
+    "cli": {
+      "bytes": 41962,
+      "cap": 42000
+    },
+    "core_total": {
+      "bytes": 103867,
+      "cap": 104000
+    },
+    "registry": {
+      "bytes": 65316,
+      "cap": 68000
+    },
+    "note": "measured on this host by gate_size, so the Linux and Windows accounts are compared rather than assumed equal"
+  },
+  "registry": {
+    "versions": [
+      "0.4.14",
+      "0.4.14"
+    ]
+  },
+  "stranger_install": {
+    "measured_this_round": false,
+    "why": "cold install was not re-measured this round"
+  },
+  "npx": {
+    "measured_this_round": false,
+    "why": "npx was not re-measured this round"
+  },
+  "sources": {
+    "host.txt": "684d8981dd386760efca196ad2de715fc5fcba7a47c191c414a63cc3ac9d861f",
+    "verify.log": "b768127e58b3dd49af797d9e7a6944ee9e10ec6b5aa4d5cd8f85e8dd14ab2722",
+    "mutate.log": "dc1b319c74aa1c07b80b12debd01fad3c3170e7ab5447e02390fb15cf04b6e2a",
+    "size.log": "37acfbbcc331cd58d969e755014c3841977f93c4cfe4d82107e927b54f876002",
+    "cli-bin.log": "59938ccb70e9cd957309f1b1f3f21bda305cbc061328e38c36644c2b58465ab7",
+    "scan-p0044.log": "67a4964a940d1fd9c2cd69358f34477c733a6833c70c0367ad2f949e8b805504",
+    "node-version.txt": "a1eaeec13f4ef1b81a16336ede5ff36bb2d74156e091553d21244d3f179f05fd",
+    "pnpm-version.txt": "372e08d645cb12f0b366b434cb17bf4e4b7d6aa9f670271c9c6096855950c473",
+    "registry-version.log": "c77786dafd6355e3cb89873bfbfa95ee63e9ab6f6b6a9350ffd5c08e183d165b"
+  },
+  "limits": [
+    "one Linux host (WSL2 Ubuntu 26.04) and one node build; not a distribution matrix",
+    "the cold install and npx were measured on 0.4.12/0.4.13 in earlier rounds and are not re-measured here, so they are null with the reason rather than borrowed",
+    "the P-0044 scan on this host uses a synthetic session payload, not a live desktop session: the rule is platform-independent, the session is not"
+  ]
+}

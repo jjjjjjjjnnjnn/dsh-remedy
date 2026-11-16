@@ -973,7 +973,28 @@
         "data/results/patch-registry-2026-11-16T00-10-00.000Z.json",
         "data/results/live-linux-2026-11-15T15-00-00.000Z.json"
       ]
+    },
+    {
+      "id": "S55",
+      "gate": "size",
+      "title": "The registry had 9 bytes left, the release was on the tree and not in the registry, and no counter asked whether a truncated turn answered",
+      "axes": {
+        "correctness": "Two changes, both measured. (1) Registry compaction: 28 of the 43 records were shortened to the ledger fields plus a one-sentence symptom/rootCause and two-to-four short limits; every concrete token removed (version numbers, hashes, file:line, failure codes) was checked against that record's docs/patches file before deletion, and all 43 still carry every such token in their doc. (2) P-0044: scan now reports truncated_without_answer, computed by packages/core/src/answer.ts (a tool-call answers, a non-whitespace text answers, an unknown block does not, only the last step decides). Measured on this machine: 88 max-tokens turns, 88 with no text and no tool-call (71 reasoning-only, 17 with no assistant message), and 8 files carrying at least one.",
+        "reproducibility": "node scripts/record_patch_registry.mjs --stamp produced patch-registry-2026-11-16T13-40-00.000Z.json (44 patches, byte-exact against the built registry); node scripts/gate_size.mjs --mutate goes red on the handoff byte row; pnpm run verify is 368 tests / 6 gates ALL GREEN on Windows and on Linux (live-linux-2026-11-16T12-45-00.000Z.json); gate.mjs --mutate is 6/6 on both; the scanner run that produced the 88 is data/results/scan-r55-2026-11-16T10-20-00.000Z.json.",
+        "compliance": "No cap moved (44000 / 42000 / 83000 / 104000 / 68000 are the numbers P-0012 and P-0031 were signed with), no patch was retired, no test was relaxed: the six new tests pin P-0044's rule and one end-to-end case pins that the counter reaches the human line. The payment is de-duplication under P-0032, not a reallocation. The release was published from pnpm-packed tarballs and a cold directory installed it from the registry (install-acceptance-2026-11-16T13-30-00.000Z.json).",
+        "ssot": "The facts pack carries the published numbers (0.4.15 tarballs 38600 / 40675 bytes, byte account 82 857 / 103 867 / 65 316), README.md and README.zh-CN.md were re-registered after the pack moved, the handoff byte row is compared by gate_size on every run, and the registry snapshot plus the gate pair are recorded in the same round. The evidence index lists the publish, the acceptance, the desktop run and the Linux run that the live rows cite.",
+        "adversarial": "The adversarial reading is that compacting prose buys headroom while losing the reason a record exists, and that a new counter can be read as a repair. Both are answered where they can be: the token-by-token check ran against the docs, the limits say gate_registry proves a doc exists and not that it still says what the record dropped (BS-19), and the counter moves no verdict, no exit code and no repair path. A second adversarial fact: a completed turn that answered nothing (upstream #13169) produced 0 cases here, so counting it now would be inventing a class from someone else's report; the field is named truncated for that reason. The 0.4.13 tarball still carries the account name, which no release can undo."
+      },
+      "evidence": [
+        "packages/core/src/registry.ts",
+        "packages/core/src/answer.ts",
+        "data/results/patch-registry-2026-11-16T13-40-00.000Z.json",
+        "data/results/gates-2026-11-16T13-50-00.000Z.json",
+        "data/results/gates-mutate-2026-11-16T13-55-00.000Z.json",
+        "data/results/live-linux-2026-11-16T12-45-00.000Z.json",
+        "docs/copy/facts/public-repo-facts.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-16T00:20:00.000Z"
+  "updated_at": "2026-11-16T14:00:00.000Z"
 }

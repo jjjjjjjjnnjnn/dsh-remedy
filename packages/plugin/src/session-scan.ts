@@ -1,7 +1,7 @@
-/** Offline scanner: fused calls, `MALFORMED_RESPONSE` deaths, every ending (P-0006). */
+/** Offline scanner: fused calls, `MALFORMED_RESPONSE` deaths, every ending (P-0006, P-0044). */
 
-import { isFusedJsonObjectText, redact, redactValue, splitTopLevelJsonObjects, wouldRepair } from 'dsh-remedy-core'
-import type { RedactionSummary } from 'dsh-remedy-core'
+import { isFusedJsonObjectText, noteAssistantMessage, redact, redactValue, splitTopLevelJsonObjects, turnAnswered, wouldRepair } from 'dsh-remedy-core'
+import type { LastAnswer, RedactionSummary } from 'dsh-remedy-core'
 
 export interface ScanExample {
   readonly seq: number | null
@@ -60,12 +60,13 @@ export interface ScanReport {
   readonly window: ScanWindow
   /** Every `turn/end`, by `reason.kind` (P-0006). */
   readonly turns: ScanTurnCensus
+  /** P-0044: `max_tokens` turns whose last message had no text and no tool call. */
+  readonly truncated_without_answer: number
   /** `reason.error.code` for error turns (P-0006), redaction-safe names only. */
   readonly error_codes: Readonly<Record<string, number>>
   /**
-   * P-0042: `provider/model level` -> turns the host refused for that exact
-   * effort. Only filled when the host's own message names all three, so a key
-   * here is a measured refusal rather than an inference from a code.
+   * P-0042: `provider/model level` -> turns refused for that exact effort. Filled
+   * only when the host's message names all three; otherwise nothing is inferred.
    */
   readonly refused_efforts: Readonly<Record<string, number>>
   readonly by_tool: Readonly<Record<string, number>>
@@ -136,8 +137,10 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
   const redactionKinds = new Set<string>()
   let redactions = 0
   let turns: ScanTurnCensus = emptyCensus()
+  let truncatedWithoutAnswer = 0
   const errorCodes: Record<string, number> = {}
   const refusedEfforts: Record<string, number> = {}
+  const lastSteps = new Map<string, LastAnswer>()
 
   const addExample = (example: ScanExample): void => {
     if (examples.length >= MAX_EXAMPLES) return
@@ -166,14 +169,12 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
     const seq = asNumber(event.seq)
     const time = asNumber(event.time)
 
-    // P-0009: a session opens with a `session` header whose instant is
-    // `createdAt`, not `time`; reading it as "no time" spends one unreadable
-    // line per session on a record that parsed perfectly.
+    // P-0009: the `session` header is dated by `createdAt`, not `time`; read as
+    // "no time" it spends one unreadable line on a record that parsed perfectly.
     const stamp = time ?? (type === 'session' ? asNumber(event.createdAt) : null)
 
-    // The window is applied before any counting, but the dropped events are
-    // reported as `before_since`: a filtered scan must still say how much it
-    // did not look at.
+    // The window drops older events before counting them and reports them as
+    // `before_since`: a filtered scan still says how much it did not look at.
     if (options.since !== undefined) {
       if (stamp === null) {
         unreadable += 1
@@ -241,25 +242,32 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
       }
     }
 
+    if (type === 'assistant/message' && data !== null) {
+      // P-0044: only a turn's last step decides whether the user got an answer.
+      const message = asRecord(data.message)
+      noteAssistantMessage(lastSteps, data.turn, data.step, message?.content)
+    }
+
     if (type === 'turn/end' && data !== null) {
       const reason = asRecord(data.reason)
       if (reason === null) continue
-      // P-0006: count every ending first; the filter answers "can we repair
-      // this?", the census answers "how did it end?", and a map needs both.
+      // P-0006: count every ending; P-0044 records whether it answered anyone.
       const kind = asString(reason.kind)
       const slot = kind === 'max-tokens' ? 'max_tokens' : kind
       if (slot === 'completed' || slot === 'max_tokens' || slot === 'aborted' || slot === 'error') {
         turns = { ...turns, [slot]: turns[slot] + 1 }
+        // P-0044: `max-tokens` was counted as a truncation and nobody asked
+        // whether that turn answered anyone; the last step decides.
+        if (slot === 'max_tokens' && !turnAnswered(lastSteps, data.turn)) truncatedWithoutAnswer += 1
       }
       if (kind !== 'error') continue
       const error = asRecord(reason.error)
       if (error === null) continue
       const rawCode = asString(error.code)
-      // A code is a closed-vocabulary identifier and `redactReport` sanitises
-      // the whole report, so it is counted by name rather than per-line.
+      // A code is closed vocabulary and `redactReport` sanitises the report,
+      // so it is counted by name rather than per line.
       if (rawCode !== '') errorCodes[rawCode] = (errorCodes[rawCode] ?? 0) + 1
-      // P-0042: a refusal that names provider, model and level is a measured
-      // fact; a code alone is not, so nothing is inferred from one.
+      // P-0042: only a refusal naming provider, model and level is a measured fact.
       if (rawCode === 'UNSUPPORTED_REASONING_EFFORT') {
         const key = refusedKeyOf(asString(error.message))
         if (key !== null) refusedEfforts[key] = (refusedEfforts[key] ?? 0) + 1
@@ -300,6 +308,7 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
     before_since: beforeSince,
     window: { oldest, newest },
     turns,
+    truncated_without_answer: truncatedWithoutAnswer,
     error_codes: sortedCounts(errorCodes),
     refused_efforts: sortedCounts(refusedEfforts),
     by_tool: sortedCounts(byTool),
@@ -327,6 +336,7 @@ function addReport(into: ScanReport, from: ScanReport, source: string): ScanRepo
       aborted: into.turns.aborted + from.turns.aborted,
       error: into.turns.error + from.turns.error,
     },
+    truncated_without_answer: into.truncated_without_answer + from.truncated_without_answer,
     error_codes: mergeCounts(into.error_codes, from.error_codes),
     refused_efforts: mergeCounts(into.refused_efforts, from.refused_efforts),
     by_tool: mergeCounts(into.by_tool, from.by_tool),
@@ -350,6 +360,8 @@ export interface ScanRow {
   readonly before_since: number
   /** P-0006: this file's own turn census, so the total stays auditable. */
   readonly turns: ScanTurnCensus
+  /** P-0044: this file's own count of truncations that answered nobody. */
+  readonly truncated_without_answer: number
 }
 
 export interface ScanBatch {
@@ -357,7 +369,7 @@ export interface ScanBatch {
   readonly rows: readonly ScanRow[]
 }
 
-/** Scan several files at once; every file keeps its own row so a total stays auditable. */
+/** Scan several files; every file keeps a row so a total stays auditable. */
 export function scanSessions(
   files: readonly { readonly label: string; readonly text: string }[],
   source: string,
@@ -377,6 +389,7 @@ export function scanSessions(
     before_since: 0,
     window: { oldest: null, newest: null },
     turns: emptyCensus(),
+    truncated_without_answer: 0,
     error_codes: {},
     refused_efforts: {},
     by_tool: {},
@@ -386,10 +399,21 @@ export function scanSessions(
   let report = empty
   const rows: ScanRow[] = []
   for (const file of files) {
-    // A per-file row keeps the fields a reader audits; the whole report is the
-    // merged one, so a row never carries a second copy of it.
+    // A per-file row keeps only the fields a reader audits; the merged report is
+    // the whole picture, so a row never carries a second copy.
     const one = scanSessionText(file.text, file.label, options)
-    rows.push({ source: one.source, files: one.files, attempts: one.attempts, fused_calls: one.fused_calls, fusion_failures: one.fusion_failures, repairable_failures: one.repairable_failures, unreadable_lines: one.unreadable_lines, before_since: one.before_since, turns: one.turns })
+    rows.push({
+      source: one.source,
+      files: one.files,
+      attempts: one.attempts,
+      fused_calls: one.fused_calls,
+      fusion_failures: one.fusion_failures,
+      repairable_failures: one.repairable_failures,
+      unreadable_lines: one.unreadable_lines,
+      before_since: one.before_since,
+      turns: one.turns,
+      truncated_without_answer: one.truncated_without_answer,
+    })
     report = addReport(report, one, empty.source)
   }
   return { report, rows }

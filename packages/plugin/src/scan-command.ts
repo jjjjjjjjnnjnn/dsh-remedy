@@ -63,9 +63,8 @@ export function cmdScan(args: Args): number {
     return EXIT_USAGE
   }
 
-  // A live log is `session.v4.jsonl.zstd`: concatenated zstd frames, not text.
-  // Reading it as utf8 counted every line unreadable (P-0004), so the plugin's
-  // own reader is used; plain JSONL passes through untouched.
+  // A live log is `session.v4.jsonl.zstd`: concatenated frames, not text. Read
+  // as utf8 it counted every line unreadable (P-0004), so the plugin's reader.
   const inputs: { label: string; text: string }[] = []
   const failures: string[] = []
   const files = statSync(target).isDirectory() ? collectSessions(target).slice(0, maxFiles) : [target]
@@ -77,8 +76,8 @@ export function cmdScan(args: Args): number {
     try {
       inputs.push({ label: resolve(file), text: decompressSessionLog(readFileSync(file)) })
     } catch (error) {
-      // One unreadable file must not abort the batch: it is reported as a
-      // failure line and left out of the numbers, never folded in as zero.
+      // One unreadable file must not abort the batch: it is reported as a failure
+      // line and left out of the numbers, never folded in as zero.
       failures.push(`${resolve(file)}: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
@@ -97,11 +96,10 @@ export function cmdScan(args: Args): number {
     process.stdout.write(
       `attempts=${report.attempts} fused_calls=${report.fused_calls} fusion_failures=${report.fusion_failures} repairable=${report.repairable_failures} unreadable_lines=${report.unreadable_lines}\n`,
     )
-    // P-0006: the census is the fault map. A report that only names the one
-    // class this plugin can repair describes one road and calls it a map.
+    // P-0006 is the census; P-0044 asks whether a truncated turn answered.
     const t = report.turns
     process.stdout.write(
-      `turns=${t.completed + t.max_tokens + t.aborted + t.error} completed=${t.completed} max_tokens=${t.max_tokens} aborted=${t.aborted} error=${t.error}\n`,
+      `turns=${t.completed + t.max_tokens + t.aborted + t.error} completed=${t.completed} max_tokens=${t.max_tokens} aborted=${t.aborted} error=${t.error} truncated_without_answer=${report.truncated_without_answer}\n`,
     )
     const codes = Object.entries(report.error_codes)
     if (codes.length > 0) {

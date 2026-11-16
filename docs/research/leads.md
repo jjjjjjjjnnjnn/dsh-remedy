@@ -95,12 +95,25 @@ gh api graphql -f query='{ search(type: DISCUSSION, query: "repo:deepseek-ai/dee
 | L-0037 | <https://dshplugin.online/plugins/udsy19--dsh-toolcall-stream-repair> | `market` | `full` | 2026-11 | ? | `MALFORMED_RESPONSE` | `llm/stream` | **patched** | R47：竞品 0.1.0 有 11 个 repair code，其中 `empty-id-clobber` 与我们的 P-0033 边界正好拼上——它修的是「同一 index 的后续 delta 带 `id: ""` 把先到的真 id 擦掉」。本机 `app.asar` 逐行确认（`assembler.ts:72` 无守卫、`:73` 有守卫、`:115` 的 `??` 不兜空串），于是做成 **P-0036**。**只借机制，不抄代码**；它的 `jsonrepair` 路线不采用（见 L-0038 的同类理由）。 |
 | L-0038 | <https://sandbaseai.github.io/deepseek-harness-handbook/streamed-tool-call-identity.html> | `code` | `full` | 2026-08-28 | `b150a55` + `cd5ef81` | unknown | `llm/stream` | **rejected (dup)** | R47：这份手册把我们已知的两件事写全了——空身份链（已由 P-0033/P-0036 覆盖）与 `assembler.ts:187` 的「没有 finish 就读成 `stop`」。后者就是 **L-0036** 缺的宿主半边，现在**有源码**了；但补 `stop` 是重复宿主的假设、补 `error` 是编造，所以 L-0036 保持 `watching`，本轮只把它的证据等级从「需要脚本化 provider」升到「读过宿主源码」。 |
 
+## H. R55 新读的（2026-11-16 的巡检：3 源应答，79 个候选未进账本）
+
+> 巡检产物 `data/results/intake-2026-11-16T10-10-00.000Z.json`（S-DSH / S-SELF / S-NPM 三源都答）。
+> 下面两条是 79 个候选里**与本接缝真的相接**的；其余都是 adapter / 宿主 / 前端侧（STREAM_CLOSED 的 watchdog、
+> 会话写句柄、冷恢复、goal 空转等），按 §3 的阶梯判为 out-of-seam，不逐条抄进账本。
+
+| id | source | source_kind | read_depth | reported | version | class | seam | status | decision |
+|---|---|---|---|---|---|---|---|---|---|
+| L-0039 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12347> | `dsh` | `full` | 2026-11-10 | 0.2.1-rc.2 | `max_tokens`（空回答） | `cli`（读取器） | **patched** | R55：报告的形状是「一步把预算全花在 reasoning 上，`finish_reason: "length"`，没有 text 也没有 tool call，整轮以 `{"kind":"max-tokens"}` 收尾，`final` 打空」。本机 114 个会话文件里 **88 个 `max-tokens` turn 全部**如此（71 个只剩 `reasoning` 块、17 个没有 assistant 消息），而普查只报了 88 这个数、没说有没有回答。**P-0044** 把「最后一步有没有 text 或 tool-call」变成报告字段 `truncated_without_answer`；宿主「该不该继续」的那一半仍是 out-of-seam。见 `docs/patches/P-0044-turn-answered.md`。 |
+| L-0040 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13169> | `dsh` | `full` | 2026-11-14 | 0.2.2-rc.1 | unknown（`completed` 的空回答） | `cli`（读取器） | watch | R55：报告是「最后一条 assistant 消息只有 `reasoning` 块、没有 text 也没有 tool call，`turn/end` 却是 `completed`」（774 条里 5 条，其中 4 条连续）。本机 127 个 `completed` turn 里**没有一条**是这个形状，所以 P-0044 故意只数 `truncated` 并把名字收窄；要数这一类，必须先有一条本机夹具或探针，否则就是按别人的报告发补丁。 |
+
 ## 下一会话的前三条（按优先级）
 
 > **R43 结案 L-0001 / L-0002 / L-0010；R45 结案 L-0032（P-0034）与 L-0033 / L-0034 / L-0024；
 > R46 结案 L-0035（P-0035）；R49 结案 L-0004（P-0037）、L-0003 与 L-0009；R50 结案 L-0036；
 > R53 结案 L-0005 与 L-0007（两条同一段 adapter 代码，原文不进失败消息）。**
-> **A 表已无剩余线索**；新线索从一次巡检（`scripts/collect_leads.mjs`）开始，不要从这张表里挑。
+> **R55 巡检结案 L-0039（P-0044）并把 L-0040 标成 watch**：两条都是「turn 结束了却什么都没回答」，
+> 前者本机复现（88/88 个 `max-tokens`），后者本机 0 例，所以只落了读取器那一半。
+> **A 表仍无剩余线索**；新线索从一次巡检（`scripts/collect_leads.mjs`）开始，不要从这张表里挑。
 
 1. **L-0003（#11843，deepseek 路由的非法参数）**：`rejected (out-of-seam)`，原文不在失败消息里；
    默认重试已由 P-0011 覆盖（R49 读宿主源码确认）。
@@ -112,6 +125,6 @@ gh api graphql -f query='{ search(type: DISCUSSION, query: "repo:deepseek-ai/dee
    不恢复的那一支以 `dsh: TRANSPORT: Stream ended without finish_reason`、退出码 1、`turn/end error`
    收尾，而不是静默成功；能静默的只有「先失败一次、重试成功」那一支，那不是同一件事。
 
-复现任何一条之前，先看**字节账**：plugin 82 717 / 83 000（只剩 **283 B**），core 103 790 / 104 000
-（210 B），registry 67 991 / 68 000（只剩 **9 B** —— **下一条记录之前先压一条老记录，不是先写**）。
+复现任何一条之前，先看**字节账**：plugin 82 857 / 83 000（只剩 **143 B**，其中 CLI 半边只剩 **38 B**），
+core 103 867 / 104 000（133 B），registry 65 316 / 68 000（只剩 **2 684 B** —— 下一条记录之前仍建议先压一条老记录，不是先写）。
 新的常驻字节必须先付账（压散文或去重），不许抬 cap。

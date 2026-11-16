@@ -43,6 +43,9 @@ export { findPatch, PATCHES, patchRegistrySnapshot, registryProblems } from './r
 export type { RedactResult } from './redact.js'
 export { redact, redactValue } from './redact.js'
 
+export type { Ending, LastAnswer } from './answer.js'
+export { endingOf, ENDINGS, messageAnswers, noteAssistantMessage, turnAnswered } from './answer.js'
+
 export type { RemedyCounters, RemedyState, RemedyVerdict } from './verdict.js'
 export { formatRemedyVerdict, judgeRemedy } from './verdict.js'
 

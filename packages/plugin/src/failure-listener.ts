@@ -1,22 +1,13 @@
 /**
- * The `agent/request-error` listener (P-0011) and the failure namer (P-0013).
+ * The `agent/request-error` listener (P-0011) and the failure namer (P-0013):
+ * name what this plugin can diagnose — including what it must never retry —
+ * and retry `MALFORMED_RESPONSE` within an explicit, bounded budget.
  *
- * Two jobs on one seam, because a second listener would only pay twice for the
- * same dispatch:
- *
- *   1. **name** every failure class this plugin knows how to diagnose, including
- *      the ones it must never retry. Before this, `UNSUPPORTED_REASONING_EFFORT`
- *      was counted by `scan` but invisible to the resident layer: 37 turns on
- *      this host died on a profile field, and nothing in the journal said so.
- *   2. **retry** `MALFORMED_RESPONSE` within an explicit, bounded budget — the
- *      same shape the community guard proved on ten release rows.
- *
- * Upstream's own contract, quoted from the shipped runtime documentation: a
- * handling listener returns `{ kind: 'retry' }` *without* calling `next()`, and
- * an unowned decision must return `next()`. So decide in that order: speak only
- * when the decision is ours, hand everything else back. Calling `next()` first
- * and then overriding the answer — what 0.3.7 did — discards the default chain,
- * and context compaction authorizes its own retry on that path.
+ * Upstream's contract, quoted from the shipped runtime: a handling listener
+ * returns `{ kind: 'retry' }` *without* calling `next()`, and an unowned decision
+ * must return `next()`. Speaking only when the decision is ours is the whole
+ * rule; calling `next()` first and then overriding it (what 0.3.7 did) discards
+ * the default chain, and context compaction authorizes its own retry there.
  */
 
 export interface FailurePayload {
@@ -35,11 +26,10 @@ export interface FailureSink {
 const CONTROL_CODES = new Set(['IMAGE_OFFLOAD_REQUIRED', 'INVALID_CREDENTIAL', 'MISSING_CREDENTIAL'])
 
 /**
- * Classes worth a named line in the journal. Each one is a real defect measured
- * on this host (`data/results/scan-full-*.json`), not a guess: a configuration
- * refusal, a request the provider rejected outright, and a turn that produced
- * nothing. They are named, never retried — a retry of a deterministic refusal
- * spends a request to learn the same answer twice.
+ * Classes worth a named line in the journal (P-0013). Each is a real defect
+ * measured on this host (`data/results/scan-full-*.json`), not a guess. They are
+ * named, never retried: a retry of a deterministic refusal spends a request to
+ * learn the same answer twice.
  */
 const DIAGNOSED_CODES = new Set([
   'UNSUPPORTED_REASONING_EFFORT',

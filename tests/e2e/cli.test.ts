@@ -269,6 +269,7 @@ test('scan reports every way a turn ended, and exit stays quiet for a census', (
     turns: { completed: number; max_tokens: number; aborted: number; error: number }
     error_codes: Record<string, number>
     fusion_failures: number
+    truncated_without_answer: number
   }
   assert.deepEqual(report.turns, { completed: 1, max_tokens: 1, aborted: 0, error: 1 })
   assert.deepEqual(report.error_codes, { SERVER: 1 })
@@ -278,4 +279,8 @@ test('scan reports every way a turn ended, and exit stays quiet for a census', (
   assert.equal(human.status, 0, human.stderr)
   assert.match(human.stdout, /turns=3 completed=1 max_tokens=1 aborted=0 error=1/)
   assert.match(human.stdout, /error codes: SERVER=1/)
+  // P-0044: the truncated turn above has no assistant message at all, so it is a
+  // truncation that answered nobody. The field is on the human line and in JSON.
+  assert.match(human.stdout, /truncated_without_answer=1/)
+  assert.equal(report.truncated_without_answer, 1, 'a truncated turn with no message answered nothing')
 })

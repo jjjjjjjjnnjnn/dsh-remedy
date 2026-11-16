@@ -9,7 +9,7 @@ import { resealToolCallArguments } from 'dsh-remedy-core'
  */
 const PROGRAM = [
   'const fs = await import("node:fs");',
-  'const fork = "C:\\\\Users\\\\rongj\\\\AppData\\\\Local\\\\Temp\\\\awesome-fork";',
+  'const fork = "<home>\\\\awesome-fork";',
   'const p = fork + "\\\\data\\\\plugins\\\\jjjjjjjjnnjnn__ai-terminal-pet--packages-dsh-ai-terminal-pet.yml";',
   'console.log(fs.existsSync(p));',
   'console.log(fs.readFileSync(p, "utf8"));',

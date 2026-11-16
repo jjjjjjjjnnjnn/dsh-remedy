@@ -46,8 +46,12 @@ const sha256 = (buffer) => createHash('sha256').update(buffer).digest('hex')
 
 /** The installed runtime names its own version; never infer it from a path. */
 function runtimeVersion() {
+  const installed =
+    process.env.LOCALAPPDATA === undefined
+      ? null
+      : `${process.env.LOCALAPPDATA}/Programs/DeepSeek Harness/resources/runtime/primary-runtime/runtime.json`
   const candidates = [
-    'C:/Users/rongj/AppData/Local/Programs/DeepSeek Harness/resources/runtime/primary-runtime/runtime.json',
+    ...(installed === null ? [] : [installed]),
     join(home, '../dsh-runtimes/dsh-primary-runtime/runtime.json'),
   ]
   for (const candidate of candidates) {

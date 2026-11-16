@@ -37,7 +37,7 @@ could not see.
   not call it.
 - `packages/core/src/redact.ts` `windows-home` was
   `/\b[A-Za-z]:\\Users\\[^\\\s"']+/`, which cannot match an escaped path
-  (`C:\\Users\\rongj` inside JSON) or a slashed one (`<home>` in a file
+  (`C:\\Users\\<name>` inside JSON) or a slashed one (`<home>` in a file
   URL), and a DSH session directory encodes the home path with `-` separators
   (`--<home-encoded>-Desktop-…--`) so no path separator survives at all.
 

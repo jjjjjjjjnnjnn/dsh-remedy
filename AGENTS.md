@@ -1,14 +1,13 @@
 # dsh-remedy AGENTS.md
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
-> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.13`（已发布，两包 `latest`；两个 profile 已换装 0.4.13，App 已在 2026-11-15 重启并加载过）
-> **Stand**：R53（2026-11-15，**先量接缝再决定产品**——`agent/pre-step` 的 `{kind:"enter"}` 在 0.2.2-rc.3 上能带消息、
-> 却改不了 loop 已经定下的 selection，`reject` 又被桌面渲染成「已完成」，所以 P-0013 的 preflight 没有诚实的挂载点；
-> 补丁因此落在离线侧：**P-0042** 让 `scan` 记住宿主拒绝的那个档位、让 `explain` 在 profile 仍写着它时打一行 CONFLICT 并退出 1。
-> 0.4.13 两包已发布、冷装验收 `OK 8 fixture(s)`。**cap 一个没动；常驻层 0 新字节（这笔账全部由 CLI 半付）**。
-> R52 是交接轮（十处旧数字对齐到 0.4.12）；R51 是**发版之后把它拆开看**：0.4.11 带 P-0037/P-0038/P-0039，0.4.12 带 P-0040（验收不再自己拥有夹具数）
-> 与 P-0041（POSIX 上的 bin 是符号链接，旧守卫让 `main()` 根本没跑、退出 0）。
-> **361 测试 / 6 门 / `--mutate` 6-6**（Windows 与 Linux 同值）。
+> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.14`（已发布，两包 `latest`；两个 profile 仍装 0.4.13，App 加载过的是 0.4.13）
+> **Stand**：R54（2026-11-16，**交接审计查出一个已经发出去的缺陷**——P-0028 为夹具写的那条守卫允许一到两层
+> 分隔符，而夹具是 JSON 字符串、模型程序里的一个反斜杠在文件里是**四个**，于是守卫在它本该保护的文件上答 `false`，
+> **0.4.13 的 tarball 里带着账号名**；守卫放宽到任意层（仍拒 `file:///Users/<name>`）并新增「产物里不许出现本机账号」
+> 一条，夹具改用 `<home>`，发 **0.4.14**。R53 是先量接缝再决定产品（`agent/pre-step` 的 `enter` 能带消息、
+> 换不了 selection，所以 P-0013 的 preflight 落成离线的 P-0042）；R52 是交接轮（旧数字对齐到 0.4.12）。
+> **362 测试 / 6 门 / `--mutate` 6-6**（Windows 与 Linux 同值）；registry 只剩 **9 B**。
 > **平台边界：Windows 与 Linux 实测，macOS 未实测**；P-0038 的 `/Users` 形状在 Linux 上是字符串。
 > R49 是 P-0037（少一个闭合符）与 P-0038（脱敏按一个平台写却发到三个）；R48 是交接轮（三份旧账本对齐）；
 > R47 是**去互联网上读同接缝的五个竞品与上游源码**，把拼得上的
@@ -19,12 +18,12 @@
 > **接手先读**：`docs/HANDOFF.md` → `docs/research/README.md` → `docs/research/leads.md` → `PROJECT_RULES.md` → `INDEX.md`
 > **R43 起的主线**是外部反馈 → 稳定补丁：报告只是线索，本机复现后才有补丁；来源与方法见 `docs/research/`。
 >
-> **基线（2026-11-15）**：`pnpm run verify` = **361 tests / 6 gates**（Windows 与 Linux 同值）；
-> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.13`（latest）+
-> `dsh-remedy-core@0.4.13`（latest）。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
-> `v0.4.13`。四十二补丁：**6 `verified` + 36 `tested`**，在 DSH 0.2.2-rc.3 上实测过（Windows + Linux WSL2）。
-> **字节余量（下一轮的第一个约束）**：plugin **82 717 / 83 000（283 B）**、core **103 649 / 104 000（351 B）**、
-> registry **67 850 / 68 000（150 B —— 下一条记录之前先压一条老记录，按 P-0032 的先例，不许抬 cap）**。
+> **基线（2026-11-15）**：`pnpm run verify` = **362 tests / 6 gates**（Windows 与 Linux 同值）；
+> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.14`（latest）+
+> `dsh-remedy-core@0.4.14`（latest）。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
+> `v0.4.13` / `v0.4.14`。四十三补丁：**6 `verified` + 37 `tested`**，在 DSH 0.2.2-rc.3 上实测过（Windows + Linux WSL2）。
+> **字节余量（下一轮的第一个约束）**：plugin **82 717 / 83 000（283 B）**、core **103 790 / 104 000（210 B）**、
+> registry **67 991 / 68 000（9 B —— 下一条记录之前必须先压一条老记录，按 P-0032 的先例，不许抬 cap）**。
 > **本目录不是 git 根**：提交在 `..`（容器），公开仓库由
 > `git subtree split --prefix=dsh-remedy` 切出。
 

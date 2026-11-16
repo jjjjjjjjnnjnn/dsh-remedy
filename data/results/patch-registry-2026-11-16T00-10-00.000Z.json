@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "produced_by": "scripts/record_patch_registry.mjs",
-  "generated_at": "2026-11-15T20:20:00.000Z",
+  "generated_at": "2026-11-16T00:10:00.000Z",
   "source": {
-    "git_head": "a1f42a7c08670ba7bacc1a21e32752ddc3433393",
+    "git_head": "71825f20111a0dcb2117592f82809324fc9d7834",
     "git_dirty": true
   },
   "patches": [
@@ -562,8 +562,8 @@
     {
       "id": "P-0021",
       "title": "The published package advertised a subpath that never had a module",
-      "symptom": "packages/plugin/package.json exported \"./retry-listener\" -> ./dist/retry-listener.js, but no src/retry-listener.ts has ever existed: the second seam module is failure-listener.ts, already re-exported from the main entry. import \"dsh-remedy/retry-listener\" fails with ERR_MODULE_NOT_FOUND while the manifest says it is supported. The dead subpath shipped in 0.3.8 and 0.4.0",
-      "rootCause": "tests/unit/package-files.test.ts checked the target string against a regex, not the file behind it: ./dist/retry-listener.js matches the pattern exactly as well as ./dist/repair-stream.js does. The exports map was written by hand when the second seam landed, and nothing compared it with src/. This is the same family as P-0010, P-0014, P-0016 and P-0020: the guard reads the form of the promise, not whether it can be kept",
+      "symptom": "the manifest exported \"./retry-listener\" -> ./dist/retry-listener.js, a module that has never existed (the second seam is failure-listener.ts), so `import \"dsh-remedy/retry-listener\"` answered ERR_MODULE_NOT_FOUND while the manifest promised it; it shipped in 0.3.8 and 0.4.0",
+      "rootCause": "the test compared the target string against a regex and never the file behind it, so a plausible path passed as well as a real one; nothing compared the exports map with src/",
       "surface": "scripts",
       "status": "tested",
       "severity": "minor",
@@ -690,8 +690,8 @@
     {
       "id": "P-0026",
       "title": "The release procedure had two homes, and the older one was retired",
-      "symptom": "docs/PUBLISH.md described the procedure this repository uses (scripts/publish_packages.mjs, a token that bypasses the one-time password, commit-tree instead of the missing subtree subcommand), while docs/HANDOFF.md still told a successor to run the pnpm filter publish path and to expect OTP, and its boundary section said the two profiles pointed at a 0.3.5 tarball and that npm latest was 0.3.5",
-      "rootCause": "handoff-truth.test.ts checks the status table and \"第一件事\"; the release procedure and the boundary section sit after the evidence index, so they were outside the live contract while still being the sections a successor acts on. A procedure with two homes rots in the one nobody reads, and the stale one was the one the instructions pointed at",
+      "symptom": "docs/PUBLISH.md described the real procedure while the handoff still sent a successor down the retired pnpm-filter path and told them to expect OTP, and its boundary section named a 0.3.5 tarball and npm latest 0.3.5",
+      "rootCause": "handoff-truth checked the status table and the first thing; the release procedure sits after the evidence index, so it was outside the live contract while still being the section a successor acts on",
       "surface": "scripts",
       "status": "tested",
       "severity": "minor",
@@ -938,9 +938,9 @@
         "scripts/gate_namespace.mjs"
       ],
       "limits": [
-        "it proves a row resolves against this manifest, not that the host loads it",
-        "a row naming another package is accepted when it is declared, which is not proof of its subpath",
-        "it runs in the test suite, not at load time; no live artifact is possible"
+        "it proves a row resolves, not that the host loads it",
+        "a declared package is accepted, which is not proof of its subpath",
+        "it runs in the suite, not at load time"
       ],
       "failureClasses": []
     },
@@ -997,8 +997,8 @@
     {
       "id": "P-0038",
       "title": "The redaction was written on one platform and shipped to three",
-      "symptom": "a macOS or Linux home path went through `redact()` untouched (`/Users/alice/x.ts`, `file:///Users/alice/x.ts`, `--Users-alice-x--`, `--home-alice-x--`), so the account name would have left the machine in an artifact; 5 of 8 measured shapes leaked",
-      "rootCause": "two rules each assumed a Windows drive letter: `windows-home` starts with [A-Za-z]:, and `encoded-home` required `X-Users-`. The session key is built by `projectKey` (app.asar, dsh-session-persistence-jsonl/src/format.ts) which turns every / \\ : into one `-` and wraps the slug in `--…--`, so the same project encodes as --C-Users-…, --Users-… or --home-… and only the first one matched",
+      "symptom": "a macOS or Linux home path went through `redact()` untouched: 5 of the 8 measured shapes (`/Users/<name>`, `file:///Users/<name>`, `--Users-…`, `--home-…`) left the account name in an artifact",
+      "rootCause": "two rules each assumed a Windows drive letter, and the session key is built by `projectKey` (app.asar), which turns every separator into `-`, so one project encodes three ways and only the Windows one matched",
       "surface": "scripts",
       "status": "tested",
       "severity": "major",
@@ -1063,8 +1063,8 @@
       ],
       "limits": [
         "the criterion is the count plus every PASS line, not fixture contents: verify still owns what each case must decide",
-        "it cannot name which fixture drifted; sync_fixtures --check owns that",
-        "an npm exec that exits 0 with no output stays a failure here"
+        "it cannot name the drifted fixture; sync_fixtures --check does",
+        "an npm exec that exits 0 with no output is still a failure"
       ],
       "failureClasses": []
     },
@@ -1112,6 +1112,28 @@
       "limits": [
         "it names the conflict and exits 1; only changing the profile stops the next dead turn, and it never clamps",
         "a profile that omits reasoningEffort produces no finding, even when the UI selected a refused level"
+      ]
+    },
+    {
+      "id": "P-0043",
+      "title": "The guard written for a fixture could not see it",
+      "symptom": "the 0.4.13 tarball carries this machine's account name in `fixtures/toolcall-fusion/bare-code-value.json`, and the P-0028 guard written for that file was green on it",
+      "rootCause": "the guard allowed two separators before `Users`, but the fixture is a JSON string, so one backslash becomes four; a second artifact leaked the name as a bare `ls -l` token no path rule sees",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0043-shipped-sample-guard-shape.md",
+        "tests/governance/shipped-samples.test.ts",
+        "data/fixtures/toolcall-fusion/bare-code-value.json",
+        "data/results/live-linux-2026-11-15T15-00-00.000Z.json"
+      ],
+      "guards": [
+        "tests/governance/shipped-samples.test.ts"
+      ],
+      "limits": [
+        "the 0.4.13 tarball still carries the name: a published version is fixed forward, not rewritten",
+        "the guard runs after the fact; the writer knows only path shapes"
       ]
     }
   ]

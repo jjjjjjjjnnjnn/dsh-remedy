@@ -951,11 +951,29 @@
       "evidence": [
         "docs/patches/P-0042-profile-effort-conflict.md",
         "data/results/prestep-enter-2026-11-15T17-55-00.000Z.json",
-        "data/results/patch-registry-2026-11-15T20-20-00.000Z.json",
+        "data/results/patch-registry-2026-11-16T00-10-00.000Z.json",
         "tests/unit/refused-effort.test.ts",
         "tests/e2e/explain-conflict.test.ts"
       ]
+    },
+    {
+      "id": "S54",
+      "gate": "size",
+      "title": "The guard written for the fixture could not see the fixture, and 0.4.13 shipped the name",
+      "axes": {
+        "correctness": "P-0043 widens the shipped-samples guard from one-or-two separators to one-or-more and requires a non-letter before the drive letter, so a JSON-escaped home path (four separators) is caught while `file:///Users/<name>` in prose about macOS is not. It also adds a second guard that walks every tracked result artifact for the account the machine runs as, and repairs the one artifact that carried a bare `ls -l` token. Measured before the fix: the guard answered false on the exact fixture P-0028 exists for, and one artifact named the account.",
+        "reproducibility": "`.tmp/r53-guard-red.mjs` prints both answers against the shipped shapes; `node --test tests/governance/shipped-samples.test.ts` fails on the pre-fix tree (naming CHANGELOG.md, the canonical fixture and the packaged copy) and the new artifact rule names `live-linux-2026-11-15T15-00-00.000Z.json`; both are green after. The repaired artifact records `redaction_repair` (field, why, at) and its sibling `.sha256` names the new bytes.",
+        "compliance": "Caps did not move: plugin 82 717 / 83 000, core 103 790 / 104 000, registry.js 67 991 / 68 000 (9 B left, the tightest this project has run). The P-0043 record was paid by compacting P-0038 / P-0026 / P-0021 / P-0035 records under P-0032, and the fixture keeps the shape it exists for: `verify` still prints `OK 8 fixture(s)`.",
+        "ssot": "Doc is `docs/patches/P-0043-shipped-sample-guard-shape.md`; ledger row, registry snapshot `data/results/patch-registry-2026-11-16T00-10-00.000Z.json`, and this review are in the same round. The leak is reproducible from the published tarball itself (`tar -xOzf … | grep -c <account>`), which is the strongest form of evidence this project has.",
+        "adversarial": "The most adversarial fact is the one this patch starts with: the previous guard was green while the file it protects carried the name, so a passing test proved nothing. The fix therefore ships with two negative controls (escaped shape, URL scheme) and a rule whose input is the machine's own account rather than a hard-coded string. The remaining hole is stated in the limits: the 0.4.13 tarball still carries the name until 0.4.14 is published."
+      },
+      "evidence": [
+        "docs/patches/P-0043-shipped-sample-guard-shape.md",
+        "tests/governance/shipped-samples.test.ts",
+        "data/results/patch-registry-2026-11-16T00-10-00.000Z.json",
+        "data/results/live-linux-2026-11-15T15-00-00.000Z.json"
+      ]
     }
   ],
-  "updated_at": "2026-11-15T18:55:00.000Z"
+  "updated_at": "2026-11-16T00:20:00.000Z"
 }

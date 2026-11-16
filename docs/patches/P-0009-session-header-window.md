@@ -29,7 +29,7 @@ could not decompress zstd at all (P-0004).
 
 ```
 {"type":"session","version":4,"id":"session-…","createdAt":1794318268790,
- "cwd":"C:\\Users\\rongj\\Desktop\\项目开发","isSeeded":false,
+ "cwd":"C:\\Users\\<name>\\Desktop\\项目开发","isSeeded":false,
  "delegationDepth":0,"agentPreset":"standard"}
 ```
 

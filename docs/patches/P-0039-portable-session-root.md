@@ -15,7 +15,7 @@ failure message never said so:
 | `scripts/record_live_mount.mjs` | already portable (`homedir()`) | works |
 
 Measured, not inferred: on the Linux box `USERPROFILE=[<unset>]` and
-`HOME=/home/rongj`, so `process.env.USERPROFILE ?? ''` produced the empty string and
+`HOME=/home/<name>`, so `process.env.USERPROFILE ?? ''` produced the empty string and
 `join('', '.dsh', 'sessions')` produced a **relative** path. The recorder then
 reports "no session directory" — which reads as "this machine has no sessions",
 not "this script does not know where you keep them".

@@ -20,7 +20,7 @@ import { test } from 'node:test'
  */
 
 const root = new URL('../../', import.meta.url)
-const shipped = /[A-Za-z]:[\\/]{1,2}Users[\\/]/i
+const shipped = /(?:^|[^A-Za-z])[A-Za-z]:[\\/]+Users[\\/]/i
 
 function walk(dir: string): string[] {
   const out: string[] = []
@@ -69,10 +69,38 @@ test('no file that ships with the tarball names this machine', () => {
   assert.deepEqual(offenders, [], `these shipped files contain an absolute home path: ${offenders.join(', ')}`)
 })
 
+test('no tracked result artifact names a real account, in any shape', () => {
+  // P-0043: P-0028 forbids an `…:/Users/<name>` segment in anything that ships.
+  // A Linux artifact carried a bare `ls -l` line naming the user — no drive letter,
+  // no `Users` segment — so the path-shaped guard could not see it and the artifact
+  // stayed in the index. A bare token has no false positives here: every artifact is
+  // produced by a recorder on this machine, and `<home>` is what they write instead.
+  const accounts = ([process.env.USERNAME, process.env.USER] as Array<string | undefined>).filter(
+    (name): name is string => typeof name === 'string' && name.length >= 3,
+  )
+  const reported = accounts.length > 0 ? accounts : ['NO_ACCOUNT_IN_ENV']
+  const offenders = []
+  for (const file of walk(fileURLToPath(new URL('data/results/', root)))) {
+    if (!file.endsWith('.json')) continue
+    const text = readFileSync(file, 'utf8')
+    if (reported.some((name) => text.includes(name))) {
+      offenders.push(file.slice(fileURLToPath(root).length).replaceAll('\\', '/'))
+    }
+  }
+  assert.deepEqual(offenders, [], `these artifacts name the account this machine runs as: ${offenders.join(', ')}`)
+})
+
 test('the detector actually detects the shape it forbids', () => {
   // Without this, a regex typo would make the rule above pass on everything.
   const sample = 'cd "C:/Users/someone/Desktop/project" && ls'
   assert.match(sample, shipped, 'the detector must catch a forward-slash home path')
   assert.match('cd "C:\\\\Users\\\\someone\\\\project"', shipped, 'and a backslash one')
   assert.doesNotMatch('cd "<home>/Desktop/project" && ls', shipped, 'and must not flag the placeholder')
+  // The fixture is a JSON string, so one backslash in the program is four in the
+  // file. A guard bounded to one or two separators answered `false` on the exact
+  // file P-0028 exists for, and 0.4.13 shipped the account name because of it.
+  assert.match('const fork = "C:\\\\Users\\\\someone\\\\AppData";', shipped, 'and a JSON-escaped one (four separators)')
+  // `file:///Users/<name>` is a URL scheme quoted in prose about macOS, not a local
+  // path: the drive-letter alternative must not start inside the word `file`.
+  assert.doesNotMatch('the macOS shape `file:///Users/<name>` passed through untouched', shipped, 'and must not flag a URL scheme')
 })

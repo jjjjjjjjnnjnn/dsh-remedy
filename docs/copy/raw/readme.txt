@@ -8,7 +8,7 @@
 
 [中文说明](README.zh-CN.md)
 
-dsh-remedy is a patch set for DeepSeek Harness (DSH) — forty-two defects, each registered with the seam it touches, the symptom it removes, the mechanism that was measured, and the limits it does not cross. Two of those seams are resident (`llm/stream` and `agent/request-error`); the rest are the CLI, the build side, and one seam that has been measured but deliberately not mounted.
+dsh-remedy is a patch set for DeepSeek Harness (DSH) — forty-three defects, each registered with the seam it touches, the symptom it removes, the mechanism that was measured, and the limits it does not cross. Two of those seams are resident (`llm/stream` and `agent/request-error`); the rest are the CLI, the build side, and one seam that has been measured but deliberately not mounted.
 
 ## What it fixes
 
@@ -197,11 +197,13 @@ The whole `MALFORMED_RESPONSE` corpus on one machine was replayed through the bu
 
 Six patches are `verified` on a real host: P-0001 on a headless profile and on the desktop app, P-0002 on a 2026-11-10 headless run that repaired a real two-call fusion and saw the synthesized call dispatched, P-0003 on a 2026-11-10 headless run whose journal wrote a non-zero `refused` after the code declined to repair a budget refusal, and P-0033 on an isolated harness whose endpoint replays the incomplete tool call of upstream discussion #13211: without the plugin the turn dies at V4 admission, with it the call carries a traceable id and the same session completes a second turn. P-0037 and P-0041 were verified on Linux (WSL2 Ubuntu 26.04): the one-delimiter-short call of upstream discussion #12819 is repaired inside a real host process and dispatched, and the installed `bin` — a symlink, the way npm installs it there — prints its result instead of exiting 0 silently.
 
-The other thirty-six are `tested`, not `verified`. Each carries unit tests, a negative control and a measured artifact where one exists: P-0004, P-0006 and P-0009 change an offline reader; P-0005 has no live bare-value shape yet; P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019, P-0020, P-0024, P-0026, P-0028, P-0029, P-0031, P-0035, P-0038, P-0039 and P-0040 are build-side or a corpus; P-0010, P-0016 and P-0025 change text a command prints; P-0011 and P-0013 sit on a seam a live journal witnesses only when a turn fails in a class this plugin retries, which the default budget of 0 never triggers; P-0015 is a measurement on an isolated profile rather than a mount; P-0027, P-0030, P-0034 and P-0036 narrow what a repaired, failed or delta-only turn is allowed to claim, with unit tests and a measured fixture but no live run of their own; P-0032 moved prose, not behaviour; P-0042 is a CLI reader that names a configuration conflict the seam cannot fix; P-0037 and P-0041 are the two patches verified on Linux rather than on this machine.
-Release status: `0.4.13` is published and is the registry `latest` for both `dsh-remedy` and `dsh-remedy-core`; it carries forty-two patches and is measured on **DSH 0.2.2-rc.3** on Windows and on Linux. A cold directory installed 0.4.13 from the registry and `dsh-remedy verify` printed `OK 8 fixture(s)`. The previous release is `0.4.12` with forty-one patches, `0.4.11` with thirty-nine patches, `0.4.10` with thirty-six, `0.4.9` with thirty-five, `0.4.8` with thirty-three, `0.4.7` with thirty-one, `0.4.6` with thirty, `0.4.5` with twenty-eight, `0.4.4` with twenty-seven, `0.4.3` with twenty-six, `0.4.2` with twenty-six, and `0.4.1` with twenty-three.
+The other thirty-seven are `tested`, not `verified`. Each carries unit tests, a negative control and a measured artifact where one exists: P-0004, P-0006 and P-0009 change an offline reader; P-0005 has no live bare-value shape yet; P-0007, P-0008, P-0012, P-0014, P-0017, P-0018, P-0019, P-0020, P-0024, P-0026, P-0028, P-0029, P-0031, P-0035, P-0038, P-0039 and P-0040 are build-side or a corpus; P-0010, P-0016 and P-0025 change text a command prints; P-0011 and P-0013 sit on a seam a live journal witnesses only when a turn fails in a class this plugin retries, which the default budget of 0 never triggers; P-0015 is a measurement on an isolated profile rather than a mount; P-0027, P-0030, P-0034 and P-0036 narrow what a repaired, failed or delta-only turn is allowed to claim, with unit tests and a measured fixture but no live run of their own; P-0032 moved prose, not behaviour; P-0042 is a CLI reader that names a configuration conflict the seam cannot fix; P-0037 and P-0041 are the two patches verified on Linux rather than on this machine.
+Release status: `0.4.14` is published and is the registry `latest` for both `dsh-remedy` and `dsh-remedy-core`; it carries forty-three patches and is measured on **DSH 0.2.2-rc.3** on Windows and on Linux. A cold directory installed 0.4.14 from the registry and `dsh-remedy verify` printed `OK 8 fixture(s)`. The previous release is `0.4.13` with forty-two patches, `0.4.11` with thirty-nine patches, `0.4.10` with thirty-six, `0.4.9` with thirty-five, `0.4.8` with thirty-three, `0.4.7` with thirty-one, `0.4.6` with thirty, `0.4.5` with twenty-eight, `0.4.4` with twenty-seven, `0.4.3` with twenty-six, `0.4.2` with twenty-six, and `0.4.1` with twenty-three.
 
 Package sizes:
 
+- 0.4.14 plugin: 38762 bytes compressed, 38 files, 124050 bytes unpacked, shasum `02d0747ac766408c0525bfcfb09df4581039af9d`.
+- 0.4.14 core: 39968 bytes compressed, 25 files, 131617 bytes unpacked, shasum `b825fe0b8b523411a17714abf41cc916c14e6273`.
 - 0.4.13 plugin: 38762 bytes compressed, 38 files, 124050 bytes unpacked, shasum `02d0747ac766408c0525bfcfb09df4581039af9d`.
 - 0.4.13 core: 39968 bytes compressed, 25 files, 131617 bytes unpacked, shasum `b825fe0b8b523411a17714abf41cc916c14e6273`.
 - 0.4.12 plugin: 39694 bytes compressed, 38 files, 126181 bytes unpacked, shasum `b9122c89b04a4c18a92b0404dfe939af3ba8f54e`.
@@ -225,7 +227,7 @@ Package sizes:
 - 0.3.8 plugin: 35898 bytes compressed, 35 files, 117750 bytes unpacked, shasum `3bc47df12f21fe7d68336f595d397ff868b3d4d7`; core: 26551 bytes compressed, 21 files, 83461 bytes unpacked, shasum `0df993f85589e101b15b830fa105e7ef8c66c5d5`.
 - No sourcemaps are shipped; that removal is worth 41926 bytes of unpacked payload.
 
-The emitted plugin budget is three checks: residency 41494 of 44000 bytes (the modules a mounted plugin loads), cli 41223 of 42000 bytes (the modules only a command loads), and a total of 82717 of 83000 bytes. Per-file caps: `repair-stream.js` 28000, `session-scan.js` 14000, `cli.js` 12000. A patch that crosses a per-file number splits that file instead of absorbing it. These three are measured on the working tree and the 0.4.13 tarball ships 82717 of those bytes, so a reader checking the published package sees the same figure. The engine has its own two numbers: core 103649 of 104000 bytes, and `registry.js` 67850 of 68000.
+The emitted plugin budget is three checks: residency 41494 of 44000 bytes (the modules a mounted plugin loads), cli 41223 of 42000 bytes (the modules only a command loads), and a total of 82717 of 83000 bytes. Per-file caps: `repair-stream.js` 28000, `session-scan.js` 14000, `cli.js` 12000. A patch that crosses a per-file number splits that file instead of absorbing it. These three are measured on the working tree and the 0.4.14 tarball ships 82717 of those bytes, so a reader checking the published package sees the same figure. The engine has its own two numbers: core 103790 of 104000 bytes, and `registry.js` 67991 of 68000.
 
 ## Development
 
@@ -236,7 +238,7 @@ pnpm run gate
 node scripts/gate.mjs --mutate
 ```
 
-Six gates run on every change: `ssot`, `registry`, `namespace`, `step-review`, `copy`, `size`. `--mutate` breaks each one on purpose and requires every one to go red; it currently catches 6 of 6. The suite is 361 tests and 0 failing.
+Six gates run on every change: `ssot`, `registry`, `namespace`, `step-review`, `copy`, `size`. `--mutate` breaks each one on purpose and requires every one to go red; it currently catches 6 of 6. The suite is 362 tests and 0 failing.
 
 ## Contributing
 

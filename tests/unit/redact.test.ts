@@ -18,9 +18,9 @@ test('assigned secrets are removed but the key name survives', () => {
 })
 
 test('emails and home paths are removed', () => {
-  const result = redact('mail rongjiajun2025@outlook.com from C:\\Users\\rongj\\Desktop\\x and /home/alice/y')
-  assert.doesNotMatch(result.text, /rongjiajun2025@outlook\.com/)
-  assert.doesNotMatch(result.text, /rongj/)
+  const result = redact('mail sample@example.com from C:\\Users\\<name>\\Desktop\\x and /home/alice/y')
+  assert.doesNotMatch(result.text, /sample@example\.com/)
+  assert.doesNotMatch(result.text, /sample@example/)
   assert.doesNotMatch(result.text, /alice/)
   assert.match(result.text, /<home>/)
 })

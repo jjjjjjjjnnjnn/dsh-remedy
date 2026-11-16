@@ -202,6 +202,8 @@ node scripts/gate.mjs --mutate
 
 包体积：
 
+- 0.4.14 plugin：38804 字节压缩，38 个文件，124177 字节解包，shasum `80fc4414a9997a467fffe2f51fdb7d771bff1bcd`。
+- 0.4.14 core：39878 字节压缩，25 个文件，131758 字节解包，shasum `b2474efb54c1a9c9719422238e264656d16c35e7`。
 - 0.4.13 plugin：38762 字节压缩，38 个文件，124050 字节解包，shasum `02d0747ac766408c0525bfcfb09df4581039af9d`。
 - 0.4.13 core：39968 字节压缩，25 个文件，131617 字节解包，shasum `b825fe0b8b523411a17714abf41cc916c14e6273`。
 - 0.4.12 plugin：39694 字节压缩，38 个文件，126181 字节解包，shasum `b9122c89b04a4c18a92b0404dfe939af3ba8f54e`。

@@ -202,8 +202,8 @@ Release status: `0.4.14` is published and is the registry `latest` for both `dsh
 
 Package sizes:
 
-- 0.4.14 plugin: 38762 bytes compressed, 38 files, 124050 bytes unpacked, shasum `02d0747ac766408c0525bfcfb09df4581039af9d`.
-- 0.4.14 core: 39968 bytes compressed, 25 files, 131617 bytes unpacked, shasum `b825fe0b8b523411a17714abf41cc916c14e6273`.
+- 0.4.14 plugin: 38804 bytes compressed, 38 files, 124177 bytes unpacked, shasum `80fc4414a9997a467fffe2f51fdb7d771bff1bcd`.
+- 0.4.14 core: 39878 bytes compressed, 25 files, 131758 bytes unpacked, shasum `b2474efb54c1a9c9719422238e264656d16c35e7`.
 - 0.4.13 plugin: 38762 bytes compressed, 38 files, 124050 bytes unpacked, shasum `02d0747ac766408c0525bfcfb09df4581039af9d`.
 - 0.4.13 core: 39968 bytes compressed, 25 files, 131617 bytes unpacked, shasum `b825fe0b8b523411a17714abf41cc916c14e6273`.
 - 0.4.12 plugin: 39694 bytes compressed, 38 files, 126181 bytes unpacked, shasum `b9122c89b04a4c18a92b0404dfe939af3ba8f54e`.

@@ -7,7 +7,7 @@
 The published **0.4.13** tarball carries this machine's account name:
 
 ```
-$ tar -xOzf dsh-remedy-0.4.13.tgz package/fixtures/toolcall-fusion/bare-code-value.json | grep -c rongj
+$ tar -xOzf dsh-remedy-0.4.13.tgz package/fixtures/toolcall-fusion/bare-code-value.json | grep -c <account>
 1
 ```
 

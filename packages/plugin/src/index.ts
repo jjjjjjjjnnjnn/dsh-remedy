@@ -1,25 +1,30 @@
 /**
  * DSH loader entry for `dsh-remedy`.
  *
- * One seam, two listeners:
+ * Three listeners:
+ *  - `llm/stream` (waterfall): repair a fused call before the loop assembles it (P-0001);
+ *  - `agent/request-error` (waterfall): the retry for MALFORMED_RESPONSE, and the
+ *    namer for refusals that reach it (P-0011, P-0013);
+ *  - `agent/error` (emit): the seam a preparation refusal reaches; names only (P-0045).
  *
- *   1. `llm/stream` (waterfall) — wraps the chunk stream and repairs a fused tool
- *      call before the agent loop assembles it (P-0001);
- *   2. `agent/request-error` (waterfall) — an opt-in retry for `MALFORMED_RESPONSE`,
- *      off by default: a stop-gap for deployments that cannot take the repair.
- *
- * The plugin is resident but silent: no route, no tool, no writes unless
- * `journalPath` is configured. Its job is to make a known defect not happen,
- * not to add a surface.
+ * Resident but silent: no route, no tool, no writes unless `journalPath` is set.
  */
 
 import { appendFileSync, mkdirSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { PATCHES, redactValue } from 'dsh-remedy-core'
 import { RemedyMonitor, repairStream, type RepairEvent, type ToolDeclaration } from './repair-stream.js'
-import { makeFailureListener, RETRY_CACHE_LIMIT, type FailureListener } from './failure-listener.js'
+import {
+  makeErrorNamer,
+  makeFailureListener,
+  makeNamer,
+  RETRY_CACHE_LIMIT,
+  type AgentErrorPayload,
+  type DiagnosisNamer,
+  type FailureListener,
+} from './failure-listener.js'
 
-export { makeFailureListener, RETRY_CACHE_LIMIT, type FailureListener }
+export { makeFailureListener, makeNamer, RETRY_CACHE_LIMIT, type DiagnosisNamer, type FailureListener }
 
 export interface RemedyLogger {
   info?(message: string): void
@@ -43,6 +48,12 @@ export interface RemedyContext {
     event: 'agent/request-error',
     listener: (payload: RequestErrorPayload, next: () => unknown) => unknown,
   ): () => void
+  /**
+   * P-0045: the seam a preparation-time refusal actually reaches. `agent/error`
+   * is emitted by the loop's own `throwError` and carries the thrown error; it
+   * has no decision, so a listener can only observe.
+   */
+  on(event: 'agent/error', listener: (payload: AgentErrorPayload) => void): () => void
   readonly logger?: RemedyLogger
   effect?(execute: () => () => void, label?: string): unknown
 }
@@ -132,20 +143,25 @@ function mount(ctx: RemedyContext, config: RemedyConfig, monitor: RemedyMonitor)
       )
     }
 
-    // P-0011 + P-0013 share one listener: naming a failure and retrying it are two
-    // decisions on one dispatch. Naming is always on; the retry budget defaults to 0.
+    // P-0011 + P-0013 + P-0045 share one namer and two seams: a stream that fails
+    // after it started reaches `agent/request-error` (where a retry is a legal
+    // decision); a call refused during preparation reaches only `agent/error`
+    // (where naming is all that is possible). One set of `(turn, step, code)` keys
+    // means a failure both seams see is named once.
     const retryMax = config.retryOnMalformed ?? 0
+    const namer = makeNamer((code, key) => monitor.recordDiagnosis(code, key), ctx.logger)
     disposers.push(
       ctx.on(
         'agent/request-error',
         makeFailureListener({
           retryMax,
           onRetry: (key) => monitor.recordRetry(key),
-          onDiagnosis: (code, key) => monitor.recordDiagnosis(code, key),
+          namer,
           logger: ctx.logger,
         }),
       ),
     )
+    disposers.push(ctx.on('agent/error', makeErrorNamer(namer)))
 
     return () => {
       for (const dispose of disposers) dispose()

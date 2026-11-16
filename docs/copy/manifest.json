@@ -189,20 +189,22 @@
       "channel": "retired-external-model"
     },
     {
-      "name": "metadata",
-      "target": "docs/copy/repo-metadata.json",
+      "name": "release-notes-0415-frozen",
+      "target": "docs/copy/release-notes/v0.4.15.md",
       "model": "in-session",
-      "generated_at": "2026-11-16T12:39:50.681Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
-      "draft_sha256": "0dc957a9af16058160b66d913b905689a47549147f50cda7934848a24e654e3c",
-      "output_sha256": "0dc957a9af16058160b66d913b905689a47549147f50cda7934848a24e654e3c"
+      "generated_at": "2026-11-16T15:29:53.731Z",
+      "facts_sha256": "7e2b269773b6c7102913505a01bb42d53894ce5bd7160752473cddf8ff9213bf",
+      "draft_sha256": "3a6ba5d309368dbd63a08ca54bd9adbc50de1d2e35531ddec2199508982cb33f",
+      "output_sha256": "3a6ba5d309368dbd63a08ca54bd9adbc50de1d2e35531ddec2199508982cb33f",
+      "frozen_at": "2026-11-16T15:32:22.888Z",
+      "channel": "retired-external-model"
     },
     {
       "name": "contributing",
       "target": "CONTRIBUTING.md",
       "model": "in-session",
-      "generated_at": "2026-11-16T12:39:50.774Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
+      "generated_at": "2026-11-16T15:54:40.326Z",
+      "facts_sha256": "934df948c2cbc89ddfdc8d41ff0d0072a47580a5166450b1c7139c9892ace540",
       "draft_sha256": "025ecf6c7885d2b0ca17ad186b176151044d479a656da8895b9c3ab6cc14ced6",
       "output_sha256": "025ecf6c7885d2b0ca17ad186b176151044d479a656da8895b9c3ab6cc14ced6"
     },
@@ -210,8 +212,8 @@
       "name": "security",
       "target": "SECURITY.md",
       "model": "in-session",
-      "generated_at": "2026-11-16T12:39:50.897Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
+      "generated_at": "2026-11-16T15:54:40.431Z",
+      "facts_sha256": "934df948c2cbc89ddfdc8d41ff0d0072a47580a5166450b1c7139c9892ace540",
       "draft_sha256": "9fe2a67b388d8e8699eb7c15e50657c248a092b25948cd03d3a1a9a9f30e1db8",
       "output_sha256": "9fe2a67b388d8e8699eb7c15e50657c248a092b25948cd03d3a1a9a9f30e1db8"
     },
@@ -219,8 +221,8 @@
       "name": "code-of-conduct",
       "target": "CODE_OF_CONDUCT.md",
       "model": "in-session",
-      "generated_at": "2026-11-16T12:39:50.999Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
+      "generated_at": "2026-11-16T15:54:40.528Z",
+      "facts_sha256": "934df948c2cbc89ddfdc8d41ff0d0072a47580a5166450b1c7139c9892ace540",
       "draft_sha256": "9dc6c44f8c0122a8cbcb701f87acc264f2fb21d4cbecb63f8b027b28215ca31e",
       "output_sha256": "9dc6c44f8c0122a8cbcb701f87acc264f2fb21d4cbecb63f8b027b28215ca31e"
     },
@@ -228,8 +230,8 @@
       "name": "package-readme-plugin",
       "target": "packages/plugin/README.md",
       "model": "in-session",
-      "generated_at": "2026-11-16T12:39:51.107Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
+      "generated_at": "2026-11-16T15:54:40.637Z",
+      "facts_sha256": "934df948c2cbc89ddfdc8d41ff0d0072a47580a5166450b1c7139c9892ace540",
       "draft_sha256": "bd43caa7c625ae0085ec6f4e10315191c05a42cfd61ba8cba86d388945311a0c",
       "output_sha256": "bd43caa7c625ae0085ec6f4e10315191c05a42cfd61ba8cba86d388945311a0c"
     },
@@ -237,8 +239,8 @@
       "name": "package-readme-core",
       "target": "packages/core/README.md",
       "model": "in-session",
-      "generated_at": "2026-11-16T12:39:51.226Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
+      "generated_at": "2026-11-16T15:54:40.745Z",
+      "facts_sha256": "934df948c2cbc89ddfdc8d41ff0d0072a47580a5166450b1c7139c9892ace540",
       "draft_sha256": "81cd4042a4d7c2158fbae26171b0228038181c8ef070524d53199c537b530392",
       "output_sha256": "81cd4042a4d7c2158fbae26171b0228038181c8ef070524d53199c537b530392"
     },
@@ -246,83 +248,92 @@
       "name": "package-readme-plugin-zh",
       "target": "packages/plugin/README.zh.md",
       "model": "in-session",
-      "generated_at": "2026-11-16T12:39:51.320Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
+      "generated_at": "2026-11-16T15:54:40.866Z",
+      "facts_sha256": "934df948c2cbc89ddfdc8d41ff0d0072a47580a5166450b1c7139c9892ace540",
       "draft_sha256": "f3cb081aa5b51cd95e78f4ac7ff8957652f9dbc71d0838124221b649d15c7ded",
       "output_sha256": "f3cb081aa5b51cd95e78f4ac7ff8957652f9dbc71d0838124221b649d15c7ded"
-    },
-    {
-      "name": "release-notes",
-      "target": "docs/copy/release-notes/v0.4.15.md",
-      "model": "in-session",
-      "generated_at": "2026-11-16T12:43:31.289Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
-      "draft_sha256": "c60a8875814dc08fcc26fd712e608058f1e8ec0ab79f65fe4460273bc154b940",
-      "output_sha256": "3a6ba5d309368dbd63a08ca54bd9adbc50de1d2e35531ddec2199508982cb33f"
     },
     {
       "name": "changelog",
       "target": "CHANGELOG.md",
       "model": "in-session",
-      "generated_at": "2026-11-16T12:43:42.667Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
+      "generated_at": "2026-11-16T15:54:40.980Z",
+      "facts_sha256": "934df948c2cbc89ddfdc8d41ff0d0072a47580a5166450b1c7139c9892ace540",
       "draft_sha256": "20c100e10df0e1d38872b945c1bd8c49c949b4569e63c72f23fdc1386472e55d",
       "output_sha256": "20c100e10df0e1d38872b945c1bd8c49c949b4569e63c72f23fdc1386472e55d"
+    },
+    {
+      "name": "metadata",
+      "target": "docs/copy/repo-metadata.json",
+      "model": "in-session",
+      "generated_at": "2026-11-16T15:54:41.088Z",
+      "facts_sha256": "934df948c2cbc89ddfdc8d41ff0d0072a47580a5166450b1c7139c9892ace540",
+      "draft_sha256": "a9065755c4da6a7933fdeabfb743a2b4c4d6e753a01ee97811a36f0757ba4dcf",
+      "output_sha256": "a9065755c4da6a7933fdeabfb743a2b4c4d6e753a01ee97811a36f0757ba4dcf"
     },
     {
       "name": "templates:.github/ISSUE_TEMPLATE/bug_report.yml",
       "target": ".github/ISSUE_TEMPLATE/bug_report.yml",
       "model": "in-session",
-      "generated_at": "2026-11-16T12:43:42.770Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
-      "draft_sha256": "f22ac30fa72b51f19a18bd2249f2d021e0f327a520e5258c750a5a0f031bcf6e",
+      "generated_at": "2026-11-16T15:54:41.298Z",
+      "facts_sha256": "934df948c2cbc89ddfdc8d41ff0d0072a47580a5166450b1c7139c9892ace540",
+      "draft_sha256": "759ed63f30c4534716d5d89e6086c07748d01e9d96313ee3901417039ea36b78",
       "output_sha256": "f56615e214bc297cf4ba581a6b5094235bd236634148c596e9581aeb405272b8"
     },
     {
       "name": "templates:.github/ISSUE_TEMPLATE/feature_request.yml",
       "target": ".github/ISSUE_TEMPLATE/feature_request.yml",
       "model": "in-session",
-      "generated_at": "2026-11-16T12:43:42.770Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
-      "draft_sha256": "f22ac30fa72b51f19a18bd2249f2d021e0f327a520e5258c750a5a0f031bcf6e",
+      "generated_at": "2026-11-16T15:54:41.298Z",
+      "facts_sha256": "934df948c2cbc89ddfdc8d41ff0d0072a47580a5166450b1c7139c9892ace540",
+      "draft_sha256": "759ed63f30c4534716d5d89e6086c07748d01e9d96313ee3901417039ea36b78",
       "output_sha256": "95e334680ad5a7a603abc0f005a5fb37a263d4a932e46c24aa591f7543c1bfcf"
     },
     {
       "name": "templates:.github/ISSUE_TEMPLATE/config.yml",
       "target": ".github/ISSUE_TEMPLATE/config.yml",
       "model": "in-session",
-      "generated_at": "2026-11-16T12:43:42.770Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
-      "draft_sha256": "f22ac30fa72b51f19a18bd2249f2d021e0f327a520e5258c750a5a0f031bcf6e",
+      "generated_at": "2026-11-16T15:54:41.298Z",
+      "facts_sha256": "934df948c2cbc89ddfdc8d41ff0d0072a47580a5166450b1c7139c9892ace540",
+      "draft_sha256": "759ed63f30c4534716d5d89e6086c07748d01e9d96313ee3901417039ea36b78",
       "output_sha256": "e354d0e18d416509296e613235167a334ca2c4c8b83ece393b9eea05066831b2"
     },
     {
       "name": "templates:.github/PULL_REQUEST_TEMPLATE.md",
       "target": ".github/PULL_REQUEST_TEMPLATE.md",
       "model": "in-session",
-      "generated_at": "2026-11-16T12:43:42.770Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
-      "draft_sha256": "f22ac30fa72b51f19a18bd2249f2d021e0f327a520e5258c750a5a0f031bcf6e",
+      "generated_at": "2026-11-16T15:54:41.298Z",
+      "facts_sha256": "934df948c2cbc89ddfdc8d41ff0d0072a47580a5166450b1c7139c9892ace540",
+      "draft_sha256": "759ed63f30c4534716d5d89e6086c07748d01e9d96313ee3901417039ea36b78",
       "output_sha256": "f24428fb646baf4ad6db682e31289ed3567865e82604bb730c8c0b8a1c24f94d"
     },
     {
-      "name": "readme-zh",
-      "target": "README.zh-CN.md",
+      "name": "release-notes",
+      "target": "docs/copy/release-notes/v0.4.16.md",
       "model": "in-session",
-      "generated_at": "2026-11-16T13:27:10.601Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
-      "draft_sha256": "716f9dfa9279f2728eff31b0bcc4d3587acf761082c4ec799812f47d99de7e91",
-      "output_sha256": "716f9dfa9279f2728eff31b0bcc4d3587acf761082c4ec799812f47d99de7e91"
+      "generated_at": "2026-11-16T15:54:41.837Z",
+      "facts_sha256": "934df948c2cbc89ddfdc8d41ff0d0072a47580a5166450b1c7139c9892ace540",
+      "draft_sha256": "a802b4e56f67441a0289821d0f1bc70ceb84c34fe8681ba5a99a7f4347a1569b",
+      "output_sha256": "a802b4e56f67441a0289821d0f1bc70ceb84c34fe8681ba5a99a7f4347a1569b"
     },
     {
       "name": "readme",
       "target": "README.md",
       "model": "in-session",
-      "generated_at": "2026-11-16T13:27:32.514Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
-      "draft_sha256": "f1e18cf101989ee444511c2a328ff8adda8086eba4ada833fdd124ea46e339d1",
-      "output_sha256": "f1e18cf101989ee444511c2a328ff8adda8086eba4ada833fdd124ea46e339d1"
+      "generated_at": "2026-11-16T15:55:14.654Z",
+      "facts_sha256": "934df948c2cbc89ddfdc8d41ff0d0072a47580a5166450b1c7139c9892ace540",
+      "draft_sha256": "4e3fa1abb1bb007fbb6eaf244d7c63433d116a2887c4a1f5ae19fbe9321c7278",
+      "output_sha256": "4e3fa1abb1bb007fbb6eaf244d7c63433d116a2887c4a1f5ae19fbe9321c7278"
+    },
+    {
+      "name": "readme-zh",
+      "target": "README.zh-CN.md",
+      "model": "in-session",
+      "generated_at": "2026-11-16T15:55:14.769Z",
+      "facts_sha256": "934df948c2cbc89ddfdc8d41ff0d0072a47580a5166450b1c7139c9892ace540",
+      "draft_sha256": "8508b8b4d53b6371eecf578502778feda116fb781ab1b704a4840dabd11b7e99",
+      "output_sha256": "8508b8b4d53b6371eecf578502778feda116fb781ab1b704a4840dabd11b7e99"
     }
   ],
-  "updated_at": "2026-11-16T13:27:32.519Z"
+  "updated_at": "2026-11-16T15:55:14.776Z"
 }

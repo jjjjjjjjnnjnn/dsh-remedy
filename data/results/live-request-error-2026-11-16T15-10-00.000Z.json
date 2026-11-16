@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_request_error_seam.mjs",
+  "generated_at": "2026-11-16T15:10:00.000Z",
+  "question": "P-0011 and P-0013 were both `tested`, not `verified`: no live journal had ever witnessed the retry, and the refusal they name is thrown while the call is prepared. Which seam carries each, and does naming survive it?",
+  "probe": {
+    "homes": "one isolated DSH_HOME per version (.tmp/r56-old, .tmp/r56-new; nothing under ~/.dsh is written)",
+    "profiles": {
+      "refusal": "r56-refusal — the real opendesign route, reasoningEffort `xhigh` (the level this model does not map)",
+      "retry": "r56-retry — a local OpenAI-compatible endpoint, retryOnMalformed 1",
+      "control": "r56-retry-before — the same endpoint and prompt, plugin absent"
+    },
+    "endpoint": ".tmp/r56-fake-openai.mjs — one main-step stream with arguments one `]` short and finish_reason tool_calls (the #12819 shape), then text; the title request gets text",
+    "runtime": {
+      "version": "0.2.2-rc.3",
+      "source": "<home>\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\primary-runtime\\runtime.json",
+      "sha256": "ce43135cf00d7dcd9d1c52f467cf8fe533248a745226e27def0e86ba8e6abad6"
+    },
+    "versions": {
+      "old": "the released 0.4.15 dist bytes (.tmp/r56-dist-0415), measured before this tree changed",
+      "new": "this tree after P-0045"
+    },
+    "commands": [
+      "node .tmp/r56-setup.mjs --home .tmp/r56-old --dist .tmp/r56-dist-0415",
+      "node .tmp/r56-setup.mjs --home .tmp/r56-new",
+      "node .tmp/r56-run-probe.mjs --home … --profile … --endpoint none|malformed"
+    ],
+    "note": "the endpoint is local and synthetic: it reproduces the adapter failure, not a relay incident"
+  },
+  "runs": {
+    "control": {
+      "dir": ".tmp/r56-runs/control-retry",
+      "profile": "r56-retry-before",
+      "endpoint": "malformed",
+      "exit_code": 1,
+      "requests": 2,
+      "main_step_requests": 1,
+      "stderr_first": "dsh: MALFORMED_RESPONSE: Tool call \"ops_bash\": Expected ',' or ']' after array element in JSON at position 61 (line 1 column 62)",
+      "journal": {
+        "file": null,
+        "sha256": null,
+        "events": 0,
+        "kinds": [],
+        "retries": 0,
+        "diagnoses": 0,
+        "counters": null
+      },
+      "sessions": [
+        {
+          "kind": "error",
+          "error": {
+            "message": "Tool call \"ops_bash\": Expected ',' or ']' after array element in JSON at position 61 (line 1 column 62)\n\nReceived arguments:\n{\"command\":\"echo hi\",\"components\":[{\"type\":\"text\",\"text\":\"a\"}",
+            "code": "MALFORMED_RESPONSE"
+          }
+        }
+      ]
+    },
+    "old_retry": {
+      "dir": ".tmp/r56-runs/old-retry",
+      "profile": "r56-retry",
+      "endpoint": "malformed",
+      "exit_code": 0,
+      "requests": 3,
+      "main_step_requests": 2,
+      "stderr_first": "",
+      "journal": {
+        "file": "<home>\\Desktop\\项目开发\\DSH-Addition\\dsh-remedy\\.tmp\\r56-old\\retry-journal.jsonl",
+        "sha256": "4d31d38eec9a51c5a3ad7cbf61806498843058e5c9a2eb20352f2f1784b21323",
+        "events": 5,
+        "kinds": [
+          "rejected",
+          "retry",
+          "stream"
+        ],
+        "retries": 1,
+        "diagnoses": 0,
+        "counters": {
+          "streams": 3,
+          "fused": 0,
+          "repaired": 0,
+          "unrepaired": 0,
+          "truncated": 0,
+          "errors": 0,
+          "refused": 1,
+          "withdrawn": 0,
+          "resealed": 0,
+          "closed": 0,
+          "diagnoses": 0
+        }
+      },
+      "sessions": [
+        {
+          "kind": "completed"
+        }
+      ]
+    },
+    "new_retry": {
+      "dir": ".tmp/r56-runs/new-retry",
+      "profile": "r56-retry",
+      "endpoint": "malformed",
+      "exit_code": 0,
+      "requests": 3,
+      "main_step_requests": 2,
+      "stderr_first": "",
+      "journal": {
+        "file": "<home>\\Desktop\\项目开发\\DSH-Addition\\dsh-remedy\\.tmp\\r56-new\\retry-journal.jsonl",
+        "sha256": "d409cf285263949b61b633ffce189b6c3fdeb509a2f92de862699b1fde59d3de",
+        "events": 5,
+        "kinds": [
+          "rejected",
+          "retry",
+          "stream"
+        ],
+        "retries": 1,
+        "diagnoses": 0,
+        "counters": {
+          "streams": 3,
+          "fused": 0,
+          "repaired": 0,
+          "unrepaired": 0,
+          "truncated": 0,
+          "errors": 0,
+          "refused": 1,
+          "withdrawn": 0,
+          "resealed": 0,
+          "closed": 0,
+          "diagnoses": 0
+        }
+      },
+      "sessions": [
+        {
+          "kind": "completed"
+        }
+      ]
+    },
+    "old_refusal": {
+      "dir": ".tmp/r56-runs/old-refusal",
+      "profile": "r56-refusal",
+      "endpoint": "none",
+      "exit_code": 1,
+      "requests": 0,
+      "main_step_requests": 0,
+      "stderr_first": "dsh: UNSUPPORTED_REASONING_EFFORT: provider \"opendesign\" model \"deepseek-v4.1-flash-eco\" does not support reasoning effort \"xhigh\"",
+      "journal": {
+        "file": null,
+        "sha256": null,
+        "events": 0,
+        "kinds": [],
+        "retries": 0,
+        "diagnoses": 0,
+        "counters": null
+      },
+      "sessions": [
+        {
+          "kind": "error",
+          "error": {
+            "message": "provider \"opendesign\" model \"deepseek-v4.1-flash-eco\" does not support reasoning effort \"xhigh\"",
+            "code": "UNSUPPORTED_REASONING_EFFORT"
+          }
+        }
+      ]
+    },
+    "new_refusal": {
+      "dir": ".tmp/r56-runs/new-refusal",
+      "profile": "r56-refusal",
+      "endpoint": "none",
+      "exit_code": 1,
+      "requests": 0,
+      "main_step_requests": 0,
+      "stderr_first": "dsh: UNSUPPORTED_REASONING_EFFORT: provider \"opendesign\" model \"deepseek-v4.1-flash-eco\" does not support reasoning effort \"xhigh\"",
+      "journal": {
+        "file": "<home>\\Desktop\\项目开发\\DSH-Addition\\dsh-remedy\\.tmp\\r56-new\\refusal-journal.jsonl",
+        "sha256": "89d7bef85850a80ea08bb90d8112cd89a0a4ac2d82a139e16b3806df4df85a65",
+        "events": 1,
+        "kinds": [
+          "diagnosis"
+        ],
+        "retries": 0,
+        "diagnoses": 1,
+        "counters": {
+          "streams": 0,
+          "fused": 0,
+          "repaired": 0,
+          "unrepaired": 0,
+          "truncated": 0,
+          "errors": 0,
+          "refused": 0,
+          "withdrawn": 0,
+          "resealed": 0,
+          "closed": 0,
+          "diagnoses": 1
+        }
+      },
+      "sessions": [
+        {
+          "kind": "error",
+          "error": {
+            "message": "provider \"opendesign\" model \"deepseek-v4.1-flash-eco\" does not support reasoning effort \"xhigh\"",
+            "code": "UNSUPPORTED_REASONING_EFFORT"
+          }
+        }
+      ]
+    }
+  },
+  "claims": {
+    "p0011_retry_reaches_the_second_seam": true,
+    "p0011_retry_was_already_live_in_the_released_bytes": true,
+    "p0011_no_retry_without_the_plugin": true,
+    "p0013_naming_was_silent_on_the_released_bytes": true,
+    "p0013_naming_names_once_on_the_fix": true,
+    "p0045_the_refusal_never_reaches_agent_request_error": true,
+    "p0045_the_fix_adds_no_request": true
+  },
+  "findings": [
+    "The retry path is real and was already live in the released bytes: the control run made two main-step requests? (see runs.control) and exited 1, while both retry runs made three, wrote exactly one `retry` event and ended `completed` at exit 0.",
+    "`agent/request-error` is never dispatched for a refusal thrown during preparation. The released bytes wrote no journal at all for the xhigh run; a probe listener on both candidate seams saw one `agent/error` and zero `agent/request-error`. That is the host split, quoted from `dsh-agent-loop/lib/index.js`: line 942 dispatches `agent/request-error` only after a started stream fails; line 657 emits `agent/error` from the loop catch.",
+    "P-0045 names the refusal on `agent/error` and shares one `(turn, step, code)` set with `agent/request-error`, so a failure both seams can see is named once. The new bytes write exactly one `diagnosis` for the same profile and turn that the released bytes wrote zero for.",
+    "No request was added by the fix: the refusal run still makes no model call (the code refuses before dispatch), and the retry run still makes exactly three."
+  ],
+  "not_proven": [
+    "One provider route and one model. `opendesign/deepseek-v4.1-flash-eco` is the route this machine uses; another adapter may throw the refusal on a different seam.",
+    "The endpoint is local and synthetic: it reproduces the adapter's `MALFORMED_RESPONSE`, not a relay incident.",
+    "One turn per run, one prompt. A multi-step turn and a tool-call turn were not exercised.",
+    "The desktop app was not driven; these are headless CLI runs."
+  ],
+  "verdict": {
+    "p0011": "verified — the retry decision, its bound and its completion are witnessed by a live journal",
+    "p0013": "verified — the diagnosis reaches the journal on the seam the host actually uses",
+    "p0045": "the seam split, measured on both the released and the changed bytes"
+  },
+  "redaction": {
+    "replacements": 0,
+    "kinds": []
+  }
+}

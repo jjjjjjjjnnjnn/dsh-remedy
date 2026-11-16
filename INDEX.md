@@ -14,7 +14,7 @@
 | `PROJECT_RULES.md` | 硬规则（只读本机、失败即失败、证据由脚本产出） |
 | `docs/HANDOFF.md` | 交接：五分钟检查 / 当前批次 / 第一件事 / 坑 |
 | `docs/research/README.md` | 外部反馈 intake：来源、判据、四条约束、同类项目读法（R43 起） |
-| `docs/research/leads.md` | 线索账本：38 条（31 条 DSH + 4 条 Reddit 摘要 + 3 条同接缝/手册），带 `source_kind` / `read_depth`；F 表结案 L-0032…L-0036，G 表结案 L-0037/L-0038 |
+| `docs/research/leads.md` | 线索账本：40 条（34 条 DSH + 4 条 Reddit 摘要 + 2 条市场/手册），带 `source_kind` / `read_depth`；F 表结案 L-0032…L-0036，G 表结案 L-0037/L-0038，H 表结案 L-0039（P-0044）并把 L-0040 记成 `watch` |
 | `docs/research/sources.md` | 七个来源的读法、频率、边界；Reddit 读不到正文的诚实规则 |
 | `docs/research/plan-0.4.9.md` | 0.4.9 计划与结案：来源 → 巡检 → 一条线索 → 一个补丁；§2 记着这一版实际结掉的六条线索 |
 | `docs/research/similar-projects-2026-11-14.md` | 同接缝的五个竞品与上游源码：借了什么机制、拒了什么取舍、每条指回本机 `app.asar` 的行号（R47） |

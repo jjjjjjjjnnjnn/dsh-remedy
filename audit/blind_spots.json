@@ -84,7 +84,8 @@
     {
       "id": "BS-17",
       "status": "closed",
-      "note": "Closed 2026-11-13 by R30 (data/results/prestep-ui-2026-11-13T12-15-00.000Z.json). The renderer the desktop shell loads was served by `dsh web` from an isolated DSH_HOME and driven through CDP, with a rejecting listener and a control turn. The rejection draws one line, \"已完成，用时 1秒\" — the same completion line a real turn prints — and nothing else: no user bubble, no assistant bubble, no error, no reason; the control draws the user bubble, the assistant \"OK\" and the same completion line. So the window reports a rejected turn as completed and shows nothing that happened, and a reject must not be used on the desktop profile. The same run measured the pass-through path: `return next()` answers the step and then ends the turn with reason.kind \"error\", message \"next is not a function\", code UNKNOWN, so the seam's chain is not the request-error chain. What remains narrower: the Electron shell itself was not driven (only the web app bundle it loads), a rejection inside a multi-step turn was not exercised, and the {kind:\"enter\"} rewrite — the only candidate left — is still unmeasured."
+      "note": "Closed 2026-11-13 by R30 (data/results/prestep-ui-2026-11-13T12-15-00.000Z.json). The renderer the desktop shell loads was served by `dsh web` from an isolated DSH_HOME and driven through CDP, with a rejecting listener and a control turn. The rejection draws one line, \"已完成，用时 1秒\" — the same completion line a real turn prints — and nothing else: no user bubble, no assistant bubble, no error, no reason; the control draws the user bubble, the assistant \"OK\" and the same completion line. So the window reports a rejected turn as completed and shows nothing that happened, and a reject must not be used on the desktop profile. The same run measured the pass-through path: `return next()` answers the step and then ends the turn with reason.kind \"error\", message \"next is not a function\", code UNKNOWN, so the seam's chain is not the request-error chain. What remains narrower: the Electron shell itself was not driven (only the web app bundle it loads), a rejection inside a multi-step turn was not exercised, The `{kind:\"enter\"}` rewrite was measured in R53 (`data/results/prestep-enter-2026-11-15T17-55-00.000Z.json`): it carries an added message the host admits and the model reads, and it cannot change a selection the loop fixed before the waterfall. So the remaining gap is narrower than \"unmeasured\": the seam has no honest way to move a refused effort, and P-0013's own naming was blind until P-0045 put it on `agent/error`.",
+      "updated_at": "2026-11-16T15:40:00.000Z"
     },
     {
       "id": "BS-18",
@@ -99,5 +100,5 @@
       "updated_at": "2026-11-14T17:05:00.000Z"
     }
   ],
-  "updated_at": "2026-11-14T17:05:00.000Z"
+  "updated_at": "2026-11-16T15:40:00.000Z"
 }

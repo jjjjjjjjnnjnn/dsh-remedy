@@ -1,47 +1,61 @@
-## dsh-remedy 0.4.15
+## dsh-remedy 0.4.16
 
 ### Added
 
-- **P-0044 — a truncated turn now says whether it answered anyone.** `scan` has counted every
-  `turn/end` since P-0006 and never asked the second half of the question. On this machine that
-  gap was not hypothetical: 88 `max-tokens` turns were reported, and **88** of them ended with
-  no `text` block and no `tool-call` — the user saw an empty bubble in every case.
-- The rule lives in `packages/core/src/answer.ts`: a `tool-call` answers, a `text` block answers
-  only when it is not whitespace, a block type the rule does not know does not answer, and only
-  a turn's **last step** decides. The scanner and the evidence recorder call the same function.
-- `scan` prints `truncated_without_answer` on the human line, in `--json` and in `--out`; every
-  `rows` entry carries its own count, so a total stays auditable backwards.
+- **P-0045 — a refusal thrown before the stream starts now reaches the seam that names it.**
+  P-0013 exists to name the failure class this host hits most after fusion: 37 turns died with
+  `UNSUPPORTED_REASONING_EFFORT` while the resident layer said nothing. The released 0.4.15
+  bytes were measured against a deliberately refused profile (`reasoningEffort: xhigh`): the
+  turn ended `error` and the journal was **empty** — not a wrong line, zero events.
+  `agent/request-error` is dispatched only after a started stream fails (`dsh-agent-loop` line
+  942); a call refused while it is prepared never reaches it, and the loop's catch emits
+  `agent/error` instead (line 657). The namer now listens on that seam too, and both seams share
+  one `(turn, step, code)` set, so a failure both can see is named once.
+- **The first live witness for the second seam.** A local OpenAI-compatible endpoint answers the
+  #12819 shape once and a text block afterwards. With `retryOnMalformed: 1` the host made three
+  main-step requests, the journal wrote one `retry`, the turn ended `completed` and the CLI
+  exited 0; the plugin-free control made one main-step request and exited 1. P-0011's retry
+  decision, its bound and its completion are now witnessed by a live journal instead of by unit
+  tests alone.
+- **P-0046 — a first screen can be one patch short and every gate stays green.** `README.md`
+  and `README.zh-CN.md` both claimed forty-four patches, both enumerated the tested ones, and
+  **P-0043 appeared in neither**; both also put 0.4.14 first under a status sentence calling
+  0.4.15 the published release. `gate_copy` checks numbers, bytes and provenance, not
+  completeness. Two rules now read the registry against each page: every patch id must appear,
+  and the published version's size rows must come first. Both rules carry the failing shape as
+  their own negative control.
 
 ### Changed
 
-- **The registry ledger was compacted again, and no cap moved.** 28 records were shortened to
-  the ledger fields plus a one-sentence `symptom`, a one-sentence `rootCause` and two to four
-  short `limits`; the long form stays in `docs/patches/`. `registry.js` went from 67991 to
-  63955 of 68000 bytes, and the patch record for P-0044 then spent part of that room. Every
-  concrete token removed (version numbers, hashes, `file:line`, failure codes) was checked
-  against its own patch document before deletion.
-- The P-0044 record no longer carries an empty `switchKey`, because an optional field set to
-  `undefined` still reaches the snapshot and reads like a switch key that does not exist.
+- **P-0011, P-0013 and P-0045 moved from `tested` to `verified`**; P-0013's record now names
+  `agent/error`, because that is where its naming actually lands. Nine patches are `verified`
+  and thirty-seven are `tested`.
+- **The registry paid for the new record by de-duplication, not by a raise.** A path that already
+  sat in `guards` was dropped from `evidence` when it is the same test or gate (2 507 bytes back
+  across 43 records), and five records were compacted with their concrete tokens checked against
+  their own docs. No cap moved: residency 40902 of 44000, CLI 41962 of 42000, total 82864 of
+  83000; engine 103544 of 104000, `registry.js` 64993 of 68000.
 
 ### Fixed
 
-- Nothing: this release adds a counter and pays for it. No repair path, verdict or exit code
-  changed, and a truncation is still never repaired.
+- **The suite's stale byte row and the handoff's stale pointers.** `gate_size` compares the live
+  handoff byte row with the build, so the row moved with the tree, and the evidence index now
+  marks the R56 snapshot current and the 0.4.15 one historical.
 
 ### Package size
 
-- `dsh-remedy@0.4.15`: 38600 bytes compressed, 38 files, 124248 bytes unpacked, shasum
-  `cd717926bd9ecec01326d8bd1c055290341f665b`.
-- `dsh-remedy-core@0.4.15`: 40675 bytes compressed, 27 files, 134256 bytes unpacked, shasum
-  `c6577a61dd3af4df57bf234d5e6d9bb4dd2c2b84`.
+- `dsh-remedy@0.4.16`: 38654 bytes compressed, 38 files, 125107 bytes unpacked, shasum
+  `623c4cc7d380931e91826948f194ab3b0ac43d84`.
+- `dsh-remedy-core@0.4.16`: 40979 bytes compressed, 27 files, 133933 bytes unpacked, shasum
+  `43bde005968b4fa97131770d1fdef70aab188433`.
 
 ### Notes
 
-- This release carries 44 patches: 6 `verified` and 38 `tested`.
-- Byte budget: residency 40895 of 44000, CLI 41962 of 42000, total 82857 of 83000; engine
-  103867 of 104000, `registry.js` 65316 of 68000. No cap moved.
-- 368 tests, 6 gates, 6/6 negative controls on Windows and on Linux (WSL2 Ubuntu 26.04,
-  node 24.10.0).
-- A `completed` turn whose only content is reasoning (upstream #13169) is **not** counted:
-  this machine produced 0 of them, and a counter for that shape needs its own evidence first.
-
+- This release carries 46 patches: 9 `verified` and 37 `tested`.
+- Byte budget: residency 40902 of 44000, CLI 41962 of 42000, total 82864 of 83000; engine
+  103544 of 104000, `registry.js` 64993 of 68000. No cap moved.
+- 376 tests, 6 gates, 6/6 negative controls on Windows and on Linux (WSL2 Ubuntu 26.04); the
+  byte account is the same number on both (`data/results/live-linux-2026-11-16T16-40-00.000Z.json`).
+- The retry proof uses a local synthetic endpoint: it reproduces the adapter's
+  `MALFORMED_RESPONSE`, not a relay incident. The seam split itself was measured on the released
+  bytes and on this tree, which is what makes P-0045 a fix rather than a guess.

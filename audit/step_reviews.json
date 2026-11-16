@@ -994,6 +994,78 @@
         "data/results/live-linux-2026-11-16T12-45-00.000Z.json",
         "docs/copy/facts/public-repo-facts.md"
       ]
+    },
+    {
+      "id": "S56",
+      "gate": "registry",
+      "title": "A refusal thrown before the stream starts reached no listener, and the retry had never been seen",
+      "axes": {
+        "correctness": "Two claims measured, not read. (1) The seam split: `dsh-agent-loop/lib/index.js` dispatches `agent/request-error` only after a started stream fails (line 942) and emits `agent/error` from the loop catch (line 657); a probe listener mounted on both seams saw exactly one `agent/error` and zero `agent/request-error` for an `xhigh` profile, and the released 0.4.15 bytes wrote an EMPTY journal for the same turn. P-0045 names the refusal on the second seam and shares one `(turn, step, code)` set with the first, so a failure both can see is named once. (2) The retry: with `retryOnMalformed: 1` a local endpoint answering the #12819 shape once produced three main-step requests, one `retry` event, a `completed` turn and exit 0; the plugin-free control produced one main-step request and exit 1. P-0011 and P-0013 moved from `tested` to `verified` on that artifact.",
+        "reproducibility": "`scripts/record_request_error_seam.mjs` reads five run directories, checks every claim before writing, and refuses (`exit 4`) when a run does not have the shape it claims. The artifact is `data/results/live-request-error-2026-11-16T15-10-00.000Z.json`; the homes (`.tmp/r56-old` with the released dist bytes, `.tmp/r56-new` with this tree) are isolated `DSH_HOME`s, so nothing under `~/.dsh` was written. `node --test tests/unit/agent-error-naming.test.ts` (5 cases) and `tests/unit/request-error.test.ts` (9 cases) pin the rules.",
+        "compliance": "No repair path, verdict, exit code or retry budget changed: `agent/error` is an emit with no decision. The new record cost 1 881 bytes of registry and the payment was de-duplication (a test or gate already in `guards` no longer repeats in `evidence`, 2 507 bytes back) plus five compacted records whose concrete tokens were re-checked against their docs by `.tmp/r56-token-check.mjs`; no cap moved (44000 / 42000 / 83000 / 104000 / 68000).",
+        "ssot": "The registry is the single source: P-0013 now says `agent/error` because that is where its naming lands, `agent/error` joined the closed surface list, and the snapshot `patch-registry-2026-11-16T15-40-00.000Z.json` is byte-exact against the build. The fact pack carries 46 patches, 9 verified and 37 tested; both first screens were re-registered from that pack in one pass.",
+        "adversarial": "The adversarial reading is that a counter for a seam nobody mounted is bookkeeping, and that upgrading two patches on a synthetic endpoint is grading one's own homework. Both are answered where they can be: the seam split was measured on the RELEASED bytes first (the empty journal is the negative control), the retry control is a plugin-free run against the same endpoint, and the limits say the endpoint is synthetic and one route was measured. The one thing this round cannot say is that the desktop app saw a named refusal: it did not, because the desktop profile does not ask for a refused effort."
+      },
+      "evidence": [
+        "data/results/live-request-error-2026-11-16T15-10-00.000Z.json",
+        "packages/plugin/src/failure-listener.ts",
+        "packages/core/src/registry.ts",
+        "docs/patches/P-0045-preparation-refusal-seam.md"
+      ]
+    },
+    {
+      "id": "S57",
+      "gate": "copy",
+      "title": "Two first screens were one patch short and one release behind, and no gate read completeness",
+      "axes": {
+        "correctness": "Measured on the 0.4.15 tree: both READMEs named 43 of 44 ids (P-0043 missing from both) while claiming forty-four, and both put 0.4.14 first under a status sentence calling 0.4.15 the published release even though the fact pack carried 0.4.15's rows. `gate_copy` checks numbers, bytes and provenance; it has no opinion about a missing row. Two rules now read the registry against each page (every id must appear; the published version's size rows come first), and the same pass fixed `INDEX.md`'s lead count (38 claimed, 40 actual), BS-17's stale `enter` sentence and a duplicated P-0043 clause in `docs/research/README.md`.",
+        "reproducibility": "`node --test tests/governance/public-pages-complete.test.ts` fails on the pre-fix pages with the exact sentences (`never names P-0043`, `list starts at 0.4.14`) and passes after the re-registration; its third test carries that shape as its own negative control. Pages were written to drafts and recorded with `scripts/copy_record.mjs`, so the numbers were validated against the fact pack before they reached disk.",
+        "compliance": "No predicate changed in the runtime; this is build-side. The two pages and the rest of the live entries were re-registered in ONE pass after the fact pack moved (a pack change invalidates every `facts_sha256`), and the frozen 0.4.15 release notes were frozen and renamed rather than rewritten.",
+        "ssot": "The fact pack is the only place a number may come from: the new 0.4.15 rows and shasums were already there (`38600 / 38 / 124248`, `cd717926…`), the 0.4.16 status lines were added with the counts the built registry answers (46 / 9 / 37), and `copy_record` refused the release notes until the `dsh-agent-loop` line numbers were recorded in the pack.",
+        "adversarial": "The rule reads ids, not sentences: a patch named in the wrong table row satisfies it, and a page could still describe behaviour the code does not have (that is P-0019's older, wider family). The text also cannot see the two npm package pages, because they carry no enumeration for the rule to compare. Both are written into the patch limits rather than papered over."
+      },
+      "evidence": [
+        "tests/governance/public-pages-complete.test.ts",
+        "docs/patches/P-0046-public-page-completeness.md",
+        "README.md",
+        "docs/copy/facts/public-repo-facts.md"
+      ]
+    },
+    {
+      "id": "S58",
+      "gate": "size",
+      "title": "The registry had 323 bytes and the CLI had 38; the new record paid itself out of duplication",
+      "axes": {
+        "correctness": "Two records were added (P-0045 and P-0046) and the engine still fits its cap: core dist 103544 of 104000, `registry.js` 64993 of 68000. The payment is measured, not asserted: 2 507 bytes came back from 43 records that listed the same test or gate in both `evidence` and `guards`, and 538 bytes from five records compacted to the P-0032 shape. The plugin half moved by 39 bytes of prose in `index.ts` and the CLI half did not move at all (41962 of 42000).",
+        "reproducibility": "`node scripts/gate_size.mjs` reports every number on every run and compares the live handoff row with the build, so the row cannot drift; `gate.mjs --mutate` proves the comparison is not vacuous by comparing against a cap one byte under the measurement.",
+        "compliance": "No cap moved: residency 44000, CLI 42000, total 83000, core 104000, `registry.js` 68000 are the numbers P-0012 and P-0031 were signed with. The de-duplication is a rule about one record, not a reclassification of a file between load paths, and no live artifact left `evidence` (the check refuses that).",
+        "ssot": "The handoff byte row, the fact pack and the registry snapshot carry the same figures, and `gate_size` fails if the handoff row and the build disagree. The 0.4.15 published figures stay quoted beside the tree's, because a frozen page cites them.",
+        "adversarial": "De-duplication can look like paying a debt by deleting the proof: a path is dropped only when it is a test or a gate that is still in `guards`, and every fixture, doc and `data/results/live-*` path stays. The remaining risk is that a single record still carries a fact only its doc repeats — that is BS-19, still open, and this round checked the compacted five against their docs by hand rather than by a gate."
+      },
+      "evidence": [
+        "scripts/lib/budgets.mjs",
+        "scripts/gate_size.mjs",
+        "data/results/patch-registry-2026-11-16T15-40-00.000Z.json",
+        "docs/HANDOFF.md"
+      ]
+    },
+    {
+      "id": "S59",
+      "gate": "ssot",
+      "title": "Every artifact this round cites is script-produced, hashed and listed where a reader looks",
+      "axes": {
+        "correctness": "Five new artifacts: the seam evidence (`live-request-error-…`), the final snapshot, and the gate pair. Each carries `produced_by`, `generated_at`, `schema_version` and a `.sha256` that matches its bytes; the seam recorder refuses to write at all when a run does not have the shape it claims.",
+        "reproducibility": "The five runs behind the seam artifact are reproducible from `.tmp/r56-setup.mjs` + `.tmp/r56-run-probe.mjs` with the commands written into the artifact, and the released-bytes control is the same tree with `.tmp/r56-dist-0415` copied in.",
+        "compliance": "No artifact was hand-edited: the two I had to repair (the registry snapshot and the handoff rows) were produced by their own recorders again, and the seam artifact was regenerated from the runs after the first copy was rejected as overwriting.",
+        "ssot": "The evidence index lists the seam artifact, the current snapshot and the gate pair, with exactly one `当前` row per family; `handoff-truth` resolves every row and compares the quoted hashes.",
+        "adversarial": "The artifact could have been written to say more than the runs show: the recorder checks `exit_code`, request counts, retry events, diagnosis counts and the turn's ending before it writes, and its first draft was rejected (`exit 4`) when the runs were still wrong — which is the behaviour that keeps the artifact honest."
+      },
+      "evidence": [
+        "data/results/live-request-error-2026-11-16T15-10-00.000Z.json",
+        "data/results/patch-registry-2026-11-16T15-40-00.000Z.json",
+        "data/results/gates-2026-11-16T16-10-00.000Z.json",
+        "scripts/record_request_error_seam.mjs"
+      ]
     }
   ],
   "updated_at": "2026-11-16T14:00:00.000Z"

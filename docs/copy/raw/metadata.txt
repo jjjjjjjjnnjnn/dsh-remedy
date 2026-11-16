@@ -1,5 +1,5 @@
 {
-  "description": "A patch set for DeepSeek Harness: 42 registered defects, each with evidence, guards and limits.",
+  "description": "A patch set for DeepSeek Harness: forty-six registered defects, each with evidence, guards and limits.",
   "plugin_description": "DeepSeek Harness patch set that intercepts MALFORMED_RESPONSE streams, splits fused tool-call arguments, re-throws unprovable buffers, and names the deterministic refusals it does not retry.",
   "core_description": "Pure repair and redaction engine for the dsh-remedy patch set. Nothing unproven is ever emitted; a failure it cannot split is re-thrown unchanged.",
   "topics": [

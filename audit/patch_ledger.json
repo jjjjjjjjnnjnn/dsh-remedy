@@ -186,18 +186,19 @@
     },
     {
       "id": "P-0011",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.3.8",
       "evidence": [
-        "tests/unit/request-error.test.ts",
         "packages/plugin/src/failure-listener.ts",
-        "docs/patches/P-0011-request-error-contract.md"
+        "docs/patches/P-0011-request-error-contract.md",
+        "data/results/live-request-error-2026-11-16T15-10-00.000Z.json"
       ],
       "guards": [
         "tests/unit/request-error.test.ts",
         "packages/plugin/src/failure-listener.ts"
-      ]
+      ],
+      "verified_at": "2026-11-16T15:10:00.000Z"
     },
     {
       "id": "P-0012",
@@ -217,21 +218,22 @@
     },
     {
       "id": "P-0013",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.3.8",
       "evidence": [
         "packages/core/src/preflight.ts",
         "packages/plugin/src/failure-listener.ts",
-        "tests/unit/preflight.test.ts",
-        "tests/unit/request-error.test.ts",
-        "docs/patches/P-0013-named-refusals.md"
+        "docs/patches/P-0013-named-refusals.md",
+        "data/results/live-request-error-2026-11-16T15-10-00.000Z.json"
       ],
       "guards": [
         "tests/unit/preflight.test.ts",
         "tests/unit/request-error.test.ts",
+        "tests/unit/agent-error-naming.test.ts",
         "packages/core/src/preflight.ts"
-      ]
+      ],
+      "verified_at": "2026-11-16T15:10:00.000Z"
     },
     {
       "id": "P-0014",
@@ -728,6 +730,35 @@
       "guards": [
         "tests/unit/turn-answer.test.ts",
         "tests/e2e/cli.test.ts"
+      ]
+    },
+    {
+      "id": "P-0045",
+      "status": "verified",
+      "owner": "remedy",
+      "since": "0.4.16 (unreleased on the tree)",
+      "verified_at": "2026-11-16T15:10:00.000Z",
+      "evidence": [
+        "docs/patches/P-0045-preparation-refusal-seam.md",
+        "packages/plugin/src/failure-listener.ts",
+        "data/results/live-request-error-2026-11-16T15-10-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/agent-error-naming.test.ts",
+        "tests/unit/request-error.test.ts"
+      ]
+    },
+    {
+      "id": "P-0046",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.16 (unreleased on the tree)",
+      "evidence": [
+        "docs/patches/P-0046-public-page-completeness.md",
+        "tests/governance/public-pages-complete.test.ts"
+      ],
+      "guards": [
+        "tests/governance/public-pages-complete.test.ts"
       ]
     }
   ]

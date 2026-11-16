@@ -30,7 +30,11 @@ test('every covering patch is resident, because a CLI patch cannot see turn/end'
   // `explain` answers "covered by" from the registry, so a claim of coverage is
   // also a claim that the patch runs where turns end. A build-side or CLI patch
   // that declared coverage would be answering a question it cannot observe.
-  const RESIDENT = new Set(['llm/stream', 'agent/request-error'])
+  //
+  // P-0045 measured that a preparation-time refusal ends a turn on `agent/error`,
+  // not on `agent/request-error`: a resident namer has to sit on that seam or the
+  // class P-0013 covers is named by nobody.
+  const RESIDENT = new Set(['llm/stream', 'agent/request-error', 'agent/error'])
   for (const patch of PATCHES) {
     if ((patch.failureClasses ?? []).length === 0) continue
     assert.ok(

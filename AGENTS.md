@@ -1,13 +1,13 @@
 # dsh-remedy AGENTS.md
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
-> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.15`（已发布，两包 `latest`；两个 profile 与桌面 App 都在 0.4.15 上）
-> **Stand**：R55（2026-11-16，**交接轮做成四件实事**——registry 先压 28 条老记录付清字节、P-0044 让 `scan` 在截断的 turn 上说清它有没有回答、把它发成 **0.4.15**（两包 `latest`，冷装 `OK 8 fixture(s)`，两个 profile 与桌面 App 都换到它）、并在 Windows + Linux 两个平台量过——公开仓 `main` 是 `466fa70`、`v0.4.15` release 在位；R54 是**交接审计查出一个已经发出去的缺陷**——P-0028 为夹具写的那条守卫允许一到两层
+> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.16`（已发布，两包 `latest`；两个 profile 与桌面 App 都在 0.4.16 上）
+> **Stand**：R56（2026-11-16，**把两条「测过」变成「真机见过」再发版**：P-0013 的命名此前挂在宿主根本不会派发的接缝上，P-0045 把它挪到 `agent/error` 并共享一份 `(turn, step, code)` 键；P-0011 的 retry 第一次被真机 journal 见证；P-0046 把「首页少一个补丁、落后一个发布」变成判据。0.4.16 已发布（两包 `latest`），冷装 `OK 8 fixture(s)`，两个 profile 与桌面 App 都在 0.4.16，`0.4.13` 已 `npm deprecate`。R55 是那四件实事——registry 先压 28 条老记录付清字节、P-0044 让 `scan` 在截断的 turn 上说清它有没有回答、把它发成 **0.4.15**（两包 `latest`，冷装 `OK 8 fixture(s)`，两个 profile 与桌面 App 都换到它）、并在 Windows + Linux 两个平台量过——公开仓 `main` 是 `466fa70`、`v0.4.15` release 在位；R54 是**交接审计查出一个已经发出去的缺陷**——P-0028 为夹具写的那条守卫允许一到两层
 > 分隔符，而夹具是 JSON 字符串、模型程序里的一个反斜杠在文件里是**四个**，于是守卫在它本该保护的文件上答 `false`，
 > **0.4.13 的 tarball 里带着账号名**；守卫放宽到任意层（仍拒 `file:///Users/<name>`）并新增「产物里不许出现本机账号」
 > 一条，夹具改用 `<home>`，发 **0.4.14**。R53 是先量接缝再决定产品（`agent/pre-step` 的 `enter` 能带消息、
 > 换不了 selection，所以 P-0013 的 preflight 落成离线的 P-0042）；R52 是交接轮（旧数字对齐到 0.4.12）。
-> **368 测试 / 6 门 / `--mutate` 6-6**（Windows 与 Linux WSL2 同值）；registry 剩 **2 684 B**、CLI 半边剩 **38 B**（下一处 CLI 字节必须先付账）。
+> **376 测试 / 6 门 / `--mutate` 6-6**（Windows 与 Linux WSL2 同值）；registry 剩 **3 007 B**、CLI 半边剩 **38 B**（下一处 CLI 字节必须先付账）。
 > **平台边界：Windows 与 Linux 实测，macOS 未实测**；P-0038 的 `/Users` 形状在 Linux 上是字符串。
 > R49 是 P-0037（少一个闭合符）与 P-0038（脱敏按一个平台写却发到三个）；R48 是交接轮（三份旧账本对齐）；
 > R47 是**去互联网上读同接缝的五个竞品与上游源码**，把拼得上的
@@ -16,14 +16,14 @@
 > R43 是 P-0032 台账去重与 P-0033 空身份；R42 是引擎的字节账（P-0031）；R41 是继任者的地图（P-0029）与归因证明（P-0030）。
 > 更早的 R40…R1 见 `docs/HANDOFF.md` 的批次叙事。｜
 > **接手先读**：`docs/HANDOFF.md` → `docs/research/README.md` → `docs/research/leads.md` → `PROJECT_RULES.md` → `INDEX.md`
-> **R43 起的主线**是外部反馈 → 稳定补丁：报告只是线索，本机复现后才有补丁；来源与方法见 `docs/research/`。
+> **R43 起的主线**是外部反馈 → 稳定补丁：报告只是线索，本机复现后才有补丁；来源与方法见 `docs/research/`。R56 的教训：**接缝名写在补丁里不算数，要在宿主源码里核对接缝真的会被派发**。
 >
-> **基线（2026-11-16）**：`pnpm run verify` = **368 tests / 6 gates**（Windows 与 Linux WSL2 同值）；
-> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.15`（latest）+
-> `dsh-remedy-core@0.4.15`（latest）。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
-> `v0.4.13` / `v0.4.14` / `v0.4.15`。四十四补丁：**6 `verified` + 38 `tested`**，在 DSH 0.2.2-rc.3 上实测过（Windows 与 Linux WSL2 同值，R55）。
-> **字节余量（下一轮的第一个约束）**：plugin **82 857 / 83 000（143 B；CLI 半边只剩 38 B）**、core **103 867 / 104 000（133 B）**、
-> registry **65 316 / 68 000（2 684 B —— 下一条记录之前仍建议先压一条老记录，按 P-0032 的先例，不许抬 cap）**。
+> **基线（2026-11-16）**：`pnpm run verify` = **376 tests / 6 gates**（Windows 与 Linux WSL2 同值）；
+> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.16`（latest）+
+> `dsh-remedy-core@0.4.16`（latest）。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
+> `v0.4.13` / `v0.4.14` / `v0.4.15` / `v0.4.16`。四十六补丁：**9 `verified` + 37 `tested`**，在 DSH 0.2.2-rc.3 上实测过（Windows 与 Linux WSL2 同值，R56）。
+> **字节余量（下一轮的第一个约束）**：plugin **82 864 / 83 000（136 B；CLI 半边只剩 38 B）**、core **103 544 / 104 000（456 B）**、
+> registry **64 993 / 68 000（3 007 B —— 下一条记录可以直写，但仍建议按 P-0032 的先例先压一条老记录）**。
 > **本目录不是 git 根**：提交在 `..`（容器），公开仓库由
 > `git subtree split --prefix=dsh-remedy` 切出。
 

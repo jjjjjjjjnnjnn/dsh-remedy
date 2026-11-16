@@ -1,13 +1,8 @@
 /**
- * The `agent/request-error` listener (P-0011) and the failure namer (P-0013):
- * name what this plugin can diagnose — including what it must never retry —
- * and retry `MALFORMED_RESPONSE` within an explicit, bounded budget.
- *
- * Upstream's contract, quoted from the shipped runtime: a handling listener
- * returns `{ kind: 'retry' }` *without* calling `next()`, and an unowned decision
- * must return `next()`. Speaking only when the decision is ours is the whole
- * rule; calling `next()` first and then overriding it (what 0.3.7 did) discards
- * the default chain, and context compaction authorizes its own retry there.
+ * `agent/request-error` (P-0011 retry, P-0013 naming) and `agent/error` (P-0045
+ * naming). The contract, the measured seam split and the shared key set are in
+ * `docs/patches/P-0011-request-error-contract.md`, `P-0013-named-refusals.md` and
+ * `P-0045-preparation-refusal-seam.md`; this file only implements them.
  */
 
 export interface FailurePayload {
@@ -15,6 +10,13 @@ export interface FailurePayload {
   readonly step?: unknown
   readonly failure?: { readonly code?: string; readonly message?: string }
   readonly signal?: { readonly aborted?: boolean }
+}
+
+/** `agent/error` carries the thrown error itself, not a `failure`. */
+export interface AgentErrorPayload {
+  readonly turn?: unknown
+  readonly step?: unknown
+  readonly error?: { readonly code?: string; readonly message?: string }
 }
 
 export interface FailureSink {
@@ -25,12 +27,7 @@ export interface FailureSink {
 /** Signals, not failures: retrying one burns a request and hides the message. */
 const CONTROL_CODES = new Set(['IMAGE_OFFLOAD_REQUIRED', 'INVALID_CREDENTIAL', 'MISSING_CREDENTIAL'])
 
-/**
- * Classes worth a named line in the journal (P-0013). Each is a real defect
- * measured on this host (`data/results/scan-full-*.json`), not a guess. They are
- * named, never retried: a retry of a deterministic refusal spends a request to
- * learn the same answer twice.
- */
+/** Named once per `(turn, step, code)`, never retried: the answer would be the same. */
 const DIAGNOSED_CODES = new Set([
   'UNSUPPORTED_REASONING_EFFORT',
   'INVALID_REQUEST',
@@ -44,6 +41,33 @@ const RETRYABLE = 'MALFORMED_RESPONSE'
 /** A resident process must not keep one entry per step forever. */
 export const RETRY_CACHE_LIMIT = 256
 
+/** One key set for every seam that can report the same failed step. */
+export interface DiagnosisNamer {
+  name(code: string | undefined, key: string, message: string | undefined): void
+  /** Tests read this to prove the set stays bounded. */
+  size(): number
+}
+
+export function makeNamer(report: (code: string, key: string) => void, logger?: FailureSink): DiagnosisNamer {
+  const named = new Set<string>()
+  return {
+    name(code, key, message) {
+      if (typeof code !== 'string' || code === '' || !DIAGNOSED_CODES.has(code)) return
+      const seen = `${key}:${code}`
+      if (named.has(seen)) return
+      named.add(seen)
+      while (named.size > RETRY_CACHE_LIMIT) {
+        const oldest = named.values().next()
+        if (oldest.done === true) break
+        named.delete(oldest.value)
+      }
+      report(code, key)
+      logger?.warn?.(`remedy: ${code} at ${key}: ${String(message ?? '').slice(0, 200)}`)
+    },
+    size: () => named.size,
+  }
+}
+
 export interface FailureListener {
   (payload: FailurePayload, next: () => unknown): Promise<unknown>
   /** Exposed so a test proves the cache is bounded instead of assuming it. */
@@ -55,42 +79,27 @@ export interface FailureHandlerOptions {
   readonly retryMax: number
   /** Called once per retried attempt, with the `turn:step` key. */
   readonly onRetry: (key: string) => void
-  /** Called once per named diagnosis, with the code and the key. */
-  readonly onDiagnosis: (code: string, key: string) => void
-  /** The preceding `next()` is not consulted when this listener owns the decision. */
+  /** Called once per named diagnosis. Ignored when `namer` is supplied. */
+  readonly onDiagnosis?: (code: string, key: string) => void
+  /** The set both seams share, so one failure is named once. */
+  readonly namer?: DiagnosisNamer
   readonly logger?: FailureSink
 }
 
 export function makeFailureListener(options: FailureHandlerOptions): FailureListener {
-  const { retryMax, onRetry, onDiagnosis, logger } = options
+  const { retryMax, onRetry, logger } = options
+  const namer = options.namer ?? makeNamer(options.onDiagnosis ?? (() => {}), logger)
   const budget = new Map<string, number>()
-  const named = new Set<string>()
 
   const listener = async (payload: FailurePayload, next: () => unknown): Promise<unknown> => {
     const code = payload.failure?.code
     if (typeof code !== 'string' || code === '' || payload.signal?.aborted === true) return await next()
-
     const key = `${String(payload.turn)}:${String(payload.step)}`
 
     if (DIAGNOSED_CODES.has(code)) {
-      // Name it once per (step, code): a host-level retry of the same failure
-      // would otherwise fill the journal with the same sentence — the "unreadable
-      // noise" defect this project already fixed once in `scan` — while a
-      // different code on the same step is a genuinely different fact.
-      const seenKey = `${key}:${code}`
-      if (!named.has(seenKey)) {
-        named.add(seenKey)
-        while (named.size > RETRY_CACHE_LIMIT) {
-          const oldest = named.values().next()
-          if (oldest.done === true) break
-          named.delete(oldest.value)
-        }
-        onDiagnosis(code, key)
-        logger?.warn?.(`remedy: ${code} at ${key}: ${String(payload.failure?.message ?? '').slice(0, 200)}`)
-      }
+      namer.name(code, key, payload.failure?.message)
       return await next()
     }
-
     if (code !== RETRYABLE || CONTROL_CODES.has(code) || retryMax <= 0) return await next()
 
     const used = budget.get(key) ?? 0
@@ -102,11 +111,15 @@ export function makeFailureListener(options: FailureHandlerOptions): FailureList
       if (oldest.done === true) break
       budget.delete(oldest.value)
     }
-
     onRetry(key)
     logger?.warn?.(`remedy: retry ${used + 1}/${retryMax} for ${key} after ${RETRYABLE}`)
     return { kind: 'retry' }
   }
   ;(listener as FailureListener).cacheSize = () => budget.size
   return listener as FailureListener
+}
+
+/** `agent/error` has no decision to return, so this only names. */
+export function makeErrorNamer(namer: DiagnosisNamer): (payload: AgentErrorPayload) => void {
+  return (payload) => namer.name(payload.error?.code, `${String(payload.turn)}:${String(payload.step)}`, payload.error?.message)
 }

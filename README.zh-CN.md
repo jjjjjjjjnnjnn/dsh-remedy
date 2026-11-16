@@ -8,7 +8,7 @@
 
 [English](README.md)
 
-dsh-remedy 是 DeepSeek Harness（DSH）的**补丁集**：四十三个缺陷，每一个都登记了它挂的接缝、它消掉的症状、实测到的机制，以及它不越过的边界。其中两个接缝是常驻的（`llm/stream` 与 `agent/request-error`），其余在 CLI、构建侧，还有一个**测过但故意没挂**的接缝。
+dsh-remedy 是 DeepSeek Harness（DSH）的**补丁集**：四十四个缺陷，每一个都登记了它挂的接缝、它消掉的症状、实测到的机制，以及它不越过的边界。其中两个接缝是常驻的（`llm/stream` 与 `agent/request-error`），其余在 CLI、构建侧，还有一个**测过但故意没挂**的接缝。
 
 ## 它修什么
 

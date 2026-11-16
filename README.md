@@ -8,7 +8,7 @@
 
 [中文说明](README.zh-CN.md)
 
-dsh-remedy is a patch set for DeepSeek Harness (DSH) — forty-three defects, each registered with the seam it touches, the symptom it removes, the mechanism that was measured, and the limits it does not cross. Two of those seams are resident (`llm/stream` and `agent/request-error`); the rest are the CLI, the build side, and one seam that has been measured but deliberately not mounted.
+dsh-remedy is a patch set for DeepSeek Harness (DSH) — forty-four defects, each registered with the seam it touches, the symptom it removes, the mechanism that was measured, and the limits it does not cross. Two of those seams are resident (`llm/stream` and `agent/request-error`); the rest are the CLI, the build side, and one seam that has been measured but deliberately not mounted.
 
 ## What it fixes
 

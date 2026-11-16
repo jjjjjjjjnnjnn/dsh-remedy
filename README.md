@@ -238,7 +238,7 @@ pnpm run gate
 node scripts/gate.mjs --mutate
 ```
 
-Six gates run on every change: `ssot`, `registry`, `namespace`, `step-review`, `copy`, `size`. `--mutate` breaks each one on purpose and requires every one to go red; it currently catches 6 of 6. The suite is 362 tests and 0 failing.
+Six gates run on every change: `ssot`, `registry`, `namespace`, `step-review`, `copy`, `size`. `--mutate` breaks each one on purpose and requires every one to go red; it currently catches 6 of 6. The suite is 368 tests and 0 failing, on Windows and on Linux (WSL2 Ubuntu 26.04).
 
 ## Contributing
 

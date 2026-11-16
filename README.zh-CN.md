@@ -238,7 +238,7 @@ pnpm run gate
 node scripts/gate.mjs --mutate
 ```
 
-每次改动跑六道门：`ssot`、`registry`、`namespace`、`step-review`、`copy`、`size`。`--mutate` 会故意破坏每一道并要求它变红，现在 6 抓 6。测试是 362 条，0 失败。
+每次改动跑六道门：`ssot`、`registry`、`namespace`、`step-review`、`copy`、`size`。`--mutate` 会故意破坏每一道并要求它变红，现在 6 抓 6。测试是 368 条，0 失败（Windows 与 Linux（WSL2 Ubuntu 26.04）同值）。
 
 ## 贡献
 

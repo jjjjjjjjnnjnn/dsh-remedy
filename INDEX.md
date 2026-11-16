@@ -85,6 +85,7 @@
 | `data/results/publish-2026-11-11T17-35-00.000Z.json` | 0.3.6 发布后两包 `latest`（`ok: true`） |
 | `docs/patches/P-0001-toolcall-fusion.md` … `P-0009-session-header-window.md` | 每个补丁的症状 / 机制 / 反证 / 边界 |
 | `docs/patches/P-0010-cli-usage-truth.md` … `P-0030-attribution-proof.md` | 同上；P-0015 是 `agent/pre-step` 拒绝语义的实测记录；P-0016 的文档在 R31 补写；P-0024 把两个包内 README 收进 copy 通道；P-0025 让 `explain` 的三态落地；P-0026 把发布流程收成一个家；P-0027 给「名字证不出来」的片段一个不可执行的名字；P-0028 把随包夹具里的本机路径换成 `<home>`；P-0029 把继任者的版本指针与字节账接上判据；P-0030 把归因证明搬进 core，按 schema 能证明的部分判定并记录 `unproven` |
+| `docs/patches/P-0045-preparation-refusal-seam.md` … `P-0048-macos-ci-criterion.md` | P-0045 把 P-0013 的命名挂到 `agent/error`（准备阶段的拒绝只抵达那里）；P-0046 让首页点名它数到的每个补丁并列出已发布版本的尺寸；P-0047 把 P-0044 的问题问给 `completed` turn（探针复现 #13169 形状）；P-0048 把 macOS 从一句话变成 CI 判据 |
 | `docs/patches/P-0031-core-budget.md` … `P-0044-turn-answered.md` | P-0031 给引擎立 cap；P-0032 把台账的长叙述搬回补丁文档（registry.js 66 303 → 63 217，cap 不动）；P-0033 让空 id/空名的 tool call 不再被持久化（合成 id + `remedy_unattributed`）；P-0034 让「没有一个拒绝记账解释过的失败」记成 error 而不是安静的一轮；P-0035 把 patch 层每个 `name:` 解析到 manifest exports 与已构建文件（0 运行时字节）；P-0036 让纯 delta 协议的 tool call 保留流里已经证过的 id（宿主 `assembler.ts:72` 无条件写 id、`:115` 的 `??` 不兜空串）；P-0037 让「单个对象少一个闭合符」在唯一插入点上被补回，末尾与歧义一律拒（上游 #12819，`pi-ai` 回显 `Received arguments:` 才让字节到得了接缝）；P-0040 把装机验收的夹具数从 `data/fixtures/` 数出来；P-0041 让安装后的 `bin` 在 POSIX 上真的运行；P-0042 让 `scan` 记住宿主拒绝的那个档位、让 `explain` 在 profile 仍写着它时打一行 CONFLICT 并退出 1（零常驻字节，`agent/pre-step` 不能改 selection 是实测的）；P-0043 把为夹具写的那条守卫放宽到任意层转义，并新增「产物里不许出现本机账号」，夹具改用 `<home>`；P-0044 让 `scan` 在截断的 turn 上补一句「它到底有没有回答」（规则住 `core/answer.ts`，只数 `max-tokens`，只报告不升级） |
 | `docs/adr/0001-stream-repair-over-asar-patch.md` | 为什么在 `llm/stream` 修 |
 
@@ -157,6 +158,8 @@
 | `tests/unit/refused-effort.test.ts` | `scan` 只在宿主句子同时点名 provider/model/level 时才记 `refused_efforts`；code 单独出现不造 key（P-0042） |
 | `tests/unit/runtime-version.test.ts` | runtime 版本读自 `runtime.json`；缺字段/坏文件答 null，不猜（P-0042 的附带修正） |
 | `tests/unit/turn-answer.test.ts` | P-0044 的判据：文本 / tool-call 算回答，只有 reasoning 与空白不算，只有 turn 最后一步决定，没有 assistant 消息算没回答 |
+| `tests/unit/completed-answer.test.ts` | P-0047 的判据：`completed` 的同样形状被数，文本/工具调用不数，两个结局各自计数，rows 与总数对得上 |
+| `tests/governance/public-pages-complete.test.ts` | P-0046 的两条规则：每个 registry id 都出现在两个首页；状态句点名的版本是尺寸表第一行 |
 | `tests/governance/shipped-samples.test.ts` | 两个规则：随包文件不许有 `…:/Users/<name>`（任意层分隔符），`data/results/` 不许出现本机账号（P-0028 / P-0043） |
 | `tests/e2e/explain-conflict.test.ts` | `explain` 的 CONFLICT 五种情形：命中 / 已改好 / 无拒绝 / profile 未写档位 / 另一条路由（P-0042） |
 | `tests/unit/redact-platform.test.ts` | 三个平台的家目录与三种会话目录键；过度删除是负对照（P-0038） |

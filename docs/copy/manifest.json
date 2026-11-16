@@ -319,24 +319,6 @@
       "output_sha256": "f24428fb646baf4ad6db682e31289ed3567865e82604bb730c8c0b8a1c24f94d"
     },
     {
-      "name": "readme",
-      "target": "README.md",
-      "model": "in-session",
-      "generated_at": "2026-11-16T17:38:21.261Z",
-      "facts_sha256": "cf7e665e1280f92f1c71025e41f4cd790303ae5706de0b82f412887328783dd1",
-      "draft_sha256": "dd77a8b6784b54357c0a967b16057865063afd8354a6fee2ef5370e24e502b8e",
-      "output_sha256": "dd77a8b6784b54357c0a967b16057865063afd8354a6fee2ef5370e24e502b8e"
-    },
-    {
-      "name": "readme-zh",
-      "target": "README.zh-CN.md",
-      "model": "in-session",
-      "generated_at": "2026-11-16T17:38:21.381Z",
-      "facts_sha256": "cf7e665e1280f92f1c71025e41f4cd790303ae5706de0b82f412887328783dd1",
-      "draft_sha256": "552c37b8bc4bed19974e07dc7a0d8ecec3e7edc37c9d850f0d4cc73199f1e796",
-      "output_sha256": "552c37b8bc4bed19974e07dc7a0d8ecec3e7edc37c9d850f0d4cc73199f1e796"
-    },
-    {
       "name": "release-notes",
       "target": "docs/copy/release-notes/v0.4.17.md",
       "model": "in-session",
@@ -344,7 +326,25 @@
       "facts_sha256": "cf7e665e1280f92f1c71025e41f4cd790303ae5706de0b82f412887328783dd1",
       "draft_sha256": "261fd97fcfdc9ce9ba93a51ac6c7eea43f59771db9b5b7042142ed9152a71f25",
       "output_sha256": "261fd97fcfdc9ce9ba93a51ac6c7eea43f59771db9b5b7042142ed9152a71f25"
+    },
+    {
+      "name": "readme",
+      "target": "README.md",
+      "model": "in-session",
+      "generated_at": "2026-11-16T18:21:33.031Z",
+      "facts_sha256": "cf7e665e1280f92f1c71025e41f4cd790303ae5706de0b82f412887328783dd1",
+      "draft_sha256": "3bfae2dd37038dfc81674256ac22e3b0c13643a3142c1afae35235a7e4eb3280",
+      "output_sha256": "3bfae2dd37038dfc81674256ac22e3b0c13643a3142c1afae35235a7e4eb3280"
+    },
+    {
+      "name": "readme-zh",
+      "target": "README.zh-CN.md",
+      "model": "in-session",
+      "generated_at": "2026-11-16T18:21:33.149Z",
+      "facts_sha256": "cf7e665e1280f92f1c71025e41f4cd790303ae5706de0b82f412887328783dd1",
+      "draft_sha256": "28dbde408a1d24132e0960ad1c1598c457e343090b3e175e1f4eb6b753ef45c8",
+      "output_sha256": "28dbde408a1d24132e0960ad1c1598c457e343090b3e175e1f4eb6b753ef45c8"
     }
   ],
-  "updated_at": "2026-11-16T17:40:00.190Z"
+  "updated_at": "2026-11-16T18:21:33.154Z"
 }

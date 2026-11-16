@@ -103,7 +103,7 @@ git -C .. log --oneline -3
 
 - Windows：**382 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` **6-6**；`cli verify` `OK 8 fixture(s)`。
 - 快照 `patch-registry-2026-11-16T18-10-00.000Z.json`（四十八补丁：**9 `verified` + 39 `tested`**）；
-  门禁 `gates-2026-11-16T18-35-00.000Z.json` / `gates-mutate-2026-11-16T18-40-00.000Z.json`；五轴 review `S60…S62`；
+  门禁 `gates-2026-11-16T20-00-00.000Z.json` / `gates-mutate-2026-11-16T20-05-00.000Z.json`（交接审计之后的最终树）；五轴 review `S60…S62`；
   披露行 `opencode-2026-11-16-dsh-remedy-r57`。
 
 **G. Linux 与 macOS 的实测**
@@ -200,8 +200,8 @@ git -C .. log --oneline -3
 
 - Windows：**376 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` **6-6**；`cli verify` `OK 8 fixture(s)`。
 - 快照 `patch-registry-2026-11-16T15-40-00.000Z.json`（四十六补丁：**9 `verified` + 37 `tested``，sha256 `1e503ca1…`）；
-| `gates-2026-11-16T19-25-00.000Z.json` | 绿 | **当前**门禁（6 gates ALL GREEN，R57 树）；负对照见下一行 |
-| `gates-mutate-2026-11-16T19-30-00.000Z.json` | 绿 | **当前**负对照（6/6 CAUGHT，同一次 R57 树） |
+| `gates-2026-11-16T20-00-00.000Z.json` | 绿 | **当前**门禁（6 gates ALL GREEN，R57 树）；负对照见下一行 |
+| `gates-mutate-2026-11-16T20-05-00.000Z.json` | 绿 | **当前**负对照（6/6 CAUGHT，同一次 R57 树） |
 | `gates-2026-11-16T17-30-00.000Z.json` / `gates-mutate-2026-11-16T17-35-00.000Z.json` | 绿 | 历史门禁对儿（0.4.16 发布后；被 18:35 那对取代） |
   披露行 `opencode-2026-11-16-dsh-remedy-r56`。
 - 字节账（cap 一个没动）：plugin **82 864 / 83 000（136 B；CLI 半边只剩 38 B）**、core **103 544 / 104 000（456 B）**、registry **64 993 / 68 000（3 007 B）**。

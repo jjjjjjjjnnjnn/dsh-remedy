@@ -189,24 +189,6 @@
       "channel": "retired-external-model"
     },
     {
-      "name": "readme",
-      "target": "README.md",
-      "model": "in-session",
-      "generated_at": "2026-11-16T12:39:50.450Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
-      "draft_sha256": "527135d826990651edbd62b43142d1851f04acc607b528c5617c43b523657b5e",
-      "output_sha256": "527135d826990651edbd62b43142d1851f04acc607b528c5617c43b523657b5e"
-    },
-    {
-      "name": "readme-zh",
-      "target": "README.zh-CN.md",
-      "model": "in-session",
-      "generated_at": "2026-11-16T12:39:50.553Z",
-      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
-      "draft_sha256": "363988fbb75d74805a232a6a7a61e6eaf5e39b4c4621201854021ee17c428735",
-      "output_sha256": "363988fbb75d74805a232a6a7a61e6eaf5e39b4c4621201854021ee17c428735"
-    },
-    {
       "name": "metadata",
       "target": "docs/copy/repo-metadata.json",
       "model": "in-session",
@@ -322,7 +304,25 @@
       "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
       "draft_sha256": "f22ac30fa72b51f19a18bd2249f2d021e0f327a520e5258c750a5a0f031bcf6e",
       "output_sha256": "f24428fb646baf4ad6db682e31289ed3567865e82604bb730c8c0b8a1c24f94d"
+    },
+    {
+      "name": "readme",
+      "target": "README.md",
+      "model": "in-session",
+      "generated_at": "2026-11-16T12:58:45.116Z",
+      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
+      "draft_sha256": "d477e47004b74fc250ce95dab2cdd2baaebe9a41ee4142be41434ed86cdb63c4",
+      "output_sha256": "d477e47004b74fc250ce95dab2cdd2baaebe9a41ee4142be41434ed86cdb63c4"
+    },
+    {
+      "name": "readme-zh",
+      "target": "README.zh-CN.md",
+      "model": "in-session",
+      "generated_at": "2026-11-16T12:58:45.255Z",
+      "facts_sha256": "04e731b98aa0a5e0f2d205c590929a04daa935a683889a22b248e5cc1f889a58",
+      "draft_sha256": "f4a5e416a245b5d03bac9f3917739fe2facd5f63cd5515d194238a243ddd9cf2",
+      "output_sha256": "f4a5e416a245b5d03bac9f3917739fe2facd5f63cd5515d194238a243ddd9cf2"
     }
   ],
-  "updated_at": "2026-11-16T12:43:42.778Z"
+  "updated_at": "2026-11-16T12:58:45.260Z"
 }

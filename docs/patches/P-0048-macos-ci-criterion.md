@@ -57,8 +57,14 @@ gh run list --repo jjjjjjjjnnjnn/dsh-remedy --limit 1   # the macos job appears 
 gh run view <id> --json jobs --jq '.jobs[].name'       # ubuntu 22, ubuntu 24, windows, macos
 ```
 
-The first push that carries this file is the measurement: until it is green, the
-criterion is a claim like any other.
+The first push that carried this file is the measurement, and it is green:
+- `gh run list` → run **43921103727** (`main`, `push`, 54 s, `success`)
+- `gh run view 43921103727 --json jobs` → four jobs, all `completed / success`:
+  `verify (macos, node 24)`, `verify (windows, node 24)`, `verify (node 22)`, `verify (node 24)`
+
+So the criterion is measured rather than claimed: the darwin job ran
+`pnpm run verify` and `node scripts/gate.mjs --mutate` and both passed. It still
+leaves no `data/results/live-*`, which is why the record stays `tested`.
 
 ## Numbers this page quotes
 

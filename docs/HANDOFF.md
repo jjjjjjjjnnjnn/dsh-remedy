@@ -11,7 +11,7 @@
 | 补丁 | 四十八，按 registry 顺序：P-0001 `verified` 拆开已证实的粘连调用；P-0002 `verified` 救援必须可证、可归因、原子；P-0003 `verified` 拒绝必须可观测，撤回不许读成修复；P-0005 `tested` 裸值成员值要么 reseal、要么拒绝；P-0011 `verified` 第二接缝按上游契约重写 + 有界重试（**R56 真机见证**）；P-0012 `tested` 一个加载路径一个字节上限；P-0013 `verified` 确定性的拒绝只命名一次（**R56 改挂 `agent/error` 并见证**）；P-0004 `tested` scan 读得懂 zstd 目录，脱敏看见每种路径形状；P-0006 `tested` scan 统计每一种 turn 结束方式；P-0007 `tested` copy 通道按长度选传输；P-0008 `tested` 字节预算变成脚本检查的门；P-0010 `tested` 用法文本必须与二进制一致；P-0009 `tested` 窗口化扫描按 createdAt 计头记录；P-0014 `tested` 事实包 / 交接 / 包内页面三处自述必须成立；P-0015 `tested` agent/pre-step 拒绝语义的实测；P-0016 `tested` 覆盖表只能住在 registry；P-0017 `tested` 两个包内页面钉住「无散文数字 + 命令真能跑」；P-0018 `tested` Windows 退出码按异常命名；P-0019 `tested` 首屏按补丁集重写；P-0020 `tested` 市场索引说清字节从哪里来；P-0021 `tested` 删掉指向不存在模块的导出；P-0022 `tested` 漂移测试先只读检查再比较；P-0023 `tested` 每个补丁必须有 docs/patches 文档；P-0024 `tested` 两个包内页面进 copy 通道；P-0025 `tested` 没读到的 profile 不算发现；P-0026 `tested` 发布流程只留一个家；P-0027 `tested` 证不出名字的片段用 remedy_unattributed 发出；P-0028 `tested` 随包样本里的本机路径换成 <home>；P-0029 `tested` 继任者的版本指针与字节账接上判据；P-0030 `tested` 归因证明搬进 core；P-0031 `tested` 引擎有了自己的字节上限；P-0032 `tested` 台账不再重复补丁文档的长叙述；P-0033 `verified` 空身份的调用不再被持久化；P-0034 `tested` 没有拒绝记账解释的失败不再记成安静的一轮；P-0035 `tested` patch 层每一行都要能在 manifest 里解析；P-0036 `tested` 纯 delta 的调用保留流里证过的 id；P-0037 `verified` 少一个闭合符时只在唯一内部插入点补回；P-0038 `tested` 脱敏认三个平台的家目录与会话键；P-0039 `tested` 会话目录在三个平台上只有一个定义；P-0040 `tested` 装机验收的夹具数从 data/fixtures 数出来；P-0041 `verified` 安装后的 bin 在 POSIX 上真的运行；P-0042 `tested` profile 仍写着的档位与宿主实测拒绝的档位第一次被摆在一起；P-0043 `tested` 为夹具写的那条守卫看不见夹具的 JSON 转义形状；P-0044 `tested` 截断的 turn 现在也说它到底有没有回答；P-0045 `verified` 准备阶段的拒绝只抵达 `agent/error`，此前挂错接缝因此静默；P-0046 `tested` 首页必须点名它数到的每个补丁、并列出已发布版本的尺寸；P-0047 `tested` `scan` 也数「结束却没回答」的 `completed` turn（探针复现）；P-0048 `tested` macOS 从一句话变成一个 CI 判据。逐条的症状 / 机制 / 反证 / 边界在 `docs/patches/`；状态以 `dsh-remedy status` 为准。 |
 | 基线 | **382 tests / 6 gates / `--mutate` 6-6**，Windows 与 **Linux（WSL2 Ubuntu 26.04）同值**（`data/results/live-linux-2026-11-16T19-10-00.000Z.json`）；`cli verify` 两边 `OK 8 fixture(s)`；字节账两边同值（82 698 / 103 868 / 66 425）。 |
 | 包体 | **已发布 0.4.16 = 38 654 B 压缩 / 38 文件 / 125 107 B 解包**（sha1 `623c4cc7…`），core **0.4.16 = 40 979 B / 27 / 133 933**（sha1 `43bde005…`）。**R57 的工作树（未发布）**：emit 总量 **82 698 / 83 000**（常驻 40 902 / 44 000，CLI 41 796 / 42 000），core 的 dist 是 **103 868 / 104 000**（registry.js 66 425 / 68 000）；两条新记录之后引擎只剩 132 B，CLI 半边回来 204 B。上一个发布 **0.4.15 = 38 600 / 38 / 124 248**（sha1 `cd717926…`），core **40 675 / 27 / 134 256**（sha1 `c6577a61…`）。 |
-| 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases … `v0.4.13` / `v0.4.14` / `v0.4.15` / **`v0.4.16`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release）。`v0.4.16` 的正文从 `gh release view --json body` 读回、与 `docs/copy/release-notes/v0.4.16.md` **逐字节相同**（3 838 B）；`v0.4.15` 那份（1 911 B）已冻成 `release-notes-0415-frozen`。`main` 推到 **`6113170`**（release 提交，tree 与容器 `main:dsh-remedy` 逐次比对相等）；tag `v0.4.16` 打在同一棵树上；CI 在 `main`（`43905753797`）与 tag（`43905786772`）两次推送上都 **success**（每次三个 job：ubuntu node 22、ubuntu node 24、windows node 24）。**本段文字所在的提交比它再晚，所以「当前 HEAD」永远等于「本段所在的提交」**。**0.4.13 已 `npm deprecate`**（两包：随包夹具里有维护者本机账号名，0.4.14 起已修，用 0.4.16 或更新）；`npm view` 读回两包都带这句话。 |
+| 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases … `v0.4.13` / `v0.4.14` / `v0.4.15` / **`v0.4.16`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release）。`v0.4.16` 的正文从 `gh release view --json body` 读回、与 `docs/copy/release-notes/v0.4.16.md` **逐字节相同**（3 838 B）；`v0.4.15` 那份（1 911 B）已冻成 `release-notes-0415-frozen`。`main` 推到 **`6113170`**（release 提交，tree 与容器 `main:dsh-remedy` 逐次比对相等）；tag `v0.4.16` 打在同一棵树上；CI 在 `main`（`43905753797`）与 tag（`43905786772`）两次推送上都 **success**（每次三个 job：ubuntu node 22、ubuntu node 24、windows node 24）。**本段文字所在的提交比它再晚，所以「当前 HEAD」永远等于「本段所在的提交」**。R57 的推送 `43921103727` 是 **四个 job 全 success**（多出的那个是 `verify (macos, node 24)`，P-0048 的判据第一次真实运行就绿）。**0.4.13 已 `npm deprecate`**（两包：随包夹具里有维护者本机账号名，0.4.14 起已修，用 0.4.16 或更新）；`npm view` 读回两包都带这句话。 |
 | 装机验收 | **0.4.16 已从 registry 单装到空目录验过 `OK 8 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-16T17-05-00.000Z.json`（`ok: true`、三条命令 0/0/0、`canonical_fixtures: 8`）。**两个 profile 已换到 0.4.16**（`pnpm why` 与 `verify` 两边读 0.4.16，备份 `.before-0416`）；桌面 App 已重启并跑了一个真实 turn（`live-2026-11-16T17-20-00.000Z.json`）。Linux 侧的 0.4.15 与 R56 树都量过（`live-linux-2026-11-16T16-40-00.000Z.json`）。 |
 | 下一件事 | 用户批准的三条里两条已落盘（P-0047 读者线与 P-0048 macOS 判据），第三条（79 个候选）已判读。**R57 未发布**：0.4.17 需要一次 npm OTP（发布顺序照旧：`publish_packages` → `record_publish` → 冷装验收 → 两个 profile → 桌面 turn → Linux 重跑 → 公开仓 push/tag/release → market-index）。**发布之前必须先付字节**：core 只剩 **132 B**（两条新记录之后），下一条记录之前先压一条老记录。之后：**(a)** macOS job 的第一次真实运行是本轮的判据，要看 `gh run list`；**(b)** #12741 / #12348 / #10115 三条已判读但未复现，属下一轮的候选。 |
 | 交接边界 | R57 没有半成品：工作树干净、`pnpm run verify` = **382 tests / 0 fail / 6 gates ALL GREEN**、`--mutate` **6-6**、`cli verify` `OK 8 fixture(s)`。新证据 6 份（探针 ×1、扫面 ×1、快照 ×1、门禁 ×2、Linux ×1），都带 `.sha256`。**0.4.17 未发布**是本轮的交接边界，不是半成品：两条记录已进 registry 与账本，`facts` 与首页都写着「未发布」。Linux 侧本轮已重跑（382 / 6 / 6-6、8 fixtures、字节账同值、P-0047 在 POSIX 上打 1）；macOS 仍无真机，但 CI 上有了一个 job。 |
@@ -106,11 +106,19 @@ git -C .. log --oneline -3
   门禁 `gates-2026-11-16T18-35-00.000Z.json` / `gates-mutate-2026-11-16T18-40-00.000Z.json`；五轴 review `S60…S62`；
   披露行 `opencode-2026-11-16-dsh-remedy-r57`。
 
-**G. 本轮未做（下一轮的第一件事）**
+**G. Linux 与 macOS 的实测**
 
-- **未发布 0.4.17**：需要一次 npm OTP。发布之前必须先付字节——core 只剩 **132 B**。
-- **Linux 侧未重跑**（R57 只动 CLI 读取器与 CI 配置）；**macOS job 的第一次真实运行要看 `gh run list`**，那是本轮的判据。
-- **0.4.16 的桌面 turn 与 profile 换装已在 R56 做完**，本轮没有重复。
+- **Linux（WSL2 Ubuntu 26.04）**：同一棵树复制进 Linux 文件系统，**382 tests / 6 gates / 6-6**、`OK 8 fixture(s)`、
+  字节账 **82 698 / 103 868 / 66 425** 与 Windows 同值；P-0047 在 POSIX 上打出 `completed_without_answer=1`
+  → `data/results/live-linux-2026-11-16T19-10-00.000Z.json`（冷装与 `npx` 本轮没重测，记 null + 原因）。
+- **macOS**：P-0048 的 job 第一次真实运行就绿——`gh run list` 的 `43921103727`（main、push、54 s、success），
+  `gh run view --json jobs` 四个 job 全 `completed / success`，多出来的那个是 `verify (macos, node 24)`。
+  **它仍然不是真机**：CI 不产出 `data/results/live-*`，所以没有补丁能凭它 `verified`。
+
+**H. 本轮未做（下一轮的第一件事）**
+
+- **未发布 0.4.17**：需要一次 npm OTP。发布之前必须先付字节——core 只剩 **132 B**，下一条记录之前先压一条老记录。
+- **0.4.16 的桌面 turn 与 profile 换装已在 R56 做完**，本轮没有重复；0.4.17 的桌面 turn 要等发布。
 
 ## 当前批次（R56，2026-11-16）
 

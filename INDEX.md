@@ -69,6 +69,9 @@
 | `data/results/live-linux-2026-11-15T15-00-00.000Z.json` | **Linux 真机终态（0.4.12）**：344 tests / 6 gates / 6-6；安装后的 `bin`（符号链接）真的运行，冷装 0.4.12 |
 | `data/results/publish-2026-11-15T14-20-00.000Z.json` / `install-acceptance-2026-11-15T14-25-00.000Z.json` | **0.4.12 发布 + 空目录装机**（两包 `ok`、`OK 8 fixture(s)`） |
 | `data/results/publish-2026-11-15T19-30-00.000Z.json` / `install-acceptance-2026-11-15T19-35-00.000Z.json` | **0.4.13 发布 + 空目录装机**（两包 `ok`、`OK 8 fixture(s)`、`canonical_fixtures: 8`） |
+| `data/results/publish-2026-11-16T13-20-00.000Z.json` / `install-acceptance-2026-11-16T13-30-00.000Z.json` | **0.4.15 发布 + 空目录单装**（两包 `exact_ok` + `latest_ok`，`ok: true`；装机三条命令 0/0/0、`OK 8 fixture(s)`） |
+| `data/results/live-desktop-2026-11-16T12-40-00.000Z.json` | **桌面真机：0.4.15 被 App 加载并跑了一个真实 turn**（13:31 重启、13:35 turn `completed`、journal `streams: 4`、verdict `quiet`） |
+| `data/results/live-linux-2026-11-16T12-45-00.000Z.json` | **Linux 真机（WSL2 Ubuntu 26.04）· 0.4.15**：368 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 同值 |
 | `data/results/publish-2026-11-16T06-52-00.000Z.json` / `install-acceptance-2026-11-16T06-55-00.000Z.json` | **0.4.14 发布 + 空目录装机**（两包 `ok`、`OK 8 fixture(s)`、`canonical_fixtures: 8`；发布的夹具里是 `<home>`，不是账号名） |
 | `data/results/live-desktop-2026-11-15T17-12-40.000Z.json` | **桌面真机：0.4.12 第一次被 App 加载**（一次真实 turn `completed`，journal 两个 stream 事件，verdict `quiet`；runtime 版本读自 `runtime.json`） |
 | `data/results/prestep-enter-2026-11-15T17-55-00.000Z.json` | **`agent/pre-step` 的 `enter` 分支实测**（P-0042 的形状由来：能带消息、不能换 selection；`resolveCallConfig` 需 `inject`） |

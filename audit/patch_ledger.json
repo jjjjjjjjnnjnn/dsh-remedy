@@ -703,7 +703,7 @@
       "id": "P-0043",
       "status": "tested",
       "owner": "remedy",
-      "since": "0.4.14 (unreleased on the tree)",
+      "since": "0.4.14",
       "evidence": [
         "docs/patches/P-0043-shipped-sample-guard-shape.md",
         "tests/governance/shipped-samples.test.ts",
@@ -718,7 +718,7 @@
       "id": "P-0044",
       "status": "tested",
       "owner": "remedy",
-      "since": "0.4.15 (unreleased on the tree)",
+      "since": "0.4.15",
       "evidence": [
         "docs/patches/P-0044-turn-answered.md",
         "tests/unit/turn-answer.test.ts",

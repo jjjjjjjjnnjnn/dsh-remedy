@@ -1,6 +1,6 @@
 /** Offline scanner (P-0004/P-0006/P-0044/P-0047/P-0050); each rule is in docs/patches/. */
 
-import { capabilityDrift, isFusedJsonObjectText, noteAssistantMessage, redact, redactValue, splitTopLevelJsonObjects, turnAnswered, wouldRepair } from 'dsh-remedy-core'
+import { capabilityDrift, isFusedJsonObjectText, noteAssistantMessage, redact, redactValue, splitTopLevelJsonObjects, turnAnswered, turnOnToolCall, wouldRepair } from 'dsh-remedy-core'
 import type { LastAnswer, RedactionSummary } from 'dsh-remedy-core'
 
 export interface ScanExample {
@@ -59,6 +59,8 @@ export interface ScanReport {
   readonly truncated_without_answer: number
   /** P-0047: `completed` turns of the same shape (upstream #13169). */
   readonly completed_without_answer: number
+  /** P-0052: `completed` turns whose last step carried a tool call (upstream #12741). */
+  readonly completed_on_tool_call: number
   /** `reason.error.code` for error turns (P-0006), redaction-safe names only. */
   readonly error_codes: Readonly<Record<string, number>>
   /**
@@ -139,6 +141,7 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
   let turns: ScanTurnCensus = emptyCensus()
   let truncatedWithoutAnswer = 0
   let completedWithoutAnswer = 0
+  let completedOnToolCall = 0
   const errorCodes: Record<string, number> = {}
   const refusedEfforts: Record<string, number> = {}
   const lastSteps = new Map<string, LastAnswer>()
@@ -268,6 +271,7 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
         turns = { ...turns, [slot]: turns[slot] + 1 }
               if (slot === 'max_tokens' && !turnAnswered(lastSteps, data.turn)) truncatedWithoutAnswer += 1
               if (slot === 'completed' && !turnAnswered(lastSteps, data.turn)) completedWithoutAnswer += 1
+              if (slot === 'completed' && turnOnToolCall(lastSteps, data.turn)) completedOnToolCall += 1
       }
       if (kind !== 'error') continue
       const error = asRecord(reason.error)
@@ -318,6 +322,7 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
     turns,
     truncated_without_answer: truncatedWithoutAnswer,
     completed_without_answer: completedWithoutAnswer,
+    completed_on_tool_call: completedOnToolCall,
     error_codes: sortedCounts(errorCodes),
     refused_efforts: sortedCounts(refusedEfforts),
     dropped_tools: droppedTools,
@@ -347,6 +352,7 @@ function addReport(into: ScanReport, from: ScanReport, source: string): ScanRepo
     },
     truncated_without_answer: into.truncated_without_answer + from.truncated_without_answer,
     completed_without_answer: into.completed_without_answer + from.completed_without_answer,
+    completed_on_tool_call: into.completed_on_tool_call + from.completed_on_tool_call,
     error_codes: mergeCounts(into.error_codes, from.error_codes),
     refused_efforts: mergeCounts(into.refused_efforts, from.refused_efforts),
     dropped_tools: into.dropped_tools + from.dropped_tools,
@@ -375,6 +381,8 @@ export interface ScanRow {
   readonly truncated_without_answer: number
   /** P-0047: this file's own count of completed turns that answered nobody. */
   readonly completed_without_answer: number
+  /** P-0052: this file's own count of completed turns whose last step was a tool call. */
+  readonly completed_on_tool_call: number
   /** P-0050: this file's own count of lost tools (session resumes that dropped one). */
   readonly dropped_tools: number
 }
@@ -405,6 +413,7 @@ export function scanSessions(
     turns: emptyCensus(),
     truncated_without_answer: 0,
     completed_without_answer: 0,
+    completed_on_tool_call: 0,
     error_codes: {},
     refused_efforts: {},
     dropped_tools: 0,
@@ -428,6 +437,7 @@ export function scanSessions(
       turns: one.turns,
       truncated_without_answer: one.truncated_without_answer,
       completed_without_answer: one.completed_without_answer,
+      completed_on_tool_call: one.completed_on_tool_call,
       dropped_tools: one.dropped_tools,
     })
     report = addReport(report, one, empty.source)

@@ -3,6 +3,38 @@
 All notable changes to this project are documented here.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.4.18] - 2026-11-17
+
+### Added
+
+- **P-0052 — a completed turn that ends on the tool call the UI does not read is now
+  counted.** Upstream #12741 reports a long tool loop that finishes with tool rows and no
+  sentence: the host can end a turn `completed` on a step that still carries a tool call
+  when a tool result marks the turn concluded (`agent.ts:592-603`), while the client
+  accepts a final step only when it has visible content and no tool-call block
+  (`turn-process.ts:160-161`). A local probe reproduced the shape with a tool whose
+  success calls `concludeTurn()`: the last step is `["text","tool-call"]` and the turn
+  ends `completed`; the control, same endpoint and prompt with that call off, takes a
+  second text-only step. `scan` now reports `completed_on_tool_call` beside
+  `completed_without_answer` (the two are disjoint), and `explain` prints one `TOOLCALL`
+  finding and exits 1 when the count is positive. P-0044's answer rule is unchanged: a
+  tool call is still visible work; this is a second, narrower count.
+
+### Fixed
+
+- **The first screens quote the suite they are on, and only there.** The English and
+  Chinese READMEs still said "the suite is 399 tests" while the pack said 0.4.17 ships
+  405; the number is now bound to the release (`0.4.18 ... 420`), and a governance rule
+  reads it against the fact pack. The handoff and the research notes no longer repeat the
+  byte account from older rounds; the status table is the single home, and a rule rejects
+  an expired pair in live prose.
+- **The reproduction steps in the patch docs run from the repository.** Thirteen
+  `## Reproduction` sections cited paths under `.tmp/`, which is gitignored and swept;
+  they now name shipped commands (`cli scan`, `node --test tests/...`, `npm pack
+  <package>@<version>`), and a governance rule rejects a `.tmp/` path or a cited path that
+  does not exist. The three host harnesses that cannot ship say so beside the artifact
+  they produced.
+
 ## [0.4.17] - 2026-11-17
 
 ### Added

@@ -92,7 +92,7 @@
 | `data/results/publish-2026-11-11T17-35-00.000Z.json` | 0.3.6 发布后两包 `latest`（`ok: true`） |
 | `docs/patches/P-0001-toolcall-fusion.md` … `P-0009-session-header-window.md` | 每个补丁的症状 / 机制 / 反证 / 边界 |
 | `docs/patches/P-0010-cli-usage-truth.md` … `P-0030-attribution-proof.md` | 同上；P-0015 是 `agent/pre-step` 拒绝语义的实测记录；P-0016 的文档在 R31 补写；P-0024 把两个包内 README 收进 copy 通道；P-0025 让 `explain` 的三态落地；P-0026 把发布流程收成一个家；P-0027 给「名字证不出来」的片段一个不可执行的名字；P-0028 把随包夹具里的本机路径换成 `<home>`；P-0029 把继任者的版本指针与字节账接上判据；P-0030 把归因证明搬进 core，按 schema 能证明的部分判定并记录 `unproven` |
-| `docs/patches/P-0045-preparation-refusal-seam.md` … `P-0051-explain-drift.md` | P-0045 把 P-0013 的命名挂到 `agent/error`（准备阶段的拒绝只抵达那里）；P-0046 让首页点名它数到的每个补丁并列出已发布版本的尺寸；P-0047 把 P-0044 的问题问给 `completed` turn（探针复现 #13169 形状）；P-0048 把 macOS 从一句话变成 CI 判据；P-0049 让事实包的接缝普查按注册表重数，并补回 0.4.16 / 0.4.17 的 CHANGELOG 小节（零运行时字节）；P-0050 让 `scan` 数「resume 丢掉会话已经用过的工具」（规则住 `core/capability.ts`，宿主真答过 `UNKNOWN_TOOL`）；P-0051 让 `explain` 把同一条计数指名成 finding 并退出 1（finding，不是覆盖行；CLI 读者） |
+| `docs/patches/P-0045-preparation-refusal-seam.md` … `P-0052-completed-on-tool-call.md` | P-0045 把 P-0013 的命名挂到 `agent/error`（准备阶段的拒绝只抵达那里）；P-0046 让首页点名它数到的每个补丁并列出已发布版本的尺寸；P-0047 把 P-0044 的问题问给 `completed` turn（探针复现 #13169 形状）；P-0048 把 macOS 从一句话变成 CI 判据；P-0049 让事实包的接缝普查按注册表重数，并补回 0.4.16 / 0.4.17 的 CHANGELOG 小节（零运行时字节）；P-0050 让 `scan` 数「resume 丢掉会话已经用过的工具」（规则住 `core/capability.ts`，宿主真答过 `UNKNOWN_TOOL`）；P-0051 让 `explain` 把同一条计数指名成 finding 并退出 1（finding，不是覆盖行；CLI 读者）；P-0052 数 `completed` 的 turn 停在 UI 不读的工具调用上（`completed_on_tool_call`，`explain` 打 `TOOLCALL`），P-0044 的回答规则不动 |
 | `docs/patches/P-0031-core-budget.md` … `P-0044-turn-answered.md` | P-0031 给引擎立 cap；P-0032 把台账的长叙述搬回补丁文档（registry.js 66 303 → 63 217，cap 不动）；P-0033 让空 id/空名的 tool call 不再被持久化（合成 id + `remedy_unattributed`）；P-0034 让「没有一个拒绝记账解释过的失败」记成 error 而不是安静的一轮；P-0035 把 patch 层每个 `name:` 解析到 manifest exports 与已构建文件（0 运行时字节）；P-0036 让纯 delta 协议的 tool call 保留流里已经证过的 id（宿主 `assembler.ts:72` 无条件写 id、`:115` 的 `??` 不兜空串）；P-0037 让「单个对象少一个闭合符」在唯一插入点上被补回，末尾与歧义一律拒（上游 #12819，`pi-ai` 回显 `Received arguments:` 才让字节到得了接缝）；P-0040 把装机验收的夹具数从 `data/fixtures/` 数出来；P-0041 让安装后的 `bin` 在 POSIX 上真的运行；P-0042 让 `scan` 记住宿主拒绝的那个档位、让 `explain` 在 profile 仍写着它时打一行 CONFLICT 并退出 1（零常驻字节，`agent/pre-step` 不能改 selection 是实测的）；P-0043 把为夹具写的那条守卫放宽到任意层转义，并新增「产物里不许出现本机账号」，夹具改用 `<home>`；P-0044 让 `scan` 在截断的 turn 上补一句「它到底有没有回答」（规则住 `core/answer.ts`，只数 `max-tokens`，只报告不升级） |
 | `docs/adr/0001-stream-repair-over-asar-patch.md` | 为什么在 `llm/stream` 修 |
 
@@ -142,6 +142,8 @@
 | `scripts/record_linux_r55.mjs` / `scripts/record_linux_r56.mjs` / `scripts/record_linux_r57.mjs` / `scripts/record_linux_r58.mjs` / `scripts/record_linux_r62.mjs` | 每一轮的 Linux 半边：读 `.tmp/<round>-linux/` 的日志，未重测的项写 null + 原因 |
 | `scripts/copy_with_agy.mjs` | 已退役的 copy 传输（P-0007 的历史记录；现在的写盘者是 `copy_record.mjs`，门外有测试钉着它不许回来） |
 | `scripts/record_capability_drift.mjs` | P-0050 的本机证据：114 文件 / 293 header / 9 对丢失；扫描器与记录器不同数就 `exit 4`（R59） |
+| `scripts/record_toolcall_turn.mjs` | P-0052 的探针取证：conclude 与 control 两 run 的末步块集合、`completed_on_tool_call=1`、`completed_without_answer=0`，否则 `exit 4`（R65） |
+| `scripts/record_linux_r65.mjs` | R65 的 Linux 半边：读 `.tmp/r65-linux/` 的日志，420/6/6-6 与字节账同值才写 `live-linux-*`（R65） |
 | `scripts/record_explain_drift.mjs` | P-0051 的本机证据：`scan --json` 与 `explain` 在同目录上必须同数、后者退出 1 且只有一条 `DROPPED`，否则 `exit 4`（R61） |
 | `scripts/record_session_sample.mjs` | 本机故障样本（必须带 `--until`；会话根走 `lib/session-root.mjs`） |
 | `scripts/record_install_acceptance.mjs` | 空目录从 registry 单装 → `install-acceptance-*` 产物 |
@@ -177,6 +179,8 @@
 | `tests/unit/completed-answer.test.ts` | P-0047 的判据：`completed` 的同样形状被数，文本/工具调用不数，两个结局各自计数，rows 与总数对得上 |
 | `tests/governance/public-pages-complete.test.ts` | P-0046 的两条规则：每个 registry id 都出现在两个首页；状态句点名的版本是尺寸表第一行 |
 | `tests/governance/fact-pack-census.test.ts` | P-0049 的三条规则：事实包点名每个 registry id；每个接缝条目的计数与队伍等于该接缝的实际集合；包里称作已发布的版本有 CHANGELOG 小节 |
+| `tests/unit/on-tool-call.test.ts` | P-0052 的规则：末步有 tool-call 才算；文本+tool-call、只有 tool-call、控制 run、max_tokens、缺消息五种形状 |
+| `tests/e2e/explain-toolcall.test.ts` | P-0052 的 finding：正值打 `TOOLCALL` 并退出 1；文本-only、reasoning-only、无 `--sessions` 三条负对照 |
 | `tests/e2e/explain-drift.test.ts` | P-0051 的六条：掉的是调过的才打 finding；带 profile 也打；没人调过、丢掉之后才调、没有 `--sessions`、会话保住了工具这四种都不打（四条负对照） |
 | `tests/unit/capability-drift.test.ts` | P-0050 的九条：掉的是调过的才算；没人调过不算；丢掉之后才调不算；series 不增减；change 同 resume；同一工具只记一次；未知 reason 不算；以及一条按实测形状复算 |
 | `tests/governance/facts-truth.test.ts`（P-0049 的两条） | 已发布版本必须有节、最新一节不许比已发布版本更旧（未发布小节在上方合法） |

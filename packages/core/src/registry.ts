@@ -988,6 +988,24 @@ export const PATCHES: readonly PatchRecord[] = [
       'a session with no request/header is unmeasured, not clean',
     ],
   },
+  {
+    id: 'P-0052',
+    title: 'A completed turn can end on the tool call the UI does not read',
+    symptom:
+      'upstream #12741: a long tool loop finishes `completed` on a step that still carries a tool call, and the UI shows only tool rows; scan counted the tool call as an answer (P-0044)',
+    rootCause:
+      'the host ends a step with tool calls only when a tool result carries `concludesTurn` (`dsh-agent-loop/src/agent.ts:592-603`), and ui-chat accepts only a final step with no tool-call block (`turn-process.ts:160-161`)',
+    surface: 'cli',
+    status: 'tested',
+    severity: 'minor',
+    evidence: ['docs/patches/P-0052-completed-on-tool-call.md', 'data/results/live-toolcall-2026-11-17T13-30-00.000Z.json'],
+    guards: ['tests/unit/on-tool-call.test.ts', 'tests/e2e/explain-toolcall.test.ts'],
+    limits: [
+      'a counter, not a repair: the host decides to conclude and the UI decides what is visible',
+      'counts completed only; a max_tokens turn on a tool call keeps P-0044 meaning',
+      'a finding, not a coverage row: no resident seam',
+    ],
+  },
 ]
 
 

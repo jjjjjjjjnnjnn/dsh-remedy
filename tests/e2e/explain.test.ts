@@ -70,8 +70,8 @@ function rowFor(out: string, failure: string): string {
 test('with no inputs it reports unknowns rather than zeros', () => {
   const { status, out } = run(['explain'])
   assert.equal(status, 0, out)
-  assert.match(out, /counts are unknown/, 'a missing scan must not become a row of zeros')
-  assert.match(out, /enabled-here is unknown/, 'a missing profile must not become "disabled"')
+  assert.match(out, /counts unknown/, 'a missing scan must not become a row of zeros')
+  assert.match(out, /enabled-here unknown/, 'a missing profile must not become "disabled"')
   assert.doesNotMatch(out, /MALFORMED_RESPONSE\s+0\s/, 'no invented rows')
 })
 

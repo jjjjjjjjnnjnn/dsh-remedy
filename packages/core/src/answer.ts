@@ -1,4 +1,4 @@
-/** P-0044 / P-0047 — did a turn answer the user? One rule, shared by every reader. */
+/** P-0044/P-0047/P-0052 — did a turn answer, and did it end on a tool call? */
 
 /** The ending kinds the census knows; anything else is not a question here. */
 export const ENDINGS = ['completed', 'max_tokens', 'aborted', 'error'] as const
@@ -21,12 +21,21 @@ export function messageAnswers(blocks: unknown): boolean {
   })
 }
 
+/** P-0052: a tool call in the last message. */
+export function messageOnToolCall(blocks: unknown): boolean {
+  if (!Array.isArray(blocks)) return false
+  return blocks.some(
+    (raw) => raw !== null && typeof raw === 'object' && !Array.isArray(raw) && (raw as Record<string, unknown>).type === 'tool-call',
+  )
+}
+
 export interface LastAnswer {
   readonly step: number
   readonly answered: boolean
+  readonly toolCall: boolean
 }
 
-/** Only the last step of a turn decides; an earlier step never overwrites it. */
+/** Only the last step decides. */
 export function noteAssistantMessage(
   last: Map<string, LastAnswer>,
   turn: unknown,
@@ -37,10 +46,15 @@ export function noteAssistantMessage(
   const at = typeof step === 'number' && Number.isFinite(step) ? step : 0
   const prior = last.get(key)
   if (prior !== undefined && at < prior.step) return
-  last.set(key, { step: at, answered: messageAnswers(content) })
+  last.set(key, { step: at, answered: messageAnswers(content), toolCall: messageOnToolCall(content) })
 }
 
-/** No assistant message at all answered nothing: a missing record is `false`, not unknown. */
+/** A missing record answered nothing: `false`, not unknown. */
 export function turnAnswered(last: ReadonlyMap<string, LastAnswer>, turn: unknown): boolean {
   return last.get(String(turn))?.answered === true
+}
+
+/** P-0052: the last step carried a tool call. */
+export function turnOnToolCall(last: ReadonlyMap<string, LastAnswer>, turn: unknown): boolean {
+  return last.get(String(turn))?.toolCall === true
 }

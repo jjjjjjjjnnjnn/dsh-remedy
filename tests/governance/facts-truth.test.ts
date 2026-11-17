@@ -225,11 +225,12 @@ test('the first screens quote the suite the published version ships', () => {
     assert.equal(claim?.tests, shippedCount, `${path} quotes a suite count ${version} did not ship`)
   }
 
-  // The negative control, on the shape this round found: a 0.4.17 sentence that
-  // still says 399 must be parsed as a claim and must disagree with the pack.
-  const stale = suiteClaim('The suite of 0.4.17 is 399 tests and 0 failing.')
+  // The negative control, on the shape this rule exists for: the current
+  // version's sentence with the old count must be parsed and must disagree.
+  const stale = suiteClaim(`The suite of ${version} is 399 tests and 0 failing.`)
   assert.notEqual(stale, null, 'the parser does not read the stale sentence')
   assert.equal(stale?.version, version)
+  assert.equal(stale?.tests, 399)
   assert.notEqual(stale?.tests, shippedCount, '399 must not equal the count the pack ships')
 })
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** P-0016 / P-0025 / P-0042 / P-0051: what this plugin is doing here; exit 1 names a finding. */
+/** P-0016/P-0025/P-0042/P-0051/P-0052: what this plugin is doing here. */
 
 import { existsSync, readFileSync } from 'node:fs'
 import process from 'node:process'
@@ -26,7 +26,6 @@ interface ProfileSelection {
   readonly reasoningEffort?: string
 }
 
-/** P-0042: the profile selection, flat; a missing key stays missing. */
 function selectionOf(text: string): ProfileSelection | null {
   const start = text.split(/\r?\n/).findIndex((line) => line === '- id: agent-default-model')
   if (start === -1) return null
@@ -43,22 +42,23 @@ function selectionOf(text: string): ProfileSelection | null {
   return { provider, model, ...(effort === undefined ? {} : { reasoningEffort: effort }) }
 }
 
-/** P-0042 — a conflict needs both halves and an exact match; never clamps (P-0013). */
+/** P-0042: both halves and an exact match; never clamps (P-0013). */
 function conflicts(refused: Readonly<Record<string, number>>, selection: ProfileSelection | null): string[] {
   const level = selection?.reasoningEffort
   if (selection === null || level === undefined) return []
   const count = refused[`${selection.provider}/${selection.model} ${level}`] ?? 0
   return count <= 0
     ? []
-    : [`CONFLICT — ${selection.provider}/${selection.model} fixes reasoningEffort "${level}"; the host refused that exact level ${count} time(s). Change it in the profile or stop selecting it; this plugin does not clamp it.`]
+    : [`CONFLICT — ${selection.provider}/${selection.model} fixes reasoningEffort "${level}"; the host refused it ${count} time(s). Change the profile; this plugin does not clamp it.`]
 }
 
-/** P-0051: the rule is P-0050's; no profile is involved. */
+/** P-0051: the rule is P-0050's. */
 function drops(dropped: number | null): string[] {
   return dropped === null || dropped <= 0
     ? []
-    : [`DROPPED — ${dropped} tool(s) this session had called are missing from a later resume/change header; a later call to one was answered UNKNOWN_TOOL. Nothing restores the set (P-0050).`]
+    : [`DROPPED — ${dropped} tool(s) this session had called are missing from a later resume/change header; a later call was answered UNKNOWN_TOOL (P-0050).`]
 }
+
 /** Classes this project decided never to repair, with the reason. */
 const BY_DESIGN: Readonly<Record<string, string>> = {
   'max-tokens': 'upstream by design: a cut tail is missing bytes, not a quote',
@@ -72,7 +72,6 @@ const BY_DESIGN: Readonly<Record<string, string>> = {
 export function readProfileConfig(path: string): Record<string, unknown> | null {
   if (!existsSync(path)) return null
   const text = readFileSync(path, 'utf8')
-  // No YAML parser: only flat keys under our row; an absent key stays absent (P-0025).
   const block = text.split(/\n- id /).find((chunk) => /remedy|dsh-remedy/.test(chunk))
   if (block === undefined) return null
   const out: Record<string, unknown> = {}
@@ -119,7 +118,7 @@ interface Row {
   readonly failure: string
   readonly count: number
   readonly coveredBy: readonly string[]
-  /** Patches on in the profile read, or `null` when none was read (P-0025: three states). */
+  /** Patches on in the profile read, or `null` when none was read (P-0025). */
   readonly enabled: readonly string[] | null
   readonly byDesign?: string
 }
@@ -170,6 +169,8 @@ export function cmdExplain(args: Args): number {
   let refusedEfforts: Record<string, number> = {}
   /** P-0051: `null` means no directory was measured, which is not a zero. */
   let droppedTools: number | null = null
+  /** P-0052: the same null-means-unmeasured rule. */
+  let onToolCall: number | null = null
   let files = 0
   if (sessions !== undefined) {
     const inputs = collectSessions(sessions)
@@ -188,6 +189,7 @@ export function cmdExplain(args: Args): number {
     errorCodes = { ...report.error_codes }
     refusedEfforts = { ...report.refused_efforts }
     droppedTools = report.dropped_tools
+    onToolCall = report.completed_on_tool_call
   }
 
   const rows = explainRows(census, errorCodes, config)
@@ -215,12 +217,12 @@ export function cmdExplain(args: Args): number {
   }
 
   if (config === null) {
-    process.stdout.write('\nenabled-here is unknown: pass --profile-file <cordis.patch.yml> to read it\n')
+    process.stdout.write('\nenabled-here unknown: pass --profile-file <cordis.patch.yml>\n')
   }
   if (sessions === undefined) {
-    process.stdout.write('\ncounts are unknown: pass --sessions <directory> to measure them\n')
+    process.stdout.write('\ncounts unknown: pass --sessions <directory>\n')
   } else {
-    process.stdout.write(`\nmeasured over ${files} session file(s)\n`)
+    process.stdout.write(`\nmeasured: ${files} session file(s)\n`)
   }
   for (const row of rows) {
     if (row.byDesign !== undefined) process.stdout.write(`by design: ${row.failure} — ${row.byDesign}\n`)
@@ -230,6 +232,7 @@ export function cmdExplain(args: Args): number {
   const findings = conflicts(refusedEfforts, selection)
   // P-0051: the session census has a second thing worth a nonzero exit.
   const drift = drops(droppedTools)
-  for (const line of [...drift, ...findings]) process.stdout.write(`${line}\n`)
-  return uncovered === 0 && findings.length === 0 && drift.length === 0 ? EXIT_OK : EXIT_FINDING
+  const toolCall = onToolCall === null || onToolCall <= 0 ? [] : [`TOOLCALL — ${onToolCall} completed turn(s) ended on a tool call; the UI counts only text (P-0052).`]
+  for (const line of [...drift, ...toolCall, ...findings]) process.stdout.write(`${line}\n`)
+  return uncovered === 0 && findings.length === 0 && drift.length === 0 && toolCall.length === 0 ? EXIT_OK : EXIT_FINDING
 }

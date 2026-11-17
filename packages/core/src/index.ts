@@ -44,7 +44,7 @@ export type { RedactResult } from './redact.js'
 export { redact, redactValue } from './redact.js'
 
 export type { Ending, LastAnswer } from './answer.js'
-export { endingOf, ENDINGS, messageAnswers, noteAssistantMessage, turnAnswered } from './answer.js'
+export { endingOf, ENDINGS, messageAnswers, messageOnToolCall, noteAssistantMessage, turnAnswered, turnOnToolCall } from './answer.js'
 
 export type { HeaderTools, ToolLoss } from './capability.js'
 export { capabilityDrift, lostTools } from './capability.js'

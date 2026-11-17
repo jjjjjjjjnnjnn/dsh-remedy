@@ -1257,6 +1257,28 @@
         "data/results/gates-2026-11-18T02-50-00.000Z.json",
         "data/results/gates-mutate-2026-11-18T02-55-00.000Z.json"
       ]
+    },
+    {
+      "id": "S70",
+      "gate": "copy",
+      "title": "A completed turn can end on the tool call the UI does not read",
+      "axes": {
+        "correctness": "Upstream #12741 reports a tool loop that finishes with no visible reply. The host source shows the mechanism: `dsh-agent-loop/src/agent.ts:592-603` returns `{kind:\"completed\"}` from a step that still has tool calls when the batch result is `concluded`, and `dsh-tools` sets that marker from `ToolRunContext.concludeTurn()` (`contracts.ts:261`, `batch.ts:147`). The client refuses such a step as the final answer at `dsh-client-ui-chat/.../turn-process.ts:160-161`, even when the same step has text (`assistant-content.ts:9-15` treats a tool call as protocol material). P-0052 adds `messageOnToolCall` / `turnOnToolCall` and `completed_on_tool_call`; P-0044's `turnAnswered` is unchanged, so the two counters are disjoint by construction (one needs no text and no tool call, the other needs a tool call).",
+        "reproducibility": "A local probe with two headless runs on one isolated DSH_HOME: the same local OpenAI-compatible endpoint streams one text delta and one `probe_conclude` tool call; the probe profile's tool calls `concludeTurn()`, the control's does not. The conclude run ends `completed` with last blocks `[\"text\",\"tool-call\"]`; the control takes a second text-only step. `scripts/record_toolcall_turn.mjs` reads both sessions and refuses to write unless both exits are 0, both turns end `completed`, the block sets differ exactly as above, the scanner counts one `completed_on_tool_call` and zero `completed_without_answer`, and the per-file rows agree. Artifact `data/results/live-toolcall-2026-11-17T13-30-00.000Z.json`. The five unit cases and four end-to-end cases were red before the rule existed and carry their own negative controls (text-only last step, earlier tool call, reasoning-only, max_tokens, missing message).",
+        "compliance": "The endpoint is local and synthetic; no provider credential is used beyond the probe key, nothing under `~/.dsh` is written, and the artifact redacts the session paths to `<home>`. No new dependency. Runtime bytes were paid, not capped: `answer.ts`, `attribute.ts` and `reseal.ts` comments were compacted and the P-0052 record condensed, leaving plugin 82 859 / 83 000 (CLI 41 957 / 42 000) and core 103 869 / 104 000; the caps did not move. The probe harness is not shipped; the recorder is.",
+        "ssot": "Every host claim is a quoted line from the extracted 0.4.18 `app.asar` (`agent.ts`, `contracts.ts`, `batch.ts`, `turn-process.ts`, `assistant-content.ts`), and the doc names the files. Every number in the artifact is read from the two session logs or the scanner; the artifact's `claims` booleans are checked before it is written. The ledger row, the patch doc, the registry record and the artifact all name the same patch id and the same evidence.",
+        "adversarial": "What this round cannot claim: the endpoint is synthetic and the probe used one route, one model, one tool and one prompt; a multi-tool batch and a multi-step conclusion were not exercised. The desktop UI was not driven, so the \"no reply\" half is read from `turn-process.ts`, not observed on screen. The number is a transcript rule, not an incident count: before the probe this machine had zero of the shape (131 completed turns, all ending on text). The rule counts `completed` only; a `max_tokens` turn on a tool call keeps P-0044's meaning. It does not repair or steer the model; the host still decides to conclude and the UI still decides what is visible."
+      },
+      "evidence": [
+        "docs/patches/P-0052-completed-on-tool-call.md",
+        "packages/core/src/answer.ts",
+        "packages/plugin/src/session-scan.ts",
+        "packages/plugin/src/explain-command.ts",
+        "tests/unit/on-tool-call.test.ts",
+        "tests/e2e/explain-toolcall.test.ts",
+        "scripts/record_toolcall_turn.mjs",
+        "data/results/live-toolcall-2026-11-17T13-30-00.000Z.json"
+      ]
     }
   ],
   "updated_at": "2026-11-18T01:00:00.000Z"

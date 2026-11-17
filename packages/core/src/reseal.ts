@@ -1,23 +1,8 @@
 /**
  * Tool-call argument resealing (P-0005): one unquoted blob as a member value.
- *
- * The question is whether exactly one segment, when quoted, turns the whole text
- * into one plain object whose payload is byte-for-byte what the model wrote. That
- * is the only shape this module touches; anything ambiguous is refused rather than
- * guessed, and the measured failure is in docs/patches/P-0005-bare-value-reseal.md.
- *
- * SAFETY PROPERTIES (each one has a negative-control test):
- *  - a text that already parses is never resealed (the caller checks that first);
- *  - a fusion (two or more top-level objects) is never resealed: that is a split;
- *  - the raw segment must span more than one line, so a mistyped enum or a
- *    truncated literal is refused rather than silently quoted;
- *  - exactly one candidate must parse, otherwise the shape is ambiguous and the
- *    text is refused — two possible resealings is the same as none;
- *  - the value is inserted with `JSON.stringify`, so every byte the model wrote
- *    survives into the parsed payload; nothing is trimmed or re-wrapped;
- *  - a `max-tokens` truncation is never resealed (the tail is cut, not malformed);
- *  - the search is bounded: a very long text with many member heads or commas
- *    is refused instead of scanned quadratically.
+ * Only one segment, quoted so the whole text parses as one plain object, is
+ * touched; ambiguity is refused. Safety properties (each has a negative control)
+ * and the measurement are in docs/patches/P-0005-bare-value-reseal.md.
  */
 
 const MAX_BYTES = 65536

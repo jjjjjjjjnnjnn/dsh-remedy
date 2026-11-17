@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_linux_r65.mjs",
+  "generated_at": "2026-11-18T03:40:00.000Z",
+  "question": "Does the published 0.4.18 tree pass on a POSIX host with the same suite count and the same byte account as Windows, and does P-0052 behave there?",
+  "host": {
+    "kernel": "Linux rjjRobert 6.6.114.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Mon Dec  1 20:46:23 UTC 2025 x86_64 GNU/Linux",
+    "node": "24.10.0",
+    "pnpm": "12.15.0",
+    "how": "WSL2; the tracked tree copied into the Linux filesystem and never run through /mnt/c; `*.tsbuildinfo` excluded so tsc -b could emit on this host"
+  },
+  "verify": {
+    "tests": 420,
+    "pass": 420,
+    "fail": 0,
+    "gates": 6,
+    "negative_control": "6/6"
+  },
+  "installed_dist_cli": {
+    "what": "node packages/plugin/dist/cli.js verify on this host, against the fixture set the package ships",
+    "printed": "OK  8 fixture(s)"
+  },
+  "p0052_on_linux": {
+    "tests": 9,
+    "fail": 0,
+    "what": "five unit cases and four end-to-end cases (the TOOLCALL finding and its three negative controls)"
+  },
+  "byte_account": {
+    "residency": {
+      "bytes": 40902,
+      "cap": 44000
+    },
+    "cli": {
+      "bytes": 41957,
+      "cap": 42000
+    },
+    "total": {
+      "bytes": 82859,
+      "cap": 83000
+    },
+    "core_total": {
+      "bytes": 103869,
+      "cap": 104000
+    },
+    "registry": {
+      "bytes": 66049,
+      "cap": 68000
+    }
+  },
+  "not_measured": {
+    "cold_directory_install": "not re-run on POSIX this round: the 0.4.18 registry copy was installed on Windows (install-acceptance-2026-11-18T03-20-00.000Z.json)",
+    "npx": "not re-run this round for the same reason",
+    "explain_sessions_on_this_host": "this Linux home has no ~/.dsh/sessions, so the live DROPPED/TOOLCALL findings are measured on the Windows host and by the fixtures/tests",
+    "desktop_app": "not a POSIX claim: the app is measured on Windows only"
+  },
+  "sources": {
+    "versions.log": "5e316273a67820fdff02f6f5a8f5ad280ff01792c2ef71024d76433433a333a5",
+    "verify.log": "53559231459c3ef45e67f3226d7bd2fcfad1214fbd3a33d434265f8f17e2991e",
+    "mutate.log": "b836f93078bbd314d565ce9295000bb43bbfabe660e61156285cbc8dcbe2af8f",
+    "size.log": "2c5229c41b46084f04ab2a5b936a19561ae09007815b9d8ead3a8733bf222650",
+    "cli.log": "53b12f2ac916f8678a5846686250ddf175f5e089d159da82366ffcf926d8fa27",
+    "explain.log": "880cb3daca2cd6408407778439b9b781e5bed43ed37906e715bb94b8d68f66da"
+  },
+  "limits": [
+    "one Linux host (WSL2) and one node build; this is not a distribution matrix",
+    "the suite reads files, so a POSIX pass proves the tests are portable, not that the pages are right on darwin",
+    "no resident provider ran on this host: P-0052 is a CLI reader, and its live evidence is the Windows probe"
+  ]
+}

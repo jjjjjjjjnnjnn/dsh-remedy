@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_toolcall_turn.mjs",
+  "generated_at": "2026-11-17T13:30:00.000Z",
+  "question": "Upstream #12741 reports a long tool loop that finishes a turn with no visible reply: the UI accepts a final step only when it has visible text and no tool-call block, while a tool result can mark the turn concluded. Does a local tool whose success calls `concludeTurn()` end a `completed` turn on a step that carries a text block and a tool call, and does the scanner count that shape without stealing the no-answer count?",
+  "probe": {
+    "homes": ".tmp/r65-runs/conclude and .tmp/r65-runs/control (one isolated DSH_HOME; nothing under ~/.dsh is written)",
+    "endpoint": "a local OpenAI-compatible server: the first step streams one text delta and one `probe_conclude` tool call, then `finish_reason: \"tool_calls\"`; a tool-result request streams text only",
+    "why_the_shape_survives": "`dsh-agent-loop/src/agent.ts` returns `{kind:\"completed\"}` from a step with tool calls when the batch result is `concluded` (`toolCalls.length === 0` / `result.concluded ? {kind:\"completed\"} : null`), and `dsh-tools` carries that marker from `ToolRunContext.concludeTurn()`. The UI rule is `dsh-client-ui-chat/.../turn-process.ts:160-161`: a final step with any tool-call block is not a final answer, even when it also has text.",
+    "runtime": {
+      "version": "0.2.2-rc.3",
+      "source": "<home>\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\primary-runtime\\runtime.json",
+      "sha256": "ce43135cf00d7dcd9d1c52f467cf8fe533248a745226e27def0e86ba8e6abad6"
+    },
+    "note": "the endpoint is local and synthetic: it reproduces the host mechanism, not a relay incident"
+  },
+  "runs": {
+    "conclude": {
+      "profile": "r65-conclude",
+      "endpoint": "http://127.0.0.1:8791/v1",
+      "exit_code": 0,
+      "session": {
+        "file": "<home>\\Desktop\\项目开发\\DSH-Addition\\dsh-remedy\\.tmp\\r65-home\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-debe1ca4-9e71-4d4e-9453-97754b761a57\\session.v4.jsonl.zstd",
+        "sha256": "2e7966572dd6a433fae443b60e5c655461c60e1777fde408e734a9a3af2d1d6b",
+        "events": 22,
+        "turn_ends": [
+          "completed"
+        ],
+        "steps": [
+          1
+        ],
+        "last_blocks": [
+          "text",
+          "tool-call"
+        ],
+        "tool_calls": [
+          "probe_conclude"
+        ],
+        "tool_results": 1
+      }
+    },
+    "control": {
+      "profile": "r65-control",
+      "endpoint": "http://127.0.0.1:8791/v1",
+      "exit_code": 0,
+      "session": {
+        "file": "<home>\\Desktop\\项目开发\\DSH-Addition\\dsh-remedy\\.tmp\\r65-home\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-4befc34e-0a77-4d91-9a32-532aa927bafe\\session.v4.jsonl.zstd",
+        "sha256": "895c1e2315704d3f8b8b204f16a0e6ea772d7146fdfc4034d905b8060cbb6686",
+        "events": 25,
+        "turn_ends": [
+          "completed"
+        ],
+        "steps": [
+          1,
+          2
+        ],
+        "last_blocks": [
+          "text"
+        ],
+        "tool_calls": [
+          "probe_conclude"
+        ],
+        "tool_results": 1
+      }
+    }
+  },
+  "scan": {
+    "completed": 2,
+    "completed_on_tool_call": 1,
+    "completed_without_answer": 0,
+    "rows": [
+      {
+        "source": "<home>\\Desktop\\项目开发\\DSH-Addition\\dsh-remedy\\.tmp\\r65-home\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-debe1ca4-9e71-4d4e-9453-97754b761a57\\session.v4.jsonl.zstd",
+        "completed": 1,
+        "completed_on_tool_call": 1,
+        "completed_without_answer": 0
+      },
+      {
+        "source": "<home>\\Desktop\\项目开发\\DSH-Addition\\dsh-remedy\\.tmp\\r65-home\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-DSH-Addition-dsh-remedy--\\session-4befc34e-0a77-4d91-9a32-532aa927bafe\\session.v4.jsonl.zstd",
+        "completed": 1,
+        "completed_on_tool_call": 0,
+        "completed_without_answer": 0
+      }
+    ]
+  },
+  "claims": {
+    "the_shape_reproduces_here": true,
+    "the_control_differs_only_in_the_concluding_tool": true,
+    "the_scanner_counts_exactly_one": true,
+    "the_no_answer_counter_did_not_move": true,
+    "the_census_itself_did_not_move": true
+  },
+  "findings": [
+    "A tool result that calls `concludeTurn()` ends the turn `completed` on a step that still carries a tool call, so the last assistant message can be `[\"text\",\"tool-call\"]`.",
+    "The control run, same endpoint, prompt and tool name with `concludeTurn()` off, takes a second step and ends on a text-only message; the only difference a reader can see is the concluding marker.",
+    "The scanner counts the conclude run and not the control; `completed_without_answer` stays zero, because P-0044 already counts the tool call as work. P-0052 adds the second count rather than redefining the first rule.",
+    "The host and UI lines that make the shape possible are quoted in `docs/patches/P-0052-completed-on-tool-call.md`; the local endpoint reproduces the mechanism, not an incident."
+  ],
+  "not_proven": [
+    "The endpoint is local and synthetic. It reproduces the host mechanism, not a relay or model incident.",
+    "One route, one model, one prompt, one tool; a multi-tool batch and a multi-step conclusion were not exercised.",
+    "The desktop UI was not driven for this probe: both runs are headless CLI runs, and the \"no reply\" half is read from `turn-process.ts`, not observed on screen.",
+    "The number this artifact records is a transcript rule, not a count of user-visible incidents; the machine had produced zero of the shape before the probe."
+  ],
+  "redaction": {
+    "replacements": 0,
+    "kinds": []
+  }
+}

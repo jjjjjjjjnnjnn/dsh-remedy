@@ -114,7 +114,7 @@ test('with no session directory nothing is counted and nothing is a finding', ()
   // The same rule `explain` already lives by: no input is `unknown`, never `0`.
   const { status, out } = run(['explain'])
   assert.doesNotMatch(out, /DROPPED/, `an unmeasured session cannot be a drop:\n${out}`)
-  assert.match(out, /counts are unknown/, out)
+  assert.match(out, /counts unknown/, out)
   assert.equal(status, 0, out)
 })
 

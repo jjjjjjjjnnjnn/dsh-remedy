@@ -1,15 +1,9 @@
 /**
- * P-0030 — what a fragment's name can actually prove.
- *
- * P-0027 checks a fragment against the named tool's `required` list; "every key
- * must be declared" is not sound on this host (`dsh-tools/lib/index.js:800-808`
- * never sets `additionalProperties`), so an undeclared key proves nothing. What
- * the declaration can still prove, each source, and the over-claim this avoided
- * are in `docs/patches/P-0030-attribution-proof.md`.
- *
- * Returns `foreign` (the host would reject these arguments), `fits` ("nothing
- * against", not identity) or `unproven` (nothing to check; the plugin keeps the
- * stream's name and books the residue).
+ * P-0030 — what a fragment's name can prove. The host never sets
+ * `additionalProperties` (`dsh-tools/lib/index.js:800-808`), so an undeclared
+ * key proves nothing; the proof and its over-claim are in
+ * docs/patches/P-0030-attribution-proof.md. Returns `foreign`, `fits` or
+ * `unproven`.
  */
 
 export type FragmentFit = 'fits' | 'foreign' | 'unproven'

@@ -247,12 +247,35 @@ function bytePairs(text: string): string[] {
 }
 
 /** The pairs the live status table measures, which are the only ones prose may repeat. */
-function measuredPairs(): Set<string> {
+function baselineRow(): string {
   const row = read('docs/HANDOFF.md')
     .split(/\r?\n/)
     .find((line) => line.startsWith('| 基线 |'))
   assert.ok(row !== undefined, 'HANDOFF must keep the `| 基线 |` row that quotes the byte account')
-  return new Set(bytePairs(row))
+  return row
+}
+
+function measuredPairs(): Set<string> {
+  return new Set(bytePairs(baselineRow()))
+}
+
+/**
+ * A lone byte figure as prose writes it: `538 B`, `1 951 B`.
+ *
+ * Measured on the R65 tree: `docs/research/README.md` §6 said the last payment
+ * left plugin **538 B** (CLI **440 B**), core **337 B** and registry **3 089 B**,
+ * while the status table measured 141 / 43 / 131 / 1 951. The pair rule above
+ * only reads *ratios*, and the file was already inside `liveProse()`, so a figure
+ * with a `B` suffix was invisible to every gate.
+ */
+const BYTE_FIGURE = /(\d{1,3}(?: \d{3})*|\d{4,}) B\b/g
+
+function byteFigures(text: string): string[] {
+  return [...text.matchAll(BYTE_FIGURE)].map((match) => match[1] ?? '')
+}
+
+function measuredFigures(): Set<string> {
+  return new Set(byteFigures(baselineRow()))
 }
 
 /**
@@ -296,4 +319,69 @@ test('a live section may only repeat the byte account the status table measures'
   ])
   assert.deepEqual(bytePairs('plugin 82 462 / 83 000').filter((pair) => !allowed.has(pair)), [])
   assert.deepEqual(bytePairs('6 of 6 gates'), [], 'a ratio without thousands separators is not a byte account')
+})
+
+test('a live section may only quote byte figures the status table measures', () => {
+  const measured = measuredFigures()
+  const stale: string[] = []
+  for (const { path, line } of liveProse()) {
+    for (const figure of byteFigures(line)) {
+      if (!measured.has(figure)) stale.push(`${path}: ${figure} B`)
+    }
+  }
+  assert.deepEqual(stale, [], `live sections quote a byte figure the status table does not measure: ${stale.join('; ')}`)
+
+  // The negative control, on the measured shape: §6's four figures must be read
+  // and must be rejected, while this tree's headroom is accepted.
+  assert.deepEqual(byteFigures('plugin **538 B**（CLI **440 B**）、core **337 B**、registry **3 089 B**'), [
+    '538', '440', '337', '3 089',
+  ])
+  assert.deepEqual(byteFigures('plugin **538 B**').filter((figure) => !measured.has(figure)), ['538'])
+  assert.deepEqual(byteFigures('只剩 **141 B**').filter((figure) => !measured.has(figure)), [])
+  assert.deepEqual(byteFigures('82 859 / 83 000'), [], 'a pair without a `B` suffix is not a lone figure')
+})
+
+/**
+ * The section a successor is told to read first in the research page.
+ *
+ * Measured on the R65 tree: it still said "0.4.17 已发布", named the next patch as
+ * P-0052 (which had shipped), and quoted the byte account of the round before the
+ * payment. Three live claims, in the one page the intake rules tell a successor to
+ * read, and nothing parsed it. R63 and R64 fixed this class in HANDOFF and
+ * `leads.md`; duplication is what drifts, so this section now points instead.
+ */
+function researchInstructionSection(text: string): string {
+  const start = text.indexOf('## 6. 下一会话的第一件事')
+  assert.notEqual(start, -1, 'docs/research/README.md must keep its §6 for the next session')
+  const rest = text.slice(start + 1)
+  const end = rest.indexOf('\n## ')
+  return end === -1 ? rest : rest.slice(0, end)
+}
+
+/** Version strings and patch ids a pointer section must not restate. */
+function restatedVersions(section: string): string[] {
+  return [...section.matchAll(/\b0\.\d+\.\d+\b/g)].map((match) => match[0] ?? '')
+}
+
+function restatedPatchIds(section: string): string[] {
+  return [...section.matchAll(/P-\d{4}/g)].map((match) => match[0] ?? '')
+}
+
+test('the research page points the next session at the handoff instead of restating it', () => {
+  const section = researchInstructionSection(read('docs/research/README.md'))
+  assert.match(section, /docs\/HANDOFF\.md/, '§6 must send the next session to the handoff, not a copy of it')
+  assert.match(section, /scripts\/collect_leads\.mjs/, '§6 must keep the intake command')
+
+  const versions = restatedVersions(section)
+  assert.deepEqual(versions, [], `§6 restates a released version: ${versions.join(', ')}`)
+  const ids = restatedPatchIds(section)
+  assert.deepEqual(ids, [], `§6 restates patch history the registry already owns: ${ids.join(', ')}`)
+
+  // The negative control, on the measured shape: the old §6 must be rejected by
+  // both readers, or the rules above prove nothing about the page.
+  const stale =
+    '## 6. 下一会话的第一件事\n\n3. **0.4.17 已发布**（P-0047 …）。4. 编号只前进（下一个是 **P-0052**）。\n'
+  const staleSection = researchInstructionSection(stale)
+  assert.deepEqual(restatedVersions(staleSection), ['0.4.17'])
+  assert.deepEqual(restatedPatchIds(staleSection), ['P-0047', 'P-0052'])
 })

@@ -103,23 +103,12 @@
 
 ## 6. 下一会话的第一件事
 
-1. **A 表不再有 `lead`，但也不是空的**（R64 量过）：L-0006 是汇总帖（六条引用已逐条读回，
-   没有新形状，判 `rejected (dup)`）、L-0008 是「把坏调用降级成工具错误」的提议（本项目立场
-   「修不了就抛」，判 `rejected (no defect)`）；L-0010 仍是 `watching`。全账本 40 行，状态分布以
-   `leads.md` 的表为准，本文件不复述数字。R55 的 79 个候选已在 R57 逐桶判读（`docs/research/intake-r57-triage.md`）：只有两条
-   进过账本语义——#11151 / #10732 是 P-0033/P-0036 的同族（不新增行），#13169 是 **P-0047**（本机探针
-   复现后才落补丁）。#12741（工具循环结束后没有可见回复）已在 R65 用本地端点与一个会 `concludeTurn()` 的探针工具复现：
-   **P-0052** 把「末步带 tool-call」作为第二条计数（`completed_on_tool_call`），`explain` 打 `TOOLCALL`，
-   而 P-0044 的「tool-call 算工作」没有改——两条规则分开，证据 `live-toolcall-2026-11-17T13-30-00.000Z.json`。#12348（跨 profile resume 的
-   capability drift）已两半落地：P-0050 在 `scan` 里数它，P-0051 让 `explain` 指名它并退出 1（证据
-   `explain-drift-2026-11-17T10-05-00.000Z.json`）。这条不再是候选。
-2. **新线索从一次巡检开始**：`node scripts/collect_leads.mjs --stamp <ISO> --dsh --self --npm` 产出
-   `data/results/intake-<stamp>.json`；它只说哪些来源答了、哪些没答、有几个候选还没进账本。
-3. **0.4.17 已发布**（把 **P-0047**（`completed` 却没有回答的 turn，探针 `data/results/live-completed-2026-11-16T18-30-00.000Z.json`）、**P-0048**
-   （macOS CI 判据）、**P-0049**（事实包按注册表重数）、**P-0050**（`scan` 数丢掉的工具，证据
-   `capability-drift-2026-11-17T04-40-00.000Z.json`）、**P-0051**（`explain` 把同一条计数指名，证据
-   `explain-drift-2026-11-17T10-05-00.000Z.json`）一起发了出去）。0.4.16 带 P-0045 / P-0046。
-4. 复现成功 → 夹具 + 先红测试 + 编号只前进（下一个是 **P-0052**）。
-5. 复现失败 → 标 `unreproduced`，写清版本差异，换下一条。
-6. 动运行时字节前先付账：压散文或去重，**不抬 cap**（P-0032 的先例）。最近一次付款之后：plugin **538 B**
-   （CLI **440 B**）、core **337 B**、registry **3 089 B** —— 下一轮写记录之前先压一条老记录或先付账。
+**这一节不复述状态。** 当前版本、字节余量、下一个补丁号、哪些线索已经关掉，都以
+`docs/HANDOFF.md` 的「三十秒状态」与「下一件事」为准；本文件只留方法、入口与判据。
+
+- **先读**：`docs/HANDOFF.md` 的状态表，再回到 §0 / §3 的阶梯。
+- **新线索**：`node scripts/collect_leads.mjs --stamp <ISO> --dsh --self --npm` 产出
+  `data/results/intake-<stamp>.json`；它只说哪些来源答了、哪些没答、有几个候选还没进账本。
+- **判读**：候选只按 §0 / §3 的阶梯处理，结论写进 `leads.md` 的 `decision` 列；
+  没复现的报告不进补丁。
+- **动运行时字节前先付账**：压散文或去重，**不抬 cap**；付账后的余量以状态表为准。

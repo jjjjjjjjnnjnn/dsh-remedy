@@ -1,8 +1,15 @@
 # dsh-remedy AGENTS.md
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
-> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.18`（已发布，两包 `latest`；两个 profile 在 0.4.18 上，桌面 App 本轮未重启、仍是 0.4.17；本树就是已发布的那一版，发布不需要 OTP）
-> **Stand**：R65（2026-11-17，**把 #12741 的那一半变成计数：`completed` 的 turn 停在 UI 不读的工具调用上**）——
+> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.18`（已发布，两包 `latest`；两个 profile 在 0.4.18 上，桌面 App 在 R66 里跑过一个 0.4.18 的真实 turn；本树就是已发布的那一版，发布不需要 OTP）
+> **Stand**：R66（2026-11-17，**首屏第三次少一个补丁：开篇数字、漏掉的 P-0042、研究页 §6 的三处漂移**）——
+> registry 52、两个首页开篇却写 51，CLI 接缝行只有 12 个 id（漏 P-0042），`docs/research/README.md` §6 还在说
+> `0.4.17 已发布` / 下一个是 P-0052 / 上一轮付款前的字节账。三条规则先红后绿：开篇计数对 `PATCHES.length`、
+> 每个接缝行对 registry 的 `surface`、§6 只许指向 HANDOFF；活段里的单体 `N B` 数字也纳入状态表比对。
+> 同一轮补齐了 R65 的未做项：桌面 0.4.18 真机 turn（`live-desktop-2026-11-18T05-10-00.000Z.json`）与一次巡检
+> （92 条 discussion / 76 条候选，`intake-r66-triage.md`；无新形状，所以没有 P-0053）。**零运行时字节**，cap 一个没动；
+> 门禁对 `gates-2026-11-18T06-00-00.000Z.json` / `gates-mutate-2026-11-18T06-05-00.000Z.json`。
+> R65（2026-11-17，**把 #12741 的那一半变成计数：`completed` 的 turn 停在 UI 不读的工具调用上**）——
 > 本机用本地端点与一个会 `concludeTurn()` 的探针工具复现了形状（末步 `["text","tool-call"]`、`turn/end completed`），
 > P-0052 让 `scan` 报 `completed_on_tool_call`、`explain` 打 `TOOLCALL` 并退出 1；P-0044 的回答规则没有改。
 > 0.4.18 已发布（两包 `exact_ok` + `latest_ok`、冷装 `OK 8 fixture(s)`、两个 profile 换到 0.4.18、Linux 420/6/6-6）；
@@ -32,7 +39,7 @@
 > R56 是两条「测过」变成「真机见过」（P-0045 / P-0046），并把 0.4.16 发出去；
 > R55 是 registry 付款 + P-0044 + 0.4.15；R54 是那个已经把账号名发出去的守卫（P-0043）。
 > 更早的 R53…R1 见 `docs/HANDOFF.md` 的批次叙事。
-> **R65 的树（0.4.18，已发布）**：plugin **82 859 / 83 000（剩 141 B；CLI 半边 41 957 / 42 000，剩 43 B）**、core **103 869 / 104 000（131 B）**、registry **66 049 / 68 000（1 951 B）**。0.4.17 的账户是 82 462 / 103 663 / 64 911。
+> **R66 的树（0.4.18，已发布）**：plugin **82 859 / 83 000（剩 141 B；CLI 半边 41 957 / 42 000，剩 43 B）**、core **103 869 / 104 000（131 B）**、registry **66 049 / 68 000（1 951 B）**。0.4.17 的账户是 82 462 / 103 663 / 64 911。
 > **平台边界：Windows 与 Linux 实测（同一棵树、同一组数），macOS 未实测**；P-0038 的 `/Users` 形状在 Linux 上是字符串，CI 里有一个 `verify (macos, node 24)` job。
 > R53（P-0042 的 profile 与拒绝第一次被摆在一起）、R52 与 R51（旧数字对齐）、R49（P-0037 / P-0038）、
 > R47（同接缝的五个竞品与上游源码，借来的那一块成了 P-0036）、R46（P-0035）、R44（社区面），
@@ -40,7 +47,7 @@
 > **接手先读**：`docs/HANDOFF.md` → `docs/research/README.md` → `docs/research/leads.md` → `PROJECT_RULES.md` → `INDEX.md`
 > **R43 起的主线**是外部反馈 → 稳定补丁：报告只是线索，本机复现后才有补丁；来源与方法见 `docs/research/`。R56 的教训：**接缝名写在补丁里不算数，要在宿主源码里核对接缝真的会被派发**。
 >
-> **基线（2026-11-17）**：`pnpm run verify` = **420 tests / 6 gates**（R65 的树，Windows；0.4.17 发布时 405；Linux 同值）；
+> **基线（2026-11-17）**：`pnpm run verify` = **425 tests / 6 gates**（R66 的树，Windows；0.4.18 发布时 420；Linux 的 0.4.18 树是 420）；
 > `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.18`（latest）+
 > `dsh-remedy-core@0.4.18`（latest）。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
 > `v0.4.13` / `v0.4.14` / `v0.4.15` / `v0.4.16` / `v0.4.17` / `v0.4.18`。五十二个补丁：**9 `verified` + 43 `tested`**，在 DSH 0.2.2-rc.3 上实测过（0.4.17 的 Linux 是 405/6/6-6；0.4.18 是 420/6/6-6）。

@@ -1,0 +1,574 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/collect_leads.mjs",
+  "generated_at": "2026-11-18T05:20:00.000Z",
+  "source": {
+    "git_head": "71b8782850f4d15f9bc355bb8d2af52d6118b5bb",
+    "terms": [
+      "MALFORMED",
+      "STREAM_CLOSED",
+      "empty tool",
+      "parallel tool",
+      "session resume"
+    ]
+  },
+  "intake": {
+    "sources": [
+      {
+        "id": "S-DSH",
+        "ok": true,
+        "counts": {
+          "terms": 5,
+          "discussions_by_term": [
+            {
+              "term": "MALFORMED",
+              "discussionCount": 302,
+              "returned": 20
+            },
+            {
+              "term": "STREAM_CLOSED",
+              "discussionCount": 28,
+              "returned": 20
+            },
+            {
+              "term": "empty tool",
+              "discussionCount": 936,
+              "returned": 20
+            },
+            {
+              "term": "parallel tool",
+              "discussionCount": 213,
+              "returned": 20
+            },
+            {
+              "term": "session resume",
+              "discussionCount": 786,
+              "returned": 20
+            }
+          ],
+          "unique_discussions": 92,
+          "already_in_ledger": 16,
+          "new_candidates": 76
+        },
+        "detail": {
+          "candidates": [
+            {
+              "number": 13516,
+              "title": "[Bug] DeepSeek Messages 适配器将工具参数 JSON 抖动当成错误",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13516",
+              "updatedAt": "2026-11-16T14:07:31Z"
+            },
+            {
+              "number": 10877,
+              "title": "[Bug] agent.inject() accepts malformed messages: one missing `role` permanently breaks the session (422, no recovery)",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/10877",
+              "updatedAt": "2026-10-31T15:03:17Z"
+            },
+            {
+              "number": 8192,
+              "title": "Add temporary recovery for malformed or truncated DSML/tool calls",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/8192",
+              "updatedAt": "2026-10-15T07:17:05Z"
+            },
+            {
+              "number": 6303,
+              "title": "ld: tapi error: malformed file",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/6303",
+              "updatedAt": "2026-09-15T08:33:17Z"
+            },
+            {
+              "number": 9721,
+              "title": "MALFORMED_RESPONSE \"DeepSeek Messages SSE event type mismatch\" hard-fails every in-flight turn in synchronized waves",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/9721",
+              "updatedAt": "2026-10-15T02:13:10Z"
+            },
+            {
+              "number": 11123,
+              "title": "[Bug] llm-pi-ai: content_filter 抹平了 8 种上游终止原因，失败信息不可诊断",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/11123",
+              "updatedAt": "2026-10-26T15:59:11Z"
+            },
+            {
+              "number": 11151,
+              "title": "[Bug] llm-pi-ai forwards empty tool id/name, crashing the session write (assertV4ToolResultMessage)",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/11151",
+              "updatedAt": "2026-10-27T03:18:55Z"
+            },
+            {
+              "number": 9503,
+              "title": "How other agent platforms handle malformed tool-call arguments — and the two layers this repo is missing",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/9503",
+              "updatedAt": "2026-10-15T02:54:40Z"
+            },
+            {
+              "number": 8997,
+              "title": "Two defects that end agent turns: malformed tool arguments, and unpriced request images",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/8997",
+              "updatedAt": "2026-10-06T11:02:33Z"
+            },
+            {
+              "number": 10406,
+              "title": "[bug] 单条 tool-call 的 arguments 非法即整轮失败（MALFORMED_RESPONSE），建议隔离坏调用或自动重试",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/10406",
+              "updatedAt": "2026-10-20T10:36:06Z"
+            },
+            {
+              "number": 13153,
+              "title": "[Bug] repeat-tool-reminder reads message.source.kind without a guard in agent/pre-step — same crash family as #7363",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13153",
+              "updatedAt": "2026-11-13T02:27:20Z"
+            },
+            {
+              "number": 6783,
+              "title": "Degraded response generation and poor compatibility with Gemini models",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/6783",
+              "updatedAt": "2026-11-16T14:17:57Z"
+            },
+            {
+              "number": 9789,
+              "title": "[Bug] 模型流静默约 300 秒被判死：STREAM_CLOSED「SSE stream ended without [DONE]」，并发多任务时高概率复现",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/9789",
+              "updatedAt": "2026-10-15T12:28:41Z"
+            },
+            {
+              "number": 4972,
+              "title": "llm-deepseek: STREAM_CLOSED on providers that send finish_reason but no trailing [DONE] sentinel",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/4972",
+              "updatedAt": "2026-08-29T02:28:11Z"
+            },
+            {
+              "number": 13397,
+              "title": "[Bug][LiveShare] viewer 点「继续生成」发出的 retry 不计入 viewer turn，续跑那一轮不受共享限制（0.2.2-rc.2 / rc.3）",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13397",
+              "updatedAt": "2026-11-15T09:25:27Z"
+            },
+            {
+              "number": 13336,
+              "title": "[Bug] \"Continue\" after a failed turn persists an empty user message → session permanently 400s on strict gateways",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13336",
+              "updatedAt": "2026-11-14T16:28:37Z"
+            },
+            {
+              "number": 6725,
+              "title": "【bug】一次会话中出现两次\"卡住\"：界面在数分钟内没有任何输出，用户无法区分\"在跑\"还是\"已死\"",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/6725",
+              "updatedAt": "2026-09-15T09:32:04Z"
+            },
+            {
+              "number": 3677,
+              "title": "调用第三方key存在异常中断问题",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/3677",
+              "updatedAt": "2026-09-24T13:18:13Z"
+            },
+            {
+              "number": 2374,
+              "title": "[Bug] Configuring third-party OpenAI-compatible gateways: STREAM_CLOSED error message is too vague to root-cause",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/2374",
+              "updatedAt": "2026-08-26T22:24:47Z"
+            },
+            {
+              "number": 388,
+              "title": "Bugfix: parseSse raises STREAM_CLOSED when a compatible gateway closes right after data: [DONE]",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/388",
+              "updatedAt": "2026-08-13T17:09:17Z"
+            },
+            {
+              "number": 8423,
+              "title": "DSH | dsh-reconnect | retry failed model requests with backoff instead of losing the turn",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/8423",
+              "updatedAt": "2026-10-06T17:10:48Z"
+            },
+            {
+              "number": 6580,
+              "title": "deepseek harness一直在输出思考的内容，没有任何工作内容的产出",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/6580",
+              "updatedAt": "2026-09-24T10:07:38Z"
+            },
+            {
+              "number": 2203,
+              "title": "无法连接到 z.ai 海外coding plan",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/2203",
+              "updatedAt": "2026-09-24T10:12:53Z"
+            },
+            {
+              "number": 8501,
+              "title": "动态插件缺少可在 workspace-write 下合法落盘的「全局设置」通道",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/8501",
+              "updatedAt": "2026-09-30T17:33:04Z"
+            },
+            {
+              "number": 7502,
+              "title": "[BUG] web_search always fails: \"DeepSeek returned an unprocessable response body\" (brotli not decoded under custom undici dispatcher)",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/7502",
+              "updatedAt": "2026-10-13T00:40:38Z"
+            },
+            {
+              "number": 3542,
+              "title": "[Bug] Manual `/compact` aborts after 5–15s with \"DeepSeek request aborted by caller\" — 22/23 attempts fail (rc.7 & rc.8)",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/3542",
+              "updatedAt": "2026-11-06T11:05:31Z"
+            },
+            {
+              "number": 11919,
+              "title": "Treat empty optional delegation selections as omission in the executor tool",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/11919",
+              "updatedAt": "2026-11-02T23:59:36Z"
+            },
+            {
+              "number": 12673,
+              "title": "mapStopReason empty-response guard counts blocks, not usable content",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12673",
+              "updatedAt": "2026-11-09T00:21:15Z"
+            },
+            {
+              "number": 13135,
+              "title": "A session whose baseline tools are all gone sends an all-deferred request, and every turn fails",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13135",
+              "updatedAt": "2026-11-13T03:13:14Z"
+            },
+            {
+              "number": 10732,
+              "title": "[Bug] empty tool-call id/name from Anthropic Messages gateway → \"format v4 tool/result requires toolCallId matching its tool source\" crash (fix provided)",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/10732",
+              "updatedAt": "2026-10-23T02:18:29Z"
+            },
+            {
+              "number": 10531,
+              "title": "Model misreads delivered messages as empty/zero-width-space messages and replies \"empty message, maybe a mis-touch\"",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/10531",
+              "updatedAt": "2026-10-22T09:49:51Z"
+            },
+            {
+              "number": 13245,
+              "title": "[P0 Performance] `workspace-changes` git snapshot blocks the first tool of every turn for 27–29 s in large repositories (tested on all 4 releases, including 0.2.2-alpha.3)",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13245",
+              "updatedAt": "2026-11-15T09:26:26Z"
+            },
+            {
+              "number": 12521,
+              "title": "[Solved] PTC mode fails on the next step after any successful tool call (reading 'length')",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12521",
+              "updatedAt": "2026-11-07T05:47:38Z"
+            },
+            {
+              "number": 12939,
+              "title": "Windows desktop: first tool call in a new session (or after ~1 min idle) takes 20–30 s — tool runtime cold start",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12939",
+              "updatedAt": "2026-11-11T13:18:28Z"
+            },
+            {
+              "number": 11345,
+              "title": "Proposal: A Unified Runtime Policy Pipeline for Tool Calls",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/11345",
+              "updatedAt": "2026-10-29T11:49:32Z"
+            },
+            {
+              "number": 13449,
+              "title": "Subagent model-selection policy snapshot diverges from the live configuration",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13449",
+              "updatedAt": "2026-11-16T02:42:48Z"
+            },
+            {
+              "number": 13261,
+              "title": "[Bug] run_code child processes start with an empty process.env on Windows; shell APIs can write %SystemDrive%\\ProgramData\\... into the cwd",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13261",
+              "updatedAt": "2026-11-14T04:28:44Z"
+            },
+            {
+              "number": 13472,
+              "title": "Render per-reply web sources outside tool cards (opt-in, hideable, copy stays clean)",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13472",
+              "updatedAt": "2026-11-16T05:40:56Z"
+            },
+            {
+              "number": 13450,
+              "title": "subagent_fork cannot specify a model route (context and route are orthogonal)",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13450",
+              "updatedAt": "2026-11-16T02:43:58Z"
+            },
+            {
+              "number": 12741,
+              "title": "Long tool loops can finish a turn with no visible reply",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12741",
+              "updatedAt": "2026-11-09T09:40:37Z"
+            },
+            {
+              "number": 13426,
+              "title": "Parallel dsh sessions on one Git workspace: writer coordination and external subagent visibility",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13426",
+              "updatedAt": "2026-11-15T13:58:01Z"
+            },
+            {
+              "number": 12639,
+              "title": "[Idea] Start concurrency-safe tool calls while the response is still streaming",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12639",
+              "updatedAt": "2026-11-08T08:43:14Z"
+            },
+            {
+              "number": 12933,
+              "title": "BUG: cua tools fail validation in 0.2.2-rc.1 — params object serialized to string in the tool-call bridge",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12933",
+              "updatedAt": "2026-11-11T06:36:14Z"
+            },
+            {
+              "number": 12057,
+              "title": "dsh-parallel-tools-prompt：并行工具调度提示插件（多调用轮占比 3.2% → 22.6% 实测）",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12057",
+              "updatedAt": "2026-11-04T05:46:53Z"
+            },
+            {
+              "number": 11793,
+              "title": "[Bug + tested fix] dsh-superagent-prototype: nested subagents past depth 8 keep their tools",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/11793",
+              "updatedAt": "2026-11-01T19:02:28Z"
+            },
+            {
+              "number": 10832,
+              "title": "一次调用该装几个动作：行为纪律 A/B 实测（PTC step −39.5%）与 pwsh 缺 isConcurrencySafe 的连锁效应 — Measured: how many actions per call, and why native mode stops paying",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/10832",
+              "updatedAt": "2026-11-05T00:12:05Z"
+            },
+            {
+              "number": 12737,
+              "title": "agent-teams: spawn_teammate cannot select a model/provider",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12737",
+              "updatedAt": "2026-11-10T15:03:42Z"
+            },
+            {
+              "number": 11189,
+              "title": "[Withdrawn] Duplicate of #11190 — type:'json' tool params are not parsed to JSON values (see maintained thread)",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/11189",
+              "updatedAt": "2026-10-27T09:28:11Z"
+            },
+            {
+              "number": 13024,
+              "title": "Desktop host exits with an uncatchable undici assertion when a fetch is aborted (Node 24.21 / Electron 44.7)",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13024",
+              "updatedAt": "2026-11-12T03:08:46Z"
+            },
+            {
+              "number": 10115,
+              "title": "Feature request — signal truncated output from workflow / subagent returns",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/10115",
+              "updatedAt": "2026-10-18T08:55:14Z"
+            },
+            {
+              "number": 13461,
+              "title": "[Plugin] OmAgents: 33 skills, background subagents, and a durable Web Job Board",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13461",
+              "updatedAt": "2026-11-16T03:47:44Z"
+            },
+            {
+              "number": 13137,
+              "title": "dsh-native-mode-router —— Autonomous Runtime Engine Switching (Standard, PTC, Team, Minimal) with In-Flight Auto-Wakeup",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13137",
+              "updatedAt": "2026-11-12T19:50:38Z"
+            },
+            {
+              "number": 12744,
+              "title": "[Bug][Windows][0.2.1-rc.5] Every tool dispatch fails with \"Cannot read properties of undefined (reading 'prepare')\" — duplicate dsh-tools instances yield unequal Symbol keys",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12744",
+              "updatedAt": "2026-11-09T10:12:51Z"
+            },
+            {
+              "number": 12102,
+              "title": "感觉dsh写代码 越来越慢了 大家装什么插件 或者是配置什么 能保证速度也能保证质量的呢？",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12102",
+              "updatedAt": "2026-11-04T05:41:38Z"
+            },
+            {
+              "number": 12175,
+              "title": "DSH | dsh-kimicode-swarm | Kimi Code 风格的批量并行子 Agent / Kimi-Code-style batch-parallel subagents",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12175",
+              "updatedAt": "2026-11-07T15:58:59Z"
+            },
+            {
+              "number": 12596,
+              "title": "[Bug] dsh web auto-exits with SIGSEGV (signal 11) while idle on 0.2.2-rc.1",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12596",
+              "updatedAt": "2026-11-11T05:50:38Z"
+            },
+            {
+              "number": 12728,
+              "title": "Simple \"did DSH update?\" lookup took 9m43s: timeout-promotion UX + missing self-budget signals",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12728",
+              "updatedAt": "2026-11-09T07:16:09Z"
+            },
+            {
+              "number": 10210,
+              "title": "Google Gemini-Argon-4 tool-call replay drops thought_signature in openai-completions",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/10210",
+              "updatedAt": "2026-11-02T23:59:41Z"
+            },
+            {
+              "number": 13097,
+              "title": "vmware-console-mcp: VM console + lifecycle control for agents (VMware Player/Workstation + multi-host ESXi, 59 tools)",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13097",
+              "updatedAt": "2026-11-12T10:41:07Z"
+            },
+            {
+              "number": 12829,
+              "title": "session/writer-held: leaked session write handle blocks resume after a turn ends (zombie session)",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12829",
+              "updatedAt": "2026-11-10T09:05:24Z"
+            },
+            {
+              "number": 13598,
+              "title": "dsh-session-persistence-jsonl: write open and historical-format migration hold every Session event in memory; large Sessions need several GB",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13598",
+              "updatedAt": "2026-11-17T11:49:43Z"
+            },
+            {
+              "number": 13165,
+              "title": "GUI \"New Session\" silently resumes an old blank draft, making \"settings apply to new Sessions\" unreachable",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13165",
+              "updatedAt": "2026-11-16T10:05:28Z"
+            },
+            {
+              "number": 13293,
+              "title": "Subagent model-selection preference only applies to new sessions; resume can never adopt changes",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13293",
+              "updatedAt": "2026-11-14T10:04:01Z"
+            },
+            {
+              "number": 12566,
+              "title": "ACP server: compose a configured agent preset for new and resumed sessions",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12566",
+              "updatedAt": "2026-11-07T13:19:39Z"
+            },
+            {
+              "number": 12348,
+              "title": "跨 profile resume 时的 capability drift：想确认设计边界和推荐做法",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12348",
+              "updatedAt": "2026-11-05T21:47:56Z"
+            },
+            {
+              "number": 10006,
+              "title": "Feature request: move an existing session to another workspace (`dsh session move`)",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/10006",
+              "updatedAt": "2026-11-05T16:26:55Z"
+            },
+            {
+              "number": 13221,
+              "title": "[Bug] 0.2.2-rc.3: opening a historical session removes it from the sidebar and disables the composer",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13221",
+              "updatedAt": "2026-11-16T21:58:35Z"
+            },
+            {
+              "number": 12654,
+              "title": "Support ACP session/load so Paseo can restore conversation history",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12654",
+              "updatedAt": "2026-11-08T11:55:06Z"
+            },
+            {
+              "number": 13103,
+              "title": "Cold resume decodes the entire Session log: a 179 MB Session costs ~9 s per resume and blocks the event loop / 冷恢复会解码整份日志：179MB 会话每次恢复约 9 秒并阻塞事件循环",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13103",
+              "updatedAt": "2026-11-12T11:42:07Z"
+            },
+            {
+              "number": 12331,
+              "title": "ACP: reopening an agent loses the conversation; tool calls render as \"Other\"",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12331",
+              "updatedAt": "2026-11-05T17:21:47Z"
+            },
+            {
+              "number": 12454,
+              "title": "0.2.2-rc.1: opening a session silently disposes it — input \"Session unavailable\", row disappears",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12454",
+              "updatedAt": "2026-11-07T03:30:17Z"
+            },
+            {
+              "number": 10602,
+              "title": "dsh-sdk-jsonrpc-server: resume a session that already exists in session persistence instead of always creating",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/10602",
+              "updatedAt": "2026-10-22T12:56:03Z"
+            },
+            {
+              "number": 11568,
+              "title": "[Bug] Resume right after a restart can fail with \"Unknown agent preset: standard\" although the preset exists (transient preset-roster window surfaced as gateway/internal)",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/11568",
+              "updatedAt": "2026-10-30T11:39:34Z"
+            },
+            {
+              "number": 12810,
+              "title": "[Bug] 0.1.0-rc.7 → 0.2.2-rc.1 upgrade: seeded sessions show \"Untitled\" — projection-cache identity migration drops isSeeded",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12810",
+              "updatedAt": "2026-11-10T18:09:17Z"
+            },
+            {
+              "number": 10778,
+              "title": "Session-level deep link for external tools (dsh://session/<id>)",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/10778",
+              "updatedAt": "2026-10-23T10:44:18Z"
+            },
+            {
+              "number": 12081,
+              "title": "[hooks-claude-code] SessionStart additionalContext stacks once per resume and lands twice in the first turn",
+              "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/12081",
+              "updatedAt": "2026-11-04T02:05:11Z"
+            }
+          ]
+        },
+        "unreadable_reason": null
+      },
+      {
+        "id": "S-SELF",
+        "ok": true,
+        "counts": {
+          "open_total": 4,
+          "user_issues": 0,
+          "user_prs": 0,
+          "bot_prs": 4
+        },
+        "detail": {
+          "user_issues": []
+        },
+        "unreadable_reason": null
+      },
+      {
+        "id": "S-NPM",
+        "ok": true,
+        "counts": {
+          "packages": 2,
+          "downloads_last_month": {
+            "dsh-remedy": 5235,
+            "dsh-remedy-core": 5132
+          },
+          "latest": {
+            "dsh-remedy": "0.4.18",
+            "dsh-remedy-core": "0.4.18"
+          }
+        },
+        "detail": {
+          "dsh-remedy": {
+            "latest": "0.4.18",
+            "downloads": {
+              "downloads": 5235,
+              "start": "2026-10-18",
+              "end": "2026-11-16",
+              "package": "dsh-remedy"
+            }
+          },
+          "dsh-remedy-core": {
+            "latest": "0.4.18",
+            "downloads": {
+              "downloads": 5132,
+              "start": "2026-10-18",
+              "end": "2026-11-16",
+              "package": "dsh-remedy-core"
+            }
+          }
+        },
+        "unreadable_reason": null
+      }
+    ],
+    "answered": 3,
+    "unreadable": [],
+    "complete": true,
+    "note": "every registered source answered"
+  },
+  "notes": [
+    "S-DSH: 76 candidate(s) not yet in leads.md"
+  ]
+}

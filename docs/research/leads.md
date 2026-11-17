@@ -129,3 +129,19 @@ gh api graphql -f query='{ search(type: DISCUSSION, query: "repo:deepseek-ai/dee
 （`scripts/gate_size.mjs` 的 `handoff-bytes` 在读它）。本文件不复述那三个数：上一版复述的
 R55 账在这张表里活了两轮没人发现，而它早已过期。
 新的常驻字节必须先付账（压散文或去重），不许抬 cap。
+
+## I. R66 新读的（2026-11-17 的巡检：3 源应答，76 个候选未进账本）
+
+> 判读见 `docs/research/intake-r66-triage.md`：76 条里 68 条按标题归桶（UI / 会话持久化 / 子 agent / 性能 / 市场插件），
+> 落不到本项目的四个接缝上；另外 8 条读全文，逐条在下面下结论。**没有新形状，本轮不发补丁。**
+
+| id | source | source_kind | read_depth | reported | version | class | seam | status | decision |
+|---|---|---|---|---|---|---|---|---|---|
+| L-0041 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13516> | `dsh` | `full` | 2026-11-16 | 0.2.0-rc.2 | `MALFORMED_RESPONSE` | **out-of-seam**（adapter） | **rejected (dup)** | R66：与 L-0003 / L-0005 是同一条 adapter 代码路径（`dsh-llm-deepseek` 的 `tool input is invalid JSON`，出错的那段参数文本不进失败消息），本接缝拿不到可修的字节；「把 `MALFORMED_RESPONSE` 纳入默认重试」那一半由 P-0011 的 `retryOnMalformed` 覆盖（默认 0、按 `(turn,step)` 计数）。判 dup。 |
+| L-0042 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12933> | `dsh` | `full` | 2026-11-11 | 0.2.2-rc.1 | unknown | **out-of-seam**（host bridge） | **rejected (out-of-seam)** | R66：宿主把对象参数串成字符串之后才交给工具校验（zod 报 `expected object, received string`），错在派发前的桥接，不在 `llm/stream` 读到的 arguments 文本；本项目的 `attribute.ts` 只判片段能否归因，不改桥接。记录，不碰。 |
+| L-0043 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12673> | `dsh` | `full` | 2026-11-08 | 0.2.1-rc.2 | unknown | **out-of-seam**（stop-reason） | **rejected (dup)** | R66：`mapStopReason` 用块数判空是宿主守卫；本项目问的是同一个问题的会话侧——P-0047 / P-0052 已经数「`completed` 却没回答」与「停在 tool-call」，`core/answer.ts` 也不把 reasoning 与空白算回答。改宿主的 stop 分支不是本接缝，判 dup。 |
+| L-0044 | <https://github.com/deepseek-ai/deepseek-harness/discussions/9721> | `dsh` | `full` | 2026-10-15 | 0.2.0-rc.2 | `MALFORMED_RESPONSE` | **out-of-seam**（adapter） | **rejected (out-of-seam)** | R66：`SSE event type mismatch` 由 adapter 解析帧时抛出，失败消息不带原始帧，与 L-0003 同一条「字节到不了接缝」的边界；它的建议（默认重试）与 L-0007 同一取舍，由 P-0011 的有界重试应对。记录，不碰。 |
+| L-0045 | <https://github.com/deepseek-ai/deepseek-harness/discussions/9789> | `dsh` | `full` | 2026-10-15 | 0.1.5-rc.3 | `STREAM_CLOSED` | `agent/request-error` | **rejected (dup)** | R66：与 L-0011 同一类；报告补上了两个 300 秒闸门（`LLM_STREAM_IDLE_TIMEOUT` 与 undici `bodyTimeout`），但本机 census 里仍是 0 个 `STREAM_CLOSED`（114 文件，词表见 L-0011）。同一个宿主上造出形状之前不改词表、不加计数，判 dup。 |
+| L-0046 | <https://github.com/deepseek-ai/deepseek-harness/discussions/11123> | `dsh` | `full` | 2026-10-26 | 0.2.1-rc.3 | `PI_AI_ERROR` | **out-of-seam**（adapter） | **rejected (out-of-seam)** | R66：adapter 把多种上游终止原因压成 `content_filter` + `PI_AI_ERROR`，可诊断性差；但被抹掉的原始原因 `llm/stream` 看不到。本项目只命名本机真见过的类，而本机 census 没有这个形状（L-0011 的规则）。记录，不碰。 |
+| L-0047 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13135> | `dsh` | `full` | 2026-11-12 | 0.2.2-rc.1 | `UNKNOWN_TOOL` | `cli` | **rejected (dup)** | R66：与 P-0050 同族但触发不同——那边是 resume header 丢掉会话调过的工具，这边是 profile 的 baseline 工具全没了、请求变成全 defer；`core/capability.ts` 的规则要求「调过、后来不再声明」，本机没有这个形状，先不扩规则，判 dup。 |
+| L-0048 | <https://github.com/deepseek-ai/deepseek-harness/discussions/8192> | `dsh` | `full` | 2026-09-29 | ? | `MALFORMED_RESPONSE` | `llm/stream` | **rejected (no defect)** | R66：提议对坏/截断的 DSML 调用做「临时恢复」；截断的尾巴缺失，补出来就是派发一个模型没做过的调用（PROJECT_RULES §1、P-0037 的边界）。与 L-0008 同一取舍，判 no defect。 |

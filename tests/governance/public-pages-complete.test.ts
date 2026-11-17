@@ -67,6 +67,157 @@ test('the first screen names the published version it calls latest, with its siz
   }
 })
 
+/**
+ * The opening count and the seam table, measured on the R65 tree.
+ *
+ * `README.md` and `README.zh-CN.md` both opened with "fifty-one defects" while
+ * the same pages said 52 two paragraphs later and the registry held 52, and the
+ * CLI row of the seam table named twelve patches while the registry and the fact
+ * pack both put thirteen there (P-0042 appeared only in a limits sentence). The
+ * rules above require every id to appear *somewhere*, which is satisfied by a
+ * page whose count is wrong and whose table is one row short.
+ */
+
+/** Chinese numerals up to ninety-nine, which is all a patch count needs. */
+const ZH_DIGITS: Record<string, number> = {
+  〇: 0, 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9,
+}
+
+function parseChineseCount(token: string): number | null {
+  if (/^\d+$/.test(token)) return Number.parseInt(token, 10)
+  const tens = /^([一二三四五六七八九])?十([一二三四五六七八九])?$/.exec(token)
+  if (tens !== null) {
+    const high = tens[1] === undefined ? 1 : ZH_DIGITS[tens[1]]
+    const low = tens[2] === undefined ? 0 : ZH_DIGITS[tens[2]]
+    return high === undefined || low === undefined ? null : high * 10 + low
+  }
+  const single = ZH_DIGITS[token]
+  return single === undefined ? null : single
+}
+
+/** The count the first sentence puts in front of the thing the project registers. */
+function openingPatchCount(text: string): number | null {
+  const en = /—\s+(?:an?\s+)?([A-Za-z]+(?:-[A-Za-z]+)?|\d+)\s+defects/.exec(text)
+  if (en !== null) return statedEnglishCount(en[1] ?? '')
+  const zh = /：([〇零一二三四五六七八九十\d]+)\s*个缺陷/.exec(text)
+  if (zh !== null) return parseChineseCount(zh[1] ?? '')
+  return null
+}
+
+const EN_UNITS: Record<string, number> = {
+  one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9,
+}
+const EN_TEENS: Record<string, number> = {
+  ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15,
+  sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19,
+}
+const EN_TENS: Record<string, number> = { twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80, ninety: 90 }
+
+function statedEnglishCount(token: string): number | null {
+  const lower = token.toLowerCase()
+  if (/^\d+$/.test(lower)) return Number.parseInt(lower, 10)
+  if (lower in EN_UNITS) return EN_UNITS[lower]!
+  if (lower in EN_TEENS) return EN_TEENS[lower]!
+  if (lower in EN_TENS) return EN_TENS[lower]!
+  const compound = /^([a-z]+)-([a-z]+)$/.exec(lower)
+  if (compound !== null) {
+    const high = EN_TENS[compound[1]!]
+    const low = EN_UNITS[compound[2]!]
+    if (high !== undefined && low !== undefined) return high + low
+  }
+  return null
+}
+
+/** The seam a table row names, or null when the row is one the registry cannot answer for. */
+function surfaceOfLabel(label: string): string | null {
+  const ticked = /`([^`]+)`/.exec(label)?.[1]
+  if (ticked !== undefined) {
+    return ['llm/stream', 'agent/request-error', 'agent/error'].includes(ticked) ? ticked : null
+  }
+  const plain = label.replace(/\s+/g, ' ').trim()
+  if (/^(CLI|命令行)$/i.test(plain)) return 'cli'
+  if (/^(build side|构建侧)$/.test(plain)) return 'scripts'
+  if (/^(measured, not mounted|测过但没挂)$/.test(plain)) return 'profile'
+  return null
+}
+
+/** The rows of the seam table: its label and the ids it enumerates. */
+function seamRows(text: string): { label: string; ids: string[] }[] {
+  const lines = text.split(/\r?\n/)
+  const header = lines.findIndex((line) => /^\| (seam \| patches|接缝 \| 补丁) /.test(line))
+  assert.notEqual(header, -1, 'the page must keep a seam table with a patches column')
+  const rows: { label: string; ids: string[] }[] = []
+  for (let index = header + 2; index < lines.length && lines[index]!.startsWith('|'); index += 1) {
+    const cells = lines[index]!.split('|').map((cell) => cell.trim())
+    rows.push({ label: cells[1] ?? '', ids: [...new Set(cells[2]?.match(/P-\d{4}/g) ?? [])] })
+  }
+  return rows
+}
+
+test('both first screens open with the number of patches the registry holds', () => {
+  for (const path of ['README.md', 'README.zh-CN.md']) {
+    const text = read(path)
+    const stated = openingPatchCount(text)
+    assert.notEqual(stated, null, `${path} must keep an opening sentence that counts the patch set`)
+    assert.equal(
+      stated,
+      PATCHES.length,
+      `${path} opens with ${String(stated)} defects while the registry holds ${PATCHES.length}`,
+    )
+  }
+})
+
+test('each seam row names exactly the patches the registry puts on that seam', () => {
+  const bySurface = new Map<string, string[]>()
+  for (const patch of PATCHES) {
+    const ids = bySurface.get(patch.surface) ?? []
+    ids.push(patch.id)
+    bySurface.set(patch.surface, ids)
+  }
+  const expectedIds = PATCHES.map((patch) => patch.id).sort()
+
+  for (const path of ['README.md', 'README.zh-CN.md']) {
+    const rows = seamRows(read(path))
+    assert.ok(rows.length > 0, `${path} must keep its seam table`)
+    const seen: string[] = []
+    for (const row of rows) {
+      const surface = surfaceOfLabel(row.label)
+      assert.notEqual(surface, null, `${path}: the seam row "${row.label}" is not one the registry can answer for`)
+      const expected = [...(bySurface.get(surface ?? '') ?? [])].sort()
+      assert.deepEqual(
+        [...row.ids].sort(),
+        expected,
+        `${path}: the ${String(surface)} row names ${row.ids.length} patches while the registry puts ${expected.length} there`,
+      )
+      seen.push(...row.ids)
+    }
+    assert.deepEqual([...seen].sort(), expectedIds, `${path}: the seam table does not cover the registry`)
+  }
+})
+
+test('the count and seam rules fail on the shapes they were written for', () => {
+  // Measured on the R65 tree: fifty-one in front of fifty-two, and a CLI row
+  // missing P-0042. Both must be visible to the parsers, or the rules prove
+  // nothing about the pages they read.
+  assert.equal(openingPatchCount('dsh-remedy is a patch set — fifty-one defects, each registered'), 51)
+  assert.equal(openingPatchCount('补丁集：五十一个缺陷，每一个都登记了'), 51)
+  assert.equal(openingPatchCount('补丁集：52 个缺陷'), 52)
+  assert.equal(openingPatchCount('no count here'), null)
+  assert.notEqual(openingPatchCount('— fifty-one defects'), PATCHES.length)
+
+  const stale = '| seam | patches | what |\n|---|---|---|\n| CLI | P-0004, P-0006 | x |\n'
+  const row = seamRows(stale)[0]!
+  assert.equal(surfaceOfLabel(row.label), 'cli')
+  assert.deepEqual(row.ids, ['P-0004', 'P-0006'])
+  assert.deepEqual(
+    [...row.ids].sort(),
+    ['P-0004', 'P-0006'],
+    'the parser sees the row; the rule above is what compares it with the registry',
+  )
+  assert.notDeepEqual([...row.ids].sort(), ['P-0004', 'P-0006', 'P-0042'].sort())
+  assert.equal(surfaceOfLabel('a row nobody can place'), null)
+})
+
 test('the rules fail on the shape they were written for', () => {
   // The negative control: a page that drops one id, and a page whose status row
   // names a version it has no sizes for. If these pass, the rules above prove

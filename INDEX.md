@@ -14,12 +14,13 @@
 | `PROJECT_RULES.md` | 硬规则（只读本机、失败即失败、证据由脚本产出） |
 | `docs/HANDOFF.md` | 交接：五分钟检查 / 当前批次 / 第一件事 / 坑 |
 | `docs/research/README.md` | 外部反馈 intake：来源、判据、四条约束、同类项目读法（R43 起） |
-| `docs/research/leads.md` | 线索账本：40 条（34 条 DSH + 4 条 Reddit 摘要 + 2 条市场/手册），带 `source_kind` / `read_depth`；R64 把状态与 decision 对齐：0 条 `lead`、7 条 `watching`，其余都是 `patched` / `rejected`（原因在 decision 列） |
+| `docs/research/leads.md` | 线索账本：48 条（42 条 DSH + 4 条 Reddit 摘要 + 1 条市场 + 1 条上游源码），带 `source_kind` / `read_depth`；R64 把状态与 decision 对齐，R66 新增 I 表 8 条（全部 `rejected`，无新形状）：0 条 `lead`、7 条 `watching`，其余都是 `patched` / `rejected`（原因在 decision 列） |
 | `docs/research/sources.md` | 七个来源的读法、频率、边界；Reddit 读不到正文的诚实规则 |
 | `docs/research/plan-0.4.9.md` | 0.4.9 计划与结案：来源 → 巡检 → 一条线索 → 一个补丁；§2 记着这一版实际结掉的六条线索 |
 | `docs/research/similar-projects-2026-11-14.md` | 同接缝的五个竞品与上游源码：借了什么机制、拒了什么取舍、每条指回本机 `app.asar` 的行号（R47） |
 | `docs/research/community-2026-11-14.md` | 2026-11-14 的社区盘面事实底稿（star / issue / 下载 / Discussions） |
 | `docs/research/intake-r57-triage.md` | R55 巡检留下的 **79 个候选**的逐桶判读：每个桶的接缝决定、三家值得再读的、以及「这只是判读不是复现」 |
+| `docs/research/intake-r66-triage.md` | R66 巡检留下的 **76 个候选**的逐桶判读：五桶 76 条正好覆盖、8 条读全文的结论进 `leads.md` 的 I 表、以及「没有新形状所以不发补丁」 |
 
 ## 代码
 
@@ -67,6 +68,8 @@
 | `data/fixtures/toolcall-fusion/single-broken.json` | 单个坏对象不拆 |
 | `data/results/patch-registry-*.json` | 注册表快照（SSOT） |
 | `data/results/publish-2026-11-18T03-10-00.000Z.json` / `install-acceptance-2026-11-18T03-20-00.000Z.json` | **0.4.18 发布 + 空目录单装**（两包 `exact_ok` + `latest_ok`、`ok: true`；三条命令 0/0/0、`OK 8 fixture(s)`、`canonical_fixtures: 8`） |
+| `data/results/live-desktop-2026-11-18T05-10-00.000Z.json` | **桌面真机（R66）· 0.4.18**：答复 `R66-DESKTOP-OK`、`turn/end completed`、journal `streams: 1`、verdict `quiet`；包是 registry 的 0.4.18 tarball，runtime 0.2.2-rc.3 |
+| `data/results/intake-2026-11-18T05-20-00.000Z.json` | **R66 巡检**：3 个来源全应答；92 条去重 discussion / 76 条新候选；判读见 `docs/research/intake-r66-triage.md` |
 | `data/results/live-toolcall-2026-11-17T13-30-00.000Z.json` | **P-0052 本机证据**：conclude 末步 `["text","tool-call"]`、control 第二步 `["text"]`；`completed_on_tool_call=1`、`completed_without_answer=0` |
 | `data/results/live-linux-2026-11-18T03-40-00.000Z.json` | **Linux 真机（WSL2 Ubuntu, node 24.10.0）· 0.4.18 树**：420 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 同值 |
 | `data/results/publish-2026-11-17T07-30-00.000Z.json` / `install-acceptance-2026-11-17T07-40-00.000Z.json` | **0.4.17 发布 + 空目录单装**（两包 `exact_ok` + `latest_ok`、`ok: true`；三条命令 0/0/0、`OK 8 fixture(s)`、`canonical_fixtures: 8`） |
@@ -180,7 +183,7 @@
 | `tests/unit/runtime-version.test.ts` | runtime 版本读自 `runtime.json`；缺字段/坏文件答 null，不猜（P-0042 的附带修正） |
 | `tests/unit/turn-answer.test.ts` | P-0044 的判据：文本 / tool-call 算回答，只有 reasoning 与空白不算，只有 turn 最后一步决定，没有 assistant 消息算没回答 |
 | `tests/unit/completed-answer.test.ts` | P-0047 的判据：`completed` 的同样形状被数，文本/工具调用不数，两个结局各自计数，rows 与总数对得上 |
-| `tests/governance/public-pages-complete.test.ts` | P-0046 的两条规则：每个 registry id 都出现在两个首页；状态句点名的版本是尺寸表第一行 |
+| `tests/governance/public-pages-complete.test.ts` | P-0046 的两条规则：每个 registry id 都出现在两个首页；状态句点名的版本是尺寸表第一行。R66 另加两条：开篇计数必须等于 `PATCHES.length`、每个接缝行的 id 集合必须等于 registry 按 `surface` 的分组 |
 | `tests/governance/fact-pack-census.test.ts` | P-0049 的三条规则：事实包点名每个 registry id；每个接缝条目的计数与队伍等于该接缝的实际集合；包里称作已发布的版本有 CHANGELOG 小节 |
 | `tests/unit/on-tool-call.test.ts` | P-0052 的规则：末步有 tool-call 才算；文本+tool-call、只有 tool-call、控制 run、max_tokens、缺消息五种形状 |
 | `tests/e2e/explain-toolcall.test.ts` | P-0052 的 finding：正值打 `TOOLCALL` 并退出 1；文本-only、reasoning-only、无 `--sessions` 三条负对照 |
@@ -205,7 +208,7 @@
 | `tests/unit/cli-usage.test.ts` | 包内 README 与 CLI `USAGE` 的用法块必须逐行相同（P-0010 / P-0016） |
 | `tests/unit/fuzz-invariants.test.ts` | 属性测试：任何被接受的调用，其参数必须各自能 parse |
 | `tests/governance/manifest-targets.test.ts` | manifest 条目必须指向仓库内存在的文件（不得指向 `.tmp/`） |
-| `tests/governance/facts-truth.test.ts` | 事实包自己的陈述必须成立：版本、pin、上一版、引用的补丁号（R22）；R64 另加两条：首屏的测试数必须绑定已发布版本、活段里的字节对只能来自状态表 |
+| `tests/governance/facts-truth.test.ts` | 事实包自己的陈述必须成立：版本、pin、上一版、引用的补丁号（R22）；R64 另加两条：首屏的测试数必须绑定已发布版本、活段里的字节对只能来自状态表；R66 再处理两件：活段里的单体字节数（`538 B`）也必须来自状态表、`docs/research/README.md` §6 不许复述版本 / 补丁号（只能指向 HANDOFF） |
 | `tests/governance/handoff-truth.test.ts` | 证据索引=现在（可解析+哈希）+ 批次叙事=当时；每族只能一个「当前」（R22） |
 | `tests/governance/coverage-single-source.test.ts` | 覆盖表只能住在 registry；不许命令自带 `COVERAGE`/`SWITCHES`（P-0016） |
 | `tests/governance/coverage-vocabulary.test.ts` | 覆盖的故障类必须属于 census 会报的集合，且覆盖者必须是常驻接缝（P-0016） |

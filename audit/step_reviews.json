@@ -1215,10 +1215,29 @@
         "data/results/live-desktop-2026-11-17T08-55-00.000Z.json",
         "data/results/live-linux-2026-11-17T08-40-00.000Z.json",
         "data/results/patch-registry-2026-11-17T11-00-00.000Z.json",
-        "data/results/gates-2026-11-17T18-00-00.000Z.json",
-        "data/results/gates-mutate-2026-11-17T18-05-00.000Z.json"
+        "data/results/gates-2026-11-17T22-00-00.000Z.json",
+        "data/results/gates-mutate-2026-11-17T22-05-00.000Z.json"
+      ]
+    },
+    {
+      "id": "S68",
+      "gate": "copy",
+      "title": "The handover still described a tree that was no longer unpublished",
+      "axes": {
+        "correctness": "R62 published 0.4.17 and pushed it, but four live documents still described the state before that: the handoff status table called the five new records \"unpublished\" and pointed the desktop turn at `live-2026-11-17T08-50-00.000Z.json`, which had been deleted in favour of `08-55`; the profile row said both profiles were on 0.4.16; the package row called the working tree \"未发布\" and quoted 0.4.15 as the previous release instead of 0.4.16; AGENTS said \"本轮不动 npm，0.4.17 仍未发布\"; and the research README still called 0.4.17 unpublished and listed the five records as pending. Each sentence now describes the published tree, with the artifact that proves it.",
+        "reproducibility": "`node --test tests/governance/handoff-truth.test.ts` and `release-procedure.test.ts` read exactly these pointers (the release row, the five-minute `npm view` comment, the boundary `latest`, `docs/PUBLISH.md` `currently`) and were green after the edit; `node scripts/gate.mjs` and the six negative controls are the same pair recorded as `gates-2026-11-17T20-20-00.000Z.json` / `gates-mutate-2026-11-17T20-25-00.000Z.json`. One real defect was introduced by this round and caught by rereading: the research README briefly named `live-completed-2026-06-16` (a typo) as the P-0047 probe; the corrected sentence names `data/results/live-completed-2026-11-16T18-30-00.000Z.json`, which exists.",
+        "compliance": "No runtime byte, no cap, no npm write: the plugin half is 82 462 / 83 000, core 103 663 / 104 000, registry 64 911 / 68 000 — unchanged from R62, which is what a documentation round must be able to say.",
+        "ssot": "Every number in the rewritten sentences was read from an artifact or from the packages: 0.4.17 and its tarball sizes from `publish-2026-11-17T07-30-00.000Z.json` and the downloaded registry tarballs, the three CI run ids from `gh run list`, the profiles from `pnpm why` in both directories, and the gate pair from this round`s own `--record` run. The five ledger rows moved from \"0.4.17 (unreleased on the tree)\" to \"0.4.17 (published 2026-11-17)\" in R62 and are unchanged here.",
+        "adversarial": "What this round cannot claim: it proves the pages agree with the artifacts, not that a reader who follows them will succeed — the macOS boundary is still a CI job rather than hardware, and the desktop turn is one turn on one route. It also does not touch `BS-20`: the eleven patch docs still cite `Reproduction` steps in `.tmp/`, and that stays the first item of the next session, with the two choices (ship the probes under `scripts/`, or name a published command in each Reproduction) left as a decision rather than a cleanup."
+      },
+      "evidence": [
+        "docs/HANDOFF.md",
+        "AGENTS.md",
+        "docs/research/README.md",
+        "data/results/gates-2026-11-17T22-00-00.000Z.json",
+        "data/results/gates-mutate-2026-11-17T22-05-00.000Z.json"
       ]
     }
   ],
-  "updated_at": "2026-11-17T18:10:00.000Z"
+  "updated_at": "2026-11-17T22:10:00.000Z"
 }

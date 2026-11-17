@@ -132,15 +132,19 @@ census into a finding.
 node packages/plugin/dist/cli.js scan "<home>/.dsh/sessions" --json
 #   -> fusion_failures 44, and nothing about the other 243 turns
 
-# The census, read straight off the events:
-node .tmp/probe-turn-reason.mjs
-#   -> turn/end=287 kinds=[error 99, completed 92, max-tokens 88, aborted 8]
-#      codes=[MALFORMED_RESPONSE 44, UNSUPPORTED_REASONING_EFFORT 36, SERVER 16, ...]
+# After the patch the same command prints the ending census:
+node packages/plugin/dist/cli.js scan "<home>/.dsh/sessions" --json
+#   -> turn census: error / completed / max-tokens / aborted, with error codes
 
-# Why the truncated class cannot be repaired (it is counted, not fixed):
-node .tmp/probe-truncation-attribution.mjs
-#   -> truncatedTurns=88 sameTurnWithBuffers=0
+# The rule each class is counted by, and its negative controls:
+node --test tests/unit/session-scan.test.ts
 ```
+
+The host census behind the numbers above is
+`data/results/scan-full-2026-11-11T18-15-00.000Z.json` (78 files, 393 turns) and the
+later one is `data/results/scan-r55-2026-11-16T10-20-00.000Z.json` (114 files, 396
+attempts). The two one-off probes that separated kinds from codes (R39) were not shipped;
+their readings are quoted above and the rule they led to is what the test pins.
 
 ## Evidence
 

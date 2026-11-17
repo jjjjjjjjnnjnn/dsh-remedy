@@ -193,3 +193,106 @@ test('the pack does not quote a patch id that does not exist', () => {
     assert.match(registry, new RegExp(`id: '${id}'`), `the pack names ${id}, which is not in the registry`)
   }
 })
+
+/**
+ * A suite count on a first screen, bound to a version.
+ *
+ * Measured on the R63 tree: both first screens still said "The suite is 399
+ * tests" while the pack it points at said 0.4.17 ships 405. `gate_copy` allowed
+ * both numbers because 399 is a real historical count, so the page was checked
+ * for provenance and never for which release it was describing.
+ */
+function suiteClaim(text: string): { version: string; tests: number } | null {
+  const en = /The suite of ([\d.]+) is (\d+) tests/.exec(text)
+  if (en !== null) return { version: en[1] ?? '', tests: Number.parseInt(en[2] ?? '', 10) }
+  const zh = /([\d.]+) 的测试套件是 (\d+) 个测试/.exec(text)
+  if (zh !== null) return { version: zh[1] ?? '', tests: Number.parseInt(zh[2] ?? '', 10) }
+  return null
+}
+
+test('the first screens quote the suite the published version ships', () => {
+  const claimed = claimedVersions()
+  assert.notEqual(claimed, null, 'the fact pack must keep a `- Version:` line naming both packages')
+  const version = claimed?.plugin ?? ''
+  const shipped = new RegExp(`${version.replaceAll('.', '\\.')} ships (\\d+) tests`).exec(facts)
+  assert.notEqual(shipped, null, `the pack must say how many tests ${version} ships`)
+  const shippedCount = Number.parseInt(shipped?.[1] ?? '', 10)
+
+  for (const path of ['README.md', 'README.zh-CN.md']) {
+    const claim = suiteClaim(read(path))
+    assert.notEqual(claim, null, `${path} must keep a version-bound suite sentence, not an unversioned "the suite is N"`)
+    assert.equal(claim?.version, version, `${path} binds its suite count to a version the pack does not describe`)
+    assert.equal(claim?.tests, shippedCount, `${path} quotes a suite count ${version} did not ship`)
+  }
+
+  // The negative control, on the shape this round found: a 0.4.17 sentence that
+  // still says 399 must be parsed as a claim and must disagree with the pack.
+  const stale = suiteClaim('The suite of 0.4.17 is 399 tests and 0 failing.')
+  assert.notEqual(stale, null, 'the parser does not read the stale sentence')
+  assert.equal(stale?.version, version)
+  assert.notEqual(stale?.tests, shippedCount, '399 must not equal the count the pack ships')
+})
+
+/**
+ * A pair of byte counts as the handoff writes them: `82 462 / 83 000`.
+ *
+ * The denominator must carry the thousands space, so `5 / 6` is not a byte
+ * account and a ratio is not mistaken for one.
+ */
+const BYTE_PAIR = /(\d{1,3}(?: \d{3})?) \/ (\d{1,3} \d{3})/g
+
+function bytePairs(text: string): string[] {
+  return [...text.matchAll(BYTE_PAIR)].map((match) => `${match[1]} / ${match[2]}`)
+}
+
+/** The pairs the live status table measures, which are the only ones prose may repeat. */
+function measuredPairs(): Set<string> {
+  const row = read('docs/HANDOFF.md')
+    .split(/\r?\n/)
+    .find((line) => line.startsWith('| 基线 |'))
+  assert.ok(row !== undefined, 'HANDOFF must keep the `| 基线 |` row that quotes the byte account')
+  return new Set(bytePairs(row))
+}
+
+/**
+ * The lines this rule reads: prose in live sections.
+ *
+ * Batch narratives are "then" and may quote the account of that day; the
+ * evidence index is a table of artifacts whose rows describe their own stamp.
+ * What is left is the text a successor acts on now.
+ */
+function liveProse(): { path: string; line: string }[] {
+  const rows: { path: string; line: string }[] = []
+  let batch = false
+  for (const line of read('docs/HANDOFF.md').split(/\r?\n/)) {
+    if (line.startsWith('## ')) batch = line.startsWith('## 当前批次')
+    if (batch || line.startsWith('|')) continue
+    rows.push({ path: 'docs/HANDOFF.md', line })
+  }
+  for (const path of ['AGENTS.md', 'docs/research/README.md', 'docs/research/leads.md']) {
+    for (const line of read(path).split(/\r?\n/)) {
+      if (line.startsWith('|')) continue
+      rows.push({ path, line })
+    }
+  }
+  return rows
+}
+
+test('a live section may only repeat the byte account the status table measures', () => {
+  const measured = measuredPairs()
+  const stale: string[] = []
+  for (const { path, line } of liveProse()) {
+    for (const pair of bytePairs(line)) {
+      if (!measured.has(pair)) stale.push(`${path}: ${pair}`)
+    }
+  }
+  assert.deepEqual(stale, [], `live sections quote an expired byte account: ${stale.join('; ')}`)
+
+  // The negative control: R55's account must be rejected, this tree's accepted.
+  const allowed = new Set(['82 462 / 83 000'])
+  assert.deepEqual(bytePairs('plugin 只剩 143 B（82 857 / 83 000）').filter((pair) => !allowed.has(pair)), [
+    '82 857 / 83 000',
+  ])
+  assert.deepEqual(bytePairs('plugin 82 462 / 83 000').filter((pair) => !allowed.has(pair)), [])
+  assert.deepEqual(bytePairs('6 of 6 gates'), [], 'a ratio without thousands separators is not a byte account')
+})

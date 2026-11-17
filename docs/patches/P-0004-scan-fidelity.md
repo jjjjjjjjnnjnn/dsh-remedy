@@ -90,17 +90,18 @@ could not see.
 
 ```powershell
 pnpm run build
-node packages/plugin/dist/cli.js scan "<home>/.dsh/sessions/--<home-encoded>-Desktop-…--/session-949e359c-…/session.v4.jsonl.zstd"
-node packages/plugin/dist/cli.js scan "<home>/.dsh/sessions" --out .tmp/scan-all.json
+node packages/plugin/dist/cli.js scan "<home>/.dsh/sessions" --json
 node scripts/redact_artifacts.mjs
 node --test --test-reporter=spec tests/e2e/cli.test.ts tests/unit/session-scan.test.ts tests/unit/redact.test.ts
 ```
 
 The measured host run (77 session files, 0 unreadable, 276 attempts, 38 fused
 calls, 43 fusion failures, 39 repairable, window
-2026-11-09T16:50:40.119Z..2026-11-10T21:07:40.093Z) is reproduced by the second
-command; the artifact it writes is a `.tmp` product, not evidence, because the
-session tree keeps growing.
+2026-11-09T16:50:40.119Z..2026-11-10T21:07:40.093Z) was the same command run when the
+session tree held those files. It is not shipped as a fixture, because the session tree
+keeps growing: the durable census is `data/results/scan-full-2026-11-11T18-15-00.000Z.json`
+(78 files, 393 turns), and a reader who runs the command above gets their own stamped
+census, not this number.
 
 ## Evidence
 

@@ -95,7 +95,12 @@ truncations" says nothing about how many of them were silent.
 ```powershell
 pnpm run build
 node --test tests/unit/turn-answer.test.ts
-node packages/plugin/dist/cli.js scan "$env:USERPROFILE\.dsh\sessions" --out .tmp/r55-census.json
+node packages/plugin/dist/cli.js scan "$env:USERPROFILE\.dsh\sessions" --json
 node packages/plugin/dist/cli.js scan <session.v4.jsonl.zstd> --json   # carries truncated_without_answer
 node scripts/gate_size.mjs
 ```
+
+The census this patch was written against is
+`data/results/scan-r55-2026-11-16T10-20-00.000Z.json` (114 files; 88 `max-tokens` turns,
+all 88 without an answer). A reader's own directory produces its own stamped census; no
+`.tmp` file is needed.

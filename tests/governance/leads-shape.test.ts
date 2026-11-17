@@ -96,3 +96,72 @@ test('the reddit rows exist and are counted', () => {
   assert.ok(reddit.length >= 4, `expected at least four reddit leads, got ${reddit.length}`)
   for (const row of reddit) assert.equal(row.depth, 'summary')
 })
+
+/**
+ * R64: a concluded decision may not still read `lead`.
+ *
+ * Measured on the R63 tree: forty rows, twenty-two of them `lead`, while seven of those
+ * decisions already said "record only" / "not this plugin" / "reference only". The
+ * handover then said "39 leads, A table empty" — a sentence nothing read, because the
+ * ledger's own status column disagreed with it. The rule below is deliberately narrow:
+ * it reads only the phrases the ledger uses for a conclusion, not every decision.
+ */
+const CONCLUDED = /(?:记录[，,]不碰|与插件无关，只记录|不属于本插件|只作同类项目读法|不重复计)/
+
+export function concludedButOpen(rows: LeadRow[]): string[] {
+  return rows
+    .filter((row) => row.status === 'lead' && CONCLUDED.test(row.decision))
+    .map((row) => `${row.id}: the decision is a conclusion but the status is lead`)
+}
+
+test('a concluded decision is not still a lead', () => {
+  const offenders = concludedButOpen(leadRows())
+  assert.deepEqual(offenders, [], offenders.join('; '))
+
+  // The negative control: the measured shape must be reported, and an open
+  // decision must not be.
+  const stale: LeadRow = { id: 'L-9999', status: 'lead', decision: '与插件无关，只记录。' } as LeadRow
+  const open: LeadRow = { id: 'L-9998', status: 'lead', decision: '先与 census 对照，再判。' } as LeadRow
+  assert.deepEqual(concludedButOpen([stale]), ['L-9999: the decision is a conclusion but the status is lead'])
+  assert.deepEqual(concludedButOpen([open]), [])
+})
+
+/**
+ * R64: the handover may not call the A table empty unless it is.
+ *
+ * The A table is the `llm/stream` table at the top of the ledger. It still held L-0006
+ * and L-0008 as `lead` when the handover said "A 表已空"; a reader who trusted that
+ * sentence stopped looking.
+ */
+export function aTableOpen(rows: LeadRow[]): LeadRow[] {
+  return rows.filter(
+    (row) => row.id >= 'L-0001' && row.id <= 'L-0010' && (row.status === 'lead' || row.status === 'watching'),
+  )
+}
+
+/** Live prose: the handoff minus its batch narratives, plus the research README. */
+function liveProse(): string {
+  const lines: string[] = []
+  let batch = false
+  for (const line of read('docs/HANDOFF.md').split(/\r?\n/)) {
+    if (line.startsWith('## ')) batch = line.startsWith('## 当前批次')
+    if (!batch) lines.push(line)
+  }
+  return `${lines.join('\n')}\n${read('docs/research/README.md')}`
+}
+
+test('the A table is only called empty when it is empty', () => {
+  const saysEmpty = /A 表已空|A 表仍空/.test(liveProse())
+  const open = aTableOpen(leadRows())
+  if (saysEmpty) {
+    assert.deepEqual(open.map((row) => row.id), [], 'the handover calls the A table empty while these rows are lead')
+  }
+
+  // The negative control: with an open row in the A table, the claim must be reported
+  // as false — and the claim detector must really see the sentence. `watching` counts
+  // as open: it is a row a reader must still come back to.
+  const stale = { ...leadRows()[0]!, id: 'L-0006', status: 'lead' } as LeadRow
+  assert.deepEqual(aTableOpen([stale]).map((row) => row.id), ['L-0006'])
+  assert.deepEqual(aTableOpen([{ ...stale, status: 'watching' }]).map((row) => row.id), ['L-0006'])
+  assert.equal(/A 表已空|A 表仍空/.test('A 表已空'), true, 'the claim detector does not see the sentence')
+})

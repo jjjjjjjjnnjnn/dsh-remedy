@@ -211,15 +211,6 @@
       "channel": "retired-external-model"
     },
     {
-      "name": "readme",
-      "target": "README.md",
-      "model": "in-session",
-      "generated_at": "2026-11-17T09:16:07.896Z",
-      "facts_sha256": "a6063e268f4eb504d3df9b3aea32f6303f833f909a75c832815141d1e16a886a",
-      "draft_sha256": "aa17f37e09a0c58da67f3b46c78e7d0e8c49318491ceb980d5acec265b775b3e",
-      "output_sha256": "aa17f37e09a0c58da67f3b46c78e7d0e8c49318491ceb980d5acec265b775b3e"
-    },
-    {
       "name": "release-notes-0417-frozen",
       "target": "docs/copy/release-notes/v0.4.17.md",
       "model": "in-session",
@@ -303,15 +294,6 @@
       "output_sha256": "887b6955035344d8ae6c4953b7de7a9321a4e8624535874a0e59c90822cdcce2"
     },
     {
-      "name": "readme-zh",
-      "target": "README.zh-CN.md",
-      "model": "in-session",
-      "generated_at": "2026-11-17T09:16:08.856Z",
-      "facts_sha256": "a6063e268f4eb504d3df9b3aea32f6303f833f909a75c832815141d1e16a886a",
-      "draft_sha256": "e92b4092ecac376fb0c53190969d11c12ac84af618557360eebd0b55e1b08b69",
-      "output_sha256": "e92b4092ecac376fb0c53190969d11c12ac84af618557360eebd0b55e1b08b69"
-    },
-    {
       "name": "templates:.github/ISSUE_TEMPLATE/bug_report.yml",
       "target": ".github/ISSUE_TEMPLATE/bug_report.yml",
       "model": "in-session",
@@ -355,7 +337,25 @@
       "facts_sha256": "a6063e268f4eb504d3df9b3aea32f6303f833f909a75c832815141d1e16a886a",
       "draft_sha256": "27ad405d4238a03620b603bc768ee1fbc4eca314be6504f8e6298f95585a928b",
       "output_sha256": "27ad405d4238a03620b603bc768ee1fbc4eca314be6504f8e6298f95585a928b"
+    },
+    {
+      "name": "readme",
+      "target": "README.md",
+      "model": "in-session",
+      "generated_at": "2026-11-17T11:35:16.857Z",
+      "facts_sha256": "a6063e268f4eb504d3df9b3aea32f6303f833f909a75c832815141d1e16a886a",
+      "draft_sha256": "933928adc38bcbe92de7f26d94814423844e173c543dacfc9576127b283705f0",
+      "output_sha256": "933928adc38bcbe92de7f26d94814423844e173c543dacfc9576127b283705f0"
+    },
+    {
+      "name": "readme-zh",
+      "target": "README.zh-CN.md",
+      "model": "in-session",
+      "generated_at": "2026-11-17T11:35:17.042Z",
+      "facts_sha256": "a6063e268f4eb504d3df9b3aea32f6303f833f909a75c832815141d1e16a886a",
+      "draft_sha256": "7811a6947672e81c929ddeceee9c273d7727969efaecfabfbd5b195460c899f6",
+      "output_sha256": "7811a6947672e81c929ddeceee9c273d7727969efaecfabfbd5b195460c899f6"
     }
   ],
-  "updated_at": "2026-11-17T09:32:48.039Z"
+  "updated_at": "2026-11-17T11:35:17.053Z"
 }

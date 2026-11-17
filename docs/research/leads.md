@@ -27,43 +27,43 @@ gh api graphql -f query='{ search(type: DISCUSSION, query: "repo:deepseek-ai/dee
 | L-0003 | <https://github.com/deepseek-ai/deepseek-harness/discussions/11843> | `dsh` | `full` | 2026-11-02 | 0.2.2-rc.1 桌面 | `MALFORMED_RESPONSE` | **out-of-seam**（adapter） | **rejected (out-of-seam)** | R49：从本机 `app.asar` 逐行读到 `dsh-llm-deepseek/lib/index.js` 的 `catch (_invalidProviderToolJson) { return malformed("tool input is invalid JSON") }`——**出错的那段参数文本不在失败消息里**（同一文件全库搜 `Received arguments` 为 0 命中），所以本接缝拿不到可修的字节。它要的「默认重试 MALFORMED_RESPONSE」已由 P-0011 的有界重试覆盖（`retryOnMalformed`，默认 0、按 `(turn,step)` 计数）。剩下的只有上游改写；`fixes` 里不写补丁号。 |
 | L-0004 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12819> | `dsh` | `full` | 2026-11-10 | 0.2.2-rc.1（pi-ai 路由） | `MALFORMED_RESPONSE` | `llm/stream` | **patched** | R49：报告的尾部形状是「`components` 少一个 `]`，报错位置 = 长度 − 1」，本机 `pi-ai/dist/utils/json-parse.js` 逐字确认它把原文写进 `argumentsError`（`…\n\nReceived arguments:\n${json}`），也就是 P-0001 已经在读的那个标记——所以字节到得了接缝。**P-0037**：只在「恰好一个内部插入点能 parse」时补一个闭合符，末尾插入一律拒（切尾与它形状相同）。实测 1 687 个生成形状里 604 个（35.8 %）有两个以上合法插入点，全部拒绝。 |
 | L-0005 | <https://github.com/deepseek-ai/deepseek-harness/discussions/10195> | `dsh` | `full` | 2026-10 | 0.2.1-rc.2 (Windows) | `MALFORMED_RESPONSE` | **out-of-seam**（adapter） | **rejected (out-of-seam)** | R53：报告原文就指向 adapter 的 `JSON.parse(content.arguments)` + `catch (_invalidProviderToolJson) { return malformed("tool input is invalid JSON") }`。R53 在本机 `app.asar`（0.2.2-rc.3）的 `dsh-llm-deepseek/lib/index.js` 第 2057–2066 行逐字读到同一段：**抛出的句子不带参数原文**（同一文件里 `Received arguments` 命中 0 次，实测），所以本接缝拿不到可修的字节——与 L-0003 同一个结论。报告的三个建议里，`retryHints` / 降级为 tool result / raw SSE 留痕都在 adapter 侧；本接缝已有的杠杆是 P-0011 的有界重试，而本机默认路由是 pi-ai，不是 Messages。 |
-| L-0006 | <https://github.com/deepseek-ai/deepseek-harness/discussions/11577> | `dsh` | `full` | 2026-11 | 0.2.1-rc.5 | `MALFORMED_RESPONSE` | `llm/stream` | lead | 汇总帖（#7705/#8920/#8976/#9402/#9503/#10406），附补丁建议；先读它引用的六条，去重后再复现。 |
+| L-0006 | <https://github.com/deepseek-ai/deepseek-harness/discussions/11577> | `dsh` | `full` | 2026-11 | 0.2.1-rc.5 | `MALFORMED_RESPONSE` | `llm/stream` | **rejected (dup)** | 汇总帖（#7705/#8920/#8976/#9402/#9503/#10406），附补丁建议；先读它引用的六条，去重后再复现。 R64：汇总帖引用的六条已逐条读回（#7705/#8920/#8976/#9402/#9503/#10406）：四条是同一段 adapter 代码（`dsh-llm-deepseek` 的 `catch (_invalidProviderToolJson)`，原文不进失败消息），与 L-0003 / L-0005 的结论相同；#8976 的「默认不重试」那一半由 P-0011 覆盖；#9503 是同类平台的横评，不新增形状。没有新形状可复现，所以不成补丁。 |
 | L-0007 | <https://github.com/deepseek-ai/deepseek-harness/discussions/8976> | `dsh` | `full` | 2026-10 | 0.2.0-rc.2 (macOS 审计) | `MALFORMED_RESPONSE` / `STREAM_CLOSED` | `agent/request-error` + **out-of-seam**（adapter） | **rejected (out-of-seam)** | R53：报告的两句主张分开判。**「46 turns lost」**的那一半是 adapter 抛 `MALFORMED_RESPONSE` 且默认 `retryableCodes` 不含它——这与 L-0005 是同一段代码（本机 0.2.2-rc.3 的 `dsh-llm-deepseek/lib/index.js:2057-2066` 逐字确认），原文同样不在失败消息里，所以「修参数」这一半修不到。**「默认不重试」**那一半由 P-0011 的有界重试（`retryOnMalformed`，默认 0）与宿主自己的 `retryPolicy.retryableCodes` 覆盖，报告里的 workaround 就是这个配置。改宿主默认策略不是本项目的接缝：那等于替所有部署改一条重试语义。 |
-| L-0008 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12628> | `dsh` | `full` | 2026-11 | ? | `MALFORMED_RESPONSE` | `llm/stream` | lead | 提议「降级为工具错误」；我们的立场是「修不了就抛」，评估能否用 `remedy_unattributed` 或命名诊断表达，而不是吞掉。 |
+| L-0008 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12628> | `dsh` | `full` | 2026-11 | ? | `MALFORMED_RESPONSE` | `llm/stream` | **rejected (no defect)** | 提议「降级为工具错误」；我们的立场是「修不了就抛」，评估能否用 `remedy_unattributed` 或命名诊断表达，而不是吞掉。 R64：报告提议「把坏调用降级为工具错误」。本项目的立场是「修不了就抛」：把 `MALFORMED_RESPONSE` 改成一次工具错误会让可见失败变成静默成功，违反 PROJECT_RULES §1。`remedy_unattributed` 已有（P-0027 / P-0033），它处理的是「名字证不出来」的片段，不是「整轮参数坏了」；后者只能由 adapter 改。判 `rejected (no defect)`：不是本接缝能做的取舍。 |
 | L-0009 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12769> | `dsh` | `full` | 2026-11 | ? | `UNKNOWN_TOOL` | `llm/stream` | **rejected (no defect)** | R49：R49 读 `repair-stream.ts` 的 `tools.find((tool) => tool.name === call.name)` 与 `core/attribute.ts`：名字大小写不同只会得到 `unproven`（片段照流里给的名字发出、记账 `unproven`），**不会**把片段挂到别的工具名下——最坏情况和转发原名一样，是我们能给出的最保守答案。本机 census 里也没有「名字只差大小写」的形状可复现，`unreproduced` 与 `no defect` 同时成立，按更窄的那条记。 |
-| L-0010 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12064> | `dsh` | `full` | 2026-11 | ? | `MALFORMED_RESPONSE`（被吞） | **out-of-seam**（adapter） | watching | R43：`dsh-agent-loop` 的 `parseArguments` 逐字确认是 `catch { return raw }`，宿主把字符串交给工具——不修宿主。我们这条接缝能看到的下半截是「参数能 parse 但不是对象」（字符串/数组/null），可以命名并送去 `remedy_unattributed`；那是独立补丁（P-0034 候选），不塞进 P-0033。 |
+| L-0010 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12064> | `dsh` | `full` | 2026-11 | ? | `MALFORMED_RESPONSE`（被吞） | **out-of-seam**（adapter） | watching | R43：`dsh-agent-loop` 的 `parseArguments` 逐字确认是 `catch { return raw }`，宿主把字符串交给工具——不修宿主。我们这条接缝能看到的下半截是「参数能 parse 但不是对象」（字符串/数组/null），可以命名并送去 `remedy_unattributed`；`remedy_unattributed` 已在 P-0027 / P-0033 里，等本机出现这个下半截的形状再判是否另立规则（R64：本机 114 文件 / 396 attempts 里没有它，保持 watching）。 |
 
 ## B. 流 / 会话稳定性（相邻，先判断是否本接缝）
 
 | id | source | source_kind | read_depth | reported | version | class | seam | status | decision |
 |---|---|---|---|---|---|---|---|---|---|
-| L-0011 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12688> | `dsh` | `full` | 2026-11 | ? | `STREAM_CLOSED` | `agent/request-error` | lead | 流被截断不重试；我们的 request-error 接缝能否看到 `STREAM_CLOSED`？先查 census 词汇。 |
-| L-0012 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13069> | `dsh` | `full` | 2026-11 | ? | unknown | `agent/request-error` | lead | 总是重试 / 无 finish 的流被当正常结束；与 P-0011 的有界重试对照，读它的 watchdog 设计。 |
-| L-0013 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12352> | `dsh` | `full` | 2026-11 | ? | unknown | out-of-seam | lead | `tool_use` 没有 `tool_result` 的会话不能续；判断 scan 能否识别为 unreadable/坏会话。 |
-| L-0014 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13215> | `dsh` | `full` | 2026-11 | ? | unknown | `cli` | lead | session-search 多词查询；与我们的 scan 无关，但可能借它的索引设计。 |
-| L-0015 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12104> | `dsh` | `full` | 2026-11 | ? | unknown | out-of-seam | lead | 等槽位的流空闲超时；记录，不碰。 |
-| L-0016 | <https://github.com/deepseek-ai/deepseek-harness/discussions/11271> | `dsh` | `full` | 2026-11 | ? | unknown | out-of-seam | lead | 终端流冻结（并发 dispose）；与插件无关，只记录。 |
+| L-0011 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12688> | `dsh` | `full` | 2026-11 | ? | `STREAM_CLOSED` | `agent/request-error` | watching | 流被截断不重试；我们的 request-error 接缝能否看到 `STREAM_CLOSED`？先查 census 词汇。 R64：本机 114 个会话文件的 `error_codes` 里没有 `STREAM_CLOSED`（词表：MALFORMED_RESPONSE 47、UNSUPPORTED_REASONING_EFFORT 37、SERVER 16、INVALID_REQUEST 1、MISSING_CREDENTIAL 1、UNKNOWN 1）；无 finish 的流由 R50 的两个探针判过（L-0036）。在同一个宿主上造出 `STREAM_CLOSED` 之前不改词表，也不加计数。 |
+| L-0012 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13069> | `dsh` | `full` | 2026-11 | ? | unknown | `agent/request-error` | **rejected (no defect)** | 总是重试 / 无 finish 的流被当正常结束；与 P-0011 的有界重试对照，读它的 watchdog 设计。 R64：与 L-0036 合并判读——无 finish 的流在本机不静默成功（`TRANSPORT`、退出 1、`turn/end error`），默认重试是 0 且由 P-0011 拥有；报告里的「总是重试」是宿主策略，不是本接缝的决定。 |
+| L-0013 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12352> | `dsh` | `full` | 2026-11 | ? | unknown | out-of-seam | watching | `tool_use` 没有 `tool_result` 的会话不能续；判断 scan 能否识别为 unreadable/坏会话。 R64：本机 0 个「`tool_use` 没有 `tool_result`」的会话形状（114 文件、396 attempts 里 `unreadable_lines: 0`）；`scan` 的 unreadable 计数已覆盖读不出的字节，但覆盖不到语义缺口。等形状出现再判，不预先加计数。 |
+| L-0014 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13215> | `dsh` | `full` | 2026-11 | ? | unknown | `cli` | **rejected (out-of-seam)** | session-search 多词查询；与我们的 scan 无关，但可能借它的索引设计。 |
+| L-0015 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12104> | `dsh` | `full` | 2026-11 | ? | unknown | out-of-seam | **rejected (out-of-seam)** | 等槽位的流空闲超时；记录，不碰。 |
+| L-0016 | <https://github.com/deepseek-ai/deepseek-harness/discussions/11271> | `dsh` | `full` | 2026-11 | ? | unknown | out-of-seam | **rejected (out-of-seam)** | 终端流冻结（并发 dispose）；与插件无关，只记录。 |
 
 ## C. profile / 插件加载（可能直接解释「装了没挂」）
 
 | id | source | source_kind | read_depth | reported | version | class | seam | status | decision |
 |---|---|---|---|---|---|---|---|---|---|
-| L-0017 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13316> | `dsh` | `full` | 2026-11 | ? | unknown | `profile` | lead | 「带 dsh.bundle.patch 的依赖被渲染成 bundle，但 patch 从未加载」——**先查我们自己的 `cordis.patch.yml` 在 desktop 清单里是哪一行**；若同形状，可能是「装了没挂」的外部证据。 |
-| L-0018 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13320> | `dsh` | `full` | 2026-11 | ? | unknown | out-of-seam | lead | `--dump-config` 会静默改写 package.json；记录，不碰。 |
-| L-0019 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12675> | `dsh` | `full` | 2026-11 | ? | unknown | `profile` | lead | profile `package.json` 带 BOM 导致桌面崩溃；检查我们写 profile 的脚本（copy_record / switch）是否可能写 BOM（应为 UTF-8 无 BOM）。 |
-| L-0020 | <https://github.com/deepseek-ai/deepseek-harness/discussions/11182> | `dsh` | `full` | 2026-11 | ? | unknown | `profile` | lead | 同 L-0019（中文帖）；合并处理，不重复计。 |
-| L-0021 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13324> | `dsh` | `full` | 2026-11 | **0.2.2-rc.3** | unknown | out-of-seam（session） | lead | 写路径把非法 system/message 追加进 legacy 会话；`scan` 能否识别？只做读取器，不改宿主。 |
-| L-0022 | <https://github.com/deepseek-ai/deepseek-harness/discussions/10619> | `dsh` | `full` | 2026-11 | 0.2.1-rc.2 | `SessionFormatError` | out-of-seam（session） | lead | L-0021 的前序；判断我们的 `scan` 的 unreadable 计数是否覆盖这个形状。 |
+| L-0017 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13316> | `dsh` | `full` | 2026-11 | ? | unknown | `profile` | **rejected (no defect)** | 「带 dsh.bundle.patch 的依赖被渲染成 bundle，但 patch 从未加载」——**先查我们自己的 `cordis.patch.yml` 在 desktop 清单里是哪一行**；若同形状，可能是「装了没挂」的外部证据。 |
+| L-0018 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13320> | `dsh` | `full` | 2026-11 | ? | unknown | out-of-seam | **rejected (out-of-seam)** | `--dump-config` 会静默改写 package.json；记录，不碰。 |
+| L-0019 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12675> | `dsh` | `full` | 2026-11 | ? | unknown | `profile` | **rejected (no defect)** | profile `package.json` 带 BOM 导致桌面崩溃；检查我们写 profile 的脚本（copy_record / switch）是否可能写 BOM（应为 UTF-8 无 BOM）。 |
+| L-0020 | <https://github.com/deepseek-ai/deepseek-harness/discussions/11182> | `dsh` | `full` | 2026-11 | ? | unknown | `profile` | **rejected (dup)** | 同 L-0019（中文帖）；合并处理，不重复计。 |
+| L-0021 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13324> | `dsh` | `full` | 2026-11 | **0.2.2-rc.3** | unknown | out-of-seam（session） | watching | 写路径把非法 system/message 追加进 legacy 会话；`scan` 能否识别？只做读取器，不改宿主。 R64：与本机 census 对照，0 个「非法 system/message 被写进 legacy 会话」的形状；`scan` 只读、不改宿主，等形状出现再判。 |
+| L-0022 | <https://github.com/deepseek-ai/deepseek-harness/discussions/10619> | `dsh` | `full` | 2026-11 | 0.2.1-rc.2 | `SessionFormatError` | out-of-seam（session） | watching | L-0021 的前序；判断我们的 `scan` 的 unreadable 计数是否覆盖这个形状。 R64：L-0021 的前序判读；本机 `unreadable_lines: 0`，没有可对照的坏会话。保持 `watching`，不据此发补丁。 |
 
 ## D. 安全 / 参数类型 / 其他（记录，不碰或只做诊断）
 
 | id | source | source_kind | read_depth | reported | version | class | seam | status | decision |
 |---|---|---|---|---|---|---|---|---|---|
-| L-0023 | <https://github.com/deepseek-ai/deepseek-harness/discussions/10569> | `dsh` | `full` | 2026-11 | 0.2.1-rc.2 | — | out-of-seam | lead | `cleanup` 扩到 `C:/` 删用户文件；**安全类，不属于本插件**；记录，必要时在 README 边界里提示。 |
+| L-0023 | <https://github.com/deepseek-ai/deepseek-harness/discussions/10569> | `dsh` | `full` | 2026-11 | 0.2.1-rc.2 | — | out-of-seam | **rejected (out-of-seam)** | `cleanup` 扩到 `C:/` 删用户文件；**安全类，不属于本插件**；记录，必要时在 README 边界里提示。 |
 | L-0024 | <https://github.com/deepseek-ai/deepseek-harness/discussions/11190> | `dsh` | `full` | 2026-11 | ? | unknown | `llm/stream`? | **rejected (no defect)** | R45：读到 `packages/core/src/attribute.ts:73-76`——`valueFits` 只有在声明了 `type` 时才判类型，`type:'json'` 编译出的无类型 schema 一律返回 `true`（判为「不可判定」），所以 P-0030 的判据不会被这个形状误导，反而正是它要的那种保守方向。读取器没有第二处读 `type`。不改代码。 |
-| L-0025 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13035> | `dsh` | `full` | 2026-11 | ? | unknown | out-of-seam | lead | reviewer 用散文回答；记录。 |
-| L-0026 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13325> | `dsh` | `full` | 2026-11 | ? | unknown | out-of-seam | lead | `notifySettlement` 不唤醒空闲父级；记录。 |
-| L-0027 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12601> | `dsh` | `full` | 2026-11 | ? | unknown | `profile` | lead | 磁盘清理 + 装插件后 App 静默不启动；与 L-0019 一起看，可能是 profile 损坏类。 |
+| L-0025 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13035> | `dsh` | `full` | 2026-11 | ? | unknown | out-of-seam | **rejected (out-of-seam)** | reviewer 用散文回答；记录。 |
+| L-0026 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13325> | `dsh` | `full` | 2026-11 | ? | unknown | out-of-seam | **rejected (out-of-seam)** | `notifySettlement` 不唤醒空闲父级；记录。 |
+| L-0027 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12601> | `dsh` | `full` | 2026-11 | ? | unknown | `profile` | **rejected (out-of-seam)** | 磁盘清理 + 装插件后 App 静默不启动；与 L-0019 一起看，可能是 profile 损坏类。 |
 
 ## E. Reddit（只读到摘要）
 
@@ -73,10 +73,10 @@ gh api graphql -f query='{ search(type: DISCUSSION, query: "repo:deepseek-ai/dee
 
 | id | source | source_kind | read_depth | reported | version | class | seam | status | decision |
 |---|---|---|---|---|---|---|---|---|---|
-| L-0028 | <https://www.reddit.com/r/DeepSeek/comments/1w0qu8q/deepseek_harness_is_frustrating_is_it_just_me/> | `reddit` | `summary` | 2026-11 | ? | unknown | out-of-seam? | lead | 摘要句："When a tool report is empty, or straight up fails, DSH moves on and claims the job is done" —— **最该命名的静默类**。只读到摘要（正文被 TLS 拒），先与 census/explain 对照，不据此发补丁。 |
-| L-0029 | <https://www.reddit.com/r/LLMDevs/comments/1vyaxxw/i_built_a_deepseek_harness_plugin_that_proves_why/> | `reddit` | `summary` | 2026-11 | ? | unknown | out-of-seam | lead | 竞品：把"为什么 agent 做错了"做成归因插件。摘要句："the real cause was the error message itself"。只作同类项目读法，不抄设计。 |
-| L-0030 | <https://www.reddit.com/r/rust/comments/1x3xp42/does_reusing_pi_extensions_and_deepseek_harness/> | `reddit` | `summary` | 2026-11 | ? | unknown | out-of-seam | lead | 摘要句："what happens when a TS plugin hangs in the middle of a tool call" —— 插件挂起/超时类，先查 census 有没有同类，再判是否本接缝。 |
-| L-0031 | <https://www.reddit.com/r/DeepSeek/comments/1vvlnml/switched_to_deepseek_harness_your_context_didnt/> | `reddit` | `summary` | 2026-11 | ? | unknown | `profile` | lead | 摘要提到 `- insert:` 与裸行被拒（"a bare row is rejected with entry mcp-deja not found"）—— 与我们 `cordis.patch.yml` 的规则同族，可作外部印证。 |
+| L-0028 | <https://www.reddit.com/r/DeepSeek/comments/1w0qu8q/deepseek_harness_is_frustrating_is_it_just_me/> | `reddit` | `summary` | 2026-11 | ? | unknown | out-of-seam? | watching | 摘要句："When a tool report is empty, or straight up fails, DSH moves on and claims the job is done" —— **最该命名的静默类**。只读到摘要（正文被 TLS 拒），先与 census/explain 对照，不据此发补丁。 R64：只读到摘要（正文被 TLS 拒），无法把摘要句与一个具体形状对上；本机 `completed_without_answer`（P-0047）已把「结束却没回答」命名，但报告说的「tool report 为空/失败后继续」是另一条规则（工具结果侧的静默）。没有全文就不能判，保持 `watching`。 |
+| L-0029 | <https://www.reddit.com/r/LLMDevs/comments/1vyaxxw/i_built_a_deepseek_harness_plugin_that_proves_why/> | `reddit` | `summary` | 2026-11 | ? | unknown | out-of-seam | **rejected (out-of-seam)** | 竞品：把"为什么 agent 做错了"做成归因插件。摘要句："the real cause was the error message itself"。只作同类项目读法，不抄设计。 |
+| L-0030 | <https://www.reddit.com/r/rust/comments/1x3xp42/does_reusing_pi_extensions_and_deepseek_harness/> | `reddit` | `summary` | 2026-11 | ? | unknown | out-of-seam | watching | 摘要句："what happens when a TS plugin hangs in the middle of a tool call" —— 插件挂起/超时类，先查 census 有没有同类，再判是否本接缝。 R64：本机 census 里没有「插件在工具调用中间挂起」的形状（aborted 11 个是人工停止）；与插件无关的那一半是宿主 watchdog，记录在 `BS-20` 之外，不碰。 |
+| L-0031 | <https://www.reddit.com/r/DeepSeek/comments/1vvlnml/switched_to_deepseek_harness_your_context_didnt/> | `reddit` | `summary` | 2026-11 | ? | unknown | `profile` | **rejected (dup)** | 摘要提到 `- insert:` 与裸行被拒（"a bare row is rejected with entry mcp-deja not found"）—— 与我们 `cordis.patch.yml` 的规则同族，可作外部印证。 |
 
 ## F. R45 / R46 新读的（S-DSH 的 83 条候选里挑出来的五条）
 
@@ -125,6 +125,7 @@ gh api graphql -f query='{ search(type: DISCUSSION, query: "repo:deepseek-ai/dee
    不恢复的那一支以 `dsh: TRANSPORT: Stream ended without finish_reason`、退出码 1、`turn/end error`
    收尾，而不是静默成功；能静默的只有「先失败一次、重试成功」那一支，那不是同一件事。
 
-复现任何一条之前，先看**字节账**：plugin 82 857 / 83 000（只剩 **143 B**，其中 CLI 半边只剩 **38 B**），
-core 103 867 / 104 000（133 B），registry 65 316 / 68 000（只剩 **2 684 B** —— 下一条记录之前仍建议先压一条老记录，不是先写）。
+复现任何一条之前，先看**字节账**。它只有一个家：`docs/HANDOFF.md` 顶部的状态表
+（`scripts/gate_size.mjs` 的 `handoff-bytes` 在读它）。本文件不复述那三个数：上一版复述的
+R55 账在这张表里活了两轮没人发现，而它早已过期。
 新的常驻字节必须先付账（压散文或去重），不许抬 cap。

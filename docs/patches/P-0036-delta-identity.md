@@ -95,7 +95,12 @@ The two red ones are the same host rule from two directions: "erase what arrived
 ## Reproduction
 
 ```powershell
-node --test tests/unit/repair-stream.test.ts     # 40 tests, the two above red before the fix
-node scripts/gate_size.mjs                       # total 82 973 of 83 000
-node .tmp/probe-identity.mjs                     # second delta now prints "call_8f2"
+node --test tests/unit/repair-stream.test.ts     # the delta-identity cases, red before the fix
+node scripts/gate_size.mjs                       # the CLI half's budget, on this tree
 ```
+
+The second delta's identity was measured with a one-off probe that replayed the R47
+stream; it is not shipped. The rule it produced — a delta-only call keeps the id the
+stream proved — is pinned by the test above and by the live run in
+`data/results/live-2026-11-10T14-45-00.000Z.json`, whose synthetic id was dispatched and
+answered.

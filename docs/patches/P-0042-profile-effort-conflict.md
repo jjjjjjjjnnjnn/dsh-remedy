@@ -126,5 +126,9 @@ node packages/plugin/dist/cli.js explain \
 # -> exit 1
 ```
 
-The probe itself (not shipped): `.tmp/r53-probe` + `.tmp/r53-home`, four
-profiles, recorded by `scripts/record_prestep_enter.mjs`.
+The probe itself was four isolated profiles plus a session listing; neither the profiles
+nor their `.tmp` home are shipped. The durable half is the recorder
+`scripts/record_prestep_enter.mjs` (it produced
+`data/results/prestep-enter-2026-11-15T17-55-00.000Z.json`) and the census it reads
+(`data/results/scan-r53-2026-11-15T22-05-00.000Z.json`, where `opendesign` /
+`deepseek-v4.1-flash-eco` at `xhigh` was refused 37 times).

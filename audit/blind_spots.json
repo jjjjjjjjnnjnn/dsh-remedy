@@ -101,10 +101,10 @@
     },
     {
       "id": "BS-20",
-      "status": "open",
-      "note": "A reproduction step that lives in `.tmp/` cannot be re-run by a reader: that directory is gitignored and swept between rounds, and eleven patch docs cite one (P-0002 `probe-names.mjs`, P-0004 `scan-all.json`, P-0006 three probes, P-0007 two, P-0009, P-0015, P-0033 `fake-openai.mjs`, P-0044 `r55-census.json`, P-0047 a log). What survives is the half that was durable on purpose: the artifact under `data/results/` with its `.sha256`, and the shipped `scripts/record_*.mjs` that produced it. `gate_registry` (P-0023) requires a doc to exist and does not read its Reproduction section, so nothing notices. R60 measured the gap while cleaning `.tmp/`; it kept every script that a doc names and that still existed, and did not rewrite the eleven docs — a reader who wants the numbers can run the recorder named in the patch's Evidence section instead. Closing it means either shipping the probe under `scripts/` (bytes in a package that does not need them) or making each Reproduction section name a shipped command; both are a decision, not housekeeping.",
-      "updated_at": "2026-11-17T07:30:00.000Z"
+      "status": "closed",
+      "note": "Closed 2026-11-17 by R64, zero runtime bytes. Measured on the R63 tree: thirteen `## Reproduction` sections cited a `.tmp/` path (twenty-one patch docs mention one anywhere), not the eleven the note had carried since R60 — P-0004, P-0006, P-0007, P-0014, P-0015, P-0021, P-0036, P-0038, P-0042, P-0043, P-0044, P-0045 and P-0047. Every section now names commands a reader can run from the repository: `cli scan` over their own session directory, `node --test tests/...`, `npm pack <package>@<version>` for the published pre-fix tarballs, and `node scripts/gate_copy.mjs`. `tests/governance/patch-reproduction.test.ts` extracts each section (up to the next `##`) and rejects a `.tmp/` path and any cited `scripts/` / `tests/` / `packages/` / `docs/` / `data/` path that does not exist; both rules have synthetic negative controls, and the test was red on all thirteen docs before the edit. What the rules still cannot prove, and what the docs now say plainly: the host harness behind P-0015 (an isolated `DSH_HOME` with a rejecting listener), P-0045 (five runs over two homes and a scripted endpoint) and P-0047 (a local OpenAI-compatible server replaying the reasoning shape) is not shipped, so those three sections name the half a reader can run and point at the `data/results/` artifact plus the recorder that produced it. Existence is not semantics: a command can exist and still stop demonstrating the claim beside it, and nothing automatic compares the two.",
+      "updated_at": "2026-11-17T12:35:00.000Z"
     }
   ],
-  "updated_at": "2026-11-17T07:30:00.000Z"
+  "updated_at": "2026-11-17T12:35:00.000Z"
 }

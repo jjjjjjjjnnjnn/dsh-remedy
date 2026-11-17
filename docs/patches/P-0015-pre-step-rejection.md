@@ -108,9 +108,14 @@ constraints, all measured:
 ## Reproduction
 
 ```
-cd .tmp/prestep-home/profiles/probe
-pnpm install --no-frozen-lockfile
-$env:DSH_HOME="<repo>/.tmp/prestep-home"
-"Reply with exactly: OK" | dsh --profile probe        # exit 1
-node .tmp/probe-session.mjs                           # prints the eight events above
+node --test tests/unit/preflight.test.ts          # the refusal vocabulary this seam must name
+node --test tests/e2e/explain-conflict.test.ts    # the profile-side conflict a refusal produces
 ```
+
+The seam itself cannot be re-run from this repository: the probe was an isolated
+`DSH_HOME` with a one-row `cordis.patch.yml` and a listener returning `{kind:'reject'}`,
+and neither the profile nor the session reader was shipped. What survives is the artifact
+`data/results/prestep-probe-2026-11-13T07-45-00.000Z.json` (the eight events this section
+used to print), plus the later measurements
+`data/results/prestep-ui-2026-11-13T12-15-00.000Z.json` and
+`data/results/prestep-enter-2026-11-15T17-55-00.000Z.json`.

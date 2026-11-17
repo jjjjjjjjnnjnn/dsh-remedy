@@ -14,7 +14,7 @@
 | `PROJECT_RULES.md` | 硬规则（只读本机、失败即失败、证据由脚本产出） |
 | `docs/HANDOFF.md` | 交接：五分钟检查 / 当前批次 / 第一件事 / 坑 |
 | `docs/research/README.md` | 外部反馈 intake：来源、判据、四条约束、同类项目读法（R43 起） |
-| `docs/research/leads.md` | 线索账本：40 条（34 条 DSH + 4 条 Reddit 摘要 + 2 条市场/手册），带 `source_kind` / `read_depth`；F 表结案 L-0032…L-0036，G 表结案 L-0037/L-0038，H 表结案 L-0039（P-0044）并把 L-0040 记成 `watch` |
+| `docs/research/leads.md` | 线索账本：40 条（34 条 DSH + 4 条 Reddit 摘要 + 2 条市场/手册），带 `source_kind` / `read_depth`；R64 把状态与 decision 对齐：0 条 `lead`、7 条 `watching`，其余都是 `patched` / `rejected`（原因在 decision 列） |
 | `docs/research/sources.md` | 七个来源的读法、频率、边界；Reddit 读不到正文的诚实规则 |
 | `docs/research/plan-0.4.9.md` | 0.4.9 计划与结案：来源 → 巡检 → 一条线索 → 一个补丁；§2 记着这一版实际结掉的六条线索 |
 | `docs/research/similar-projects-2026-11-14.md` | 同接缝的五个竞品与上游源码：借了什么机制、拒了什么取舍、每条指回本机 `app.asar` 的行号（R47） |
@@ -198,7 +198,7 @@
 | `tests/unit/cli-usage.test.ts` | 包内 README 与 CLI `USAGE` 的用法块必须逐行相同（P-0010 / P-0016） |
 | `tests/unit/fuzz-invariants.test.ts` | 属性测试：任何被接受的调用，其参数必须各自能 parse |
 | `tests/governance/manifest-targets.test.ts` | manifest 条目必须指向仓库内存在的文件（不得指向 `.tmp/`） |
-| `tests/governance/facts-truth.test.ts` | 事实包自己的陈述必须成立：版本、pin、上一版、引用的补丁号（R22） |
+| `tests/governance/facts-truth.test.ts` | 事实包自己的陈述必须成立：版本、pin、上一版、引用的补丁号（R22）；R64 另加两条：首屏的测试数必须绑定已发布版本、活段里的字节对只能来自状态表 |
 | `tests/governance/handoff-truth.test.ts` | 证据索引=现在（可解析+哈希）+ 批次叙事=当时；每族只能一个「当前」（R22） |
 | `tests/governance/coverage-single-source.test.ts` | 覆盖表只能住在 registry；不许命令自带 `COVERAGE`/`SWITCHES`（P-0016） |
 | `tests/governance/coverage-vocabulary.test.ts` | 覆盖的故障类必须属于 census 会报的集合，且覆盖者必须是常驻接缝（P-0016） |
@@ -212,7 +212,8 @@
 | `tests/unit/agy-channel.test.ts` | 已退役通道的传输规则（P-0007 历史） |
 | `tests/governance/ledgers.test.ts` | 台账 / 六格披露行 / 唯一 SessionID / 快照一致 |
 | `tests/governance/public-copy.test.ts` | 对外文件 / 事实包 / 模板 / 元数据 |
-| `tests/governance/leads-shape.test.ts` | 线索账本的来源 / 读深 / 状态一致性（社区面） |
+| `tests/governance/leads-shape.test.ts` | 线索账本的来源 / 读深 / 状态一致性（社区面）；R64 另加两条：已经下了结论的 decision 不许还挂 `lead`、A 表只在真空时才许被叫空 |
+| `tests/governance/patch-reproduction.test.ts` | R64 / BS-20：每份补丁文档的 `## Reproduction` 不许指向 `.tmp/`，段里点名的仓库路径必须存在 |
 | `tests/governance/profile-patch-resolution.test.ts` | patch 层每一行都必须解析到 manifest 的导出与已构建文件；#12318 那条坏 row 是负对照（P-0035） |
 | `tests/e2e/cli.test.ts` | 四条命令的退出码与产物 |
 | `tests/e2e/explain.test.ts` | `explain` 不造假：无输入就报 unknown、读 profile、输入不可读时退出 3 |

@@ -109,8 +109,11 @@ core total 103 781 of 104 000 afterwards. No cap moved.
 
 ```powershell
 pnpm run build
-node --test tests/unit/redact-platform.test.ts     # 6 tests
-node .tmp/probe-redact-macos.mjs                   # 0 leaks across 6 shapes
-node .tmp/probe-platform-audit.mjs                 # one prose line, no code
+node --test tests/unit/redact-platform.test.ts     # the six shapes, and the over-deletion control
 node scripts/gate_size.mjs --fast                  # core total
 ```
+
+The two probes that measured the macOS-shaped homes were one-off and are not shipped;
+their readings — 5 of 8 shapes leaked before, 0 after — became the six cases in
+`tests/unit/redact-platform.test.ts`. The `/Users` bytes themselves were not produced on
+a Mac here (see the platform boundary and P-0048).

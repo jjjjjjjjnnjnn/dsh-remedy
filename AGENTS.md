@@ -2,7 +2,13 @@
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
 > **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.17`（已发布，两包 `latest`；两个 profile 与桌面 App 都在 0.4.17 上；本树就是已发布的那一版，发布不需要 OTP）
-> **Stand**：R63（2026-11-17，**交接轮：把「已发布」写进每一处活文字，并把公开面的三次绿留下**）——
+> **Stand**：R64（2026-11-17，**交接真相第二轮：把结论写进状态列，把公开首屏的数字改对，把 Reproduction 从 `.tmp/` 里救出来**）——
+> R63 的交接审计只修了四处活文字；本轮从同一句判据出发又读出五处（首屏的 399、HANDOFF 里 R41/R42 的字节块、
+> 「39 条 / A 表已空」、`leads.md` 尾部的 R55 字节账、BS-20 自己的「eleven」）。三件事：数字只有一个家
+> （首屏测试数绑定版本、活段字节对只能来自状态表）、13 份补丁文档的 Reproduction 不再指向 `.tmp/`（BS-20 关闭）、
+> 线索账本的 22 行状态与 decision 对齐。**零运行时字节**：plugin 82 462 / 83 000、core 103 663 / 104 000、
+> registry 64 911 / 68 000，与 R63 同值；cap 一个没动。门禁对 `gates-2026-11-18T02-20-00.000Z.json` /
+> `gates-mutate-2026-11-18T02-25-00.000Z.json`。
 > 上一轮（R62）发布 0.4.17 并在两个平台、两个 profile 与桌面 App 上各量一遍。
 > 发布不需要 OTP；两包 `exact_ok` + `latest_ok`，冷装验收 `ok`，桌面真实 turn 与 Linux 全量都已落盘。
 > R61（2026-11-17，**产品线收官：`scan` 数出来的那个形状，`explain` 现在会指名它**）——
@@ -20,7 +26,7 @@
 > R56 是两条「测过」变成「真机见过」（P-0045 / P-0046），并把 0.4.16 发出去；
 > R55 是 registry 付款 + P-0044 + 0.4.15；R54 是那个已经把账号名发出去的守卫（P-0043）。
 > 更早的 R53…R1 见 `docs/HANDOFF.md` 的批次叙事。
-> **405 测试 / 6 门 / `--mutate` 6-6**（Windows 与 Linux 同值，`live-linux-2026-11-17T08-40-00.000Z.json`）；registry 剩 **3 089 B**、core 剩 **337 B**、CLI 半边剩 **440 B**（付款之后仍有余额；cap 一个没动）。
+> **411 测试 / 6 门 / `--mutate` 6-6**（R64 的树；Windows 实测。0.4.17 发布时是 405，Linux 的同值仍是 `live-linux-2026-11-17T08-40-00.000Z.json` 那次）；registry 剩 **3 089 B**、core 剩 **337 B**、CLI 半边剩 **440 B**（本轮零运行时字节；cap 一个没动）。
 > **平台边界：Windows 与 Linux 实测（同一棵树、同一组数），macOS 未实测**；P-0038 的 `/Users` 形状在 Linux 上是字符串，CI 里有一个 `verify (macos, node 24)` job。
 > R53（P-0042 的 profile 与拒绝第一次被摆在一起）、R52 与 R51（旧数字对齐）、R49（P-0037 / P-0038）、
 > R47（同接缝的五个竞品与上游源码，借来的那一块成了 P-0036）、R46（P-0035）、R44（社区面），
@@ -28,7 +34,7 @@
 > **接手先读**：`docs/HANDOFF.md` → `docs/research/README.md` → `docs/research/leads.md` → `PROJECT_RULES.md` → `INDEX.md`
 > **R43 起的主线**是外部反馈 → 稳定补丁：报告只是线索，本机复现后才有补丁；来源与方法见 `docs/research/`。R56 的教训：**接缝名写在补丁里不算数，要在宿主源码里核对接缝真的会被派发**。
 >
-> **基线（2026-11-17）**：`pnpm run verify` = **405 tests / 6 gates**（Windows 与 Linux 同值，`live-linux-2026-11-17T08-40-00.000Z.json`）；
+> **基线（2026-11-17）**：`pnpm run verify` = **411 tests / 6 gates**（R64 的树，Windows；0.4.17 发布时 405）；
 > `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.17`（latest）+
 > `dsh-remedy-core@0.4.17`（latest）。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
 > `v0.4.13` / `v0.4.14` / `v0.4.15` / `v0.4.16` / `v0.4.17`。五十一个补丁：**9 `verified` + 42 `tested`**，在 DSH 0.2.2-rc.3 上实测过（Windows 与 Linux 都是 405/6/6-6）。

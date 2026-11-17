@@ -90,9 +90,14 @@ Both are green after. `pnpm run test` moved **361 → 362** tests.
 ## Reproduction
 
 ```
-node .tmp/r53-guard-red.mjs                 # the two guards against the pre-fix shapes
 node --test tests/governance/shipped-samples.test.ts
 node scripts/sync_fixtures.mjs --check
 node packages/plugin/dist/cli.js verify     # OK 8 fixture(s)
-tar -xOzf .tmp/r53-pack/dsh-remedy-0.4.13.tgz package/fixtures/toolcall-fusion/bare-code-value.json | grep -c <account>   # pre-fix: 1
+npm pack dsh-remedy@0.4.13
+tar -xOzf dsh-remedy-0.4.13.tgz package/fixtures/toolcall-fusion/bare-code-value.json | grep -c Users   # pre-fix: 1; the fixture named a home path
 ```
+
+The pre-fix pack is the published 0.4.13 tarball, so a reader with network can still open
+it; the guard itself is the test above, which walks every tracked result artifact for the
+account this machine runs as. The one-off script that first demonstrated the red is not
+shipped.

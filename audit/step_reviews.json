@@ -1235,6 +1235,28 @@
         "data/results/gates-2026-11-18T00-50-00.000Z.json",
         "data/results/gates-mutate-2026-11-18T00-55-00.000Z.json"
       ]
+    },
+    {
+      "id": "S69",
+      "gate": "copy",
+      "title": "The handover said more than its own ledger, and the first screen quoted a release it had left",
+      "axes": {
+        "correctness": "R63 fixed four live sentences and stopped there; the same criterion, applied again, found five more. `README.md` and `README.zh-CN.md` still said \"the suite is 399 tests\" while the pack they point at said 0.4.17 ships 405; the handoff live section still carried R41/R42 byte accounts (82 717 / 83 000, 67 850 / 68 000, 66 303 / 68 000); `docs/research/leads.md` repeated R55's account (82 857 / 103 867 / 65 316); the handoff said \"39 leads, A table empty\" against a ledger of 40 rows with two A-table `lead`s; and BS-20 still counted \"eleven\" documents when the Reproduction scanner finds thirteen. Each is now either corrected to the measured value or de-duplicated to its single home (the status table for bytes, the fact pack for the published test count).",
+        "reproducibility": "The rules are tests, not prose: `facts-truth` parses the version-bound suite sentence and every live byte pair and compares them to the status table; `patch-reproduction` extracts each `## Reproduction` body and rejects `.tmp/` plus any cited repository path that does not exist; `leads-shape` rejects a concluded decision still marked `lead` and an \"A table empty\" claim that the table contradicts. Each rule carries a negative control on a synthetic text, and each was red on the pre-fix tree before the edit (README 399; six expired pairs; thirteen `.tmp/` sections; nineteen rows; the A-table sentence). Commands cited by the rewritten sections were run this round and are listed in the handoff: `cli scan` over 114 session files, `npm pack dsh-remedy@0.3.8` / `@0.4.13` with their tar reads, and the unit tests named beside each doc.",
+        "compliance": "Zero runtime bytes, no cap, no npm write, no tag: plugin 82 462 / 83 000, core 103 663 / 104 000, registry 64 911 / 68 000, identical to R63. The two first screens changed only through `scripts/copy_record.mjs`, so `gate_copy` still owns their bytes and their fact-pack hash; nothing under `~/.dsh` was written.",
+        "ssot": "The byte account now has one home (the status table that `gate_size`'s `handoff-bytes` already measures), the published test count has one home (the fact pack line `0.4.17 ships 405 tests`), and the leads status column is the ledger's own record — the eight new decisions cite what was actually read this round: six GraphQL bodies for L-0006, the local census `error_codes` for L-0011, and the absence of a measured shape for L-0013 / L-0021 / L-0022 / L-0028 / L-0030.",
+        "adversarial": "What this round cannot claim: the rules prove that a sentence agrees with the table and that a cited command exists, not that the command still demonstrates the claim beside it — P-0015, P-0045 and P-0047 say plainly that their host harness is not shipped. The leads reclassification moves only rows whose decision was already a conclusion; five rows remain `watching` with the trigger written down, and L-0006 stays `lead` because its six referenced discussions were read and produced no reproducible shape. `#12741` is untouched: a tool-call-only turn is still counted as an answer, and changing that is a rule decision this round did not take."
+      },
+      "evidence": [
+        "tests/governance/facts-truth.test.ts",
+        "tests/governance/patch-reproduction.test.ts",
+        "tests/governance/leads-shape.test.ts",
+        "docs/HANDOFF.md",
+        "docs/research/leads.md",
+        "audit/blind_spots.json",
+        "data/results/gates-2026-11-18T02-20-00.000Z.json",
+        "data/results/gates-mutate-2026-11-18T02-25-00.000Z.json"
+      ]
     }
   ],
   "updated_at": "2026-11-18T01:00:00.000Z"

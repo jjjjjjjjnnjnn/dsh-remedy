@@ -56,22 +56,17 @@ So the reader gap is real: identical endings, different user-visible outcome, an
 ## Reproduction
 
 ```powershell
-node .tmp/r57-setup.mjs --home .tmp/r57-home --port 8790
-# terminal A
-node .tmp/r57-fake-openai.mjs 8790 reasoning-only .tmp/r57-fake.log
-# terminal B
-$env:DSH_HOME = "<repo>\.tmp\r57-home"; $env:PROBE_API_KEY = 'probe'
-dsh --profile r57-reasoning "Reply with exactly: OK"      # exit 0
-node .tmp/r57-inspect.mjs .tmp/r57-home/sessions
-# turn/end completed, assistant blocks ["reasoning"], text ""
-node packages/plugin/dist/cli.js scan .tmp/r57-runs/r57-reasoning/evidence/0-session.v4.jsonl.zstd
-# completed=1 completed_without_answer=1
+node --test tests/unit/completed-answer.test.ts    # the completed-turn rule and its controls
+node --test tests/unit/turn-answer.test.ts         # the shared rule, unchanged
+node packages/plugin/dist/cli.js scan "<home>/.dsh/sessions" --json   # completed_without_answer
 ```
 
-```bash
-node --test tests/unit/turn-answer.test.ts      # the shared rule, unchanged
-node --test tests/e2e/cli.test.ts               # the counter reaches the human line
-```
+The endpoint that reproduced the shape was a local OpenAI-compatible server plus two
+isolated homes (one reasoning-only run, one text control); neither the server nor the
+homes are shipped. The recorder `scripts/record_completed_answer.mjs` produced
+`data/results/live-completed-2026-11-16T18-30-00.000Z.json` and refuses to write unless
+both runs end `completed`, the block shapes differ, and the scanner counts exactly one.
+A reader can re-run the rule above, not the adapter path.
 
 ## Numbers this page quotes
 

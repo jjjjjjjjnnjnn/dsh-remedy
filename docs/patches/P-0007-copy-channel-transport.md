@@ -87,12 +87,17 @@ text handed to `spawnSync` in one line, with the fact pack included, came back
 ## Reproduction
 
 ```bash
-node .tmp/probe-request-sizes.mjs     # request length per target against 32767
-node .tmp/probe-agy-changelog.mjs     # the ENAMETOOLONG in 1 ms, from the old transport
-node --test tests/unit/agy-channel.test.ts
+node --test tests/unit/agy-channel.test.ts   # the transport's length rule and its refusal
+node scripts/gate_copy.mjs                   # the recorded bytes and the fact-pack hash
 ```
 
-The real run, after the change:
+The request sizes and the `ENAMETOOLONG` measurement (R36) were taken against the
+retired subprocess transport with two one-off probes; neither probe is shipped, because
+the transport they measured no longer exists. What survives is the rule they produced
+(the 32767-byte ceiling and its refusal) in `scripts/lib/agy-channel.mjs`, pinned by the
+test above, and the current transport's own run below. A reader who wants to rewrite a
+page after reading this should use `node scripts/copy_record.mjs`; that command mutates
+the tree and is not a reproduction step.
 
 ```
 WROTE CHANGELOG.md (6851 bytes)

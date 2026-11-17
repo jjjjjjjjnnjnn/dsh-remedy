@@ -128,7 +128,8 @@ What was edited to make them green:
 node --test tests/governance/facts-truth.test.ts      # red on the old pack, green now
 node --test tests/governance/handoff-truth.test.ts    # red on 900820ae…, green now
 node --test tests/unit/cli-usage.test.ts              # red on the four-line block, green now
-tar -xzOf .tmp/pack20/dsh-remedy-0.3.8.tgz package/package.json | grep core
+npm pack dsh-remedy@0.3.8
+tar -xzOf dsh-remedy-0.3.8.tgz package/package.json | grep core
 npm view dsh-remedy@0.3.8 dependencies
 node scripts/copy_record.mjs --freeze --name release-notes-038
 node scripts/gate_copy.mjs

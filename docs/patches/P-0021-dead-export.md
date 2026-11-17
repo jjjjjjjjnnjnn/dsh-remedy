@@ -72,5 +72,6 @@ filesystem check.
 ```
 node --test tests/unit/package-files.test.ts        # green, including the negative control
 npm view dsh-remedy@0.4.0 exports --json            # before this release: ./retry-listener present
-tar -tzf .tmp/pack20/dsh-remedy-0.3.8.tgz | grep -c retry-listener   # 0
+npm pack dsh-remedy@0.3.8                                  # the published pre-fix tarball
+tar -tzf dsh-remedy-0.3.8.tgz | grep -c retry-listener   # 0
 ```

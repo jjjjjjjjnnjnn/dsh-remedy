@@ -93,30 +93,17 @@ wrote nothing at all.
 ## Reproduction
 
 ```powershell
-# the two isolated homes (one for the released bytes, one for this tree)
-node .tmp/r56-setup.mjs --home .tmp/r56-old --dist .tmp/r56-dist-0415
-node .tmp/r56-setup.mjs --home .tmp/r56-new
-# five observations: control, released retry, new retry, released refusal, new refusal
-node .tmp/r56-run-probe.mjs --home .tmp/r56-old --profile r56-refusal --out .tmp/r56-runs/old-refusal `
-  --journal .tmp/r56-old/refusal-journal.jsonl
-node .tmp/r56-run-probe.mjs --home .tmp/r56-new --profile r56-refusal --out .tmp/r56-runs/new-refusal `
-  --journal .tmp/r56-new/refusal-journal.jsonl
-node .tmp/r56-run-probe.mjs --home .tmp/r56-new --profile r56-retry-before --out .tmp/r56-runs/control-retry `
-  --endpoint malformed --key PROBE_API_KEY=probe
-node .tmp/r56-run-probe.mjs --home .tmp/r56-old --profile r56-retry --out .tmp/r56-runs/old-retry `
-  --endpoint malformed --key PROBE_API_KEY=probe --journal .tmp/r56-old/retry-journal.jsonl
-node .tmp/r56-run-probe.mjs --home .tmp/r56-new --profile r56-retry --out .tmp/r56-runs/new-retry `
-  --endpoint malformed --key PROBE_API_KEY=probe --journal .tmp/r56-new/retry-journal.jsonl
-# the artifact refuses to record anything the five runs do not show
-node scripts/record_request_error_seam.mjs --control .tmp/r56-runs/control-retry `
-  --old-retry .tmp/r56-runs/old-retry --new-retry .tmp/r56-runs/new-retry `
-  --old-refusal .tmp/r56-runs/old-refusal --new-refusal .tmp/r56-runs/new-refusal
-```
-
-```bash
 node --test tests/unit/agent-error-naming.test.ts   # 5 cases: names, dedupes, bounds, never decides
 node --test tests/unit/request-error.test.ts        # 9 cases: the retry contract, unchanged
+node --test tests/unit/repair-stream.test.ts        # the refusal path beside the stream seam
 ```
+
+The five-run harness (two isolated homes, a released-bytes build, a scripted endpoint and
+five observations) was one-off and is not shipped. What survives is the artifact
+`data/results/live-request-error-2026-11-16T15-10-00.000Z.json`, produced by
+`scripts/record_request_error_seam.mjs`, which refuses to write until all five runs show
+the expected shapes; the recorder's header names the five inputs it needs. A reader
+without that harness can re-run the rules above, not the seam.
 
 ## Numbers this page quotes
 

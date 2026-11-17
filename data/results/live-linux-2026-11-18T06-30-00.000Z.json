@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_linux_r66.mjs",
+  "generated_at": "2026-11-18T06:30:00.000Z",
+  "question": "Does the R66 tree pass on a POSIX host with the same suite count and the same byte account as Windows, and do the three new first-screen rules and the two live-state rules reach the same verdict there?",
+  "host": {
+    "kernel": "Linux rjjRobert 6.6.114.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Mon Dec  1 20:46:23 UTC 2025 x86_64 GNU/Linux",
+    "node": "24.10.0",
+    "pnpm": "12.15.0",
+    "how": "WSL2; the tracked tree copied into the Linux filesystem and never run through /mnt/c; `*.tsbuildinfo` excluded so tsc -b could emit on this host"
+  },
+  "verify": {
+    "tests": 425,
+    "pass": 425,
+    "fail": 0,
+    "gates": 6,
+    "negative_control": "6/6"
+  },
+  "installed_dist_cli": {
+    "what": "node packages/plugin/dist/cli.js verify on this host, against the fixture set the package ships",
+    "printed": "OK  8 fixture(s)"
+  },
+  "r66_rules_on_posix": {
+    "tests": 19,
+    "fail": 0,
+    "files": [
+      "tests/governance/public-pages-complete.test.ts",
+      "tests/governance/facts-truth.test.ts"
+    ],
+    "what": "the opening count against the registry, each seam row against the registry surface, §6 as a pointer, and lone `N B` figures against the status table"
+  },
+  "byte_account": {
+    "residency": {
+      "bytes": 40902,
+      "cap": 44000
+    },
+    "cli": {
+      "bytes": 41957,
+      "cap": 42000
+    },
+    "total": {
+      "bytes": 82859,
+      "cap": 83000
+    },
+    "core_total": {
+      "bytes": 103869,
+      "cap": 104000
+    },
+    "registry": {
+      "bytes": 66049,
+      "cap": 68000
+    }
+  },
+  "unchanged_from_published_tree": {
+    "what": "R66 moved no runtime byte, so the three caps read exactly the published 0.4.18 values on both hosts",
+    "windows": {
+      "total": 82859,
+      "core_total": 103869,
+      "registry": 66049
+    }
+  },
+  "not_measured": {
+    "cold_directory_install": "not re-run on POSIX this round: the 0.4.18 registry copy was installed on Windows (install-acceptance-2026-11-18T03-20-00.000Z.json)",
+    "npx": "not re-run this round for the same reason",
+    "explain_sessions_on_this_host": "this Linux home has no ~/.dsh/sessions, so the live findings are measured on the Windows host and by the fixtures/tests",
+    "desktop_app": "not a POSIX claim: the app is measured on Windows only"
+  },
+  "sources": {
+    "versions.log": "462f750f1e17a5957081e1e64b0178e9fd724e049362cb304f9aa551f4a47641",
+    "verify.log": "436d41723cd6cc6aa6bfb315c84c53c5b5af1e679f0779ce84894e7b4d2c8c6b",
+    "mutate.log": "bff4cee6318bc6017e75a3439687f1d8507fccdd8d19ea191fec65e74c5ca606",
+    "size.log": "b3c8894ef480b9bc221ff18fbd92dee5795b8ea87df0f809ed16a42f831b50ac",
+    "cli.log": "40740e29ddc87019803e4ccfa608575e9c9e1f6280f383d168c8da57c93442e3",
+    "r66rules.log": "ea8717efe3fb9df3e5380bad58b534428c2646a9cbc5b573e20b933ba634a745"
+  },
+  "limits": [
+    "one Linux host (WSL2) and one node build; this is not a distribution matrix",
+    "the suite reads files, so a POSIX pass proves the tests are portable, not that the pages are right on darwin",
+    "no resident provider ran on this host: this round changed no runtime byte, so nothing here re-proves a repair"
+  ]
+}

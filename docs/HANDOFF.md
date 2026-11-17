@@ -9,12 +9,12 @@
 |---|---|
 | 版本 | `0.4.18` **已发布**，两包 `latest = 0.4.18`；这一版把 P-0052（`completed` 的 turn 停在 UI 不读的工具调用上——本机用本地端点复现，`scan` 报 `completed_on_tool_call`，`explain` 打 `TOOLCALL`）发了出去，并带上 R64 的首屏数字修复与 BS-20 的 Reproduction 改写。0.4.17 带 P-0047…P-0051，0.4.16 带 P-0045 / P-0046。**R66 不改版本、不发 npm**（零运行时字节）。 |
 | 补丁 | 五十二个，按 registry 顺序：P-0001 `verified` 拆开已证实的粘连调用；P-0002 `verified` 救援必须可证、可归因、原子；P-0003 `verified` 拒绝必须可观测，撤回不许读成修复；P-0005 `tested` 裸值成员值要么 reseal、要么拒绝；P-0011 `verified` 第二接缝按上游契约重写 + 有界重试（**R56 真机见证**）；P-0012 `tested` 一个加载路径一个字节上限；P-0013 `verified` 确定性的拒绝只命名一次（**R56 改挂 `agent/error` 并见证**）；P-0004 `tested` scan 读得懂 zstd 目录，脱敏看见每种路径形状；P-0006 `tested` scan 统计每一种 turn 结束方式；P-0007 `tested` copy 通道按长度选传输；P-0008 `tested` 字节预算变成脚本检查的门；P-0010 `tested` 用法文本必须与二进制一致；P-0009 `tested` 窗口化扫描按 createdAt 计头记录；P-0014 `tested` 事实包 / 交接 / 包内页面三处自述必须成立；P-0015 `tested` agent/pre-step 拒绝语义的实测；P-0016 `tested` 覆盖表只能住在 registry；P-0017 `tested` 两个包内页面钉住「无散文数字 + 命令真能跑」；P-0018 `tested` Windows 退出码按异常命名；P-0019 `tested` 首屏按补丁集重写；P-0020 `tested` 市场索引说清字节从哪里来；P-0021 `tested` 删掉指向不存在模块的导出；P-0022 `tested` 漂移测试先只读检查再比较；P-0023 `tested` 每个补丁必须有 docs/patches 文档；P-0024 `tested` 两个包内页面进 copy 通道；P-0025 `tested` 没读到的 profile 不算发现；P-0026 `tested` 发布流程只留一个家；P-0027 `tested` 证不出名字的片段用 remedy_unattributed 发出；P-0028 `tested` 随包样本里的本机路径换成 <home>；P-0029 `tested` 继任者的版本指针与字节账接上判据；P-0030 `tested` 归因证明搬进 core；P-0031 `tested` 引擎有了自己的字节上限；P-0032 `tested` 台账不再重复补丁文档的长叙述；P-0033 `verified` 空身份的调用不再被持久化；P-0034 `tested` 没有拒绝记账解释的失败不再记成安静的一轮；P-0035 `tested` patch 层每一行都要能在 manifest 里解析；P-0036 `tested` 纯 delta 的调用保留流里证过的 id；P-0037 `verified` 少一个闭合符时只在唯一内部插入点补回；P-0038 `tested` 脱敏认三个平台的家目录与会话键；P-0039 `tested` 会话目录在三个平台上只有一个定义；P-0040 `tested` 装机验收的夹具数从 data/fixtures 数出来；P-0041 `verified` 安装后的 bin 在 POSIX 上真的运行；P-0042 `tested` profile 仍写着的档位与宿主实测拒绝的档位第一次被摆在一起；P-0043 `tested` 为夹具写的那条守卫看不见夹具的 JSON 转义形状；P-0044 `tested` 截断的 turn 现在也说它到底有没有回答；P-0045 `verified` 准备阶段的拒绝只抵达 `agent/error`，此前挂错接缝因此静默；P-0046 `tested` 首页必须点名它数到的每个补丁、并列出已发布版本的尺寸；P-0047 `tested` `scan` 也数「结束却没回答」的 `completed` turn（探针复现）；P-0048 `tested` macOS 从一句话变成一个 CI 判据；P-0049 `tested` 事实包按注册表重数它自己描述的补丁；P-0050 `tested` `scan` 数「resume 丢掉了这个会话已经调过的工具」，规则住 `core/capability.ts`（宿主在这台机器上真的答了 `UNKNOWN_TOOL`）；P-0051 `tested` `explain` 把同一条计数指名成 finding（不需要 profile，退出 1），证据是扫描器与它自己同数。逐条的症状 / 机制 / 反证 / 边界在 `docs/patches/`；状态以 `dsh-remedy status` 为准。；P-0052 `tested` `completed` 的 turn 停在工具调用上时单独计数，`explain` 打 `TOOLCALL`（上游 #12741）；R66 没有新增补丁——巡检的 76 条候选里没有本机可复现的新形状（判读见 `docs/research/intake-r66-triage.md`） |
-| 基线 | **425 tests / 6 gates / `--mutate` 6-6**（R66 的树，Windows 实测；0.4.18 发布时是 420），`cli verify` `OK 8 fixture(s)`；字节账 plugin **82 859 / 83 000**（常驻 40 902 / 44 000、CLI 41 957 / 42 000 —— 只剩 **141 B / 43 B**）、core **103 869 / 104 000（131 B）**、`registry.js` **66 049 / 68 000（1 951 B）**。0.4.17 的账户是 82 462 / 103 663 / 64 911；Linux 同一棵 0.4.18 树的同值见 `live-linux-2026-11-18T03-40-00.000Z.json`。 |
+| 基线 | **425 tests / 6 gates / `--mutate` 6-6**（R66 的树，Windows 实测；0.4.18 发布时是 420），`cli verify` `OK 8 fixture(s)`；字节账 plugin **82 859 / 83 000**（常驻 40 902 / 44 000、CLI 41 957 / 42 000 —— 只剩 **141 B / 43 B**）、core **103 869 / 104 000（131 B）**、`registry.js` **66 049 / 68 000（1 951 B）**。0.4.17 的账户是 82 462 / 103 663 / 64 911；Linux 同一棵 R66 树（425 tests，同一组字节账）见 `live-linux-2026-11-18T06-30-00.000Z.json`。 |
 | 包体 | **已发布 0.4.18 = 38 394 B 压缩 / 38 文件 / 125 711 B 解包**（sha1 `bb4c5058…`），core **0.4.18 = 40 796 B / 29 / 132 371**（sha1 `783d5538…`）；两包的 `dist.shasum` 与下载下来的 tarball 逐字节相同。**已发布的那一棵就是这棵树**：emit 总量 **82 859 / 83 000**（常驻 40 902 / 44 000，CLI 41 957 / 42 000），core 的 dist 是 **103 869 / 104 000**（registry.js 66 049 / 68 000）。上一版 **0.4.17 = 38 348 / 38 / 125 076**（sha1 `5a8c1f95…`），core **41 316 / 29 / 133 257**（sha1 `e5b2e00f…`）。 |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases … `v0.4.13` / `v0.4.14` / `v0.4.15` / `v0.4.16` / `v0.4.17` / **`v0.4.18`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release）。`v0.4.18` 的正文来自 `docs/copy/release-notes/v0.4.18.md`；`v0.4.17` 的正文已冻成 `release-notes-0417-frozen`。`main` 每次都用 `commit-tree` 从容器 `main:dsh-remedy` 切出、tree 逐次比对相等；tag `v0.4.18` 打在发布提交上。**R62 的三次 CI 全 success**：`44058685218`（push）、`44058772739`（tag）与 `44059275024`（文档提交），四个 job 都对。**R63 / R64 的交接提交**每次 tree 都相等、CI 都 success；run id 以 `gh run list -R jjjjjjjjnnjnn/dsh-remedy --limit 8` 为准（这一行不枚举它自己所在的提交）。**0.4.13 已 `npm deprecate`**（随包夹具有维护者本机账号名，0.4.14 起已修，用 0.4.17 或更新）；`npm view` 读回两包都带这句话。**R65 的公开面**：提交 `2e9c998`（tree 与容器 `main:dsh-remedy` 相等）推上 `main`，tag `v0.4.18` 与 release 都发了（正文与 `docs/copy/release-notes/v0.4.18.md` 逐字节相同，2 136 字符），CI run `44096337395` 四个 job 全 success（`verify (node 22)` / `verify (node 24)` / `verify (windows, node 24)` / `verify (macos, node 24)`）；比它更晚的交接提交以 `gh run list -R jjjjjjjjnnjnn/dsh-remedy --limit 4` 为准。**R66 的公开面**：提交 `2126029`（tree 与容器 `main:dsh-remedy` 相等）推上 `main`（只推文档，不打 tag、不发 release、不 bump）；CI run `44107963490` 四个 job 全 success（`verify (node 22)` / `verify (node 24)` / `verify (windows, node 24)` / `verify (macos, node 24)`）；比它更晚的交接提交（包括记录这次推送的文档提交）以 `gh run list -R jjjjjjjjnnjnn/dsh-remedy --limit 4` 为准。 |
 | 装机验收 | **0.4.18 已从 registry 单装到空目录验过 `OK 8 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-18T03-20-00.000Z.json`（`ok: true`、三条命令 0/0/0、`canonical_fixtures: 8`）；上一版是 `install-acceptance-2026-11-17T07-40-00.000Z.json`。**两个 profile 已换到 0.4.18**（`pnpm why` 与 `node_modules/dsh-remedy/dist/cli.js verify` 两边读 0.4.18，备份 `.before-0418`）；**桌面 App 在 R66 里被启动、跑了一个 0.4.18 的真实 turn**（`live-desktop-2026-11-18T05-10-00.000Z.json`），随后关闭，回到本轮开始前的状态。Linux 同一棵 0.4.18 树全量跑过（`live-linux-2026-11-18T03-40-00.000Z.json`）。 |
-| 下一件事 | **R66 把 R65 的两条未做项收掉了**：桌面真机 turn（`live-desktop-2026-11-18T05-10-00.000Z.json`，答复 `R66-DESKTOP-OK`、`turn/end completed`、journal `streams: 1`、verdict `quiet`）与一次巡检（`intake-2026-11-18T05-20-00.000Z.json`：92 条去重 discussion、76 条候选，判读见 `docs/research/intake-r66-triage.md`；没有新形状，所以没有 P-0053）。同时修掉首屏两处错（开篇 51 vs 52、CLI 行缺 P-0042）与研究页 §6 的三处漂移，三条规则先红后绿。剩下的：**(a)** Linux 本轮没有重跑（只改文字与测试、零运行时字节），POSIX 的依据仍是 `live-linux-2026-11-18T03-40-00.000Z.json`；**(b)** #10115 本机仍无形状；**(c)** 下一次巡检会少 8 条候选（I 表已进账）。 |
-| 交接边界 | R66 没有半成品：`pnpm run verify` = **425 tests / 0 fail / 6 gates ALL GREEN**（Windows）、`--mutate` **6-6**、`cli verify` `OK 8 fixture(s)`。**本轮零运行时字节**：只改了 copy 草稿、两个治理测试、研究文档、INDEX 与交接；字节账与 0.4.18 逐字相同（cap 一个没动），不改版本、不发 npm、不打 tag。首屏与研究页的每一处错都由新规则守着（开篇计数对 `PATCHES.length`、每个接缝行对 registry 的 `surface`、§6 不许复述状态），三条各自带负对照。桌面 turn 见上；Linux 没重跑是明确的未做项。 |
+| 下一件事 | **R66 收掉了 R65 的两条未做项**（桌面真机 turn 与一次巡检），**R67 补上了它的 POSIX 半边**：`live-linux-2026-11-18T06-30-00.000Z.json` —— WSL2 上 425 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 逐项同值，R66 的 19 条首屏 / 活状态规则在 Linux 上同样全过。剩下的：**(a)** #10115 本机仍无形状；**(b)** 下一次巡检会少 8 条候选（I 表已进账）；**(c)** 任何新运行时功能仍要先付账（plugin 141 B、CLI 43 B、core 131 B）。 |
+| 交接边界 | 没有半成品：`pnpm run verify` = **425 tests / 0 fail / 6 gates ALL GREEN**（Windows 与 WSL2 同值）、`--mutate` **6-6**、`cli verify` `OK 8 fixture(s)`。**R66 / R67 零运行时字节**：只改了 copy 草稿、两个治理测试、研究文档、INDEX、交接与一个 Linux 记录器；字节账与 0.4.18 逐字相同（cap 一个没动），不改版本、不发 npm、不打 tag。首屏与研究页的每一处错都由新规则守着（开篇计数对 `PATCHES.length`、每个接缝行对 registry 的 `surface`、§6 不许复述状态、单体 `N B` 对状态表），三条各自带负对照。 |
 
 ## 五分钟检查
 
@@ -56,6 +56,42 @@ git -C .. log --oneline -3
 
 - 容器 `main` **没有**推到 `dsh-triage` 远端（推上去会破坏那个仓库的根布局）。不要顺手推。
 - `dsh-triage/` 只是同级项目，规则以它自己的 `AGENTS.md` 为准。
+
+## 当前批次（R67，2026-11-17）
+
+**R67 · POSIX 半边：R66 的树在 WSL2 上跑出同一组数。**
+
+> 触发：用户在 R66 收口后要求「全部同意，开始依次进行」；R66 的交接边界把
+> 「Linux 没重跑」写成明确的未做项，这一轮只补它。
+
+**A. 起点**
+
+- Windows：`pnpm run verify` = **425 tests / 6 gates ALL GREEN**、`--mutate` 6-6、`OK 8 fixture(s)`；
+  工作树干净（`d9e949e`）。字节账 82 859 / 103 869 / 66 049。
+
+**B. Linux（WSL2 Ubuntu，node 24.10.0 + pnpm 12.15.0）**
+
+- 整棵树 rsync 进 Linux 文件系统（不经 `/mnt/c`），排除 `node_modules` / `dist` / `.tmp` / `*.tsbuildinfo`；
+  `pnpm install --frozen-lockfile` 走本机 store（134 ms）。
+- **425 tests / 425 pass / 0 fail / 6 gates ALL GREEN**；`--mutate` **6/6**；`cli verify` `OK 8 fixture(s)`。
+- 字节账逐项同值：常驻 40 902 / 44 000、CLI 41 957 / 42 000、总 82 859 / 83 000、
+  core 103 869 / 104 000、registry.js 66 049 / 68 000 —— 与 Windows 的 0.4.18 树完全相同。
+- R66 的两个治理文件在 POSIX 上 **19 tests / 0 fail**（开篇计数、接缝行、§6、单体 `N B` 四条规则）。
+- 记录器 `scripts/record_linux_r66.mjs` 读 `.tmp/r66-linux/` 的六份日志，先断言 425 / 6-6 / 8 fixtures /
+  19 条规则 / 五个字节数，任一不符就 `exit 4`；产物 `live-linux-2026-11-18T06-30-00.000Z.json`。
+
+**C. 没测的**
+
+- 冷装与 `npx` 不在 POSIX 重跑（0.4.18 的 registry 单装是 Windows 的产物）；
+- 这台 Linux 没有 `~/.dsh/sessions`，所以 `explain --sessions` 的活 finding 仍靠 Windows 与夹具；
+- 桌面 App 不是 POSIX 主张；本轮零运行时字节，所以没有任何修复被重新见证。
+
+**D. 收口**
+
+- Windows 复跑：**425 tests / 0 fail / 6 gates ALL GREEN**、`--mutate` **6-6**、`OK 8 fixture(s)`；
+  门禁对 `gates-2026-11-18T07-00-00.000Z.json` / `gates-mutate-2026-11-18T07-05-00.000Z.json`；
+  五轴 review `S72`；披露行 `opencode-2026-11-17-dsh-remedy-r67`。
+- 注册表没变，快照仍是 `patch-registry-2026-11-18T05-40-00.000Z.json`。
 
 ## 当前批次（R66，2026-11-17）
 
@@ -3446,7 +3482,7 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 公开仓 `main` 推到 `2e9c998`（发布提交）与 `2c462d9`（记录推送的文档提交），`v0.4.18` 的 tag 与 release 都发了、正文与
 `docs/copy/release-notes/v0.4.18.md` 逐字节相同；CI run `44096337395` 与 `44096772132` 四个 job 全 success（含 `verify (macos, node 24)`）。
 两个 profile 在 **0.4.18** 上；**桌面 App 在 R66 里跑过一个 0.4.18 的真实 turn**（`live-desktop-2026-11-18T05-10-00.000Z.json`）。
-本树（R66）实测 Windows **425 tests / 6 gates / 6-6**；Linux 的 POSIX 证据仍是 0.4.18 那一份（本轮没重跑）；
+本树（R66）实测 Windows 与 WSL2 **425 tests / 6 gates / 6-6**（POSIX 见 `live-linux-2026-11-18T06-30-00.000Z.json`，字节账与 Windows 逐项同值）；
 **发布不需要问人拿 OTP**（见「明确边界」第一条）。
 
 **B. 主线（R43+）：外部反馈 → 稳定补丁。** R43 结掉 L-0001 / L-0002；R45 把 #11337 做成 **P-0034**，
@@ -3474,8 +3510,8 @@ pnpm install ; pnpm run verify ; node scripts/gate.mjs --mutate ; node packages/
 2. ~~`BS-20`~~ **R64 已完成**：十三份补丁文档的 Reproduction 改成 shipped 命令，守卫在 `patch-reproduction.test.ts`。
 3. ~~桌面 turn~~ **R66 已完成**：`live-desktop-2026-11-18T05-10-00.000Z.json`（0.4.18、答复 `R66-DESKTOP-OK`、`turn/end completed`、verdict `quiet`）。
 4. ~~一次巡检~~ **R66 已完成**：`intake-2026-11-18T05-20-00.000Z.json` 与 `docs/research/intake-r66-triage.md`；没有新形状，不发补丁。
-5. **剩下**：Linux 若需要新的 POSIX 证据就重跑同一组数；`#10115` 本机仍无形状；
-   下一次巡检会少 8 条候选（`leads.md` 的 I 表已进账）。
+5. ~~Linux 的 POSIX 证据~~ **R67 已完成**：`live-linux-2026-11-18T06-30-00.000Z.json`（425 / 6 / 6-6、同一组字节账、19 条 R66 规则在 POSIX 上全过）。
+6. **剩下**：`#10115` 本机仍无形状；下一次巡检会少 8 条候选（`leads.md` 的 I 表已进账）。
 
 
 **治理判据（R22 起，别再退化）：**
@@ -3552,14 +3588,16 @@ pnpm install ; pnpm run verify ; node scripts/gate.mjs --mutate ; node packages/
 
 | 文件 | 状态 | 说明 |
 |---|---|---|
+| `live-linux-2026-11-18T06-30-00.000Z.json` | 绿 | **Linux 真机（WSL2 Ubuntu, node 24.10.0）· R66 树（R67 记录）**：425 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 逐项同值（40 902 / 41 957 / 82 859、core 103 869、registry 66 049）；R66 的 19 条规则在 POSIX 上全过（sha256 `ca130ca11304…`） |
 | `live-desktop-2026-11-18T05-10-00.000Z.json` | 绿 | **桌面真机：0.4.18 跑了一个真实 turn（R66）**：答复 `R66-DESKTOP-OK`、`turn/end` `completed`、journal `streams: 1`、verdict `quiet`；tarball 是 registry 的 0.4.18 包，runtime 0.2.2-rc.3 读自 `runtime.json`（sha256 `c97542759ba7…`） |
 | `intake-2026-11-18T05-20-00.000Z.json` | 绿 | **R66 巡检**：S-DSH 92 条去重 discussion / 76 条新候选、S-SELF 4 个 open（全是 bot PR）、S-NPM 上月下载 5 235 与 5 132（sha256 `d66a3aa4b589…`）；判读见 `docs/research/intake-r66-triage.md` |
 | `publish-2026-11-18T03-10-00.000Z.json` | 绿 | **0.4.18 发布**：两包 `exact_ok` + `latest_ok`（`ok: true`；sha256 `4d707a8dae3b…`） |
 | `install-acceptance-2026-11-18T03-20-00.000Z.json` | 绿 | **0.4.18 装机验收**：空目录从 registry 单装，三条命令 0/0/0，`OK 8 fixture(s)`（`canonical_fixtures: 8`；sha256 `b88316a8db31…`） |
 | `live-toolcall-2026-11-17T13-30-00.000Z.json` | 绿 | **P-0052 本机证据**：conclude 末步 `["text","tool-call"]`、control 第二步 `["text"]`；`completed_on_tool_call=1`、`completed_without_answer=0`（sha256 `8b4a31519bf5…`） |
-| `live-linux-2026-11-18T03-40-00.000Z.json` | 绿 | **Linux 真机（WSL2 Ubuntu, node 24.10.0）· 0.4.18 树**：420 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 同值（sha256 `7df22afb4052…`） |
-| `gates-2026-11-18T06-00-00.000Z.json` | 绿 | **当前**门禁（6 gates ALL GREEN，R66 的树；sha256 `cc8a7bcad3ec…`）；负对照见下一行 |
-| `gates-mutate-2026-11-18T06-05-00.000Z.json` | 绿 | **当前**负对照（6/6 CAUGHT，同一棵 R66 树；sha256 `79772e4d691d…`） |
+| `live-linux-2026-11-18T03-40-00.000Z.json` | 绿 | **Linux 真机（WSL2 Ubuntu, node 24.10.0）· 0.4.18 发布树**：420 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 同值（sha256 `7df22afb4052…`；R67 的 06:30 是同一组数在 R66 树上重跑） |
+| `gates-2026-11-18T07-00-00.000Z.json` | 绿 | **当前**门禁（6 gates ALL GREEN，R67 的树；sha256 `754221035d88…`）；负对照见下一行 |
+| `gates-mutate-2026-11-18T07-05-00.000Z.json` | 绿 | **当前**负对照（6/6 CAUGHT，同一棵 R67 树；sha256 `9e82b290438d…`） |
+| `gates-2026-11-18T06-00-00.000Z.json` / `gates-mutate-2026-11-18T06-05-00.000Z.json` | 绿 | 历史门禁对儿（R66 交付树；被 07:00 / 07:05 取代） |
 | `gates-2026-11-18T04-00-00.000Z.json` / `gates-mutate-2026-11-18T04-05-00.000Z.json` | 绿 | 历史门禁对儿（R65 交付树；被 06:00 / 06:05 取代） |
 | `publish-2026-11-16T06-52-00.000Z.json` | 绿 | **0.4.14 发布**：两包 `exact_ok` + `latest_ok`（`ok: true`；sha256 `834e371d…`） |
 | `install-acceptance-2026-11-16T06-55-00.000Z.json` | 绿 | **0.4.14 装机验收**：空目录从 registry 单装，三条命令 0/0/0，`OK 8 fixture(s)`（`canonical_fixtures: 8`；sha256 `7d24aee6…`） |

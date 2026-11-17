@@ -68,6 +68,7 @@
 | `data/fixtures/toolcall-fusion/single-broken.json` | 单个坏对象不拆 |
 | `data/results/patch-registry-*.json` | 注册表快照（SSOT） |
 | `data/results/publish-2026-11-18T03-10-00.000Z.json` / `install-acceptance-2026-11-18T03-20-00.000Z.json` | **0.4.18 发布 + 空目录单装**（两包 `exact_ok` + `latest_ok`、`ok: true`；三条命令 0/0/0、`OK 8 fixture(s)`、`canonical_fixtures: 8`） |
+| `data/results/live-linux-2026-11-18T06-30-00.000Z.json` | **Linux 真机（WSL2 Ubuntu, node 24.10.0）· R66 树（R67）**：425 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 逐项同值；R66 的 19 条规则在 POSIX 上全过 |
 | `data/results/live-desktop-2026-11-18T05-10-00.000Z.json` | **桌面真机（R66）· 0.4.18**：答复 `R66-DESKTOP-OK`、`turn/end completed`、journal `streams: 1`、verdict `quiet`；包是 registry 的 0.4.18 tarball，runtime 0.2.2-rc.3 |
 | `data/results/intake-2026-11-18T05-20-00.000Z.json` | **R66 巡检**：3 个来源全应答；92 条去重 discussion / 76 条新候选；判读见 `docs/research/intake-r66-triage.md` |
 | `data/results/live-toolcall-2026-11-17T13-30-00.000Z.json` | **P-0052 本机证据**：conclude 末步 `["text","tool-call"]`、control 第二步 `["text"]`；`completed_on_tool_call=1`、`completed_without_answer=0` |
@@ -150,6 +151,7 @@
 | `scripts/record_capability_drift.mjs` | P-0050 的本机证据：114 文件 / 293 header / 9 对丢失；扫描器与记录器不同数就 `exit 4`（R59） |
 | `scripts/record_toolcall_turn.mjs` | P-0052 的探针取证：conclude 与 control 两 run 的末步块集合、`completed_on_tool_call=1`、`completed_without_answer=0`，否则 `exit 4`（R65） |
 | `scripts/record_linux_r65.mjs` | R65 的 Linux 半边：读 `.tmp/r65-linux/` 的日志，420/6/6-6 与字节账同值才写 `live-linux-*`（R65） |
+| `scripts/record_linux_r66.mjs` | R67 的 Linux 半边：读 `.tmp/r66-linux/` 的六份日志，425/6/6-6、8 fixtures、19 条 R66 规则与五个字节数全对才写 `live-linux-*`（R67） |
 | `scripts/record_explain_drift.mjs` | P-0051 的本机证据：`scan --json` 与 `explain` 在同目录上必须同数、后者退出 1 且只有一条 `DROPPED`，否则 `exit 4`（R61） |
 | `scripts/record_session_sample.mjs` | 本机故障样本（必须带 `--until`；会话根走 `lib/session-root.mjs`） |
 | `scripts/record_install_acceptance.mjs` | 空目录从 registry 单装 → `install-acceptance-*` 产物 |

@@ -1304,7 +1304,25 @@
         "data/results/intake-2026-11-18T05-20-00.000Z.json",
         "data/results/live-desktop-2026-11-18T05-10-00.000Z.json"
       ]
+    },
+    {
+      "id": "S72",
+      "gate": "size",
+      "title": "The R66 tree runs on POSIX with the same suite count and the same byte account",
+      "axes": {
+        "correctness": "The R66 tree was copied into the WSL2 filesystem and run there: 425 tests / 425 pass / 0 fail, 6 gates ALL GREEN, `--mutate` 6/6, and `node packages/plugin/dist/cli.js verify` printing `OK 8 fixture(s)`. The byte account reads exactly the Windows values on every line: residency 40 902 of 44 000, CLI 41 957 of 42 000, total 82 859 of 83 000, core 103 869 of 104 000, registry.js 66 049 of 68 000. The two governance files R66 grew ran 19 tests with 0 failures on this host, so the opening-count, seam-row, §6 and lone-figure rules reach the same verdict on POSIX.",
+        "reproducibility": "The tree is rsynced into the Linux filesystem (never run through `/mnt/c`) with `node_modules`, `dist`, `.tmp` and `*.tsbuildinfo` excluded, installed with `pnpm install --frozen-lockfile` against the local store, then run as `pnpm run verify`, `node scripts/gate.mjs --mutate`, `node scripts/gate_size.mjs`, `node packages/plugin/dist/cli.js verify` and `node --test` over the two R66 governance files. Each command writes a log under `.tmp/r66-linux/`; `scripts/record_linux_r66.mjs` refuses to write (exit 4) unless the suite count, the six-of-six, the fixture line, the 19 rule tests and all five byte figures match, and it records a sha256 for every log it read.",
+        "compliance": "One local WSL2 host, no provider call, no file under `~/.dsh` touched, no new dependency. R66 and R67 move no runtime byte, so the caps stay where 0.4.18 put them and nothing was published: no version bump, no npm call, no tag.",
+        "ssot": "The artifact is produced by the round's own recorder from hashed logs rather than transcribed; the handoff status table, the evidence index and INDEX all point at `live-linux-2026-11-18T06-30-00.000Z.json`; nothing is borrowed from the 0.4.18 artifact, which is kept beside it as the release tree's record.",
+        "adversarial": "One Linux host and one node build; a POSIX pass proves the suite is portable, not that the pages read correctly on darwin. This host has no `~/.dsh/sessions`, so the live `explain --sessions` findings remain Windows evidence plus fixtures. Cold-directory install and `npx` were not re-run on POSIX. Because the round changed no runtime byte, nothing here re-witnesses a repair: the claim is only that the same tree produces the same numbers on a second platform."
+      },
+      "evidence": [
+        "scripts/record_linux_r66.mjs",
+        "data/results/live-linux-2026-11-18T06-30-00.000Z.json",
+        "docs/HANDOFF.md",
+        "INDEX.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-18T05:30:00.000Z"
+  "updated_at": "2026-11-18T07:00:00.000Z"
 }

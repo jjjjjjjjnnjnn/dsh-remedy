@@ -9,6 +9,11 @@
 > 同一轮补齐了 R65 的未做项：桌面 0.4.18 真机 turn（`live-desktop-2026-11-18T05-10-00.000Z.json`）与一次巡检
 > （92 条 discussion / 76 条候选，`intake-r66-triage.md`；无新形状，所以没有 P-0053）。**零运行时字节**，cap 一个没动；
 > 门禁对 `gates-2026-11-18T06-00-00.000Z.json` / `gates-mutate-2026-11-18T06-05-00.000Z.json`。
+> R67（2026-11-17，**POSIX 半边：R66 的树在 WSL2 上跑出同一组数**）——425 tests / 6 gates / 6-6、
+> `OK 8 fixture(s)`、字节账与 Windows 逐项同值（五个数都在状态表那一行），
+> R66 的 19 条首屏 / 活状态规则在 Linux 上全过；记录器 `record_linux_r66.mjs` 先断言再写，
+> 产物 `live-linux-2026-11-18T06-30-00.000Z.json`。零运行时字节。门禁对
+> `gates-2026-11-18T07-00-00.000Z.json` / `gates-mutate-2026-11-18T07-05-00.000Z.json`。
 > R65（2026-11-17，**把 #12741 的那一半变成计数：`completed` 的 turn 停在 UI 不读的工具调用上**）——
 > 本机用本地端点与一个会 `concludeTurn()` 的探针工具复现了形状（末步 `["text","tool-call"]`、`turn/end completed`），
 > P-0052 让 `scan` 报 `completed_on_tool_call`、`explain` 打 `TOOLCALL` 并退出 1；P-0044 的回答规则没有改。

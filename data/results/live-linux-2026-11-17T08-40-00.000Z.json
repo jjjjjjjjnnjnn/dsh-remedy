@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_linux_r62.mjs",
+  "generated_at": "2026-11-17T08:40:00.000Z",
+  "question": "Does the published 0.4.17 tree pass on a POSIX host with the same suite count and the same byte account as Windows, and does P-0051 behave there?",
+  "host": {
+    "kernel": "Linux 6.6.114.1-microsoft-standard-WSL2",
+    "node": "24.10.0",
+    "pnpm": "12.15.0",
+    "how": "WSL2; the tracked tree copied into the Linux filesystem and never run through /mnt/c"
+  },
+  "verify": {
+    "tests": 405,
+    "pass": 405,
+    "fail": 0,
+    "gates": 6,
+    "negative_control": "6/6"
+  },
+  "installed_dist_cli": {
+    "what": "node packages/plugin/dist/cli.js verify on this host, against the fixture set the package ships",
+    "printed": "OK  8 fixture(s)"
+  },
+  "p0051_on_linux": {
+    "tests": 6,
+    "fail": 0,
+    "what": "the six cases, including the four negative controls"
+  },
+  "byte_account": {
+    "residency": {
+      "bytes": 40902,
+      "cap": 44000
+    },
+    "cli": {
+      "bytes": 41560,
+      "cap": 42000
+    },
+    "total": {
+      "bytes": 82462,
+      "cap": 83000
+    },
+    "core_total": {
+      "bytes": 103663,
+      "cap": 104000
+    },
+    "registry": {
+      "bytes": 64911,
+      "cap": 68000
+    }
+  },
+  "not_measured": {
+    "cold_directory_install": "not re-run on POSIX this round: the registry copy was installed on Windows (install-acceptance-2026-11-17T07-40-00.000Z.json)",
+    "npx": "not re-run this round for the same reason",
+    "dropped_finding_on_this_host": "this Linux home has no ~/.dsh/sessions, so `explain --sessions` exits 3 there; the finding is measured on the Windows host (explain-drift-2026-11-17T10-05-00.000Z.json)",
+    "desktop_app": "not a POSIX claim: the app is measured on Windows only"
+  },
+  "sources": {
+    "versions.log": "3e7ba78f867dfb01fea6d739efc124afe60b00973e95c50bede67cd576d77a34",
+    "verify.log": "256ca322abbef66aad5749ce9345471b79accf4074c8502a383045fdcd6ad7f3",
+    "mutate.log": "f07d05815d3e6c3d45f142dc7f37410679e819c61ecf984a0dba48e225436cbd",
+    "size.log": "5886ee5684ff02840582f7b9c044702ef9595c9a008c871430d21bc788603746",
+    "cli.log": "199944426ebba4225f3ebdddb75e4c161c7d23b1b2e1ef570a1019ebc14dc561",
+    "explain.log": "1a8348024f683c0c17567a41d1694bf448605bf05413c3fc6d8d4b0673b39651",
+    "hashes.log": "50a9badb734fb588db70cfd43467c83c4e729fcd390355b30da500b7eb423191"
+  },
+  "pack_and_changelog": [
+    {
+      "file": "docs/copy/facts/public-repo-facts.md",
+      "sha256": "a6063e268f4eb504d3df9b3aea32f6303f833f909a75c832815141d1e16a886a"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "sha256": "887b6955035344d8ae6c4953b7de7a9321a4e8624535874a0e59c90822cdcce2"
+    }
+  ],
+  "limits": [
+    "one Linux host (WSL2) and one node build; this is not a distribution matrix",
+    "the suite reads files, so a POSIX pass proves the tests are portable, not that the pages are right on darwin",
+    "no resident seam ran with a provider on this host: the round changed no runtime byte"
+  ]
+}

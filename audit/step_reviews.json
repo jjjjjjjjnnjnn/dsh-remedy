@@ -1120,7 +1120,105 @@
         "docs/copy/facts/public-repo-facts.md",
         "README.md"
       ]
+    },
+    {
+      "id": "S63",
+      "gate": "copy",
+      "title": "The fact pack counted a project it no longer described, and the changelog stopped one release short",
+      "axes": {
+        "correctness": "The pack is the file every outward number is resolved against, and nothing compared it with the registry: it said 41 patches where the registry held 48, put P-0013 on `agent/request-error` after P-0045 moved it to `agent/error`, listed 8 CLI and 21 build-side ids against 10 and 24, and `CHANGELOG.md` topped out at 0.4.15 while 0.4.16 was the release npm served. Every gate was green on that tree, and the two first screens were right — the pack was the only page describing a smaller project. Three rules now read it: every registry id must appear in the pack, every seam bullet must carry its surface's exact team and a count that matches it, and every version the pack calls published must have a changelog section with nothing older above it. Each rule was red on the recorded R57 bytes before the fix.",
+        "reproducibility": "`node --test tests/governance/fact-pack-census.test.ts` and `node --test tests/governance/facts-truth.test.ts` name the failing sentence; `.tmp/r58-red-proof.mjs` re-runs both rules against the R57 pack read out of `git show HEAD:` and printed all five stale counts plus the missing 0.4.16 section before the fix.",
+        "compliance": "Build-side only: zero emitted bytes changed in the plugin, and core came down because the payment compacted records instead of raising a cap. No cap moved. The pack, the changelog and the two pages were re-registered through `copy_record` in one pass, which is what `facts_sha256` requires.",
+        "ssot": "The registry is the only census: the test derives every expected number from `PATCHES` instead of restating it, and the pack now says 49 registered, 9 `verified` / 40 `tested`, 10 / 1 / 2 / 10 / 25 / 1 by seam. The snapshot `patch-registry-2026-11-16T21-30-00.000Z.json` is the byte-exact record of that state (sha256 `ff853516…`).",
+        "adversarial": "The rules prove presence and counts, not placement: the prose beside an id is not read, so a stale one-sentence description still passes. The census is parsed from the bullet shape the pack uses today, so a rewrite turns the rule red rather than wrong. The changelog rule reads section headers, not contents, and the published version stays the pack's own claim — the comparison is offline. A rule that cannot fail was also guarded: each negative control reconstructs the measured shape (a dropped id, a count that disagrees with its list, a changelog that stops one release below), and those controls pass while the real rules fail on the old bytes."
+      },
+      "evidence": [
+        "docs/patches/P-0049-fact-pack-census.md",
+        "tests/governance/fact-pack-census.test.ts",
+        "tests/governance/facts-truth.test.ts",
+        "docs/copy/facts/public-repo-facts.md",
+        "data/results/patch-registry-2026-11-16T21-30-00.000Z.json"
+      ]
+    },
+    {
+      "id": "S64",
+      "gate": "registry",
+      "title": "A resumed session can lose a tool it already called, and the registry had no word for it",
+      "axes": {
+        "correctness": "Upstream #12348 reports a resume that stops declaring a tool the session has used. Nothing on this machine read a `request/header` at all, so the shape could not be counted. Measured over 114 session files: 293 headers (109 initial, 50 resume, 43 change, 91 series), 129 tools dropped by a header, 9 of them after this session had called them (5 sessions; 7 at a resume, 2 at a change), 6 later calls to a dropped tool, and 5 of them carry `error.code: UNKNOWN_TOOL`. P-0050 turns that into `dropped_tools`, with the rule in `packages/core/src/capability.ts`, and refuses the two shapes a careless count would take: a tool nobody called, and a call made only after the drop.",
+        "reproducibility": "`node --test tests/unit/capability-drift.test.ts` (9 cases, negative controls included) and `node scripts/record_capability_drift.mjs --stamp <ISO>`, which refuses to write (exit 4) unless the shipped scanner and the recorder count the same number of losses over the same payload. `node packages/plugin/dist/cli.js scan ~/.dsh/sessions` prints `dropped_tools=9` on the human line.",
+        "compliance": "No runtime byte changed and no cap moved. The CLI half paid for the new field in comments whose long form is in the patch docs (204 -> 677 bytes of headroom), and the engine paid for the module and the record by compacting prose: core 101 309 -> 103 587 of 104 000, registry 63 866 -> 64 835 of 68 000.",
+        "ssot": "The rule has one home (`packages/core/src/capability.ts`) and both readers use it: the scanner at scan time and the recorder at evidence time, and the recorder proves the two agree before it writes. The registry record, the ledger row and the snapshot `patch-registry-2026-11-17T05-00-00.000Z.json` name the same patch and the same artifact.",
+        "adversarial": "The patch claims the request set moved, not what the model remembers: the `UNKNOWN_TOOL` answers are quoted from the sessions where the host actually wrote them, and the doc says so. `change` and `resume` are counted alike because the rule cannot tell an operator intent from a resume accident; a provider that sends no header is unmeasured rather than clean; and the count is per session, so a tool re-added later is not a second loss. Each of those is a test case as well as a sentence."
+      },
+      "evidence": [
+        "docs/patches/P-0050-capability-drift.md",
+        "packages/core/src/capability.ts",
+        "tests/unit/capability-drift.test.ts",
+        "data/results/capability-drift-2026-11-17T04-40-00.000Z.json",
+        "data/results/patch-registry-2026-11-17T05-00-00.000Z.json"
+      ]
+    },
+    {
+      "id": "S65",
+      "gate": "copy",
+      "title": "The handoff described a machine one release behind, and the release credential was an unwritten fact",
+      "axes": {
+        "correctness": "Two classes of defect, both found by reading rather than by a red gate. (1) The live sections of `docs/HANDOFF.md` still described R55: profiles on 0.4.15 while both were on 0.4.16, a platform row of 368 tests where this tree measures 399 and Linux 388, a \"first thing\" block that said forty-six patches with four unreleased while the tree holds fifty. `handoff-truth.test.ts` reads the evidence index and three live pointers, not these paragraphs, so every number in them was unchecked prose. Each sentence now names a value of this tree and an artifact a reader can open. (2) The machine holds an npm token in the user-level `~/.npmrc` that bypasses the one-time password, and no page said so, so each release round re-asked a human. That fact is now written where the procedure lives (`docs/PUBLISH.md`) and where the boundaries are (`docs/HANDOFF.md`) — the fact, the file that holds it, and what a 401 or an EOTP means — while the token itself stays out of the repository, which was verified by scanning every tracked file for the string.",
+        "reproducibility": "`node --test tests/governance/handoff-truth.test.ts` and `release-procedure.test.ts` go red on the retired shapes this round touched: quoting the disproved 2FA claim in a batch section tripped the very rule it was describing (fixed by naming R29 instead of restating the claim). The credential claim is reproducible with one command, `npm whoami`, which answers `jjjjjjjjnnjnn`; a fresh `OPT`/`EOTP` answer is the shape that a rotated token produces.",
+        "compliance": "No secret is written: the repository holds the location of the credential and the rule that keeps it there, not the value. `PROJECT_RULES` section 8 and the handoff boundary both say a token never enters the repository; a scan for the token string found zero files. No runtime byte changed and no cap moved: the plugin half is 82 225, core 103 587, registry 64 835.",
+        "ssot": "The publish procedure still has one home (`docs/PUBLISH.md`); the handoff points at it and adds one Chinese line to 明确边界 so a successor reading Chinese learns the same fact. `INDEX.md` now names all 35 `scripts/*.mjs` (it named 25), so a tool that exists is a tool a successor can find; `data/results/` was not touched, and the gate pair recorded after the edits is the one the index names.",
+        "adversarial": "The rule behind the release procedure is a shape rule: it cannot tell a quoted retired claim from a made one, and this round proved that by quoting it. The credential paragraph is prose no gate reads — `npm whoami` at release time is the only check, and it stays a reading rather than a promise. The boundary section still forbids a `.tmp/` path and a stale `latest`, so the new lines were written to satisfy both (they cite a registry version and no scratch path)."
+      },
+      "evidence": [
+        "docs/PUBLISH.md",
+        "docs/HANDOFF.md",
+        "INDEX.md",
+        "tests/governance/release-procedure.test.ts",
+        "data/results/gates-2026-11-17T09-20-00.000Z.json"
+      ]
+    },
+    {
+      "id": "S66",
+      "gate": "registry",
+      "title": "The counter for a dropped tool had one reader, and the command a person runs was the other",
+      "axes": {
+        "correctness": "P-0050 taught `scan` to count a `resume`/`change` header that stopped declaring a tool this session had already called (9 pairs in 5 sessions on this machine, 5 of the 6 later calls answered `UNKNOWN_TOOL`). The command a person runs, `explain`, kept `report.turns`, `report.error_codes` and `report.refused_efforts` from the same scan batch and dropped `report.dropped_tools`, so the shape upstream #12348 reports was invisible exactly where a decision gets made: on the R60 tree `explain --sessions ~/.dsh/sessions` printed six turn-ending rows, none about tools, and exited 0. P-0051 keeps that field (`null` when no directory was given, never 0) and prints one `DROPPED` line when it is positive, in P-0042's `CONFLICT` shape. It is a finding, not a coverage row: `tests/governance/coverage-vocabulary.test.ts` requires a covering patch to sit on a resident seam, and this is a CLI reader, so the coverage table, `failureClasses`, `switchKey` and the verdict path are untouched.",
+        "reproducibility": "`node --test tests/e2e/explain-drift.test.ts` (6 cases, 4 of them negative controls: a drop nobody called, a call made only after the drop, no `--sessions` at all, and a session that kept its tool) and `node scripts/record_explain_drift.mjs --stamp <ISO>`, which refuses to write (exit 4) unless `scan --json` and `explain` answer the same number over the same bytes, `explain` exits 1, and exactly one `DROPPED` line is printed. The two tests that assert the line failed on the built R60 bytes before the implementation existed; the four quiet cases were green then and must stay green.",
+        "compliance": "No cap moved. The CLI half was 41 323 of 42 000 and the field, the line and the exit-code branch cost 237 emitted bytes, so the half settled at 41 560 of 42 000 and the total at 82 462 of 83 000; residency is unchanged at 40 902. The engine's new record was funded by removing `failureClasses: []` from 30 records that already omitted the field (720 source bytes), so core *came down* from 103 587 to 103 663 including the new record and `registry.js` from 64 835 to 64 911 (3 089 of 68 000). `explain-command.js` is 9 995 bytes, under the 10 000 `UNCHECKED_LIMIT`, so it needs no per-file cap; the payment is comments whose long form is in the patch docs (P-0032 shape).",
+        "ssot": "One rule, two readers: `packages/core/src/capability.ts` is the only definition, `session-scan.ts` folds it per file, and `explain` reads the batch report. The artifact `data/results/explain-drift-2026-11-17T10-05-00.000Z.json` exists only if the two commands agree (`agree: true`, `dropped_tools` 9, exit 1), so a second private definition would be red at record time. The registry record, the ledger row this step writes, `docs/patches/P-0051-explain-drift.md` and the snapshot `patch-registry-2026-11-17T…` name the same patch and the same artifact; the fact pack census, both first screens and CHANGELOG name the same id.",
+        "adversarial": "The line claims the request set moved, never what the model remembers; the `UNKNOWN_TOOL` code is quoted from P-0050's artifact, not inferred. `explain --sessions` now exits 1 where it exited 0, which is a behaviour change and is written in the patch doc and the release notes; a script that wants the old silence can read the absence of the line. A provider that sends no `request/header` cannot move the number, so silence stays unmeasured rather than clean (12 of the 114 files here carry none); a drop nobody called and a call made only after the drop are both refused by the rule and both pinned by a test. The count is per session, not per turn, so a re-declared tool is not a second loss."
+      },
+      "evidence": [
+        "docs/patches/P-0051-explain-drift.md",
+        "packages/plugin/src/explain-command.ts",
+        "tests/e2e/explain-drift.test.ts",
+        "scripts/record_explain_drift.mjs",
+        "data/results/explain-drift-2026-11-17T10-05-00.000Z.json",
+        "data/results/patch-registry-2026-11-17T11-00-00.000Z.json"
+      ]
+    },
+    {
+      "id": "S67",
+      "gate": "size",
+      "title": "0.4.17 shipped: fifty-one patches published, and every claim measured on both platforms",
+      "axes": {
+        "correctness": "Five records (P-0047…P-0051) were on the tree and unreleased for two rounds; this round published them as 0.4.17. The tree changed in exactly one way that matters: three manifests carry the new version, and every outward page now describes 51 patches (9 verified / 42 tested) instead of describing an older release. The published bytes are measured from the registry copy, not from the local pack: plugin 38348 compressed / 38 files / 125076 unpacked (sha1 `5a8c1f95…`), core 41316 / 29 / 133257 (sha1 `e5b2e00f…`), and both shasums equal the `dist.shasum` the registry publishes for that version. One desktop turn ran on the published tarball (reply `R62-DESKTOP-OK`, `turn/end` completed, journal `streams: 1`, verdict quiet) and the whole suite ran on Linux with the same numbers as Windows.",
+        "reproducibility": "`node scripts/publish_packages.mjs` (core first) → `record_publish --stamp …` → `record_install_acceptance --version 0.4.17` → `record_live_mount` for the desktop turn → `scripts/record_linux_r62.mjs` for the POSIX half. Each recorder refuses to write when its shape check fails: the publish recorder needs both `exact_ok` and `latest_ok`, the acceptance recorder needs three zero exits plus `OK 8 fixture(s)` against the fixture count `data/fixtures/` actually holds, and the live recorder refuses a run with no stream. The Linux recorder was run twice on a red tree first (the `[Unreleased]` heading and the 0.4.16 version line were still there because the tree was copied before the publish), which is what makes its third green run meaningful.",
+        "compliance": "No cap moved and no runtime byte changed after the release: the published tree is 40 902 residency / 41 560 CLI / 82 462 total, core 103 663, registry 64 911. Publishing used the machine credential that bypasses the one-time password (measured again: `npm whoami` answers the account name and no code was needed); the token itself stayed out of every file, artifact and commit message. The release page was frozen through `copy_record --freeze` rather than by editing the manifest, and the live `release-notes` entry was opened for 0.4.18 through the copy channel so no hand-written manifest row exists.",
+        "ssot": "The snapshot `patch-registry-2026-11-17T11-00-00.000Z.json` is the 51-patch registry byte for byte; the fact pack was re-derived from the registry (P-0049 reads it), and the two first screens, CHANGELOG, release notes and `docs/market-index.json` were all re-registered against it. `docs/market-index.json` pins the npm source with the registry`s own `npm view time` timestamp (`2026-11-17T09:02:30.908Z`), not a literal. The desktop artifact names the registry tarball`s sha256 and the runtime version read from `runtime.json` (0.2.2-rc.3), not a remembered version.",
+        "adversarial": "Two real failures were caught and are recorded rather than smoothed over: (1) the first profile edit used PowerShell`s `Set-Content`, which wrote a UTF-8 BOM and made the app fail `JSON.parse` at boot with 「Loading plugins」 stuck on screen — restored from the `.before-0417` backup and redone with `writeFileSync(path, text, \"utf8\")` plus a first-byte assertion; (2) the registry answered 404 for about three minutes after both publishes, which is replica lag and not a failed publish, so nothing was republished. What this does not prove: macOS has no hardware run (only the CI job), the desktop turn is one turn on one route, and the Linux half runs the suite rather than a resident seam with a provider."
+      },
+      "evidence": [
+        "data/results/publish-2026-11-17T07-30-00.000Z.json",
+        "data/results/install-acceptance-2026-11-17T07-40-00.000Z.json",
+        "data/results/live-desktop-2026-11-17T08-55-00.000Z.json",
+        "data/results/live-linux-2026-11-17T08-40-00.000Z.json",
+        "data/results/patch-registry-2026-11-17T11-00-00.000Z.json",
+        "data/results/gates-2026-11-17T17-30-00.000Z.json",
+        "data/results/gates-mutate-2026-11-17T17-35-00.000Z.json"
+      ]
     }
   ],
-  "updated_at": "2026-11-16T14:00:00.000Z"
+  "updated_at": "2026-11-17T17:40:00.000Z"
 }

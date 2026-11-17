@@ -1,0 +1,209 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_capability_drift.mjs",
+  "generated_at": "2026-11-17T04:40:00.000Z",
+  "question": "Upstream #12348 reports that a session resumed under a profile that no longer declares a tool keeps the memory of it and calls it anyway. Does this machine hold that shape, does the shipped scanner count it with the rule it ships, and what did the host answer?",
+  "method": {
+    "root": "<home>\\.dsh\\sessions",
+    "reader": "the plugin's own decompressSessionLog (multi-frame zstd), the same one `scan` uses",
+    "rule": "packages/core/src/capability.ts lostTools(): a tool this session called before the header that stopped declaring it, booked once per (session, tool); a `series` or unknown reason never counts",
+    "why_this_is_the_narrow_claim": "a log can prove that a call happened before the set lost the tool. It cannot prove what the model remembers, so the artifact claims the request set moved under the session and quotes the host answers it could read - nothing more."
+  },
+  "census": {
+    "files": 114,
+    "unreadable_files": 0,
+    "headers": {
+      "total": 293,
+      "by_reason": {
+        "initial": 109,
+        "resume": 50,
+        "change": 43,
+        "series": 91
+      }
+    },
+    "tool_calls": 25062,
+    "tool_results": 25091,
+    "losses": 9,
+    "sessions_with_loss": 5,
+    "scanner_agrees": true,
+    "scan_report": {
+      "files": 114,
+      "dropped_tools": 9,
+      "turns": {
+        "completed": 130,
+        "max_tokens": 88,
+        "aborted": 11,
+        "error": 103
+      }
+    }
+  },
+  "pairs": [
+    {
+      "file": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3Dcharacter--\\session-5062d244-046b-49ef-b0ad-dc7d1d02892e\\session.v4.jsonl.zstd",
+      "losses": [
+        {
+          "tool": "ops_edit_file",
+          "atSeq": 7848,
+          "reason": "resume",
+          "callsBefore": 5,
+          "callsAfterTheDrop": 0
+        },
+        {
+          "tool": "ops_stat",
+          "atSeq": 7848,
+          "reason": "resume",
+          "callsBefore": 3,
+          "callsAfterTheDrop": 0
+        },
+        {
+          "tool": "ops_write_file",
+          "atSeq": 7848,
+          "reason": "resume",
+          "callsBefore": 2,
+          "callsAfterTheDrop": 0
+        }
+      ]
+    },
+    {
+      "file": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\13c66ffe-72d5-46eb-ae23-129a26d8cc46\\session.v4.jsonl.zstd",
+      "losses": [
+        {
+          "tool": "windows_desktop",
+          "atSeq": 623,
+          "reason": "resume",
+          "callsBefore": 1,
+          "callsAfterTheDrop": 0
+        }
+      ]
+    },
+    {
+      "file": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\718d9331-d239-407a-923f-680eb10b00d9\\session.v4.jsonl.zstd",
+      "losses": [
+        {
+          "tool": "ops_remove",
+          "atSeq": 249,
+          "reason": "change",
+          "callsBefore": 1,
+          "callsAfterTheDrop": 2
+        }
+      ]
+    },
+    {
+      "file": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\8e75991d-a7c5-4d7a-bdcf-d80333e122b3\\session.v4.jsonl.zstd",
+      "losses": [
+        {
+          "tool": "ops_write_file",
+          "atSeq": 945,
+          "reason": "resume",
+          "callsBefore": 2,
+          "callsAfterTheDrop": 0
+        },
+        {
+          "tool": "ops_stat",
+          "atSeq": 945,
+          "reason": "resume",
+          "callsBefore": 4,
+          "callsAfterTheDrop": 4
+        },
+        {
+          "tool": "windows_desktop",
+          "atSeq": 1382,
+          "reason": "resume",
+          "callsBefore": 1,
+          "callsAfterTheDrop": 0
+        }
+      ]
+    },
+    {
+      "file": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\session-1a54eab5-ec7e-437f-b103-5be665c6e159\\session.v4.jsonl.zstd",
+      "losses": [
+        {
+          "tool": "windows_mcp_doctor",
+          "atSeq": 3306,
+          "reason": "change",
+          "callsBefore": 1,
+          "callsAfterTheDrop": 0
+        }
+      ]
+    }
+  ],
+  "host_answers": {
+    "calls_after_a_drop": 6,
+    "with_a_code": 5,
+    "codes": [
+      "UNKNOWN_TOOL"
+    ],
+    "detail": [
+      {
+        "session": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\718d9331-d239-407a-923f-680eb10b00d9\\session.v4.jsonl.zstd",
+        "tool": "ops_remove",
+        "dropped_at_seq": 249,
+        "reason": "change",
+        "call_seq": 298,
+        "code": "UNKNOWN_TOOL",
+        "text": "Error: unknown tool \"ops_remove\""
+      },
+      {
+        "session": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\718d9331-d239-407a-923f-680eb10b00d9\\session.v4.jsonl.zstd",
+        "tool": "ops_remove",
+        "dropped_at_seq": 249,
+        "reason": "change",
+        "call_seq": 311,
+        "code": null,
+        "text": "[cwd: resolvedFrom=<home>\\Desktop\\项目开发\\oh_my_3dlab; cwdSource=workingDir"
+      },
+      {
+        "session": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\8e75991d-a7c5-4d7a-bdcf-d80333e122b3\\session.v4.jsonl.zstd",
+        "tool": "ops_stat",
+        "dropped_at_seq": 945,
+        "reason": "resume",
+        "call_seq": 1010,
+        "code": "UNKNOWN_TOOL",
+        "text": "Error: unknown tool \"ops_stat\""
+      },
+      {
+        "session": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\8e75991d-a7c5-4d7a-bdcf-d80333e122b3\\session.v4.jsonl.zstd",
+        "tool": "ops_stat",
+        "dropped_at_seq": 945,
+        "reason": "resume",
+        "call_seq": 1012,
+        "code": "UNKNOWN_TOOL",
+        "text": "Error: unknown tool \"ops_stat\""
+      },
+      {
+        "session": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\8e75991d-a7c5-4d7a-bdcf-d80333e122b3\\session.v4.jsonl.zstd",
+        "tool": "ops_stat",
+        "dropped_at_seq": 945,
+        "reason": "resume",
+        "call_seq": 1014,
+        "code": "UNKNOWN_TOOL",
+        "text": "Error: unknown tool \"ops_stat\""
+      },
+      {
+        "session": "<home>\\.dsh\\sessions\\--<home-encoded>-Desktop-~9879~76EE~5F00~53D1-oh_my_3dlab--\\8e75991d-a7c5-4d7a-bdcf-d80333e122b3\\session.v4.jsonl.zstd",
+        "tool": "ops_stat",
+        "dropped_at_seq": 945,
+        "reason": "resume",
+        "call_seq": 1016,
+        "code": "UNKNOWN_TOOL",
+        "text": "Error: unknown tool \"ops_stat\""
+      }
+    ]
+  },
+  "findings": [
+    "A resume that stops declaring a tool this session already called is not hypothetical here: it happens in five sessions, seven of the nine pairs at a `resume` header and two at a `change` header.",
+    "The rule refuses the two shapes a careless count would take: a tool dropped but never called (the majority of drops here), and a call made only after the drop.",
+    "The shipped scanner and this recorder count the same number over the same payload, so the artifact describes the rule that ships rather than a second rule written for the artifact."
+  ],
+  "not_proven": [
+    "What the model remembers is not in the log: the rule proves the request set lost a tool the session had used, not that the next request must fail.",
+    "Only this machine's `~/.dsh/sessions` was read; another deployment may never resume across a profile.",
+    "The sessions without any `request/header` event are unmeasured rather than clean."
+  ],
+  "redaction": {
+    "replacements": 1,
+    "kinds": [
+      "windows-home"
+    ]
+  }
+}

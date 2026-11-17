@@ -61,6 +61,16 @@
       },
       "versions": [
         {
+          "version": "0.4.17",
+          "publishTimestamp": 1794906150.908,
+          "source": {
+            "type": "npm"
+          },
+          "engines": {
+            "dsh": ">=0.2.0-rc.1 <0.3.0-0"
+          }
+        },
+        {
           "version": "0.4.16",
           "publishTimestamp": 1794844310.84,
           "source": {
@@ -224,7 +234,7 @@
     }
   ],
   "head": {
-    "en": "The repository carries forty-six patches and every one of them is inside the published 0.4.16 artifact, which is measured on DSH 0.2.2-rc.3 on Windows and Linux. The supported range is unchanged, so this index still pins the npm bytes rather than a commit.",
-    "zh": "仓库有四十六个补丁，全部都在已发布的 0.4.16 产物里，并在 DSH 0.2.2-rc.3 上（Windows 与 Linux）实测。适配范围未变，所以本索引仍钉 npm 字节而不是某个提交。"
+    "en": "The published 0.4.17 artifact carries fifty-one patches, which is what this index pins: the npm bytes, measured on DSH 0.2.2-rc.3 on Windows and Linux. The repository tree and the published tarball are the same version. The supported range is unchanged, so this index still pins the npm bytes rather than a commit.",
+    "zh": "已发布的 0.4.17 产物带五十一个补丁，本索引钉的就是它：npm 字节，并在 DSH 0.2.2-rc.3 上（Windows 与 Linux）实测。仓库这棵树与已发布的 tarball 是同一版。适配范围未变，所以本索引仍钉 npm 字节而不是某个提交。"
   }
 }

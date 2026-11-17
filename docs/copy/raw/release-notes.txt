@@ -1,45 +1,22 @@
-## dsh-remedy 0.4.17
+## dsh-remedy 0.4.18
 
 ### Added
 
-- **P-0047 — a turn that finished without answering anyone is now counted.** P-0044 asked
-  the question of a truncated turn and left the other ending out, because a `completed`
-  turn whose last step is one `reasoning` block had produced zero cases here. A local
-  probe reproduced the shape upstream #13169 reports: two `reasoning_content` deltas and
-  `finish_reason: "stop"`, and the turn ends `completed` with an assistant message whose
-  only block is `reasoning`, because the adapter's empty-response guard counts blocks
-  rather than usable content. `scan` now reports `completed_without_answer` beside
-  `truncated_without_answer`, computed by the same rule and the same last-step decision.
-  Nothing in the verdict, the exit code or the repair path moved.
-- **P-0048 — the platform boundary is a criterion, not a sentence.** Every page said
-  macOS not measured while the workflow had two jobs, so no darwin process ever ran the
-  suite. A `macos` job now runs the same `verify` and `--mutate` as the others. What it
-  proves is written down: the repository builds and the suite plus gates pass on darwin.
-  What it does not: that a desktop build mounts the plugin there, and it leaves no
-  `data/results/live-*`, so no patch may call itself `verified` on it.
+- This page is a draft: the release that ships it fills in what it did.
 
 ### Changed
 
-- **The CLI half paid for P-0047 in comments, not in caps.** The comments whose long form is
-  already in the patch docs were compacted until the field fit, and the engine's two new
-  records were paid by compacting older ones. No cap moved.
+- Nothing yet.
 
 ### Fixed
 
-- Nothing in the runtime: this release adds a counter and a CI job.
+- Nothing yet.
 
 ### Package size
 
-- `dsh-remedy@0.4.17`: measured from the registry copy after this round's publish.
-- `dsh-remedy-core@0.4.17`: measured from the registry copy after this round's publish.
+- `dsh-remedy@0.4.18`: measured from the registry copy after this round publishes it.
+- `dsh-remedy-core@0.4.18`: measured from the registry copy after this round publishes it.
 
 ### Notes
 
-- This release carries 48 patches: 9 `verified` and 39 `tested`.
-- Byte budget: residency 40902 of 44000, CLI 41796 of 42000, total 82698 of 83000;
-  engine 103868 of 104000, `registry.js` 66425 of 68000. No cap moved.
-- 382 tests, 6 gates, 6/6 negative controls on Windows and on Linux (WSL2 Ubuntu 26.04);
-  the byte account is the same number on both (`data/results/live-linux-2026-11-16T19-10-00.000Z.json`).
-- The P-0047 probe uses a local synthetic endpoint: it reproduces the adapter shape, not a
-  relay incident. The counter is a reader: the adapter guard that lets the shape through
-  is upstream.
+- Written by the round that opens it; a publish round replaces these sentences with measurements.

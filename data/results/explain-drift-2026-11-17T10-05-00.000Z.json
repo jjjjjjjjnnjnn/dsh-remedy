@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_explain_drift.mjs",
+  "generated_at": "2026-11-17T10:05:00.000Z",
+  "question": "P-0050 counts a resume that stopped declaring a tool this session called. Does the command a person runs name the same number, and does it need a profile to say it?",
+  "method": {
+    "root": "<home>\\.dsh\\sessions",
+    "reader": "the built CLI: `scan --json` for the count, `explain --sessions` for the finding",
+    "rule": "packages/core/src/capability.ts capabilityDrift(), folded by session-scan.ts; explain reads report.dropped_tools from the same batch scan",
+    "why_the_two_runs": "one reader with two definitions is the defect P-0016 closed. This artifact exists only if the two commands answer the same number over the same bytes."
+  },
+  "measured": {
+    "scan": {
+      "exit": 1,
+      "dropped_tools": 9,
+      "files": 114
+    },
+    "explain": {
+      "exit": 1,
+      "dropped_line": "DROPPED — 9 tool(s) this session had called are missing from a later resume/change header; a later call to one was answered UNKNOWN_TOOL. Nothing restores the set (P-0050).",
+      "stated": 9,
+      "profile_file": null,
+      "counts_unknown": false
+    },
+    "agree": true
+  },
+  "not_proven": [
+    "What the model remembers is not in the log; this artifact records that the request set moved and that two commands agree about it.",
+    "Only the given session directory was read; another deployment may never resume across a profile.",
+    "A session file with no request/header cannot move this number, so silence is unmeasured rather than clean."
+  ],
+  "redaction": {
+    "replacements": 1,
+    "kinds": [
+      "windows-home"
+    ]
+  }
+}

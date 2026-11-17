@@ -3,6 +3,137 @@
 All notable changes to this project are documented here.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.4.17] - 2026-11-17
+
+### Added
+
+- **P-0047 — a turn that finished without answering anyone is now counted.** P-0044 asked
+  the question of a truncated turn and left the other ending out, because a `completed`
+  turn whose last step is one `reasoning` block had produced zero cases here. A local
+  probe reproduced the shape upstream #13169 reports: two `reasoning_content` deltas and
+  `finish_reason: "stop"`, and the turn ends `completed` with an assistant message whose
+  only block is `reasoning`, because the adapter's empty-response guard counts blocks
+  rather than usable content. `scan` now reports `completed_without_answer` beside
+  `truncated_without_answer`, computed by the same rule and the same last-step decision.
+  Nothing in the verdict, the exit code or the repair path moved.
+- **P-0048 — the platform boundary is a criterion, not a sentence.** Every page said
+  macOS not measured while the workflow had two jobs, so no darwin process ever ran the
+  suite. A `macos` job now runs the same `verify` and `--mutate` as the others. What it
+  proves is written down: the repository builds and the suite plus gates pass on darwin.
+  What it does not: that a desktop build mounts the plugin there, and it leaves no
+  `data/results/live-*`, so no patch may call itself `verified` on it.
+
+### Added (continued)
+
+- **P-0050 — a `resume` that stopped declaring a tool the session had used is now counted.**
+  Upstream #12348 reports the shape; on this machine it happens in five sessions, and the host
+  answered five of the six later calls with `error.code: UNKNOWN_TOOL`. `scan` reports
+  `dropped_tools`, one rule in `packages/core/src/capability.ts`; a tool nobody called, and a
+  call made only after the drop, are both refused.
+
+- **P-0051 — the command a person runs had no word for the tool a resume dropped.**
+  P-0050 counted the shape in `scan`; `explain` printed turn endings only, so the one
+  counter about tools was invisible where a decision gets made. It now reads
+  `dropped_tools` from the same scan batch and prints one `DROPPED` line, which makes
+  `explain --sessions` exit 1 where it exited 0 before. It is a finding, not a coverage
+  row: coverage means a resident seam, and this is a CLI reader.
+
+- **P-0049 — the fact pack counted a patch set it no longer described.** The pack is the file every
+  outward number is resolved against, and nothing compared it with the registry: it said 41 patches
+  while the registry held 48, put P-0013 on a seam P-0045 had already moved it off, listed 8 CLI ids
+  against 10 and 21 build-side against 24, and `CHANGELOG.md` topped out at 0.4.15 while 0.4.16 was
+  the release npm served. Three rules now read the pack against the registry, and two more require a
+  changelog section for every version the pack calls published. Each was red on the recorded bytes first.
+
+### Changed
+
+- **The CLI half paid for P-0047 in comments, not in caps.** The comments whose long form is
+  already in the patch docs were compacted until the field fit, and the engine's two new
+  records were paid by compacting older ones. No cap moved.
+
+### Fixed
+
+- Nothing in the runtime: this release adds a counter and a CI job.
+
+### Package size
+
+- `dsh-remedy@0.4.17`: 38348 bytes compressed, 38 files, 125076 bytes unpacked, shasum `5a8c1f95b6a3c6f059a33eaf0ef9770fc62efad7`.
+- `dsh-remedy-core@0.4.17`: 41316 bytes compressed, 29 files, 133257 bytes unpacked, shasum `e5b2e00f4bcc53aedfb9fea6bd7c129bf0ba5454`.
+
+### Notes
+
+- This release carries 51 patches: 9 `verified` and 42 `tested`.
+- Byte budget: residency 40902 of 44000, CLI 41560 of 42000, total 82462 of 83000;
+  engine 103663 of 104000, `registry.js` 64911 of 68000. No cap moved.
+- 405 tests, 6 gates, 6/6 negative controls on Windows; Linux was last measured on the
+  R58 tree (388 tests / 6 gates / 6-6, node 24.10.0, `data/results/live-linux-2026-11-16T23-10-00.000Z.json`);
+  the byte account is the same number on both (`data/results/live-linux-2026-11-16T19-10-00.000Z.json`).
+- The P-0047 probe uses a local synthetic endpoint: it reproduces the adapter shape, not a
+  relay incident. The counter is a reader: the adapter guard that lets the shape through
+  is upstream.
+
+## [0.4.16] - 2026-11-16
+
+### Added
+
+- **P-0045 — a refusal thrown before the stream starts now reaches the seam that names it.**
+  P-0013 exists to name the failure class this host hits most after fusion: 37 turns died with
+  `UNSUPPORTED_REASONING_EFFORT` while the resident layer said nothing. The released 0.4.15
+  bytes were measured against a deliberately refused profile (`reasoningEffort: xhigh`): the
+  turn ended `error` and the journal was **empty** — not a wrong line, zero events.
+  `agent/request-error` is dispatched only after a started stream fails (`dsh-agent-loop` line
+  942); a call refused while it is prepared never reaches it, and the loop's catch emits
+  `agent/error` instead (line 657). The namer now listens on that seam too, and both seams share
+  one `(turn, step, code)` set, so a failure both can see is named once.
+- **The first live witness for the second seam.** A local OpenAI-compatible endpoint answers the
+  #12819 shape once and a text block afterwards. With `retryOnMalformed: 1` the host made three
+  main-step requests, the journal wrote one `retry`, the turn ended `completed` and the CLI
+  exited 0; the plugin-free control made one main-step request and exited 1. P-0011's retry
+  decision, its bound and its completion are now witnessed by a live journal instead of by unit
+  tests alone.
+- **P-0046 — a first screen can be one patch short and every gate stays green.** `README.md`
+  and `README.zh-CN.md` both claimed forty-four patches, both enumerated the tested ones, and
+  **P-0043 appeared in neither**; both also put 0.4.14 first under a status sentence calling
+  0.4.15 the published release. `gate_copy` checks numbers, bytes and provenance, not
+  completeness. Two rules now read the registry against each page: every patch id must appear,
+  and the published version's size rows must come first. Both rules carry the failing shape as
+  their own negative control.
+
+### Changed
+
+- **P-0011, P-0013 and P-0045 moved from `tested` to `verified`**; P-0013's record now names
+  `agent/error`, because that is where its naming actually lands. Nine patches are `verified`
+  and thirty-seven are `tested`.
+- **The registry paid for the new record by de-duplication, not by a raise.** A path that already
+  sat in `guards` was dropped from `evidence` when it is the same test or gate (2 507 bytes back
+  across 43 records), and five records were compacted with their concrete tokens checked against
+  their own docs. No cap moved: residency 40902 of 44000, CLI 41962 of 42000, total 82864 of
+  83000; engine 103544 of 104000, `registry.js` 64993 of 68000.
+
+### Fixed
+
+- **The suite's stale byte row and the handoff's stale pointers.** `gate_size` compares the live
+  handoff byte row with the build, so the row moved with the tree, and the evidence index now
+  marks the R56 snapshot current and the 0.4.15 one historical.
+
+### Package size
+
+- `dsh-remedy@0.4.16`: 38654 bytes compressed, 38 files, 125107 bytes unpacked, shasum
+  `623c4cc7d380931e91826948f194ab3b0ac43d84`.
+- `dsh-remedy-core@0.4.16`: 40979 bytes compressed, 27 files, 133933 bytes unpacked, shasum
+  `43bde005968b4fa97131770d1fdef70aab188433`.
+
+### Notes
+
+- This release carries 46 patches: 9 `verified` and 37 `tested`.
+- Byte budget: residency 40902 of 44000, CLI 41962 of 42000, total 82864 of 83000; engine
+  103544 of 104000, `registry.js` 64993 of 68000. No cap moved.
+- 376 tests, 6 gates, 6/6 negative controls on Windows and on Linux (WSL2 Ubuntu 26.04); the
+  byte account is the same number on both (`data/results/live-linux-2026-11-16T16-40-00.000Z.json`).
+- The retry proof uses a local synthetic endpoint: it reproduces the adapter's
+  `MALFORMED_RESPONSE`, not a relay incident. The seam split itself was measured on the released
+  bytes and on this tree, which is what makes P-0045 a fix rather than a guess.
+
 ## [0.4.15] - 2026-11-16
 
 ### Added

@@ -765,7 +765,7 @@
       "id": "P-0047",
       "status": "tested",
       "owner": "remedy",
-      "since": "0.4.17 (unreleased on the tree)",
+      "since": "0.4.17 (published 2026-11-17)",
       "evidence": [
         "docs/patches/P-0047-completed-without-answer.md",
         "packages/plugin/src/session-scan.ts",
@@ -780,13 +780,54 @@
       "id": "P-0048",
       "status": "tested",
       "owner": "remedy",
-      "since": "0.4.17 (unreleased on the tree)",
+      "since": "0.4.17 (published 2026-11-17)",
       "evidence": [
         "docs/patches/P-0048-macos-ci-criterion.md",
         ".github/workflows/ci.yml"
       ],
       "guards": [
         "docs/patches/P-0048-macos-ci-criterion.md"
+      ]
+    },
+    {
+      "id": "P-0049",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.17 (published 2026-11-17)",
+      "evidence": [
+        "docs/patches/P-0049-fact-pack-census.md",
+        "tests/governance/fact-pack-census.test.ts"
+      ],
+      "guards": [
+        "tests/governance/fact-pack-census.test.ts",
+        "tests/governance/facts-truth.test.ts"
+      ]
+    },
+    {
+      "id": "P-0050",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.17 (published 2026-11-17)",
+      "evidence": [
+        "docs/patches/P-0050-capability-drift.md",
+        "data/results/capability-drift-2026-11-17T04-40-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/capability-drift.test.ts",
+        "tests/unit/session-scan.test.ts"
+      ]
+    },
+    {
+      "id": "P-0051",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.17 (published 2026-11-17)",
+      "evidence": [
+        "docs/patches/P-0051-explain-drift.md",
+        "data/results/explain-drift-2026-11-17T10-05-00.000Z.json"
+      ],
+      "guards": [
+        "tests/e2e/explain-drift.test.ts"
       ]
     }
   ]

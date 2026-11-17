@@ -39,14 +39,28 @@ Pending (human):
 
 - Protect `main`: require the `verify` and `verify (windows, node 24)` checks
   after the first CI run names them.
-- ~~Publish npm~~ done: both packages are published (currently `0.4.16`) and the
+- ~~Publish npm~~ done: both packages are published (currently `0.4.17`) and the
   install section is updated through the copy channel.
 
 ## Publishing a release
 
-The account is `auth-and-writes`. The token in this environment bypasses the
-one-time password (R29); a fresh `--otp <code>` is only needed if npm answers
-`EOTP`. The script packs both packages, checks the manifests, publishes core then
+The account is `auth-and-writes`. **This machine already holds a token that bypasses
+the one-time password** (measured again 2026-11-17: `npm whoami` answers
+`jjjjjjjjnnjnn` and a publish needs no code), so a release does not ask a human for
+an OTP and does not wait for one. Where it lives, and the rule that keeps it out of
+the repository:
+
+- the credential is the `//registry.npmjs.org/:_authToken` line in the **user-level**
+  `~/.npmrc` on this machine, outside this repository; the token value is never
+  copied into any file here, any artifact, or any commit message (R29 and the
+  明确边界 section of the handoff say the same thing from the other side);
+- `pnpm run verify` / the preflight reads `npm whoami` only. If it answers 401 or
+  nothing, the fix is `npm login` in that shell, **not** an OTP;
+- a fresh `--otp <code>` is only needed if npm answers `EOTP`. That is the shape a
+  revoked or rotated token produces, so it is a signal to re-authenticate rather
+  than a step of the routine.
+
+The script packs both packages, checks the manifests, publishes core then
 plugin, and refuses to continue on a manifest mismatch:
 
 ```bash

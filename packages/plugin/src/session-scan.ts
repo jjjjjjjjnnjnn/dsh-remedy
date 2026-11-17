@@ -1,6 +1,6 @@
-/** Offline scanner (P-0004/P-0006/P-0044/P-0047); each rule is in docs/patches/. */
+/** Offline scanner (P-0004/P-0006/P-0044/P-0047/P-0050); each rule is in docs/patches/. */
 
-import { isFusedJsonObjectText, noteAssistantMessage, redact, redactValue, splitTopLevelJsonObjects, turnAnswered, wouldRepair } from 'dsh-remedy-core'
+import { capabilityDrift, isFusedJsonObjectText, noteAssistantMessage, redact, redactValue, splitTopLevelJsonObjects, turnAnswered, wouldRepair } from 'dsh-remedy-core'
 import type { LastAnswer, RedactionSummary } from 'dsh-remedy-core'
 
 export interface ScanExample {
@@ -23,25 +23,20 @@ export interface ScanTurnCensus {
   readonly error: number
 }
 
-/** Zeroed census; the names are the accepted `reason.kind`s. */
 const emptyCensus = (): ScanTurnCensus => ({ completed: 0, max_tokens: 0, aborted: 0, error: 0 })
 
-/** A count map leaves sorted, so two runs on one log compare equal. */
 const sortedCounts = (o: Record<string, number>): Record<string, number> =>
   Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)))
 
-/** Sum two count maps, sorted for the same reason. */
 const mergeCounts = (a: Readonly<Record<string, number>>, b: Readonly<Record<string, number>>): Record<string, number> => {
   const out: Record<string, number> = { ...a }
   for (const [key, count] of Object.entries(b)) out[key] = (out[key] ?? 0) + count
   return sortedCounts(out)
 }
 
-/** The smaller instant; null never wins. */
 const lower = (a: number | null, b: number | null): number | null =>
   a === null ? b : b === null ? a : Math.min(a, b)
 
-/** The larger instant; null never wins. */
 const higher = (a: number | null, b: number | null): number | null =>
   a === null ? b : b === null ? a : Math.max(a, b)
 
@@ -71,6 +66,12 @@ export interface ScanReport {
    * only when the host's message names all three; otherwise nothing is inferred.
    */
   readonly refused_efforts: Readonly<Record<string, number>>
+  /**
+   * P-0050: session resumes that dropped a tool this session had already called
+   * (upstream #12348). One per `(session, tool)` pair, booked at the header that
+   * stopped declaring it; what the model then remembers is not in the log.
+   */
+  readonly dropped_tools: number
   readonly by_tool: Readonly<Record<string, number>>
   readonly examples: readonly ScanExample[]
   readonly redaction: RedactionSummary
@@ -111,20 +112,17 @@ function asNumber(value: unknown): number | null {
   return typeof value === 'number' && Number.isFinite(value) ? value : null
 }
 
-/** Proven fragments, 1 when the text is not a fusion. */
 function fragmentsOf(text: string): number {
   if (!isFusedJsonObjectText(text)) return 1
   const split = splitTopLevelJsonObjects(text)
   return split.ok ? split.slices.length : 1
 }
 
-/** P-0042: `provider/model level` from the host sentence, or null (see its doc). */
 function refusedKeyOf(message: string): string | null {
   const named = /provider "([^"]+)" model "([^"]+)" does not support reasoning effort "([^"]+)"/.exec(message)
   return named === null ? null : `${named[1]}/${named[2]} ${named[3]}`
 }
 
-/** Scan one file; `since` counts what it drops. */
 export function scanSessionText(text: string, source: string, options: ScanOptions = {}): ScanReport {
   let attempts = 0
   let fusedCalls = 0
@@ -144,6 +142,7 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
   const errorCodes: Record<string, number> = {}
   const refusedEfforts: Record<string, number> = {}
   const lastSteps = new Map<string, LastAnswer>()
+  const drift = capabilityDrift()
 
   const addExample = (example: ScanExample): void => {
     if (examples.length >= MAX_EXAMPLES) return
@@ -172,11 +171,9 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
     const seq = asNumber(event.seq)
     const time = asNumber(event.time)
 
-    // P-0009: the `session` header is dated by `createdAt`; see its doc.
-    const stamp = time ?? (type === 'session' ? asNumber(event.createdAt) : null)
+      const stamp = time ?? (type === 'session' ? asNumber(event.createdAt) : null)
 
-    // A filtered scan reports what it dropped as `before_since`.
-    if (options.since !== undefined) {
+      if (options.since !== undefined) {
       if (stamp === null) {
         unreadable += 1
         continue
@@ -189,6 +186,20 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
     if (stamp !== null) {
       oldest = oldest === null ? stamp : Math.min(oldest, stamp)
       newest = newest === null ? stamp : Math.max(newest, stamp)
+    }
+
+    // P-0050: two shapes, folded as they arrive. The rule lives in core.
+    if (type === 'request/header' && data !== null) {
+      const head = asRecord(data.header)
+      const list = head !== null && Array.isArray(head.tools) ? head.tools : []
+      drift.header(
+        seq ?? 0,
+        asString(data.reason),
+        list.map((entry) => asString(asRecord(entry)?.name)).filter(Boolean),
+      )
+    }
+    if (type === 'tool/call' && data !== null && asString(data.name) !== '') {
+      drift.call(seq ?? 0, asString(data.name))
     }
 
     if (type === 'assistant/attempt' && data !== null) {
@@ -244,32 +255,26 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
     }
 
     if (type === 'assistant/message' && data !== null) {
-      // P-0044: only the last step decides (see its doc).
-      const message = asRecord(data.message)
+          const message = asRecord(data.message)
       noteAssistantMessage(lastSteps, data.turn, data.step, message?.content)
     }
 
     if (type === 'turn/end' && data !== null) {
       const reason = asRecord(data.reason)
       if (reason === null) continue
-      // P-0006 census; P-0044 and P-0047 record whether anyone was answered.
-      const kind = asString(reason.kind)
+          const kind = asString(reason.kind)
       const slot = kind === 'max-tokens' ? 'max_tokens' : kind
       if (slot === 'completed' || slot === 'max_tokens' || slot === 'aborted' || slot === 'error') {
         turns = { ...turns, [slot]: turns[slot] + 1 }
-        // P-0044: a truncation that answered nobody. P-0047: the same for completed.
-        if (slot === 'max_tokens' && !turnAnswered(lastSteps, data.turn)) truncatedWithoutAnswer += 1
-        // P-0047: the silent shape, counted.
-        if (slot === 'completed' && !turnAnswered(lastSteps, data.turn)) completedWithoutAnswer += 1
+              if (slot === 'max_tokens' && !turnAnswered(lastSteps, data.turn)) truncatedWithoutAnswer += 1
+              if (slot === 'completed' && !turnAnswered(lastSteps, data.turn)) completedWithoutAnswer += 1
       }
       if (kind !== 'error') continue
       const error = asRecord(reason.error)
       if (error === null) continue
       const rawCode = asString(error.code)
-      // A closed-vocabulary code, counted by name; `redactReport` sanitises it.
-      if (rawCode !== '') errorCodes[rawCode] = (errorCodes[rawCode] ?? 0) + 1
-      // P-0042: only a sentence naming all three is a measured fact.
-      if (rawCode === 'UNSUPPORTED_REASONING_EFFORT') {
+          if (rawCode !== '') errorCodes[rawCode] = (errorCodes[rawCode] ?? 0) + 1
+          if (rawCode === 'UNSUPPORTED_REASONING_EFFORT') {
         const key = refusedKeyOf(asString(error.message))
         if (key !== null) refusedEfforts[key] = (refusedEfforts[key] ?? 0) + 1
       }
@@ -295,6 +300,8 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
     }
   }
 
+  const droppedTools = drift.losses().length
+
   return {
     schema_version: 1,
     produced_by: 'dsh-remedy scan',
@@ -313,13 +320,13 @@ export function scanSessionText(text: string, source: string, options: ScanOptio
     completed_without_answer: completedWithoutAnswer,
     error_codes: sortedCounts(errorCodes),
     refused_efforts: sortedCounts(refusedEfforts),
+    dropped_tools: droppedTools,
     by_tool: sortedCounts(byTool),
     examples,
     redaction: { replacements: redactions, kinds: [...redactionKinds].sort() },
   }
 }
 
-/** Fold one file onto the accumulator. */
 function addReport(into: ScanReport, from: ScanReport, source: string): ScanReport {
   return {
     ...into,
@@ -342,6 +349,7 @@ function addReport(into: ScanReport, from: ScanReport, source: string): ScanRepo
     completed_without_answer: into.completed_without_answer + from.completed_without_answer,
     error_codes: mergeCounts(into.error_codes, from.error_codes),
     refused_efforts: mergeCounts(into.refused_efforts, from.refused_efforts),
+    dropped_tools: into.dropped_tools + from.dropped_tools,
     by_tool: mergeCounts(into.by_tool, from.by_tool),
     examples: [...into.examples, ...from.examples].slice(0, MAX_EXAMPLES),
     redaction: {
@@ -367,6 +375,8 @@ export interface ScanRow {
   readonly truncated_without_answer: number
   /** P-0047: this file's own count of completed turns that answered nobody. */
   readonly completed_without_answer: number
+  /** P-0050: this file's own count of lost tools (session resumes that dropped one). */
+  readonly dropped_tools: number
 }
 
 export interface ScanBatch {
@@ -374,7 +384,6 @@ export interface ScanBatch {
   readonly rows: readonly ScanRow[]
 }
 
-/** Scan several files; every file keeps a row, so a total audits backwards. */
 export function scanSessions(
   files: readonly { readonly label: string; readonly text: string }[],
   source: string,
@@ -398,6 +407,7 @@ export function scanSessions(
     completed_without_answer: 0,
     error_codes: {},
     refused_efforts: {},
+    dropped_tools: 0,
     by_tool: {},
     examples: [],
     redaction: { replacements: 0, kinds: [] },
@@ -405,8 +415,7 @@ export function scanSessions(
   let report = empty
   const rows: ScanRow[] = []
   for (const file of files) {
-    // A row carries only what a reader audits; the report is the whole picture.
-    const one = scanSessionText(file.text, file.label, options)
+      const one = scanSessionText(file.text, file.label, options)
     rows.push({
       source: one.source,
       files: one.files,
@@ -419,13 +428,13 @@ export function scanSessions(
       turns: one.turns,
       truncated_without_answer: one.truncated_without_answer,
       completed_without_answer: one.completed_without_answer,
+      dropped_tools: one.dropped_tools,
     })
     report = addReport(report, one, empty.source)
   }
   return { report, rows }
 }
 
-/** Redact every string before print or write (P-0004). */
 export function redactReport(report: ScanReport): ScanReport {
   return redactValue(report).value as ScanReport
 }

@@ -1,0 +1,1200 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_patch_registry.mjs",
+  "generated_at": "2026-11-16T21:30:00.000Z",
+  "source": {
+    "git_head": "5eec56e010b9ac03dfa2e619b9e2f12d324dd56a",
+    "git_dirty": true
+  },
+  "patches": [
+    {
+      "id": "P-0001",
+      "title": "Split fused tool-call arguments into separate calls",
+      "symptom": "a tool call fails with `Unexpected non-whitespace character after JSON` because the relay streamed two calls into one index",
+      "rootCause": "pi-ai parseToolCallArguments throws MALFORMED_RESPONSE on the concatenation and dsh-agent-loop re-throws it because it is absent from retryableCodes (dsh-llm-pi-ai/lib/index.js:1656, upstream #4427; the chain is in its doc)",
+      "surface": "llm/stream",
+      "status": "verified",
+      "severity": "critical",
+      "evidence": [
+        "data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json",
+        "data/fixtures/toolcall-fusion/valid-two-calls.json",
+        "data/results/live-2026-11-09T17-00-00.000Z.json",
+        "data/results/live-desktop-2026-11-09T19-10-00.000Z.json",
+        "data/results/live-2026-11-12T06-00-00.000Z.json",
+        "data/results/patch-registry-2026-11-09T16-40-00.000Z.json",
+        "data/results/live-2026-11-12T12-20-00.000Z.json",
+        "data/results/malformed-replay-2026-11-12T11-30-00.000Z.json",
+        "data/results/stress-repair-2026-11-12T12-10-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/json-split.test.ts",
+        "tests/unit/toolcall-repair.test.ts",
+        "tests/unit/repair-stream.test.ts",
+        "tests/unit/plugin-mount.test.ts",
+        "tests/unit/session-log.test.ts",
+        "scripts/gate_registry.mjs",
+        "scripts/record_live_mount.mjs"
+      ],
+      "failureClasses": [
+        "MALFORMED_RESPONSE"
+      ],
+      "switchKey": "repair",
+      "limits": [
+        "cannot recover a call whose tail was cut by max-tokens (finish.reason.kind === length)",
+        "does not fix the relay or adapter that assigned one index to two calls",
+        "does not reorder or rename calls; the first call keeps the original id"
+      ]
+    },
+    {
+      "id": "P-0002",
+      "title": "A rescue must be provable, attributable and atomic",
+      "symptom": "a split-out call could run under an empty or wrong tool name, replay without replayState, or commit before a later block of the same stream was rejected",
+      "rootCause": "block-end repairs committed as they arrived, one name per index, and stop emitted without replayState: the JSON proof held while the call could still be dispatched wrong",
+      "surface": "llm/stream",
+      "status": "verified",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0002-rescue-integrity.md",
+        "data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json",
+        "data/results/live-2026-11-10T14-45-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/repair-stream.test.ts",
+        "tests/unit/toolcall-repair.test.ts",
+        "tests/unit/json-split.test.ts",
+        "scripts/gate_registry.mjs"
+      ],
+      "failureClasses": [
+        "MALFORMED_RESPONSE"
+      ],
+      "switchKey": "repair",
+      "limits": [
+        "on rc.1 the adapter never closed a tool-call block; on rc.3 it closes the first fragment and leaves the surplus to the finish path",
+        "a synthesized block-start is proven on the finish path only (BS-11); a two-tool fusion sends the surplus out as remedy_unattributed (BS-18)",
+        "a tool name that arrives twice with different values stays unrepairable"
+      ]
+    },
+    {
+      "id": "P-0003",
+      "title": "A refusal must be observable, and a withdrawal must not read as a repair",
+      "symptom": "a stream whose only defect is plain bad JSON read \"repair incomplete\", and a withdrawn repair was indistinguishable from a fusion nobody could split",
+      "rootCause": "recordRejected incremented fused and unrepaired for every rejection whatever its code, so a refusal that never proved a fusion inflated fused — the difference between \"we declined\" and \"we could not\" was erased",
+      "surface": "llm/stream",
+      "status": "verified",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0003-refusal-observability.md",
+        "data/results/live-2026-11-10T16-30-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/verdict.test.ts",
+        "tests/unit/repair-stream.test.ts",
+        "tests/governance/ledgers.test.ts",
+        "scripts/gate_registry.mjs"
+      ],
+      "failureClasses": [
+        "MALFORMED_RESPONSE"
+      ],
+      "switchKey": "repair",
+      "limits": [
+        "the four verdict states and their order are unchanged: the counts are reported, never judged",
+        "no state name can say \"observed, refused, and correctly not repaired\"; only the counter row carries it",
+        "old journal lines keep the six-field shape: no migration rewrites them"
+      ]
+    },
+    {
+      "id": "P-0005",
+      "title": "A bare value after a member key must be resealed, or refused — never guessed",
+      "symptom": "a tool call fails with `Unexpected token` or `Unexpected end of JSON input` because the model wrote a program, not a JSON string, after `\"code\":`",
+      "rootCause": "a bare unquoted multi-line blob as one member value is neither a fusion nor splittable, so P-0001 refused it as `single-object` and the call never dispatched",
+      "surface": "llm/stream",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0005-bare-value-reseal.md",
+        "data/fixtures/toolcall-fusion/bare-code-value.json",
+        "data/results/malformed-replay-2026-11-12T11-30-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/reseal.test.ts",
+        "tests/unit/toolcall-repair.test.ts",
+        "tests/unit/repair-stream.test.ts",
+        "tests/unit/verdict.test.ts",
+        "scripts/gate_registry.mjs"
+      ],
+      "failureClasses": [
+        "MALFORMED_RESPONSE"
+      ],
+      "switchKey": "repair",
+      "limits": [
+        "reseals only when exactly one member value proves; two possible resealings is refused as ambiguous",
+        "never touches a truncated call; a duplicate key, doubled colon, missing brace or illegal escape stays a refusal",
+        "keeps the call id: no synthetic identity, and the stream budget is untouched"
+      ]
+    },
+    {
+      "id": "P-0011",
+      "title": "A second seam with no test is a seam nobody has ever run",
+      "symptom": "agent/request-error shipped in 0.2.0 behind retryOnMalformed with zero tests, and was wrong three ways: it called next() then overrode the answer, never pruned its budget Map, and would have retried image-offload and credential failures",
+      "rootCause": "the listener was written against an assumed contract: a handling listener returns {kind:\"retry\"} without calling next(), and a waterfall listener that does not own the decision must return next()",
+      "surface": "agent/request-error",
+      "status": "verified",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0011-request-error-contract.md",
+        "data/results/live-request-error-2026-11-16T15-10-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/request-error.test.ts",
+        "packages/plugin/src/failure-listener.ts"
+      ],
+      "failureClasses": [
+        "MALFORMED_RESPONSE"
+      ],
+      "switchKey": "retryOnMalformed",
+      "limits": [
+        "only MALFORMED_RESPONSE is retried; SERVER, TRANSPORT and TIMEOUT already self-heal upstream, so a second layer would compete",
+        "the retry budget defaults to 0: nothing is retried unless a deployment asks for it",
+        "the bound is 256 cache entries; an evicted entry lets a very long turn spend a fresh retry",
+        "the live artifact is a synthetic endpoint: it reproduces the adapter failure, not a relay incident"
+      ]
+    },
+    {
+      "id": "P-0012",
+      "title": "One byte cap for two load paths is a cap that taxes the wrong half",
+      "symptom": "one 68000-byte ceiling counted a mounted plugin and a CLI invocation as the same thing; P-0011 needed 4 263 bytes that did not fit, and paying meant deleting prose a daemon loads",
+      "rootCause": "gate_size summed every emitted module into one number and never asked which of them a running plugin imports: the CLI-only half sat beside the bytes that load on every session",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "scripts/lib/budgets.mjs",
+        "docs/patches/P-0012-budget-by-load-path.md"
+      ],
+      "guards": [
+        "scripts/gate_size.mjs",
+        "tests/governance/budget-split.test.ts"
+      ],
+      "limits": [
+        "the caps are recorded, not assumed: they moved twice in one session with the owner signature (budgets.mjs)",
+        "the lists are explicit; the test reads only the relative import graph, so a dynamic import is not caught",
+        "a split budget cannot tell good growth from bad, only which half pays",
+        "it caps emitted JavaScript only, not declarations, fixtures or package-root files"
+      ]
+    },
+    {
+      "id": "P-0013",
+      "title": "The failure class this host hits most after fusion was named by nobody",
+      "symptom": "37 turns on this host died with UNSUPPORTED_REASONING_EFFORT (one sentence, three workspaces, eleven sessions) while the resident layer said nothing; INVALID_REQUEST, MISSING_CREDENTIAL and EMPTY_RESPONSE were silent too",
+      "rootCause": "the refusal is thrown during preparation, before any stream exists: it reaches agent/error, not llm/stream or agent/request-error, and no listener was on it",
+      "surface": "agent/error",
+      "status": "verified",
+      "severity": "major",
+      "evidence": [
+        "packages/plugin/src/failure-listener.ts",
+        "docs/patches/P-0013-named-refusals.md",
+        "data/results/live-request-error-2026-11-16T15-10-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/preflight.test.ts",
+        "tests/unit/request-error.test.ts",
+        "tests/unit/agent-error-naming.test.ts",
+        "packages/core/src/preflight.ts"
+      ],
+      "failureClasses": [
+        "UNSUPPORTED_REASONING_EFFORT",
+        "INVALID_REQUEST",
+        "MISSING_CREDENTIAL",
+        "EMPTY_RESPONSE"
+      ],
+      "switchKey": "repair",
+      "limits": [
+        "naming is always on, never repairs or retries: one named line instead of one dead turn",
+        "preflight is a pure decision, not a mount: nothing wires it into agent/pre-step yet",
+        "a refused level is reported with a suggestion, never silently downgraded",
+        "a model whose metadata lives only in the adapter reads unknown, never assumed"
+      ]
+    },
+    {
+      "id": "P-0004",
+      "title": "A scan must read the log it is pointed at, and a redaction must see every path shape",
+      "symptom": "`dsh-remedy scan <session.v4.jsonl.zstd>` reported 0 attempts and one unreadable line per compressed byte, and artifacts citing a session carried the account name in three shapes the redactor could not match",
+      "rootCause": "cmdScan read a multi-frame zstd log with readFileSync(file, \"utf8\") instead of the decompressSessionLog reader the plugin ships, and core/redact.ts matched only a single-backslash C:\\Users\\<name>",
+      "surface": "cli",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0004-scan-fidelity.md"
+      ],
+      "guards": [
+        "tests/e2e/cli.test.ts",
+        "tests/unit/session-scan.test.ts",
+        "tests/unit/redact.test.ts",
+        "scripts/gate_ssot.mjs",
+        "scripts/redact_artifacts.mjs"
+      ],
+      "limits": [
+        "a filtered scan reports before_since instead of guessing; an unstamped event is unreadable, never assumed in the window",
+        "one undecompressable file is a failure line and exit 3, not a silent zero",
+        "it does not deduplicate a repair seen by both the journal and the session file",
+        "matches a home path only when the directory starts with a drive letter; another spelling is unmeasured"
+      ]
+    },
+    {
+      "id": "P-0006",
+      "title": "A scan that counts only the repairable turns is not a fault map",
+      "symptom": "`scan` reported 44 fusion failures of 287 finished turns; the 88 `max-tokens` and 36 `UNSUPPORTED_REASONING_EFFORT` turns were counted nowhere",
+      "rootCause": "session-scan.ts returned early on `kind !== \"error\"` and on `code !== \"MALFORMED_RESPONSE\"`: a filter for \"can this layer repair it\" carried into a map of \"how the turn ended\"",
+      "surface": "cli",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0006-turn-census.md"
+      ],
+      "guards": [
+        "tests/unit/session-scan.test.ts",
+        "tests/e2e/cli.test.ts",
+        "scripts/gate_registry.mjs"
+      ],
+      "limits": [
+        "reported, never promoted: the exit code still turns on fused_calls and fusion_failures",
+        "truncated turns stay unfixed; fusion_failures keeps its exact MALFORMED_RESPONSE meaning",
+        "a reason.kind this census does not know is left uncounted, not bucketed"
+      ]
+    },
+    {
+      "id": "P-0007",
+      "title": "A copy channel that reports \"exited null\" cannot be repaired",
+      "symptom": "the two longest outward files could not be regenerated at all: every attempt printed `agy exited null`, so two different faults had one unreadable name",
+      "rootCause": "the request (35509 chars for changelog, 33530 for readme) exceeded the 32767-character Windows command line, so spawnSync failed with ENAMETOOLONG and a null status; a spawn killed by the timeout reported the same null. Transport is now chosen by request length",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0007-copy-channel-transport.md",
+        "docs/copy/manifest.json"
+      ],
+      "guards": [
+        "tests/unit/agy-channel.test.ts",
+        "scripts/gate_copy.mjs",
+        "scripts/lib/agy-channel.mjs"
+      ],
+      "limits": [
+        "no retry across transports: it picks one from the request length and reports the failure",
+        "the timeout is raised to half an hour, not removed; a failure is diagnosed, never repaired",
+        "the fact pack is not shortened to fit: argv only serves the smallest briefs"
+      ]
+    },
+    {
+      "id": "P-0008",
+      "title": "A byte budget that no script checks is a suggestion",
+      "symptom": "the byte budget was crossed three times in three consecutive patches (55815, 64539, 70389) and every crossing was found by hand after the build",
+      "rootCause": "the caps lived only in the fact pack and README.md; nothing under scripts/ read them, so a patch that crossed a line stayed green through the whole suite",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0008-byte-budget-gate.md",
+        "audit/gate_ledger.json"
+      ],
+      "guards": [
+        "scripts/gate_size.mjs",
+        "tests/governance/ledgers.test.ts",
+        "scripts/gate.mjs"
+      ],
+      "limits": [
+        "the gate measures the emitted plugin only: core does not load at startup, so the ceiling protects what is loaded there",
+        "it does not shrink anything; the measured numbers stay what they were when the gate was written",
+        "it does not measure dist/*.d.ts, which is paid at build time rather than load time",
+        "it cannot decide how to split a file that crosses a cap: it only refuses the crossing"
+      ]
+    },
+    {
+      "id": "P-0010",
+      "title": "The npm page documented a CLI that had not existed since 0.3.3",
+      "symptom": "packages/plugin/README.md (the page npm renders) and the CLI USAGE disagreed about what scan accepts, and neither admitted a directory, --since or --max-files, all shipped by P-0004",
+      "rootCause": "nothing watched either string: gate_copy covers the root outward files, the package README had no output_sha256 and no gate, and no test compared the two strings, so a red result was impossible",
+      "surface": "cli",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0010-cli-usage-truth.md"
+      ],
+      "guards": [
+        "tests/unit/cli-usage.test.ts",
+        "packages/plugin/README.md",
+        "packages/plugin/src/cli-args.ts"
+      ],
+      "limits": [
+        "the gate set still does not cover packages/*/README.md: the test compares the two scan lines, not the page as a whole",
+        "moving the page into the copy channel would make it generated, which is a separate decision",
+        "the one-line-per-command rewrite pays for the flag list, so the per-command prose is thinner; the detail lives in the patch document"
+      ]
+    },
+    {
+      "id": "P-0009",
+      "title": "A windowed scan called the one dated line every session starts with unreadable",
+      "symptom": "`scan --since` reported one unreadable line per file read: 78 files gave 78 unreadable lines while every byte of them parsed, so the tool said \"I could not read this\" about the one line every session starts with",
+      "rootCause": "`session-scan.ts` required a numeric `time` before applying the window and counted anything else as unreadable; the `session` header carries `createdAt`, not `time`, so every header fell into that branch",
+      "surface": "cli",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0009-session-header-window.md"
+      ],
+      "guards": [
+        "tests/unit/session-scan.test.ts",
+        "tests/e2e/cli.test.ts",
+        "packages/plugin/src/session-scan.ts"
+      ],
+      "limits": [
+        "only the `session` header is dated by createdAt; an event with no instant stays unreadable, because there is no second field to fall back to",
+        "a header inside the window adds its instant but no attempts or turns, so the census does not move"
+      ]
+    },
+    {
+      "id": "P-0014",
+      "title": "The project describing itself is the part nothing checked",
+      "symptom": "the fact pack pinned core 0.3.7 and called 0.3.6 the previous release while 0.3.8 shipped, quoted a hash no file hashed to, and the npm page documented four commands after explain shipped",
+      "rootCause": "the copy criterion checked the shape of a number and never the pack own statements; gate_ssot read data/results/*.json but never a hash printed in prose; cli-usage.test.ts compared one line",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0014-description-truth.md",
+        "docs/copy/facts/public-repo-facts.md"
+      ],
+      "guards": [
+        "tests/governance/facts-truth.test.ts",
+        "tests/governance/handoff-truth.test.ts",
+        "tests/unit/cli-usage.test.ts",
+        "scripts/copy_record.mjs"
+      ],
+      "limits": [
+        "the package README is still hand-written prose: USAGE is its guard, not a hash (BS-13 narrows)",
+        "the pack is checked only against other repository files; a claim nothing else records stays unverified",
+        "the hash check skips any evidence row that compares two publishes instead of guessing",
+        "gate_copy cannot see the handoff or the package README: those are governance tests, not gates"
+      ]
+    },
+    {
+      "id": "P-0015",
+      "title": "The seam nobody mounted because nobody measured what refusing looks like",
+      "symptom": "agent/pre-step stayed unmounted on one sentence repeated in three places: \"a rejected step opens no step, but what the user sees has not been measured\"; a seam that can refuse before a token was blocked by an unchecked assumption",
+      "rootCause": "the claim was never run; the loop source answers it: preStep awaits the waterfall and, on a reject, closes the turn with reason \"blocked\" and no step",
+      "surface": "profile",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0015-pre-step-rejection.md"
+      ],
+      "guards": [
+        "data/results/prestep-probe-2026-11-13T07-45-00.000Z.json",
+        "scripts/record_prestep_probe.mjs",
+        "scripts/gate_ssot.mjs"
+      ],
+      "limits": [
+        "it measures the seam, it does not mount a product on it: nothing calls agent/pre-step in a shipped profile",
+        "the desktop UI render of reason.kind \"blocked\" stays unmeasured, and the probe ran headless only",
+        "a rejection discards the claimed input: the user retypes the message, so an enter decision is the better default",
+        "only the first proposed step of one turn was exercised"
+      ]
+    },
+    {
+      "id": "P-0016",
+      "title": "The command that answers \"what covers this\" kept its own copy of the answer",
+      "symptom": "`explain` answered \"what covers this class\" from its own COVERAGE and SWITCHES constants, so the registry and the command were two homes for one claim and nothing compared them",
+      "rootCause": "the command predates the registry carrying that claim; its local tables were the only map a user read, and a human diff by eye was the only mechanism",
+      "surface": "cli",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "packages/core/src/types.ts",
+        "packages/plugin/src/explain-command.ts"
+      ],
+      "guards": [
+        "tests/governance/coverage-single-source.test.ts",
+        "tests/e2e/explain.test.ts",
+        "packages/core/src/registry.ts"
+      ],
+      "limits": [
+        "moves six claims and no behaviour: the printed table is identical before and after",
+        "switch keys stay a closed vocabulary (repair, retryOnMalformed); another key must be added, not inferred",
+        "a covered-but-unmounted patch still reads covered-and-off: coverage is a claim about the code"
+      ]
+    },
+    {
+      "id": "P-0017",
+      "title": "The two pages npm renders had no mechanism at all",
+      "symptom": "both package pages are hand-written with no output_sha256 and no copy-channel entry, so gate_copy never saw them; 2331 bytes of the plugin page was compared against nothing while being what a stranger installs from",
+      "rootCause": "the copy channel was built for the repository-root files, and the package pages predate it; each round pinned one more line instead of answering what else was unguarded",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "packages/plugin/README.md",
+        "packages/core/README.md",
+        "docs/patches/P-0017-package-readme-prose.md"
+      ],
+      "guards": [
+        "tests/governance/package-readme-prose.test.ts",
+        "tests/unit/cli-usage.test.ts"
+      ],
+      "limits": [
+        "proves no prose number and no undispatchable command can rot; layout and behavioural claims stay hand-written",
+        "the number rule is the copy channel criterion, not a truth test, so a page can still describe absent behaviour",
+        "core/README.md is held to the weaker half only: it documents a library, not a command"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0018",
+      "title": "A Windows exit code printed as a bare number sent an operator hunting the wrong cause",
+      "symptom": "the publish wrapper printed \"npm exited 3221226505\" and HTTP-shaped advice, so the operator hunted a credentials problem; that number is Windows 0xC0000409",
+      "rootCause": "npmFailureAdvice only understands HTTP codes; a process killed by the Windows runtime has no HTTP answer and fell through to the generic branch",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0018-windows-exit-code.md"
+      ],
+      "guards": [
+        "tests/unit/publish.test.ts",
+        "scripts/publish_packages.mjs"
+      ],
+      "limits": [
+        "names only the two codes this machine produced (0xC0000409, 0xC0000005); another Windows exception still prints raw",
+        "does not retry the publish: the advice tells the operator to run the direct call",
+        "cannot prove the crash was the runtime rather than npm; it proves no HTTP request was logged",
+        "no live artifact is possible: this is advice printed by a build script"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0019",
+      "title": "The page strangers read first described a project that had stopped existing",
+      "symptom": "README.md and README.zh-CN.md described a single-wrapper project of eighteen patches, and said agent/pre-step was unmounted because nobody had measured a rejection",
+      "rootCause": "gate_copy guards numbers, not shape: it checks that every prose digit exists in the fact pack and never whether the page still describes the product",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0019-outward-pages.md",
+        "README.md",
+        "README.zh-CN.md",
+        "packages/plugin/README.md",
+        "packages/core/README.md"
+      ],
+      "guards": [
+        "tests/unit/cli-usage.test.ts",
+        "tests/governance/package-readme-prose.test.ts",
+        "tests/governance/facts-truth.test.ts",
+        "scripts/gate_copy.mjs"
+      ],
+      "limits": [
+        "the root README still has no structural guard: a page could describe behaviour the code does not have (BS-13 own family)",
+        "it does not change what npm renders until a release carries the new pages",
+        "no live artifact: these are pages, not a seam"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0020",
+      "title": "A listing that pins git bytes while advertising a registry version installs neither",
+      "symptom": "docs/market-index.json declared version 0.3.8 and a git commit in one entry, and that commit carried nineteen patches while 0.3.8 ships thirteen",
+      "rootCause": "the guard checked the shape of the pin and never its meaning: any hex commit passed, so every document commit forced a re-pin",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0020-market-source-truth.md"
+      ],
+      "guards": [
+        "tests/governance/distribution-entry.test.ts",
+        "docs/market-index.json"
+      ],
+      "limits": [
+        "it does not turn the repository into a published artifact: the patches it names stay merged and unreleased",
+        "a git source needs an explicit unreleased marker; \"newest\" is a fact read at release time, not checked over the network",
+        "it fixes the index this project publishes; a third party that already read this repository is out of reach"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0021",
+      "title": "The published package advertised a subpath that never had a module",
+      "symptom": "the manifest exported \"./retry-listener\" -> ./dist/retry-listener.js, a module that has never existed (the second seam is failure-listener.ts), so the import answered ERR_MODULE_NOT_FOUND while the manifest promised it; it shipped in 0.3.8 and 0.4.0",
+      "rootCause": "the test compared the target string against a regex and never the file behind it, so a plausible path passed as well as a real one",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0021-dead-export.md"
+      ],
+      "guards": [
+        "tests/unit/package-files.test.ts",
+        "packages/plugin/package.json"
+      ],
+      "limits": [
+        "it checks the source tree, not the packed tarball: a module excluded by files would still pass",
+        "it does not check main or bin against src/, although both are pinned by the same test file",
+        "it does not check that an exported subpath is documented, or that a documented subpath is exported"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0022",
+      "title": "The drift test repaired the drift before it looked for it",
+      "symptom": "tests/unit/fixtures-sync.test.ts ran sync_fixtures.mjs in write mode and then compared the copy, so the copy step overwrote any drift before the assertion ran; the read-only --check mode existed but no consumer used it",
+      "rootCause": "the test was written as setup plus assertion and the setup was the same operation it claimed to verify, so the negative control had nowhere to run",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0022-fixture-check-read-only.md"
+      ],
+      "guards": [
+        "tests/unit/fixtures-sync.test.ts",
+        "scripts/sync_fixtures.mjs"
+      ],
+      "limits": [
+        "prepack still runs write mode: packing has to create the copy, only the test is read-only first",
+        "the negative control corrupts one fixture; a drift that changes the file set is handled by --check but not exercised",
+        "the --source/--target/--checksums flags are a test seam and nothing pins them beyond this test file"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0023",
+      "title": "The workflow first step was a sentence nobody read",
+      "symptom": "AGENTS.md says every patch starts with a doc, but gate_registry resolved only evidence and guards: at the start of R31 the registry held twenty-one patches and docs/patches held nineteen, P-0016 among the missing, while every check stayed green",
+      "rootCause": "the doc was read as prose about the patch rather than as part of it: evidence and guards are paths the gate resolves, so a doc in neither list could be missing with no check noticing",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0023-patch-doc-mechanism.md"
+      ],
+      "guards": [
+        "scripts/gate_registry.mjs",
+        "docs/patches/P-0016-coverage-single-source.md"
+      ],
+      "limits": [
+        "it checks that a doc exists, not that it is true: a doc can still describe behaviour the code does not have",
+        "it matches by id prefix, which is safe only while ids stay P-NNNN",
+        "an orphan doc with no registry entry is not reported, because the gate iterates the registry rather than the directory",
+        "no live artifact is possible: this is a governance gate"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0024",
+      "title": "The two pages npm renders were outside the copy channel",
+      "symptom": "both package READMEs were hand-written and absent from docs/copy/manifest.json, so gate_copy never checked their bytes, fact-pack hash or writer",
+      "rootCause": "the copy channel was defined as \"the outward files at the repository root\", so the two package pages were read as package metadata rather than as the first thing a stranger opens",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0024-package-readme-copy-channel.md",
+        "packages/plugin/README.md",
+        "packages/core/README.md"
+      ],
+      "guards": [
+        "scripts/gate_copy.mjs",
+        "tests/governance/package-readme-prose.test.ts",
+        "tests/unit/cli-usage.test.ts"
+      ],
+      "limits": [
+        "the copy gate checks numbers, bytes and provenance, not truth: a page can still describe behaviour the code does not have",
+        "the pages ship inside the tarball, so a change reaches npm only with a release",
+        "the pages stay hand-written prose that is now registered; a generated page is a separate decision"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0025",
+      "title": "An unread profile was reported as a finding",
+      "symptom": "`explain --sessions <dir>` printed `(no)` in the \"enabled here\" cell for every covered class and exited 1, while its footer said the answer was unknown without a profile",
+      "rootCause": "`enabled` had two states where the domain has three: `isPatchOn` answered false for a null config, so \"nobody read a profile\" became \"every coverer is switched off\" and `uncovered` counted it into the exit code",
+      "surface": "cli",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "packages/plugin/README.md"
+      ],
+      "guards": [
+        "tests/e2e/explain.test.ts",
+        "packages/plugin/src/explain-command.ts",
+        "tests/governance/coverage-single-source.test.ts"
+      ],
+      "limits": [
+        "covers \"no profile was read\"; a profile read without a switch key still falls back to the default, unmeasured",
+        "exit 0 without a profile means \"nothing found\", not \"nothing wrong\": pass --profile-file for the old strictness",
+        "the row is tested, not the column widths: a longer patch id still shifts the layout"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0026",
+      "title": "The release procedure had two homes, and the older one was retired",
+      "symptom": "docs/PUBLISH.md described the real procedure while the handoff still sent a successor down the retired pnpm-filter path and told them to expect OTP, and its boundary section named a 0.3.5 tarball",
+      "rootCause": "handoff-truth checked the status table and the first thing; the release procedure lives after the evidence index, so it was outside the live contract while still being what a successor acts on",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/HANDOFF.md",
+        "docs/PUBLISH.md",
+        "scripts/publish_packages.mjs"
+      ],
+      "guards": [
+        "tests/governance/release-procedure.test.ts",
+        "tests/governance/handoff-truth.test.ts"
+      ],
+      "limits": [
+        "the test pins the shape of the sections, not the truth of every step",
+        "it forbids the retired commands by pattern, so a differently worded wrong command is not caught",
+        "the boundary rule looks for .tmp/ paths and a `latest` version; a stale line phrased without either is still unread"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0027",
+      "title": "A fragment dispatched under a name nobody proved",
+      "symptom": "a fused text gluing two different tools sent the surplus call as the first tool`s name (INVALID_ARGS, measured twice on rc.3)",
+      "rootCause": "the rescue proves the JSON split and nothing else; the stream names one tool per index and the engine reused it for every fragment",
+      "surface": "llm/stream",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/attribution.test.ts",
+        "packages/plugin/src/repair-stream.ts"
+      ],
+      "limits": [
+        "the proof needs a required list, a closed schema, or a declared value that breaks its own type; an open schema books the residue",
+        "the fallback name is not a tool, so the model pays one UNKNOWN_TOOL round trip: the cost of not running the wrong tool",
+        "a fragment that satisfies the wrong tool schema is still dispatched as that tool; a schema is a filter",
+        "the declarations come from options.tools; a hand-built call carries none"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0028",
+      "title": "A published sample carried this machine's home path",
+      "symptom": "every tarball since 0.1.0 shipped a fixture whose fused arguments carried the real workspace path, and the repository carried that account name in six patch docs, the handoff, a step review and one artifact (reported upstream on 2026-11-14)",
+      "rootCause": "redaction was wired into the artifact writers and never into the fixture corpus; P-0004 fixed the reader for three path shapes, not the files already tracked",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json",
+        "scripts/record_adaptation.mjs"
+      ],
+      "guards": [
+        "tests/governance/shipped-samples.test.ts",
+        "packages/core/src/redact.ts"
+      ],
+      "limits": [
+        "the fixture now carries <home>, so it is no longer a byte-for-byte copy; its note says so",
+        "the rule forbids an absolute Users/ segment; another shape is caught only by the P-0004 redactor",
+        "docs and artifacts were rewritten in place with unchanged stamps: a repair, not a re-measurement"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0029",
+      "title": "The pointers a successor acts on were prose nobody compared",
+      "symptom": "the live handoff called v0.4.2 the newest release after 0.4.5 shipped, its five-minute check still said \"# 0.4.1\", and PUBLISH.md said npm was at 0.4.2, while every gate stayed green",
+      "rootCause": "no rule compared a live version claim with package.json or the byte row: handoff-truth read the evidence index, release-procedure the command shapes, gate_size only the caps",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0029-live-pointers.md"
+      ],
+      "guards": [
+        "tests/governance/handoff-truth.test.ts",
+        "tests/governance/release-procedure.test.ts",
+        "scripts/gate_size.mjs"
+      ],
+      "limits": [
+        "offline: the row is compared with package.json, not npm, so it can name a tag nobody published",
+        "the release body was compared by hand, which is not a mechanism",
+        "the channel rows in docs/distribution/README.md are dated readings no test reads"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0030",
+      "title": "The name check read required and nothing else, and its counter was a running total",
+      "symptom": "a declaration with no required list proved nothing, so a fragment kept the stream name even when its schema rejected it; and one repair's unattributed count landed on every later repair in the same stream ([1,1] instead of [1,0])",
+      "rootCause": "the check was written against an imagined schema: dsh-tools never sets additionalProperties (dsh-tools/lib/index.js:800-808), so an undeclared key is not proof; the counter bug was a scoping mistake above the per-decision loop",
+      "surface": "llm/stream",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0030-attribution-proof.md",
+        "packages/core/src/attribute.ts"
+      ],
+      "guards": [
+        "tests/unit/attribute.test.ts",
+        "tests/unit/attribution.test.ts",
+        "packages/plugin/src/repair-stream.ts"
+      ],
+      "limits": [
+        "an open schema cannot prove a fragment foreign by its keys, which is every first-party tool",
+        "fits is not identity: a fragment valid for the named tool is still dispatched as that tool",
+        "only the dsh-tools dialect was read; another dialect reads unproven more often, the safe direction"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0031",
+      "title": "The engine every mount loads had no budget, and a comment said it did",
+      "symptom": "P-0012 said core sits outside the size gate and a governance test claimed the package has \"its own budget\"; no cap existed anywhere, and by R41 the engine every mount loads had reached 98 247 emitted bytes",
+      "rootCause": "the budget predates the 0.4.0 split, which added a second package without a second measurement; \"its own budget\" described a plan, not a file",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0031-core-budget.md"
+      ],
+      "guards": [
+        "scripts/gate_size.mjs",
+        "scripts/lib/budgets.mjs",
+        "tests/governance/budget-split.test.ts"
+      ],
+      "limits": [
+        "the cap covers emitted core JavaScript only: .d.ts, fixtures and package-root files are outside it",
+        "it caps the total and the registry file, not each of the other nine modules",
+        "core is still not part of residency: the startup account is two rows read together",
+        "the cap forces a decision (split the registry, or sign a raise) rather than fixing a defect once"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0032",
+      "title": "The ledger carried the narrative its patch docs already carried",
+      "symptom": "the eight longest records measured 2 107-2 377 bytes each while the registry had 1 697 bytes left, so the next patch could not be recorded without a raise disguised as a split",
+      "rootCause": "the registry and docs/patches/ were both written in long form, so symptom, mechanism and limits existed twice while the code reads only the ledger fields",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0032-registry-ledger-dedup.md",
+        "packages/core/src/registry.ts",
+        "scripts/lib/budgets.mjs",
+        "data/results/patch-registry-2026-11-14T15-56-00.000Z.json"
+      ],
+      "guards": [
+        "scripts/gate_size.mjs",
+        "tests/governance/ledgers.test.ts"
+      ],
+      "limits": [
+        "the batch compacts 8 of 31 records; the rest keep their long form until touched",
+        "the 68 000 registry cap did not move: measured 66 303 before and 61 509 after",
+        "no per-record threshold was added: that needs the owner signature PROJECT_RULES section 1 requires",
+        "the prose removed is safe only while its doc says it, and gate_registry checks a doc exists (BS-19)"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0033",
+      "title": "A tool call with no identity was refused and then dispatched anyway",
+      "symptom": "a block whose id and name were both empty (measured `0.2.2-rc.3`, #13211) was counted as refused and passed through, so the host persisted a call with an empty callId and the V4 session could never resume",
+      "rootCause": "the block-end rejection path was written for fusion refusals, where passing the original through fails the turn visibly; an identity refusal does not fail visibly: it persists a call the host cannot dispatch",
+      "surface": "llm/stream",
+      "status": "verified",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0033-empty-identity.md",
+        "packages/plugin/src/repair-stream.ts",
+        "data/results/live-empty-call-2026-11-14T16-02-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/repair-stream.test.ts",
+        "scripts/gate_size.mjs"
+      ],
+      "limits": [
+        "the adapter that emits an incomplete call is not fixed: this seam names it and keeps the session resumable",
+        "a block that is both fused and empty is refused before any split (missing-id fires first)",
+        "the verdict stays quiet: the rejected event is the only record",
+        "arguments that parse to a non-object are untouched (the other half of #12064)"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0034",
+      "title": "A failed stream that no refusal explained was booked as a quiet one",
+      "symptom": "a turn ended with MALFORMED_RESPONSE and the journal booked nothing: no `errors`, no `refused`, no event (upstream #11337: a reasoning block, then an unsupported stop reason, turn dies)",
+      "rootCause": "`isFusionFailure` read the code alone, so every MALFORMED_RESPONSE inherited the fusion path's assumption that a refusal had already booked it",
+      "surface": "llm/stream",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0034-unbooked-failure.md",
+        "packages/plugin/src/repair-stream.ts"
+      ],
+      "guards": [
+        "tests/unit/repair-stream.test.ts",
+        "scripts/gate_size.mjs"
+      ],
+      "limits": [
+        "the adapter is not fixed: `stopReason()` still rejects `refusal`, so the turn still ends; this seam names it",
+        "the verdict is untouched, so `quiet` still means the fusion defect was not seen",
+        "the reproduction is synthetic at the seam; the host half is the shipped `stopReason()` source"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0035",
+      "title": "A patch-layer row promised a module nothing resolved",
+      "symptom": "every `name:` in `cordis.patch.yml` promises an importable module and neither this repository nor the host checks before load time; #12318 shows the cost: `never started`, every resume fails",
+      "rootCause": "the namespace gate checked the shape of the rows but never resolved one against the exports it points into, so a rename in `src/` was only caught by a stranger installing the tarball",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0035-patch-row-resolution.md",
+        "packages/plugin/cordis.patch.yml"
+      ],
+      "guards": [
+        "tests/governance/profile-patch-resolution.test.ts",
+        "scripts/gate_namespace.mjs"
+      ],
+      "limits": [
+        "it proves a row resolves, not that the host loads it",
+        "a declared package is accepted, which is not proof of its subpath",
+        "it runs in the suite, not at load time"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0036",
+      "title": "The host erased the id a delta-only stream had proved",
+      "symptom": "a delta-only tool call assembled as `id: \"\"` and the session could not resume (upstream #8653)",
+      "rootCause": "assembler.ts:72 assigns toolCallId unguarded while :73 guards the name, and :115 falls back only from null",
+      "surface": "llm/stream",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0036-delta-identity.md",
+        "packages/plugin/src/repair-stream.ts"
+      ],
+      "guards": [
+        "tests/unit/repair-stream.test.ts",
+        "scripts/gate_size.mjs"
+      ],
+      "limits": [
+        "the host is not fixed; a different real id on one index passes through, so id-collision-split stays open",
+        "not verified: the red is at the seam, no live turn this round produced the shape"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0037",
+      "title": "One dropped closing delimiter killed the turn, and no proof was tried",
+      "symptom": "a nested argument one `]` short (upstream #12819: expected \",\" or \"]\" after an array element, three times in one session) was refused as `single-object` and re-thrown, so the whole turn died",
+      "rootCause": "the single-object branch had two outcomes, a proven reseal or a refusal, and a text one delimiter from parsing was neither; the splitter never saw it (`unbalanced: input ends at depth 1`)",
+      "surface": "llm/stream",
+      "status": "verified",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0037-missing-closer.md",
+        "data/fixtures/toolcall-fusion/missing-array-closer.json",
+        "data/results/live-linux-2026-11-15T10-00-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/closer.test.ts",
+        "tests/unit/toolcall-repair.test.ts",
+        "scripts/gate_size.mjs",
+        "data/fixtures/toolcall-fusion/ambiguous-closer.json"
+      ],
+      "limits": [
+        "pi-ai route only: dsh-llm-deepseek reports \"tool input is invalid JSON\" without the text, so nothing reaches this seam",
+        "a missing final delimiter and an ambiguous text are refused, never guessed",
+        "verified on Linux (WSL2) against a scripted provider, not on a real model turn: the repair and the dispatch are live, the shape is synthesized"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0038",
+      "title": "The redaction was written on one platform and shipped to three",
+      "symptom": "a macOS or Linux home path went through `redact()` untouched: 5 of the 8 measured shapes (`/Users/<name>`, `file:///Users/<name>`, `--Users-…`, `--home-…`) left the account name in an artifact",
+      "rootCause": "two rules each assumed a Windows drive letter, and the session key is built by `projectKey`, which turns every separator into `-`: one project encodes three ways and only the Windows one matched",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0038-cross-platform-home-paths.md",
+        "data/results/live-linux-2026-11-15T10-00-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/redact-platform.test.ts",
+        "tests/unit/redact.test.ts",
+        "packages/core/src/redact.ts"
+      ],
+      "limits": [
+        "the three shapes are tested as strings, not produced on their own platform, so this is not \"tested on macOS\"",
+        "/root/ is deliberately not redacted: the account name is the same string for everyone",
+        "the plugin itself stays platform-independent; only the evidence layer had a platform assumption",
+        "build scripts keep their WINDOWS branch on purpose (Node cannot spawn npm.cmd without a shell)"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0039",
+      "title": "A recorder that only worked on Windows, and said \"no sessions\" when it failed",
+      "symptom": "three recorders computed `.dsh/sessions` on Linux/macOS (`USERPROFILE` is unset there) and exited 3 with \"no session directory\"; an empty `DSH_SESSIONS=` was accepted as the root, pointing them at the current directory",
+      "rootCause": "`process.env.USERPROFILE ?? join(...)` turned \"the variable is missing\" into \"the home is the empty string\", and a join of an empty home is a relative path; the homedir-based recorder was the one that worked on both platforms",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0039-portable-session-root.md",
+        "scripts/lib/session-root.mjs",
+        "data/results/live-linux-2026-11-15T10-00-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/session-root.test.ts"
+      ],
+      "limits": [
+        "not \"runs on macOS\": the POSIX branch it takes is the Linux one measured here",
+        "an empty HOME still cannot be resolved; the fallback is a literal ~/.dsh/sessions, not a lookup",
+        "the plugin never read USERPROFILE; only these offline recorders did"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0040",
+      "title": "The acceptance recorder owned a fixture count the package owns",
+      "symptom": "a green published package was recorded as a failed install: verify printed eight PASS lines and OK 8 fixture(s), and the recorder still answered \"verify did not print OK 6 fixture(s)\" because it looked for a literal six",
+      "rootCause": "R49 added two canonical fixtures, so the count became eight in three places and stayed six in a fourth: record_install_acceptance.mjs carried both a regex and a claimed string with the old number",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0040-acceptance-fixture-count.md",
+        "scripts/lib/acceptance.mjs",
+        "data/results/install-acceptance-2026-11-15T12-20-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/acceptance.test.ts"
+      ],
+      "limits": [
+        "the criterion is the count plus every PASS line, not fixture contents: verify still owns what each case must decide",
+        "it cannot name the drifted fixture; sync_fixtures --check does",
+        "an npm exec that exits 0 with no output is still a failure"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0041",
+      "title": "The installed CLI was silent on Linux, and exited 0",
+      "symptom": "the installed bin printed nothing and exited 0 on Linux (and by the same code path on macOS), while node dist/cli.js verify printed the full result: the one command every acceptance and README quotes verified nothing",
+      "rootCause": "the entry guard compared import.meta.url with pathToFileURL(process.argv[1]), and npm installs a POSIX bin as a symlink, so the two differ and main() never ran; Windows installs a .cmd shim with the real path",
+      "surface": "cli",
+      "status": "verified",
+      "severity": "critical",
+      "evidence": [
+        "docs/patches/P-0041-cli-bin-symlink.md",
+        "packages/plugin/src/cli.ts",
+        "data/results/live-linux-2026-11-15T10-00-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/cli-entry.test.ts",
+        "tests/e2e/cli.test.ts"
+      ],
+      "limits": [
+        "0.4.11 carries the old guard: the fix ships in 0.4.12, and 0.4.11 stays installable but silent through its bin",
+        "the fix makes the command run; it adds no output of its own"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0042",
+      "title": "The profile and the refusal never met, and the seam cannot move the level",
+      "symptom": "the host refused `reasoningEffort: xhigh` 37 times on one route while the profile still fixed it: the census had the count and the profile had the level, and nothing compared them",
+      "rootCause": "P-0013 named the class and `scan` counted it by code, but the level lived only inside the host sentence; `agent/pre-step` `enter` cannot change a selection the loop fixed, and `reject` is disqualified on desktop",
+      "surface": "cli",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0042-profile-effort-conflict.md",
+        "packages/plugin/src/explain-command.ts",
+        "data/results/prestep-enter-2026-11-15T17-55-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/refused-effort.test.ts"
+      ],
+      "limits": [
+        "it names the conflict and exits 1; only changing the profile stops the next dead turn, and it never clamps",
+        "a profile that omits reasoningEffort produces no finding, even when the UI selected a refused level"
+      ]
+    },
+    {
+      "id": "P-0043",
+      "title": "The guard written for a fixture could not see it",
+      "symptom": "the 0.4.13 tarball carries this machine's account name in `fixtures/toolcall-fusion/bare-code-value.json`, and the P-0028 guard written for that file was green on it",
+      "rootCause": "the guard allowed two separators before `Users`, but the fixture is a JSON string, so one backslash becomes four; a second artifact leaked the name as a bare `ls -l` token no path rule sees",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0043-shipped-sample-guard-shape.md",
+        "data/fixtures/toolcall-fusion/bare-code-value.json",
+        "data/results/live-linux-2026-11-15T15-00-00.000Z.json"
+      ],
+      "guards": [
+        "tests/governance/shipped-samples.test.ts"
+      ],
+      "limits": [
+        "the 0.4.13 tarball still carries the name: a published version is fixed forward, not rewritten",
+        "the guard runs after the fact; the writer knows only path shapes"
+      ]
+    },
+    {
+      "id": "P-0044",
+      "title": "A truncated turn was counted, and nobody asked whether it answered",
+      "symptom": "`scan` reported 88 `max-tokens` turns on this machine and none of them said whether the user saw anything; 88 of them ended with no text and no tool call (upstream #12347 recorded the empty final answer on a headless run)",
+      "rootCause": "the census reads `turn/end` only, and `assistant/message` carries the block types that answer the second half of the question; nothing in `session-scan.ts` had ever looked at one",
+      "surface": "cli",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0044-turn-answered.md",
+        "packages/core/src/answer.ts",
+        "data/results/scan-r55-2026-11-16T10-20-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/turn-answer.test.ts",
+        "tests/e2e/cli.test.ts"
+      ],
+      "limits": [
+        "it does not repair, retry or re-end a truncation; the host decides when to stop",
+        "it counts `max_tokens` only: a `completed` turn with only reasoning is upstream #13169 and needs its own evidence",
+        "a partial text counts as answered, because the user saw words; whether they were useful is not provable here"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0045",
+      "title": "A refusal thrown before the stream starts never reaches the seam that names it",
+      "symptom": "a requested effort the adapter does not map dies in prepareCall with UNSUPPORTED_REASONING_EFFORT; the loop catch emits `agent/error` (never `agent/request-error`), so a listener on the latter alone names nothing (37 such turns on this host)",
+      "rootCause": "`agent/request-error` is dispatched only after a started stream fails (dsh-agent-loop line 942); prepareCall throws before that and the loop catch emits `agent/error` instead (line 657)",
+      "surface": "agent/error",
+      "status": "verified",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0045-preparation-refusal-seam.md",
+        "packages/plugin/src/failure-listener.ts",
+        "data/results/live-request-error-2026-11-16T15-10-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/agent-error-naming.test.ts",
+        "tests/unit/request-error.test.ts"
+      ],
+      "limits": [
+        "`agent/error` has no decision: it names a failure and cannot retry or change the turn",
+        "one `(turn, step, code)` set is shared with `agent/request-error`, so a failure both seams see is named once",
+        "one route measured; another adapter may throw the refusal after opening a stream"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0046",
+      "title": "The first screens were one patch short and one release behind",
+      "symptom": "both READMEs claimed forty-four patches and enumerated the tested ones, but P-0043 appeared in neither; both also put 0.4.14 first under a status sentence calling 0.4.15 published",
+      "rootCause": "gate_copy checks numbers, bytes and provenance, not completeness: nothing asked whether a page that advertises the count names every patch",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0046-public-page-completeness.md"
+      ],
+      "guards": [
+        "tests/governance/public-pages-complete.test.ts"
+      ],
+      "limits": [
+        "it reads ids, not sentences: a patch named in a wrong row still satisfies the rule (presence, not placement)",
+        "it pins only the published version; an unpublished release's numbers stay the fact pack's business",
+        "the status sentence is parsed with two fixed shapes, so a rewrite must keep one of them",
+        "it cannot see the two npm package pages: they carry no enumeration, so the rule is vacuous there"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0047",
+      "title": "A turn that finished without answering anyone was never counted",
+      "symptom": "P-0044 counted truncations that answered nobody and left the other ending out: a `completed` turn whose last message is one `reasoning` block (upstream #13169) produced 0 cases here, so nothing in the scanner could even say whether it happened",
+      "rootCause": "the census asks how a turn ended and the answer rule asks what the last step showed, but only the max-tokens branch joined them; the adapter guard counts blocks rather than usable content, so a reasoning-only message passes as a normal stop",
+      "surface": "cli",
+      "status": "tested",
+      "severity": "major",
+      "evidence": [
+        "docs/patches/P-0047-completed-without-answer.md",
+        "packages/plugin/src/session-scan.ts"
+      ],
+      "guards": [
+        "tests/unit/completed-answer.test.ts",
+        "tests/e2e/cli.test.ts"
+      ],
+      "limits": [
+        "it counts `completed` only: an error already names its code and an abort was the operator decision",
+        "a reasoning block a client renders to the user still counts as no answer: the rule is what the transcript gives a reader",
+        "the adapter guard that lets the shape through is upstream; this patch names the consequence, it does not repair it"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0048",
+      "title": "The platform boundary was prose, and prose is not a criterion",
+      "symptom": "every page said macOS not measured while the workflow had two jobs, so no darwin process ran the suite and a darwin-only break would land green",
+      "rootCause": "the sentence described a CI that did not exist: nothing recorded which platforms run, so not measured meant three different things",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0048-macos-ci-criterion.md",
+        ".github/workflows/ci.yml"
+      ],
+      "guards": [
+        "docs/patches/P-0048-macos-ci-criterion.md",
+        ".github/workflows/ci.yml"
+      ],
+      "limits": [
+        "CI is not a host: no `data/results/live-*`, so no patch may claim `verified` on it",
+        "it proves the suite and gates pass on darwin, not that the desktop app mounts there",
+        "weaker than the hand-run Linux evidence, which also measures the byte account and the installed bin",
+        "the first push that carries it is the measurement"
+      ],
+      "failureClasses": []
+    },
+    {
+      "id": "P-0049",
+      "title": "The pack counted a project it no longer described",
+      "symptom": "the fact pack said 41 patches against 48, named P-0013 on the seam P-0045 moved it off, listed 8 CLI and 21 build-side ids against 10 and 24, and CHANGELOG stopped at 0.4.15 while 0.4.16 was published",
+      "rootCause": "nothing compared the pack, which every outward number resolves against, with the registry: gate_copy checks outward files against the pack, and facts-truth read four specific claims",
+      "surface": "scripts",
+      "status": "tested",
+      "severity": "minor",
+      "evidence": [
+        "docs/patches/P-0049-fact-pack-census.md",
+        "tests/governance/fact-pack-census.test.ts"
+      ],
+      "guards": [
+        "tests/governance/fact-pack-census.test.ts",
+        "tests/governance/facts-truth.test.ts"
+      ],
+      "limits": [
+        "presence and counts, not placement: the prose beside an id is not read",
+        "the census is parsed from the bullet shape used today, so a rewrite turns the rule red rather than wrong",
+        "changelog headers are read, not contents; the published version stays the pack own claim"
+      ]
+    }
+  ]
+}

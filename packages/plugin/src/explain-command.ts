@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-/** P-0016 / P-0025 / P-0042: what this plugin is doing in this profile. Exit 1 names a finding. */
+/** P-0016 / P-0025 / P-0042 / P-0051: what this plugin is doing here; exit 1 names a finding. */
 
 import { existsSync, readFileSync } from 'node:fs'
 import process from 'node:process'
 import { EXIT_FINDING, EXIT_OK, EXIT_UNAVAILABLE, flagString, type Args } from './cli-args.js'
 import { redactReport, scanSessions, type ScanTurnCensus } from './session-scan.js'
 import { decompressSessionLog } from './session-log.js'
-import { readdirSync, statSync } from 'node:fs'
+import { readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { PATCHES } from 'dsh-remedy-core'
 
@@ -15,7 +15,6 @@ function coverersOf(failure: string): readonly string[] {
   return PATCHES.filter((patch) => (patch.failureClasses ?? []).includes(failure)).map((patch) => patch.id)
 }
 
-/** The switch key for a covering patch, if it has one. */
 function switchOf(patchId: string): string | undefined {
   return PATCHES.find((patch) => patch.id === patchId)?.switchKey
 }
@@ -27,7 +26,7 @@ interface ProfileSelection {
   readonly reasoningEffort?: string
 }
 
-/** P-0042: the profile selection, read flat; anything missing stays missing. */
+/** P-0042: the profile selection, flat; a missing key stays missing. */
 function selectionOf(text: string): ProfileSelection | null {
   const start = text.split(/\r?\n/).findIndex((line) => line === '- id: agent-default-model')
   if (start === -1) return null
@@ -53,6 +52,13 @@ function conflicts(refused: Readonly<Record<string, number>>, selection: Profile
     ? []
     : [`CONFLICT — ${selection.provider}/${selection.model} fixes reasoningEffort "${level}"; the host refused that exact level ${count} time(s). Change it in the profile or stop selecting it; this plugin does not clamp it.`]
 }
+
+/** P-0051: the rule is P-0050's; no profile is involved. */
+function drops(dropped: number | null): string[] {
+  return dropped === null || dropped <= 0
+    ? []
+    : [`DROPPED — ${dropped} tool(s) this session had called are missing from a later resume/change header; a later call to one was answered UNKNOWN_TOOL. Nothing restores the set (P-0050).`]
+}
 /** Classes this project decided never to repair, with the reason. */
 const BY_DESIGN: Readonly<Record<string, string>> = {
   'max-tokens': 'upstream by design: a cut tail is missing bytes, not a quote',
@@ -66,9 +72,7 @@ const BY_DESIGN: Readonly<Record<string, string>> = {
 export function readProfileConfig(path: string): Record<string, unknown> | null {
   if (!existsSync(path)) return null
   const text = readFileSync(path, 'utf8')
-  // This reads a YAML patch layer without a YAML parser: the only keys it needs
-  // are the flat ones under the plugin's own row, and a wrong guess must not
-  // become an invented answer, so an absent key stays absent.
+  // No YAML parser: only flat keys under our row; an absent key stays absent (P-0025).
   const block = text.split(/\n- id /).find((chunk) => /remedy|dsh-remedy/.test(chunk))
   if (block === undefined) return null
   const out: Record<string, unknown> = {}
@@ -115,10 +119,7 @@ interface Row {
   readonly failure: string
   readonly count: number
   readonly coveredBy: readonly string[]
-  /**
-   * Patches switched on in the profile that was read, or `null` when none was
-   * read (P-0025: on / off / unmeasured are three states, not two).
-   */
+  /** Patches on in the profile read, or `null` when none was read (P-0025: three states). */
   readonly enabled: readonly string[] | null
   readonly byDesign?: string
 }
@@ -136,7 +137,7 @@ export function explainRows(census: ScanTurnCensus, errorCodes: Readonly<Record<
     })
   }
 
-  // Turn endings first: they are what costs the user a whole turn.
+  // Turn endings first: they cost the user a whole turn.
   if (census.max_tokens > 0) push('max-tokens', census.max_tokens)
   for (const [code, count] of Object.entries(errorCodes)) {
     if (count > 0) push(code, count)
@@ -167,6 +168,8 @@ export function cmdExplain(args: Args): number {
   let census: ScanTurnCensus = { completed: 0, max_tokens: 0, aborted: 0, error: 0 }
   let errorCodes: Record<string, number> = {}
   let refusedEfforts: Record<string, number> = {}
+  /** P-0051: `null` means no directory was measured, which is not a zero. */
+  let droppedTools: number | null = null
   let files = 0
   if (sessions !== undefined) {
     const inputs = collectSessions(sessions)
@@ -184,6 +187,7 @@ export function cmdExplain(args: Args): number {
     census = report.turns
     errorCodes = { ...report.error_codes }
     refusedEfforts = { ...report.refused_efforts }
+    droppedTools = report.dropped_tools
   }
 
   const rows = explainRows(census, errorCodes, config)
@@ -193,8 +197,7 @@ export function cmdExplain(args: Args): number {
   let uncovered = 0
   for (const row of rows) {
     const covering = row.coveredBy.length === 0 ? (row.byDesign === undefined ? '(none)' : 'by design') : row.coveredBy.join(',')
-    // `unknown` is a third state, not a synonym for "(no)": no profile was read,
-    // so "off" would answer a question the command never asked (P-0025).
+    // P-0025: `null` is unknown, never a zero; `(no)` needs a profile that was read.
     const enabled =
       row.coveredBy.length === 0
         ? (row.byDesign === undefined ? '(none)' : 'no (by design)')
@@ -206,9 +209,8 @@ export function cmdExplain(args: Args): number {
     process.stdout.write(
       `${row.failure.padEnd(23)}  ${String(row.count).padStart(5)}  ${covering.padEnd(17)}  ${enabled}\n`,
     )
-    // A class this host hits, covered by a patch, switched off in a profile that
-    // was actually read, is the one thing worth a nonzero exit. An unread profile
-    // cannot support that claim (P-0025).
+    // A class this host hits, covered by a patch, off in a profile that was read, is a
+    // finding; an unread profile cannot support that claim (P-0025).
     if (config !== null && row.coveredBy.length > 0 && row.enabled !== null && row.enabled.length === 0) uncovered += 1
   }
 
@@ -223,10 +225,11 @@ export function cmdExplain(args: Args): number {
   for (const row of rows) {
     if (row.byDesign !== undefined) process.stdout.write(`by design: ${row.failure} — ${row.byDesign}\n`)
   }
-  // P-0042: the two halves meet here. `agent/pre-step` cannot change a selection
-  // (measured: data/results/prestep-enter-2026-11-15T17-55-00.000Z.json), so the
-  // only honest lever is naming the conflict before the next turn.
+  // P-0042: the two halves meet here; `agent/pre-step` cannot change a selection
+  // (data/results/prestep-enter-2026-11-15T17-55-00.000Z.json), so naming is the only lever.
   const findings = conflicts(refusedEfforts, selection)
-  for (const line of findings) process.stdout.write(`${line}\n`)
-  return uncovered === 0 && findings.length === 0 ? EXIT_OK : EXIT_FINDING
+  // P-0051: the session census has a second thing worth a nonzero exit.
+  const drift = drops(droppedTools)
+  for (const line of [...drift, ...findings]) process.stdout.write(`${line}\n`)
+  return uncovered === 0 && findings.length === 0 && drift.length === 0 ? EXIT_OK : EXIT_FINDING
 }

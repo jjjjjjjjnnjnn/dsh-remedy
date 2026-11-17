@@ -36,6 +36,28 @@ const lines = [
   'not json at all',
 ]
 
+test('the scanner books the drift count once per (session, tool)', () => {
+  const lines = [
+    '{"type":"session","seq":0,"time":1,"createdAt":1}',
+    '{"type":"request/header","seq":5,"time":2,"data":{"reason":"initial","header":{"tools":[{"name":"ops_stat"},{"name":"ops_glob"}]}}}',
+    '{"type":"tool/call","seq":6,"time":3,"data":{"turn":1,"step":1,"callId":"c1","name":"ops_stat","arguments":"{}"}}',
+    '{"type":"request/header","seq":9,"time":4,"data":{"reason":"resume","header":{"tools":[{"name":"ops_glob"}]}}}',
+  ]
+  const report = scanSessionText(lines.join('\n'), 'memory.jsonl')
+  assert.equal(report.dropped_tools, 1, 'ops_stat was called, then the resume stopped declaring it')
+  assert.equal(report.by_tool.ops_stat, undefined, 'a dropped tool is not a fused call and must not inflate by_tool')
+})
+
+test('a resume that drops a tool nobody called is not a drift', () => {
+  const lines = [
+    '{"type":"request/header","seq":1,"time":1,"data":{"reason":"initial","header":{"tools":[{"name":"a"},{"name":"b"}]}}}',
+    '{"type":"tool/call","seq":2,"time":2,"data":{"turn":1,"step":1,"callId":"c1","name":"a","arguments":"{}"}}',
+    '{"type":"request/header","seq":3,"time":3,"data":{"reason":"change","header":{"tools":[{"name":"a"}]}}}',
+  ]
+  const report = scanSessionText(lines.join('\n'), 'memory.jsonl')
+  assert.equal(report.dropped_tools, 0, 'b was declared and dropped, never used')
+})
+
 test('the scanner counts attempts, fused calls, failures and unreadable lines separately', () => {
   const report = scanSessionText(lines.join('\n'), 'C:\\Users\\alice\\session.jsonl')
   assert.equal(report.attempts, 1)

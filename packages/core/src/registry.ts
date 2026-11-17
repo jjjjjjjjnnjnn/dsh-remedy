@@ -20,7 +20,7 @@ export const PATCHES: readonly PatchRecord[] = [
     symptom:
       'a tool call fails with `Unexpected non-whitespace character after JSON` because the relay streamed two calls into one index',
     rootCause:
-      'pi-ai parseToolCallArguments (dist/utils/json-parse.js) throws MALFORMED_RESPONSE on the concatenation, which dsh-agent-loop re-throws because it is absent from retryableCodes (measured at dsh-llm-pi-ai/lib/index.js:1656, upstream #4427)',
+      'pi-ai parseToolCallArguments throws MALFORMED_RESPONSE on the concatenation and dsh-agent-loop re-throws it because it is absent from retryableCodes (dsh-llm-pi-ai/lib/index.js:1656, upstream #4427; the chain is in its doc)',
     surface: 'llm/stream',
     status: 'verified',
     severity: 'critical',
@@ -62,17 +62,8 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'llm/stream',
     status: 'verified',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0002-rescue-integrity.md',
-      'data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json',
-      'data/results/live-2026-11-10T14-45-00.000Z.json',
-    ],
-    guards: [
-      'tests/unit/repair-stream.test.ts',
-      'tests/unit/toolcall-repair.test.ts',
-      'tests/unit/json-split.test.ts',
-      'scripts/gate_registry.mjs',
-    ],
+    evidence: ['docs/patches/P-0002-rescue-integrity.md', 'data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json', 'data/results/live-2026-11-10T14-45-00.000Z.json'],
+    guards: ['tests/unit/repair-stream.test.ts', 'tests/unit/toolcall-repair.test.ts', 'tests/unit/json-split.test.ts', 'scripts/gate_registry.mjs'],
     failureClasses: ['MALFORMED_RESPONSE'],
     switchKey: 'repair',
     limits: [
@@ -91,16 +82,8 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'llm/stream',
     status: 'verified',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0003-refusal-observability.md',
-      'data/results/live-2026-11-10T16-30-00.000Z.json',
-    ],
-    guards: [
-      'tests/unit/verdict.test.ts',
-      'tests/unit/repair-stream.test.ts',
-      'tests/governance/ledgers.test.ts',
-      'scripts/gate_registry.mjs',
-    ],
+    evidence: ['docs/patches/P-0003-refusal-observability.md', 'data/results/live-2026-11-10T16-30-00.000Z.json'],
+    guards: ['tests/unit/verdict.test.ts', 'tests/unit/repair-stream.test.ts', 'tests/governance/ledgers.test.ts', 'scripts/gate_registry.mjs'],
     failureClasses: ['MALFORMED_RESPONSE'],
     switchKey: 'repair',
     limits: [
@@ -119,11 +102,7 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'llm/stream',
     status: 'tested',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0005-bare-value-reseal.md',
-      'data/fixtures/toolcall-fusion/bare-code-value.json',
-      'data/results/malformed-replay-2026-11-12T11-30-00.000Z.json',
-    ],
+    evidence: ['docs/patches/P-0005-bare-value-reseal.md', 'data/fixtures/toolcall-fusion/bare-code-value.json', 'data/results/malformed-replay-2026-11-12T11-30-00.000Z.json'],
     guards: [
       'tests/unit/reseal.test.ts',
       'tests/unit/toolcall-repair.test.ts',
@@ -149,15 +128,8 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'agent/request-error',
     status: 'verified',
     severity: 'major',
-    evidence: [
-      'packages/plugin/src/failure-listener.ts',
-      'docs/patches/P-0011-request-error-contract.md',
-      'data/results/live-request-error-2026-11-16T15-10-00.000Z.json',
-    ],
-    guards: [
-      'tests/unit/request-error.test.ts',
-      'packages/plugin/src/failure-listener.ts',
-    ],
+    evidence: ['docs/patches/P-0011-request-error-contract.md', 'data/results/live-request-error-2026-11-16T15-10-00.000Z.json'],
+    guards: ['tests/unit/request-error.test.ts', 'packages/plugin/src/failure-listener.ts'],
     failureClasses: ['MALFORMED_RESPONSE'],
     switchKey: 'retryOnMalformed',
     limits: [
@@ -177,14 +149,8 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'scripts/lib/budgets.mjs',
-      'docs/patches/P-0012-budget-by-load-path.md',
-    ],
-    guards: [
-      'scripts/gate_size.mjs',
-      'tests/governance/budget-split.test.ts',
-    ],
+    evidence: ['scripts/lib/budgets.mjs', 'docs/patches/P-0012-budget-by-load-path.md'],
+    guards: ['scripts/gate_size.mjs', 'tests/governance/budget-split.test.ts'],
     limits: [
       'the caps are recorded, not assumed: they moved twice in one session with the owner signature (budgets.mjs)',
       'the lists are explicit; the test reads only the relative import graph, so a dynamic import is not caught',
@@ -202,18 +168,8 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'agent/error',
     status: 'verified',
     severity: 'major',
-    evidence: [
-      'packages/core/src/preflight.ts',
-      'packages/plugin/src/failure-listener.ts',
-      'docs/patches/P-0013-named-refusals.md',
-      'data/results/live-request-error-2026-11-16T15-10-00.000Z.json',
-    ],
-    guards: [
-      'tests/unit/preflight.test.ts',
-      'tests/unit/request-error.test.ts',
-      'tests/unit/agent-error-naming.test.ts',
-      'packages/core/src/preflight.ts',
-    ],
+    evidence: ['packages/plugin/src/failure-listener.ts', 'docs/patches/P-0013-named-refusals.md', 'data/results/live-request-error-2026-11-16T15-10-00.000Z.json'],
+    guards: ['tests/unit/preflight.test.ts', 'tests/unit/request-error.test.ts', 'tests/unit/agent-error-naming.test.ts', 'packages/core/src/preflight.ts'],
     failureClasses: ['UNSUPPORTED_REASONING_EFFORT', 'INVALID_REQUEST', 'MISSING_CREDENTIAL', 'EMPTY_RESPONSE'],
     switchKey: 'repair',
     limits: [
@@ -233,9 +189,7 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'cli',
     status: 'tested',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0004-scan-fidelity.md',
-    ],
+    evidence: ['docs/patches/P-0004-scan-fidelity.md'],
     guards: [
       'tests/e2e/cli.test.ts',
       'tests/unit/session-scan.test.ts',
@@ -260,14 +214,8 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'cli',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0006-turn-census.md',
-    ],
-    guards: [
-      'tests/unit/session-scan.test.ts',
-      'tests/e2e/cli.test.ts',
-      'scripts/gate_registry.mjs',
-    ],
+    evidence: ['docs/patches/P-0006-turn-census.md'],
+    guards: ['tests/unit/session-scan.test.ts', 'tests/e2e/cli.test.ts', 'scripts/gate_registry.mjs'],
     limits: [
       'reported, never promoted: the exit code still turns on fused_calls and fusion_failures',
       'truncated turns stay unfixed; fusion_failures keeps its exact MALFORMED_RESPONSE meaning',
@@ -284,15 +232,8 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0007-copy-channel-transport.md',
-      'docs/copy/manifest.json',
-    ],
-    guards: [
-      'tests/unit/agy-channel.test.ts',
-      'scripts/gate_copy.mjs',
-      'scripts/lib/agy-channel.mjs',
-    ],
+    evidence: ['docs/patches/P-0007-copy-channel-transport.md', 'docs/copy/manifest.json'],
+    guards: ['tests/unit/agy-channel.test.ts', 'scripts/gate_copy.mjs', 'scripts/lib/agy-channel.mjs'],
     limits: [
       'no retry across transports: it picks one from the request length and reports the failure',
       'the timeout is raised to half an hour, not removed; a failure is diagnosed, never repaired',
@@ -309,15 +250,8 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0008-byte-budget-gate.md',
-      'audit/gate_ledger.json',
-    ],
-    guards: [
-      'scripts/gate_size.mjs',
-      'tests/governance/ledgers.test.ts',
-      'scripts/gate.mjs',
-    ],
+    evidence: ['docs/patches/P-0008-byte-budget-gate.md', 'audit/gate_ledger.json'],
+    guards: ['scripts/gate_size.mjs', 'tests/governance/ledgers.test.ts', 'scripts/gate.mjs'],
     limits: [
       'the gate measures the emitted plugin only: core does not load at startup, so the ceiling protects what is loaded there',
       'it does not shrink anything; the measured numbers stay what they were when the gate was written',
@@ -335,16 +269,8 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'cli',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0010-cli-usage-truth.md',
-      'packages/plugin/README.md',
-      'packages/plugin/src/cli-args.ts',
-    ],
-    guards: [
-      'tests/unit/cli-usage.test.ts',
-      'packages/plugin/README.md',
-      'packages/plugin/src/cli-args.ts',
-    ],
+    evidence: ['docs/patches/P-0010-cli-usage-truth.md'],
+    guards: ['tests/unit/cli-usage.test.ts', 'packages/plugin/README.md', 'packages/plugin/src/cli-args.ts'],
     limits: [
       'the gate set still does not cover packages/*/README.md: the test compares the two scan lines, not the page as a whole',
       'moving the page into the copy channel would make it generated, which is a separate decision',
@@ -361,15 +287,8 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'cli',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0009-session-header-window.md',
-      'packages/plugin/src/session-scan.ts',
-    ],
-    guards: [
-      'tests/unit/session-scan.test.ts',
-      'tests/e2e/cli.test.ts',
-      'packages/plugin/src/session-scan.ts',
-    ],
+    evidence: ['docs/patches/P-0009-session-header-window.md'],
+    guards: ['tests/unit/session-scan.test.ts', 'tests/e2e/cli.test.ts', 'packages/plugin/src/session-scan.ts'],
     limits: [
       'only the `session` header is dated by createdAt; an event with no instant stays unreadable, because there is no second field to fall back to',
       'a header inside the window adds its instant but no attempts or turns, so the census does not move',
@@ -385,16 +304,8 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0014-description-truth.md',
-      'docs/copy/facts/public-repo-facts.md',
-    ],
-    guards: [
-      'tests/governance/facts-truth.test.ts',
-      'tests/governance/handoff-truth.test.ts',
-      'tests/unit/cli-usage.test.ts',
-      'scripts/copy_record.mjs',
-    ],
+    evidence: ['docs/patches/P-0014-description-truth.md', 'docs/copy/facts/public-repo-facts.md'],
+    guards: ['tests/governance/facts-truth.test.ts', 'tests/governance/handoff-truth.test.ts', 'tests/unit/cli-usage.test.ts', 'scripts/copy_record.mjs'],
     limits: [
       'the package README is still hand-written prose: USAGE is its guard, not a hash (BS-13 narrows)',
       'the pack is checked only against other repository files; a claim nothing else records stays unverified',
@@ -412,15 +323,8 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'profile',
     status: 'tested',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0015-pre-step-rejection.md',
-      'data/results/prestep-probe-2026-11-13T07-45-00.000Z.json',
-    ],
-    guards: [
-      'data/results/prestep-probe-2026-11-13T07-45-00.000Z.json',
-      'scripts/record_prestep_probe.mjs',
-      'scripts/gate_ssot.mjs',
-    ],
+    evidence: ['docs/patches/P-0015-pre-step-rejection.md'],
+    guards: ['data/results/prestep-probe-2026-11-13T07-45-00.000Z.json', 'scripts/record_prestep_probe.mjs', 'scripts/gate_ssot.mjs'],
     limits: [
       'it measures the seam, it does not mount a product on it: nothing calls agent/pre-step in a shipped profile',
       'the desktop UI render of reason.kind "blocked" stays unmeasured, and the probe ran headless only',
@@ -438,16 +342,8 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'cli',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'packages/core/src/registry.ts',
-      'packages/core/src/types.ts',
-      'packages/plugin/src/explain-command.ts',
-    ],
-    guards: [
-      'tests/governance/coverage-single-source.test.ts',
-      'tests/e2e/explain.test.ts',
-      'packages/core/src/registry.ts',
-    ],
+    evidence: ['packages/core/src/types.ts', 'packages/plugin/src/explain-command.ts'],
+    guards: ['tests/governance/coverage-single-source.test.ts', 'tests/e2e/explain.test.ts', 'packages/core/src/registry.ts'],
     limits: [
       'moves six claims and no behaviour: the printed table is identical before and after',
       'switch keys stay a closed vocabulary (repair, retryOnMalformed); another key must be added, not inferred',
@@ -464,21 +360,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'packages/plugin/README.md',
-      'packages/core/README.md',
-      'docs/patches/P-0017-package-readme-prose.md',
-    ],
-    guards: [
-      'tests/governance/package-readme-prose.test.ts',
-      'tests/unit/cli-usage.test.ts',
-    ],
+    evidence: ['packages/plugin/README.md', 'packages/core/README.md', 'docs/patches/P-0017-package-readme-prose.md'],
+    guards: ['tests/governance/package-readme-prose.test.ts', 'tests/unit/cli-usage.test.ts'],
     limits: [
       'proves no prose number and no undispatchable command can rot; layout and behavioural claims stay hand-written',
       'the number rule is the copy channel criterion, not a truth test, so a page can still describe absent behaviour',
       'core/README.md is held to the weaker half only: it documents a library, not a command',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0018',
@@ -490,9 +378,7 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0018-windows-exit-code.md',
-    ],
+    evidence: ['docs/patches/P-0018-windows-exit-code.md'],
     guards: ['tests/unit/publish.test.ts', 'scripts/publish_packages.mjs'],
     limits: [
       'names only the two codes this machine produced (0xC0000409, 0xC0000005); another Windows exception still prints raw',
@@ -500,15 +386,14 @@ export const PATCHES: readonly PatchRecord[] = [
       'cannot prove the crash was the runtime rather than npm; it proves no HTTP request was logged',
       'no live artifact is possible: this is advice printed by a build script',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0019',
     title: 'The page strangers read first described a project that had stopped existing',
     symptom:
-      'README.md and README.zh-CN.md still opened as "a resident repair layer that mounts on llm/stream" while the project had become eighteen patches across two resident seams, the CLI and the build side; both also said agent/pre-step was unmounted because nobody had measured a rejection',
+      'README.md and README.zh-CN.md described a single-wrapper project of eighteen patches, and repeated that agent/pre-step was unmeasured',
     rootCause:
-      'the copy channel guards numbers, not shape: gate_copy checks that every prose digit exists in the fact pack and has no opinion about whether the page still describes the product',
+      'gate_copy guards numbers, not shape: it checks that every prose digit exists in the fact pack and never whether the page still describes the product',
     surface: 'scripts',
     status: 'tested',
     severity: 'major',
@@ -519,18 +404,12 @@ export const PATCHES: readonly PatchRecord[] = [
       'packages/plugin/README.md',
       'packages/core/README.md',
     ],
-    guards: [
-      'tests/unit/cli-usage.test.ts',
-      'tests/governance/package-readme-prose.test.ts',
-      'tests/governance/facts-truth.test.ts',
-      'scripts/gate_copy.mjs',
-    ],
+    guards: ['tests/unit/cli-usage.test.ts', 'tests/governance/package-readme-prose.test.ts', 'tests/governance/facts-truth.test.ts', 'scripts/gate_copy.mjs'],
     limits: [
       'the root README still has no structural guard: a page could describe behaviour the code does not have (BS-13 own family)',
       'it does not change what npm renders until a release carries the new pages',
       'no live artifact: these are pages, not a seam',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0020',
@@ -542,17 +421,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0020-market-source-truth.md',
-      'docs/market-index.json',
-    ],
+    evidence: ['docs/patches/P-0020-market-source-truth.md'],
     guards: ['tests/governance/distribution-entry.test.ts', 'docs/market-index.json'],
     limits: [
       'it does not turn the repository into a published artifact: the patches it names stay merged and unreleased',
       'a git source needs an explicit unreleased marker; "newest" is a fact read at release time, not checked over the network',
       'it fixes the index this project publishes; a third party that already read this repository is out of reach',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0021',
@@ -564,17 +439,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0021-dead-export.md',
-      'packages/plugin/package.json',
-    ],
+    evidence: ['docs/patches/P-0021-dead-export.md'],
     guards: ['tests/unit/package-files.test.ts', 'packages/plugin/package.json'],
     limits: [
       'it checks the source tree, not the packed tarball: a module excluded by files would still pass',
       'it does not check main or bin against src/, although both are pinned by the same test file',
       'it does not check that an exported subpath is documented, or that a documented subpath is exported',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0022',
@@ -586,16 +457,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0022-fixture-check-read-only.md',
-    ],
+    evidence: ['docs/patches/P-0022-fixture-check-read-only.md'],
     guards: ['tests/unit/fixtures-sync.test.ts', 'scripts/sync_fixtures.mjs'],
     limits: [
       'prepack still runs write mode: packing has to create the copy, only the test is read-only first',
       'the negative control corrupts one fixture; a drift that changes the file set is handled by --check but not exercised',
       'the --source/--target/--checksums flags are a test seam and nothing pins them beyond this test file',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0023',
@@ -607,10 +475,7 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0023-patch-doc-mechanism.md',
-      'docs/patches/P-0016-coverage-single-source.md',
-    ],
+    evidence: ['docs/patches/P-0023-patch-doc-mechanism.md'],
     guards: ['scripts/gate_registry.mjs', 'docs/patches/P-0016-coverage-single-source.md'],
     limits: [
       'it checks that a doc exists, not that it is true: a doc can still describe behaviour the code does not have',
@@ -618,7 +483,6 @@ export const PATCHES: readonly PatchRecord[] = [
       'an orphan doc with no registry entry is not reported, because the gate iterates the registry rather than the directory',
       'no live artifact is possible: this is a governance gate',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0024',
@@ -630,22 +494,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0024-package-readme-copy-channel.md',
-      'packages/plugin/README.md',
-      'packages/core/README.md',
-    ],
-    guards: [
-      'scripts/gate_copy.mjs',
-      'tests/governance/package-readme-prose.test.ts',
-      'tests/unit/cli-usage.test.ts',
-    ],
+    evidence: ['docs/patches/P-0024-package-readme-copy-channel.md', 'packages/plugin/README.md', 'packages/core/README.md'],
+    guards: ['scripts/gate_copy.mjs', 'tests/governance/package-readme-prose.test.ts', 'tests/unit/cli-usage.test.ts'],
     limits: [
       'the copy gate checks numbers, bytes and provenance, not truth: a page can still describe behaviour the code does not have',
       'the pages ship inside the tarball, so a change reaches npm only with a release',
       'the pages stay hand-written prose that is now registered; a generated page is a separate decision',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0025',
@@ -657,21 +512,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'cli',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'packages/plugin/src/explain-command.ts',
-      'packages/plugin/README.md',
-    ],
-    guards: [
-      'tests/e2e/explain.test.ts',
-      'packages/plugin/src/explain-command.ts',
-      'tests/governance/coverage-single-source.test.ts',
-    ],
+    evidence: ['packages/plugin/README.md'],
+    guards: ['tests/e2e/explain.test.ts', 'packages/plugin/src/explain-command.ts', 'tests/governance/coverage-single-source.test.ts'],
     limits: [
       'covers "no profile was read"; a profile read without a switch key still falls back to the default, unmeasured',
       'exit 0 without a profile means "nothing found", not "nothing wrong": pass --profile-file for the old strictness',
       'the row is tested, not the column widths: a longer patch id still shifts the layout',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0026',
@@ -683,21 +530,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/HANDOFF.md',
-      'docs/PUBLISH.md',
-      'scripts/publish_packages.mjs',
-    ],
-    guards: [
-      'tests/governance/release-procedure.test.ts',
-      'tests/governance/handoff-truth.test.ts',
-    ],
+    evidence: ['docs/HANDOFF.md', 'docs/PUBLISH.md', 'scripts/publish_packages.mjs'],
+    guards: ['tests/governance/release-procedure.test.ts', 'tests/governance/handoff-truth.test.ts'],
     limits: [
       'the test pins the shape of the sections, not the truth of every step',
       'it forbids the retired commands by pattern, so a differently worded wrong command is not caught',
       'the boundary rule looks for .tmp/ paths and a `latest` version; a stale line phrased without either is still unread',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0027',
@@ -708,21 +547,14 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'llm/stream',
     status: 'tested',
     severity: 'major',
-    evidence: [
-      'packages/plugin/src/repair-stream.ts',
-      'data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json',
-    ],
-    guards: [
-      'tests/unit/attribution.test.ts',
-      'packages/plugin/src/repair-stream.ts',
-    ],
+    evidence: ['data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json'],
+    guards: ['tests/unit/attribution.test.ts', 'packages/plugin/src/repair-stream.ts'],
     limits: [
       'the proof needs a required list, a closed schema, or a declared value that breaks its own type; an open schema books the residue',
       'the fallback name is not a tool, so the model pays one UNKNOWN_TOOL round trip: the cost of not running the wrong tool',
       'a fragment that satisfies the wrong tool schema is still dispatched as that tool; a schema is a filter',
       'the declarations come from options.tools; a hand-built call carries none',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0028',
@@ -734,20 +566,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json',
-      'scripts/record_adaptation.mjs',
-    ],
-    guards: [
-      'tests/governance/shipped-samples.test.ts',
-      'packages/core/src/redact.ts',
-    ],
+    evidence: ['data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json', 'scripts/record_adaptation.mjs'],
+    guards: ['tests/governance/shipped-samples.test.ts', 'packages/core/src/redact.ts'],
     limits: [
       'the fixture now carries <home>, so it is no longer a byte-for-byte copy; its note says so',
       'the rule forbids an absolute Users/ segment; another shape is caught only by the P-0004 redactor',
       'docs and artifacts were rewritten in place with unchanged stamps: a repair, not a re-measurement',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0029',
@@ -759,20 +584,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0029-live-pointers.md',
-    ],
-    guards: [
-      'tests/governance/handoff-truth.test.ts',
-      'tests/governance/release-procedure.test.ts',
-      'scripts/gate_size.mjs',
-    ],
+    evidence: ['docs/patches/P-0029-live-pointers.md'],
+    guards: ['tests/governance/handoff-truth.test.ts', 'tests/governance/release-procedure.test.ts', 'scripts/gate_size.mjs'],
     limits: [
       'offline: the row is compared with package.json, not npm, so it can name a tag nobody published',
       'the release body was compared by hand, which is not a mechanism',
       'the channel rows in docs/distribution/README.md are dated readings no test reads',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0030',
@@ -784,22 +602,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'llm/stream',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0030-attribution-proof.md',
-      'packages/core/src/attribute.ts',
-      'packages/plugin/src/repair-stream.ts',
-    ],
-    guards: [
-      'tests/unit/attribute.test.ts',
-      'tests/unit/attribution.test.ts',
-      'packages/plugin/src/repair-stream.ts',
-    ],
+    evidence: ['docs/patches/P-0030-attribution-proof.md', 'packages/core/src/attribute.ts'],
+    guards: ['tests/unit/attribute.test.ts', 'tests/unit/attribution.test.ts', 'packages/plugin/src/repair-stream.ts'],
     limits: [
       'an open schema cannot prove a fragment foreign by its keys, which is every first-party tool',
       'fits is not identity: a fragment valid for the named tool is still dispatched as that tool',
       'only the dsh-tools dialect was read; another dialect reads unproven more often, the safe direction',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0031',
@@ -811,21 +620,14 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0031-core-budget.md',
-    ],
-    guards: [
-      'scripts/gate_size.mjs',
-      'scripts/lib/budgets.mjs',
-      'tests/governance/budget-split.test.ts',
-    ],
+    evidence: ['docs/patches/P-0031-core-budget.md'],
+    guards: ['scripts/gate_size.mjs', 'scripts/lib/budgets.mjs', 'tests/governance/budget-split.test.ts'],
     limits: [
       'the cap covers emitted core JavaScript only: .d.ts, fixtures and package-root files are outside it',
       'it caps the total and the registry file, not each of the other nine modules',
       'core is still not part of residency: the startup account is two rows read together',
       'the cap forces a decision (split the registry, or sign a raise) rather than fixing a defect once',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0032',
@@ -837,23 +639,14 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0032-registry-ledger-dedup.md',
-      'packages/core/src/registry.ts',
-      'scripts/lib/budgets.mjs',
-      'data/results/patch-registry-2026-11-14T15-56-00.000Z.json',
-    ],
-    guards: [
-      'scripts/gate_size.mjs',
-      'tests/governance/ledgers.test.ts',
-    ],
+    evidence: ['docs/patches/P-0032-registry-ledger-dedup.md', 'packages/core/src/registry.ts', 'scripts/lib/budgets.mjs', 'data/results/patch-registry-2026-11-14T15-56-00.000Z.json'],
+    guards: ['scripts/gate_size.mjs', 'tests/governance/ledgers.test.ts'],
     limits: [
       'the batch compacts 8 of 31 records; the rest keep their long form until touched',
       'the 68 000 registry cap did not move: measured 66 303 before and 61 509 after',
       'no per-record threshold was added: that needs the owner signature PROJECT_RULES section 1 requires',
       'the prose removed is safe only while its doc says it, and gate_registry checks a doc exists (BS-19)',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0033',
@@ -865,22 +658,14 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'llm/stream',
     status: 'verified',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0033-empty-identity.md',
-      'packages/plugin/src/repair-stream.ts',
-      'data/results/live-empty-call-2026-11-14T16-02-00.000Z.json',
-    ],
-    guards: [
-      'tests/unit/repair-stream.test.ts',
-      'scripts/gate_size.mjs',
-    ],
+    evidence: ['docs/patches/P-0033-empty-identity.md', 'packages/plugin/src/repair-stream.ts', 'data/results/live-empty-call-2026-11-14T16-02-00.000Z.json'],
+    guards: ['tests/unit/repair-stream.test.ts', 'scripts/gate_size.mjs'],
     limits: [
       'the adapter that emits an incomplete call is not fixed: this seam names it and keeps the session resumable',
       'a block that is both fused and empty is refused before any split (missing-id fires first)',
       'the verdict stays quiet: the rejected event is the only record',
       'arguments that parse to a non-object are untouched (the other half of #12064)',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0034',
@@ -892,17 +677,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'llm/stream',
     status: 'tested',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0034-unbooked-failure.md',
-      'packages/plugin/src/repair-stream.ts',
-    ],
+    evidence: ['docs/patches/P-0034-unbooked-failure.md', 'packages/plugin/src/repair-stream.ts'],
     guards: ['tests/unit/repair-stream.test.ts', 'scripts/gate_size.mjs'],
     limits: [
       'the adapter is not fixed: `stopReason()` still rejects `refusal`, so the turn still ends; this seam names it',
       'the verdict is untouched, so `quiet` still means the fusion defect was not seen',
       'the reproduction is synthetic at the seam; the host half is the shipped `stopReason()` source',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0035',
@@ -914,17 +695,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0035-patch-row-resolution.md',
-      'packages/plugin/cordis.patch.yml',
-    ],
+    evidence: ['docs/patches/P-0035-patch-row-resolution.md', 'packages/plugin/cordis.patch.yml'],
     guards: ['tests/governance/profile-patch-resolution.test.ts', 'scripts/gate_namespace.mjs'],
     limits: [
       'it proves a row resolves, not that the host loads it',
       'a declared package is accepted, which is not proof of its subpath',
       'it runs in the suite, not at load time',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0036',
@@ -935,16 +712,12 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'llm/stream',
     status: 'tested',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0036-delta-identity.md',
-      'packages/plugin/src/repair-stream.ts',
-    ],
+    evidence: ['docs/patches/P-0036-delta-identity.md', 'packages/plugin/src/repair-stream.ts'],
     guards: ['tests/unit/repair-stream.test.ts', 'scripts/gate_size.mjs'],
     limits: [
       'the host is not fixed; a different real id on one index passes through, so id-collision-split stays open',
       'not verified: the red is at the seam, no live turn this round produced the shape',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0037',
@@ -956,19 +729,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'llm/stream',
     status: 'verified',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0037-missing-closer.md',
-      'data/fixtures/toolcall-fusion/missing-array-closer.json',
-      'data/fixtures/toolcall-fusion/ambiguous-closer.json',
-      'data/results/live-linux-2026-11-15T10-00-00.000Z.json',
-    ],
-    guards: ['tests/unit/closer.test.ts', 'tests/unit/toolcall-repair.test.ts', 'scripts/gate_size.mjs'],
+    evidence: ['docs/patches/P-0037-missing-closer.md', 'data/fixtures/toolcall-fusion/missing-array-closer.json', 'data/results/live-linux-2026-11-15T10-00-00.000Z.json'],
+    guards: ['tests/unit/closer.test.ts', 'tests/unit/toolcall-repair.test.ts', 'scripts/gate_size.mjs', 'data/fixtures/toolcall-fusion/ambiguous-closer.json'],
     limits: [
       'pi-ai route only: dsh-llm-deepseek reports "tool input is invalid JSON" without the text, so nothing reaches this seam',
       'a missing final delimiter and an ambiguous text are refused, never guessed',
       'verified on Linux (WSL2) against a scripted provider, not on a real model turn: the repair and the dispatch are live, the shape is synthesized',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0038',
@@ -976,23 +743,18 @@ export const PATCHES: readonly PatchRecord[] = [
     symptom:
       'a macOS or Linux home path went through `redact()` untouched: 5 of the 8 measured shapes (`/Users/<name>`, `file:///Users/<name>`, `--Users-…`, `--home-…`) left the account name in an artifact',
     rootCause:
-      'two rules each assumed a Windows drive letter, and the session key is built by `projectKey` (app.asar), which turns every separator into `-`, so one project encodes three ways and only the Windows one matched',
+      'two rules each assumed a Windows drive letter, and the session key is built by `projectKey`, which turns every separator into `-`: one project encodes three ways and only the Windows one matched',
     surface: 'scripts',
     status: 'tested',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0038-cross-platform-home-paths.md',
-      'packages/core/src/redact.ts',
-      'data/results/live-linux-2026-11-15T10-00-00.000Z.json',
-    ],
-    guards: ['tests/unit/redact-platform.test.ts', 'tests/unit/redact.test.ts'],
+    evidence: ['docs/patches/P-0038-cross-platform-home-paths.md', 'data/results/live-linux-2026-11-15T10-00-00.000Z.json'],
+    guards: ['tests/unit/redact-platform.test.ts', 'tests/unit/redact.test.ts', 'packages/core/src/redact.ts'],
     limits: [
       'the three shapes are tested as strings, not produced on their own platform, so this is not "tested on macOS"',
       '/root/ is deliberately not redacted: the account name is the same string for everyone',
       'the plugin itself stays platform-independent; only the evidence layer had a platform assumption',
       'build scripts keep their WINDOWS branch on purpose (Node cannot spawn npm.cmd without a shell)',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0039',
@@ -1004,18 +766,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0039-portable-session-root.md',
-      'scripts/lib/session-root.mjs',
-      'data/results/live-linux-2026-11-15T10-00-00.000Z.json',
-    ],
+    evidence: ['docs/patches/P-0039-portable-session-root.md', 'scripts/lib/session-root.mjs', 'data/results/live-linux-2026-11-15T10-00-00.000Z.json'],
     guards: ['tests/unit/session-root.test.ts'],
     limits: [
       'not "runs on macOS": the POSIX branch it takes is the Linux one measured here',
       'an empty HOME still cannot be resolved; the fallback is a literal ~/.dsh/sessions, not a lookup',
       'the plugin never read USERPROFILE; only these offline recorders did',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0040',
@@ -1027,18 +784,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0040-acceptance-fixture-count.md',
-      'scripts/lib/acceptance.mjs',
-      'data/results/install-acceptance-2026-11-15T12-20-00.000Z.json',
-    ],
+    evidence: ['docs/patches/P-0040-acceptance-fixture-count.md', 'scripts/lib/acceptance.mjs', 'data/results/install-acceptance-2026-11-15T12-20-00.000Z.json'],
     guards: ['tests/unit/acceptance.test.ts'],
     limits: [
       'the criterion is the count plus every PASS line, not fixture contents: verify still owns what each case must decide',
       'it cannot name the drifted fixture; sync_fixtures --check does',
       'an npm exec that exits 0 with no output is still a failure',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0041',
@@ -1050,17 +802,12 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'cli',
     status: 'verified',
     severity: 'critical',
-    evidence: [
-      'docs/patches/P-0041-cli-bin-symlink.md',
-      'packages/plugin/src/cli.ts',
-      'data/results/live-linux-2026-11-15T10-00-00.000Z.json',
-    ],
+    evidence: ['docs/patches/P-0041-cli-bin-symlink.md', 'packages/plugin/src/cli.ts', 'data/results/live-linux-2026-11-15T10-00-00.000Z.json'],
     guards: ['tests/unit/cli-entry.test.ts', 'tests/e2e/cli.test.ts'],
     limits: [
       '0.4.11 carries the old guard: the fix ships in 0.4.12, and 0.4.11 stays installable but silent through its bin',
       'the fix makes the command run; it adds no output of its own',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0042',
@@ -1072,11 +819,7 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'cli',
     status: 'tested',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0042-profile-effort-conflict.md',
-      'packages/plugin/src/explain-command.ts',
-      'data/results/prestep-enter-2026-11-15T17-55-00.000Z.json',
-    ],
+    evidence: ['docs/patches/P-0042-profile-effort-conflict.md', 'packages/plugin/src/explain-command.ts', 'data/results/prestep-enter-2026-11-15T17-55-00.000Z.json'],
     guards: ['tests/unit/refused-effort.test.ts'],
     limits: [
       'it names the conflict and exits 1; only changing the profile stops the next dead turn, and it never clamps',
@@ -1093,11 +836,7 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0043-shipped-sample-guard-shape.md',
-      'data/fixtures/toolcall-fusion/bare-code-value.json',
-      'data/results/live-linux-2026-11-15T15-00-00.000Z.json',
-    ],
+    evidence: ['docs/patches/P-0043-shipped-sample-guard-shape.md', 'data/fixtures/toolcall-fusion/bare-code-value.json', 'data/results/live-linux-2026-11-15T15-00-00.000Z.json'],
     guards: ['tests/governance/shipped-samples.test.ts'],
     limits: [
       'the 0.4.13 tarball still carries the name: a published version is fixed forward, not rewritten',
@@ -1114,18 +853,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'cli',
     status: 'tested',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0044-turn-answered.md',
-      'packages/core/src/answer.ts',
-      'data/results/scan-r55-2026-11-16T10-20-00.000Z.json',
-    ],
+    evidence: ['docs/patches/P-0044-turn-answered.md', 'packages/core/src/answer.ts', 'data/results/scan-r55-2026-11-16T10-20-00.000Z.json'],
     guards: ['tests/unit/turn-answer.test.ts', 'tests/e2e/cli.test.ts'],
     limits: [
       'it does not repair, retry or re-end a truncation; the host decides when to stop',
       'it counts `max_tokens` only: a `completed` turn with only reasoning is upstream #13169 and needs its own evidence',
       'a partial text counts as answered, because the user saw words; whether they were useful is not provable here',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0045',
@@ -1137,18 +871,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'agent/error',
     status: 'verified',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0045-preparation-refusal-seam.md',
-      'packages/plugin/src/failure-listener.ts',
-      'data/results/live-request-error-2026-11-16T15-10-00.000Z.json',
-    ],
+    evidence: ['docs/patches/P-0045-preparation-refusal-seam.md', 'packages/plugin/src/failure-listener.ts', 'data/results/live-request-error-2026-11-16T15-10-00.000Z.json'],
     guards: ['tests/unit/agent-error-naming.test.ts', 'tests/unit/request-error.test.ts'],
     limits: [
       '`agent/error` has no decision: it names a failure and cannot retry or change the turn',
       'one `(turn, step, code)` set is shared with `agent/request-error`, so a failure both seams see is named once',
       'one route measured; another adapter may throw the refusal after opening a stream',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0046',
@@ -1160,10 +889,7 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
-    evidence: [
-      'docs/patches/P-0046-public-page-completeness.md',
-      'tests/governance/public-pages-complete.test.ts',
-    ],
+    evidence: ['docs/patches/P-0046-public-page-completeness.md'],
     guards: ['tests/governance/public-pages-complete.test.ts'],
     limits: [
       'it reads ids, not sentences: a patch named in a wrong row still satisfies the rule (presence, not placement)',
@@ -1171,7 +897,6 @@ export const PATCHES: readonly PatchRecord[] = [
       'the status sentence is parsed with two fixed shapes, so a rewrite must keep one of them',
       'it cannot see the two npm package pages: they carry no enumeration, so the rule is vacuous there',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0047',
@@ -1183,19 +908,13 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'cli',
     status: 'tested',
     severity: 'major',
-    evidence: [
-      'docs/patches/P-0047-completed-without-answer.md',
-      'packages/plugin/src/session-scan.ts',
-      'tests/unit/completed-answer.test.ts',
-      'tests/e2e/cli.test.ts',
-    ],
+    evidence: ['docs/patches/P-0047-completed-without-answer.md', 'packages/plugin/src/session-scan.ts'],
     guards: ['tests/unit/completed-answer.test.ts', 'tests/e2e/cli.test.ts'],
     limits: [
       'it counts `completed` only: an error already names its code and an abort was the operator decision',
       'a reasoning block a client renders to the user still counts as no answer: the rule is what the transcript gives a reader',
       'the adapter guard that lets the shape through is upstream; this patch names the consequence, it does not repair it',
     ],
-    failureClasses: [],
   },
   {
     id: 'P-0048',
@@ -1208,14 +927,66 @@ export const PATCHES: readonly PatchRecord[] = [
     status: 'tested',
     severity: 'minor',
     evidence: ['docs/patches/P-0048-macos-ci-criterion.md', '.github/workflows/ci.yml'],
-    guards: ['docs/patches/P-0048-macos-ci-criterion.md'],
+    guards: ['docs/patches/P-0048-macos-ci-criterion.md', '.github/workflows/ci.yml'],
     limits: [
       'CI is not a host: no `data/results/live-*`, so no patch may claim `verified` on it',
       'it proves the suite and gates pass on darwin, not that the desktop app mounts there',
       'weaker than the hand-run Linux evidence, which also measures the byte account and the installed bin',
       'the first push that carries it is the measurement',
     ],
-    failureClasses: [],
+  },
+  {
+    id: 'P-0049',
+    title: 'The pack counted a project it no longer described',
+    symptom:
+      'the pack said 41 patches against 48, named P-0013 on the seam P-0045 moved it off, listed 8 CLI and 21 build-side ids against 10 and 24, and CHANGELOG stopped at 0.4.15 while 0.4.16 shipped',
+    rootCause:
+      'gate_copy compares outward files with the pack and facts-truth read four claims: nothing compared the pack with the registry',
+    surface: 'scripts',
+    status: 'tested',
+    severity: 'minor',
+    evidence: ['docs/patches/P-0049-fact-pack-census.md', 'tests/governance/fact-pack-census.test.ts'],
+    guards: ['tests/governance/fact-pack-census.test.ts', 'tests/governance/facts-truth.test.ts'],
+    limits: [
+      'presence and counts, not placement: the prose beside an id is not read',
+      'the census is parsed from the bullet shape used today, so a rewrite turns the rule red rather than wrong',
+      'changelog headers are read, not contents; the published version stays the pack own claim',
+    ],
+  },
+  {
+    id: 'P-0050',
+    title: 'A resumed session can lose a tool it already called, and nothing counted it',
+    symptom:
+      'upstream #12348: a resume stops declaring a tool this session used and the host answers UNKNOWN_TOOL; nothing read a request/header here',
+    rootCause:
+      'scan read attempts, turns and codes, never request/header, so no rule compared a header with what the session had already called',
+    surface: 'cli',
+    status: 'tested',
+    severity: 'major',
+    evidence: ['docs/patches/P-0050-capability-drift.md', 'data/results/capability-drift-2026-11-17T04-40-00.000Z.json'],
+    guards: ['tests/unit/capability-drift.test.ts', 'tests/unit/session-scan.test.ts'],
+    limits: [
+      'it proves the request set lost a tool the session used, not what the model remembers',
+      'a drop nobody called, and a call made only after the drop, are both refused',
+      'it counts resume and change alike, cannot see a provider that sends no header, and names no verdict',
+    ],
+  },
+  {
+    id: 'P-0051',
+    title: 'explain had no word for the tool a resume dropped',
+    symptom:
+      'P-0050 counted lost tools in scan; explain printed turn endings only, so the shape #12348 reports stayed invisible where a decision is made',
+    rootCause: 'explain kept turns, codes and refused efforts from the scan report and dropped dropped_tools',
+    surface: 'cli',
+    status: 'tested',
+    severity: 'minor',
+    evidence: ['docs/patches/P-0051-explain-drift.md', 'data/results/explain-drift-2026-11-17T10-05-00.000Z.json'],
+    guards: ['tests/e2e/explain-drift.test.ts'],
+    limits: [
+      'a finding, not a coverage row: coverage needs a resident seam',
+      'it names the request set moving, never what the model remembers; restoring it is out of scope',
+      'a session with no request/header is unmeasured, not clean',
+    ],
   },
 ]
 

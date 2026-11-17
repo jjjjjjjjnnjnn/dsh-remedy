@@ -3,18 +3,18 @@
 > **下一会话从 `dsh-remedy/` 开始。** 读本文件 → `PROJECT_RULES.md` → `AGENTS.md` 即可开工。
 > 本目录是**公开仓库根**；`dsh-triage/` 在父目录，是另一个项目，不属于本仓库。
 
-## 三十秒状态（2026-11-16 · R55 发布 + 交接）
+## 三十秒状态（2026-11-17 · R62 交接）
 
 | 项 | 值 |
 |---|---|
-| 版本 | `0.4.16` **已发布**，两包 `latest = 0.4.16`。**R57 的工作树在它之上有两个未发布补丁**：P-0047（`completed` 却没有回答的 turn——本机探针 `data/results/live-completed-2026-11-16T18-30-00.000Z.json` 复现）与 P-0048（macOS CI 判据）。发布仍需要一次 npm OTP。0.4.15 带 P-0044，0.4.14 带 P-0043。 |
-| 补丁 | 四十八，按 registry 顺序：P-0001 `verified` 拆开已证实的粘连调用；P-0002 `verified` 救援必须可证、可归因、原子；P-0003 `verified` 拒绝必须可观测，撤回不许读成修复；P-0005 `tested` 裸值成员值要么 reseal、要么拒绝；P-0011 `verified` 第二接缝按上游契约重写 + 有界重试（**R56 真机见证**）；P-0012 `tested` 一个加载路径一个字节上限；P-0013 `verified` 确定性的拒绝只命名一次（**R56 改挂 `agent/error` 并见证**）；P-0004 `tested` scan 读得懂 zstd 目录，脱敏看见每种路径形状；P-0006 `tested` scan 统计每一种 turn 结束方式；P-0007 `tested` copy 通道按长度选传输；P-0008 `tested` 字节预算变成脚本检查的门；P-0010 `tested` 用法文本必须与二进制一致；P-0009 `tested` 窗口化扫描按 createdAt 计头记录；P-0014 `tested` 事实包 / 交接 / 包内页面三处自述必须成立；P-0015 `tested` agent/pre-step 拒绝语义的实测；P-0016 `tested` 覆盖表只能住在 registry；P-0017 `tested` 两个包内页面钉住「无散文数字 + 命令真能跑」；P-0018 `tested` Windows 退出码按异常命名；P-0019 `tested` 首屏按补丁集重写；P-0020 `tested` 市场索引说清字节从哪里来；P-0021 `tested` 删掉指向不存在模块的导出；P-0022 `tested` 漂移测试先只读检查再比较；P-0023 `tested` 每个补丁必须有 docs/patches 文档；P-0024 `tested` 两个包内页面进 copy 通道；P-0025 `tested` 没读到的 profile 不算发现；P-0026 `tested` 发布流程只留一个家；P-0027 `tested` 证不出名字的片段用 remedy_unattributed 发出；P-0028 `tested` 随包样本里的本机路径换成 <home>；P-0029 `tested` 继任者的版本指针与字节账接上判据；P-0030 `tested` 归因证明搬进 core；P-0031 `tested` 引擎有了自己的字节上限；P-0032 `tested` 台账不再重复补丁文档的长叙述；P-0033 `verified` 空身份的调用不再被持久化；P-0034 `tested` 没有拒绝记账解释的失败不再记成安静的一轮；P-0035 `tested` patch 层每一行都要能在 manifest 里解析；P-0036 `tested` 纯 delta 的调用保留流里证过的 id；P-0037 `verified` 少一个闭合符时只在唯一内部插入点补回；P-0038 `tested` 脱敏认三个平台的家目录与会话键；P-0039 `tested` 会话目录在三个平台上只有一个定义；P-0040 `tested` 装机验收的夹具数从 data/fixtures 数出来；P-0041 `verified` 安装后的 bin 在 POSIX 上真的运行；P-0042 `tested` profile 仍写着的档位与宿主实测拒绝的档位第一次被摆在一起；P-0043 `tested` 为夹具写的那条守卫看不见夹具的 JSON 转义形状；P-0044 `tested` 截断的 turn 现在也说它到底有没有回答；P-0045 `verified` 准备阶段的拒绝只抵达 `agent/error`，此前挂错接缝因此静默；P-0046 `tested` 首页必须点名它数到的每个补丁、并列出已发布版本的尺寸；P-0047 `tested` `scan` 也数「结束却没回答」的 `completed` turn（探针复现）；P-0048 `tested` macOS 从一句话变成一个 CI 判据。逐条的症状 / 机制 / 反证 / 边界在 `docs/patches/`；状态以 `dsh-remedy status` 为准。 |
-| 基线 | **382 tests / 6 gates / `--mutate` 6-6**，Windows 与 **Linux（WSL2 Ubuntu 26.04）同值**（`data/results/live-linux-2026-11-16T19-10-00.000Z.json`）；`cli verify` 两边 `OK 8 fixture(s)`；字节账两边同值（82 698 / 103 868 / 66 425）。 |
-| 包体 | **已发布 0.4.16 = 38 654 B 压缩 / 38 文件 / 125 107 B 解包**（sha1 `623c4cc7…`），core **0.4.16 = 40 979 B / 27 / 133 933**（sha1 `43bde005…`）。**R57 的工作树（未发布）**：emit 总量 **82 698 / 83 000**（常驻 40 902 / 44 000，CLI 41 796 / 42 000），core 的 dist 是 **103 868 / 104 000**（registry.js 66 425 / 68 000）；两条新记录之后引擎只剩 132 B，CLI 半边回来 204 B。上一个发布 **0.4.15 = 38 600 / 38 / 124 248**（sha1 `cd717926…`），core **40 675 / 27 / 134 256**（sha1 `c6577a61…`）。 |
-| 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases … `v0.4.13` / `v0.4.14` / `v0.4.15` / **`v0.4.16`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release）。`v0.4.16` 的正文从 `gh release view --json body` 读回、与 `docs/copy/release-notes/v0.4.16.md` **逐字节相同**（3 838 B）；`v0.4.15` 那份已冻成 `release-notes-0415-frozen`。`main` 已推到 R57 的 release 提交（每次都用 `commit-tree` 从容器 `main:dsh-remedy` 切出，tree 逐次比对相等）；tag `v0.4.16` 打在 0.4.16 的提交上。**R57 的两次推送都绿**：`43921103727`（R57 本体）与 `43921575147`（记录 Linux/macOS 的文档提交），**四个 job 全 success**——多出的那个是 `verify (macos, node 24)`，P-0048 的判据第一次真实运行就绿。**本段文字所在的提交比它再晚，所以「当前 HEAD」永远等于「本段所在的提交」**。**0.4.13 已 `npm deprecate`**（两包：随包夹具里有维护者本机账号名，0.4.14 起已修，用 0.4.16 或更新）；`npm view` 读回两包都带这句话。 |
-| 装机验收 | **0.4.16 已从 registry 单装到空目录验过 `OK 8 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-16T17-05-00.000Z.json`（`ok: true`、三条命令 0/0/0、`canonical_fixtures: 8`）。**两个 profile 已换到 0.4.16**（`pnpm why` 与 `verify` 两边读 0.4.16，备份 `.before-0416`）；桌面 App 已重启并跑了一个真实 turn（`live-2026-11-16T17-20-00.000Z.json`）。Linux 侧的 0.4.15 与 R56 树都量过（`live-linux-2026-11-16T16-40-00.000Z.json`）。 |
-| 下一件事 | 用户批准的三条里两条已落盘（P-0047 读者线与 P-0048 macOS 判据），第三条（79 个候选）已判读。**R57 未发布**：0.4.17 需要一次 npm OTP（发布顺序照旧：`publish_packages` → `record_publish` → 冷装验收 → 两个 profile → 桌面 turn → Linux 重跑 → 公开仓 push/tag/release → market-index）。**发布之前必须先付字节**：core 只剩 **132 B**（两条新记录之后），下一条记录之前先压一条老记录。之后：**(a)** macOS job 的第一次真实运行是本轮的判据，要看 `gh run list`；**(b)** #12741 / #12348 / #10115 三条已判读但未复现，属下一轮的候选。 |
-| 交接边界 | R57 没有半成品：工作树干净、`pnpm run verify` = **382 tests / 0 fail / 6 gates ALL GREEN**、`--mutate` **6-6**、`cli verify` `OK 8 fixture(s)`。新证据 6 份（探针 ×1、扫面 ×1、快照 ×1、门禁 ×2、Linux ×1），都带 `.sha256`。**0.4.17 未发布**是本轮的交接边界，不是半成品：两条记录已进 registry 与账本，`facts` 与首页都写着「未发布」。Linux 侧本轮已重跑（382 / 6 / 6-6、8 fixtures、字节账同值、P-0047 在 POSIX 上打 1）；macOS 仍无真机，但 CI 上有了一个 job。 |
+| 版本 | `0.4.17` **已发布**，两包 `latest = 0.4.17`；这一版把 P-0047（`completed` 却没有回答的 turn）、P-0048（macOS CI 判据）、P-0049（事实包按注册表重数）、P-0050（`resume` 丢掉会话用过的工具——本机 5 个会话、9 对，宿主答了 5 次 `UNKNOWN_TOOL`）与 P-0051（`explain` 把同一条计数指名并退出 1）一起发了出去。0.4.16 带 P-0045 / P-0046，0.4.15 带 P-0044，0.4.14 带 P-0043。 |
+| 补丁 | 五十一个，按 registry 顺序：P-0001 `verified` 拆开已证实的粘连调用；P-0002 `verified` 救援必须可证、可归因、原子；P-0003 `verified` 拒绝必须可观测，撤回不许读成修复；P-0005 `tested` 裸值成员值要么 reseal、要么拒绝；P-0011 `verified` 第二接缝按上游契约重写 + 有界重试（**R56 真机见证**）；P-0012 `tested` 一个加载路径一个字节上限；P-0013 `verified` 确定性的拒绝只命名一次（**R56 改挂 `agent/error` 并见证**）；P-0004 `tested` scan 读得懂 zstd 目录，脱敏看见每种路径形状；P-0006 `tested` scan 统计每一种 turn 结束方式；P-0007 `tested` copy 通道按长度选传输；P-0008 `tested` 字节预算变成脚本检查的门；P-0010 `tested` 用法文本必须与二进制一致；P-0009 `tested` 窗口化扫描按 createdAt 计头记录；P-0014 `tested` 事实包 / 交接 / 包内页面三处自述必须成立；P-0015 `tested` agent/pre-step 拒绝语义的实测；P-0016 `tested` 覆盖表只能住在 registry；P-0017 `tested` 两个包内页面钉住「无散文数字 + 命令真能跑」；P-0018 `tested` Windows 退出码按异常命名；P-0019 `tested` 首屏按补丁集重写；P-0020 `tested` 市场索引说清字节从哪里来；P-0021 `tested` 删掉指向不存在模块的导出；P-0022 `tested` 漂移测试先只读检查再比较；P-0023 `tested` 每个补丁必须有 docs/patches 文档；P-0024 `tested` 两个包内页面进 copy 通道；P-0025 `tested` 没读到的 profile 不算发现；P-0026 `tested` 发布流程只留一个家；P-0027 `tested` 证不出名字的片段用 remedy_unattributed 发出；P-0028 `tested` 随包样本里的本机路径换成 <home>；P-0029 `tested` 继任者的版本指针与字节账接上判据；P-0030 `tested` 归因证明搬进 core；P-0031 `tested` 引擎有了自己的字节上限；P-0032 `tested` 台账不再重复补丁文档的长叙述；P-0033 `verified` 空身份的调用不再被持久化；P-0034 `tested` 没有拒绝记账解释的失败不再记成安静的一轮；P-0035 `tested` patch 层每一行都要能在 manifest 里解析；P-0036 `tested` 纯 delta 的调用保留流里证过的 id；P-0037 `verified` 少一个闭合符时只在唯一内部插入点补回；P-0038 `tested` 脱敏认三个平台的家目录与会话键；P-0039 `tested` 会话目录在三个平台上只有一个定义；P-0040 `tested` 装机验收的夹具数从 data/fixtures 数出来；P-0041 `verified` 安装后的 bin 在 POSIX 上真的运行；P-0042 `tested` profile 仍写着的档位与宿主实测拒绝的档位第一次被摆在一起；P-0043 `tested` 为夹具写的那条守卫看不见夹具的 JSON 转义形状；P-0044 `tested` 截断的 turn 现在也说它到底有没有回答；P-0045 `verified` 准备阶段的拒绝只抵达 `agent/error`，此前挂错接缝因此静默；P-0046 `tested` 首页必须点名它数到的每个补丁、并列出已发布版本的尺寸；P-0047 `tested` `scan` 也数「结束却没回答」的 `completed` turn（探针复现）；P-0048 `tested` macOS 从一句话变成一个 CI 判据；P-0049 `tested` 事实包按注册表重数它自己描述的补丁；P-0050 `tested` `scan` 数「resume 丢掉了这个会话已经调过的工具」，规则住 `core/capability.ts`（宿主在这台机器上真的答了 `UNKNOWN_TOOL`）；P-0051 `tested` `explain` 把同一条计数指名成 finding（不需要 profile，退出 1），证据是扫描器与它自己同数。逐条的症状 / 机制 / 反证 / 边界在 `docs/patches/`；状态以 `dsh-remedy status` 为准。 |
+| 基线 | **405 tests / 6 gates / `--mutate` 6-6**，Windows 与 Linux（WSL2 Ubuntu，node 24.10.0）同值（Linux 产物 `live-linux-2026-11-17T08-40-00.000Z.json`），`cli verify` `OK 8 fixture(s)`；字节账 plugin **82 462 / 83 000**（常驻 40 902 / 44 000、CLI 41 560 / 42 000）、core **103 663 / 104 000**、`registry.js` **64 911 / 68 000**——两台机器同数。 |
+| 包体 | **已发布 0.4.17 = 38 348 B 压缩 / 38 文件 / 125 076 B 解包**（sha1 `5a8c1f95…`），core **0.4.17 = 41 316 B / 29 / 133 257**（sha1 `e5b2e00f…`）；两包的 `dist.shasum` 与下载下来的 tarball 逐字节相同。**R61 的工作树（未发布）**：emit 总量 **82 462 / 83 000**（常驻 40 902 / 44 000，CLI 41 560 / 42 000），core 的 dist 是 **103 663 / 104 000**（registry.js 64 911 / 68 000）；付款之后引擎剩 337 B、registry 剩 3 089 B、CLI 半边 440 B。上一个发布 **0.4.15 = 38 600 / 38 / 124 248**（sha1 `cd717926…`），core **40 675 / 27 / 134 256**（sha1 `c6577a61…`）。 |
+| 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases … `v0.4.13` / `v0.4.14` / `v0.4.15` / `v0.4.16` / **`v0.4.17`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release）。`v0.4.17` 的正文从 `gh release view --json body` 读回、与 `docs/copy/release-notes/v0.4.17.md` 逐字节相同；`v0.4.16` 那份已冻成 `release-notes-0416-frozen`。`main` 每次都用 `commit-tree` 从容器 `main:dsh-remedy` 切出、tree 逐次比对相等；tag `v0.4.17` 打在发布提交上。**本段文字所在的提交比它再晚，所以「当前 HEAD」永远等于「本段所在的提交」**。**0.4.13 已 `npm deprecate`**（两包：随包夹具里有维护者本机账号名，0.4.14 起已修，用 0.4.16 或更新）；`npm view` 读回两包都带这句话。 |
+| 装机验收 | **0.4.17 已从 registry 单装到空目录验过 `OK 8 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-17T07-40-00.000Z.json`（`ok: true`、三条命令 0/0/0、`canonical_fixtures: 8`）；上一版是 `install-acceptance-2026-11-16T17-05-00.000Z.json`。**两个 profile 已换到 0.4.16**（`pnpm why` 与 `verify` 两边读 0.4.16，备份 `.before-0416`）；桌面 App 已重启并跑了一个真实 turn（`live-2026-11-16T17-20-00.000Z.json`）。Linux 侧的 0.4.15 与 R56 树都量过（`live-linux-2026-11-16T16-40-00.000Z.json`）。 |
+| 下一件事 | **0.4.17 已发布**、两个 profile 与桌面 App 都已换装、市场索引已补（两包 `exact_ok` + `latest_ok`，冷装验收 `ok`，桌面真实 turn 答复 `R62-DESKTOP-OK`）。只剩公开面的 push / tag `v0.4.17` / release；之后是 **`BS-20`**（十一份补丁文档的 Reproduction 指向 `.tmp/`）。**字节已付清**：core 剩 **337 B**、registry 剩 **3 089 B**、CLI 半边 **440 B**、总量剩 538 B。产品线剩下的：**(a)** #12741 本机 130 个 `completed` turn 里 0 个是那个形状，要数它必须先复现它；**(b)** #12348 的两半都已落地（P-0050 数、P-0051 指名），没有第三半；**(c)** #10115 本机没有形状。下一条更值得做的是 **`BS-20`**：十一份补丁文档的 Reproduction 指向 `.tmp/`，那是 R60 放大出来的缺口，零运行时字节。 |
+| 交接边界 | R62 没有半成品：`pnpm run verify` = **405 tests / 0 fail / 6 gates ALL GREEN**（Windows 与 Linux 同值）、`--mutate` **6-6**、`cli verify` `OK 8 fixture(s)`。这一轮把 0.4.17 发了出去并留下 6 份新证据：`publish-2026-11-17T07-30-00.000Z.json`、`install-acceptance-2026-11-17T07-40-00.000Z.json`、`live-desktop-2026-11-17T08-55-00.000Z.json`（真实 turn，答复 `R62-DESKTOP-OK`）、`live-linux-2026-11-17T08-40-00.000Z.json`（405 tests / 6 gates / 6-6）、`patch-registry-2026-11-17T11-00-00.000Z.json` 与门禁对（14:20 / 14:25），都带 `.sha256`。两个 profile 与桌面 App 都在 0.4.17 上（`pnpm why` 与 `verify` 两边读 0.4.17，备份 `.before-0417`）。**剩下一件是公开面**：push / tag `v0.4.17` / release / market-index——那一步不需要任何测量，只需要一次推送与一次 `gh release create`。 |
 
 ## 五分钟检查
 
@@ -25,7 +25,7 @@ pnpm install
 pnpm run verify                  # build → typecheck → test → gate
 node scripts/gate.mjs --mutate   # 6 门都必须红
 node packages/plugin/dist/cli.js verify   # OK 8 fixture(s)
-npm view dsh-remedy version      # 0.4.16
+npm view dsh-remedy version      # 0.4.17
 ```
 
 `git` 要注意：本目录不是 git 根。
@@ -56,6 +56,354 @@ git -C .. log --oneline -3
 
 - 容器 `main` **没有**推到 `dsh-triage` 远端（推上去会破坏那个仓库的根布局）。不要顺手推。
 - `dsh-triage/` 只是同级项目，规则以它自己的 `AGENTS.md` 为准。
+
+## 当前批次（R62，2026-11-17）
+
+**R62 · 把五条记录发成 0.4.17，然后在两个平台、两个 profile 与桌面 App 上各量一遍。**
+
+> 触发：用户在同一会话里批准了「两段：P-0051 + 四处陈旧文字，再发 0.4.17」的第二段，
+> 并再次要求「注意质量、稳定性和真实测试」。发布不需要 OTP（见「明确边界」第一条）。
+
+**A. 起点（先证明是绿的）**
+
+- `pnpm run verify` → **405 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` **6-6**；`cli verify` `OK 8 fixture(s)`；
+  工作树干净（`50a7a3d`）。字节账 plugin **82 462 / 83 000**、core **103 663 / 104 000**、registry **64 911 / 68 000**。
+
+**B. 发布（两包，core 先、plugin 后）**
+
+- 三份 manifest 一起 bump 到 **0.4.17**（root 仍 `private: true`）；`publish_packages.mjs` 先 `--dry-run`
+  打到两个 tarball（plugin 38.3 kB / 38 文件，core 41 kB / 29 文件），再真发。
+- registry 的副本延迟约三分钟：`npm view dsh-remedy@0.4.17 version` 先回 **404**，三分钟后两包都答 200。
+  这是记录过的副本延迟（`BS-10`），不是失败，也没有重发。
+- `record_publish` → `data/results/publish-2026-11-17T07-30-00.000Z.json`（`ok: true`，两包 `exact_ok` + `latest_ok`）。
+- 空目录单装验收入 `install-acceptance-2026-11-17T07-40-00.000Z.json`（`ok: true`、三条命令 0/0/0、
+  `OK 8 fixture(s)`、`canonical_fixtures: 8`）。
+- 包体是**下载 registry 的 tarball 再解开量的**，不是本地 pack：plugin **38 348 B / 38 / 125 076**（sha1 `5a8c1f95…`）、
+  core **41 316 B / 29 / 133 257**（sha1 `e5b2e00f…`）；两包的 `dist.shasum` 与下载字节相同。
+
+**C. 两个 profile 与桌面 App**
+
+- `desktop` 与 `remedy-live` 的 pin 换成 0.4.17（备份 `.before-0417`），两边 `pnpm why` 读 0.4.17、两边
+  `node_modules/dsh-remedy/dist/cli.js verify` 打 `OK 8 fixture(s)`。
+- **一处当场红的真错**：第一次用 PowerShell 的 `Set-Content` 改 profile `package.json`，写入了 **UTF-8 BOM**，
+  于是 App 启动时报 `Error invoking remote method 'dsh-desktop:boot': Unexpected token '﻿`, 页面停在
+  「Loading plugins」。备份的字节第一个是 `123`（`{`），改后是 `239,187,191`——从备份恢复后改用
+  `writeFileSync(path, text, 'utf8')` 并断言首字节是 `0x7b` 再写。这条已写进「已知坑」。
+- 桌面 App 用 `--remote-debugging-port=9222` 重启，CDP 驱动一轮真实 turn（contenteditable → `Ctrl+A` →
+  `Input.insertText` → Enter），答复 **`R62-DESKTOP-OK`**，`turn\u002fend` `completed`；
+  journal 记 `streams: 1`、verdict `quiet` → `live-desktop-2026-11-17T08-55-00.000Z.json`
+  （tarball sha256 是 registry 那份 0.4.17 包的，runtime 版本读自 `runtime.json` = **0.2.2-rc.3**）。
+
+**D. Linux 半边（同一棵树，同一组数）**
+
+- 整棵树复制进 Linux 文件系统（不经 `/mnt/c`），去掉 `node_modules` / `.tmp` / `dist`，用
+  `/home/rongj/toolchain` 的 node 24.10.0 + pnpm 12.15.0 跑：**405 tests / 6 gates / 6-6**、
+  `OK 8 fixture(s)`，字节账 **40 902 / 41 560 / 82 462**、core **103 663**、registry **64 911**——与 Windows 同值。
+- 前两次是红的，红得有道理：树里还有 `## [Unreleased]` 与 `0.4.16` 的版本行（发布之前复制的），
+  以及 manifest 缺 `release-notes` 活条目。修完之后第三次全绿；产物
+  `live-linux-2026-11-17T08-40-00.000Z.json` 由新 `scripts/record_linux_r62.mjs` 读日志产出，
+  冷装与 `npx` 记 null + 原因，`explain --sessions` 在这台 Linux 上退出 3（没有 `~/.dsh/sessions`）也如实记下。
+
+**E. 对外文字与市场索引**
+
+- 事实包翻成已发布口径：0.4.17 = 51 补丁（9 / 42）、0.4.16 是上一版（46 补丁）、0.4.17 的 tarball 尺寸、
+  405 tests、字节账；13 个 live copy 条目 + 4 个模板一次重登记。
+- 0.4.17 的 release notes 冻结成 `release-notes-0417-frozen`（`copy_record --freeze`，字节与登记一致才允许），
+  活条目 `release-notes` 让给 0.4.18 的草稿页（这是每次发布的老形状：`release-notes-0416-frozen` 旁边一个活页）。
+- `docs/market-index.json` 补 0.4.17（`publishTimestamp` = `npm view time` 的 `2026-11-17T09:02:30.908Z`），
+  head 句改成「51 补丁、树与 tarball 同版」。
+
+**F. 实测**
+
+- Windows：**405 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` **6-6**；`cli verify` `OK 8 fixture(s)`。
+- 快照 `patch-registry-2026-11-17T11-00-00.000Z.json`（51 补丁）与门禁对 `gates-2026-11-17T17-30-00.000Z.json` /
+  `gates-mutate-2026-11-17T17-35-00.000Z.json`；本轮新证据 4 份（publish / 装机 / 桌面 / Linux），
+  另有中间两对门禁已删（同一棵逻辑树在补录 INDEX 前后的两次测量）。
+- 两个 profile 与桌面 App 都在 0.4.17 上；`npm view` 两包 `latest = 0.4.17`。
+
+**G. 本轮未做**
+
+- **公开面还没推**：push / tag `v0.4.17` / `gh release create` 是下一步，正文取自
+  `docs/copy/release-notes/v0.4.17.md`，tag 打在发布提交上。
+- **`BS-20` 仍未关闭**：十一份补丁文档的 Reproduction 指向 `.tmp/`，零运行时字节，留到下一轮。
+
+## 当前批次（R61，2026-11-17）
+
+**R61 · 产品线收官：`scan` 数出来的那个形状，`explain` 现在会指名它（P-0051）。**
+
+> 触发：用户要求「交接过来项目，查看目前进度和目标，进行下一步计划」，并在计划里选了
+> 「两段：P-0051 + 四处陈旧文字，再发 0.4.17」；随后要求「全部同意，开始进行，注意质量、稳定性和真实测试」。
+> 本轮做的是第一段；发布留到下一轮，交接边界写明。
+
+**A. 起点（先证明是绿的）**
+
+- `pnpm run verify` → **399 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` **6-6**；`cli verify` `OK 8 fixture(s)`；
+  工作树干净（`f064ef9`）。字节账 plugin **82 225 / 83 000**、core **103 587 / 104 000**、registry **64 835 / 68 000**。
+
+**B. P-0051：一个计数器只有一条命令会读**
+
+- P-0050 把「resume 之后这个会话已经用过的工具不再被声明」这条规则放进 `core/capability.ts`，由 `scan` 报
+  `dropped_tools`；本机 5 个会话、9 对，丢掉之后的 6 次调用里 5 次被宿主答 `UNKNOWN_TOOL`。
+- 而人真正会跑的是 `explain`：它从同一批 `scanSessions` 里留下 turns / error codes / refused efforts，
+  **把 `dropped_tools` 丢在地上**。R60 树上 `explain --sessions ~/.dsh/sessions` 打六行 turn 结束方式、没有一行
+  关于工具，退出 0 —— 上游 #12348 的形状恰好落在「做决定的地方」看不见。
+- 先红：`tests/e2e/explain-drift.test.ts` 六条，两条正例在**已构建的 R60 字节**上红（`DROPPED` 匹配失败、
+  退出 0），四条负对照当时绿（没人调过的掉落、丢掉之后才调、没有 `--sessions`、会话保住了工具）。
+- 修法：`explain` 留下 `report.dropped_tools`（没有 `--sessions` 时是 `null`，不是 `0`），为正时打**一条**
+  `DROPPED` 行（P-0042 的 `CONFLICT` 形状），并把退出码算成 finding。
+  **它不需要 `--profile-file`**：丢掉的工具属于会话，不属于 profile。
+- **不进覆盖表**：`tests/governance/coverage-vocabulary.test.ts` 要求覆盖者是常驻接缝，而 P-0050 的 surface 是
+  `cli`。所以这是一条 finding，不是 coverage row；`failureClasses`、`switchKey`、verdict 一律没动。
+
+**C. 取证（两条命令必须同数才允许写盘）**
+
+- 新 `scripts/record_explain_drift.mjs`：在同一目录上跑 `scan --json` 与 `explain --sessions`，
+  要求 `explain` 退出 1、恰好一条 `DROPPED`、行上的数等于 `scan` 的 `dropped_tools`、且大于 0，否则 `exit 4`。
+- 产物 `data/results/explain-drift-2026-11-17T10-05-00.000Z.json`（`dropped_tools: 9`、114 文件、`agree: true`、
+  `redaction` 记 `windows-home` 一次；路径被脱敏成 `<home>`）。第一版产物因为把本机账号名写进 `method.root`
+  被 `shipped-samples` 当场抓住并重录——这条正好是那个守卫存在的理由。
+
+**D. 字节付款（cap 一个没动）**
+
+- CLI 半边 41 323 → **41 560 / 42 000（440 B 余额）**；总量 82 462 / 83 000（538 B）。
+  先写完再压：净增 237 字节，付款是 `explain-command.ts` 里长文已在补丁文档的注释（P-0032 的先例）。
+- 引擎：新记录之前先把 `failureClasses: []` 从 30 条「本来就不声明覆盖」的记录里删掉（720 源码字节，
+  `files: []`/空字段的语义不变，`coverage-vocabulary` 仍然绿），所以**写进第 51 条记录之后引擎反而更窄**：
+  core 103 587 → **103 663 / 104 000（337 B）**、registry 64 835 → **64 911 / 68 000（3 089 B）**。
+- `explain-command.js` 收在 9 999 B，低于 10 000 的 `UNCHECKED_LIMIT`，不需要单独立 cap。
+
+**E. 交接审计又读出四处过期活文字（都不是错数字，是「该改的句子没改」）**
+
+| 位置 | 写的是 | 实际是 |
+|---|---|---|
+| `docs/research/README.md` §4 / §6 | R57 的字节账（136 B / 82 698 / 103 868 / 66 425）与「下一个是 P-0049」 | 本树 534 / 82 462 / 103 663 / 64 911，下一个是 P-0052；这份文件没有任何门禁在读 |
+| `docs/copy/facts/` | 0.4.15 那一句 publish/install 在同一 bullet 里写了两遍 | 一遍 |
+| `docs/copy/release-notes/v0.4.17.md` | Linux 写着 388，却引用 R57 的 `live-linux-*`（382）并称「两平台同数」 | 只写「上一次全量是 R58 的 388，本轮未重跑」 |
+| `CHANGELOG.md` | `## [0.4.17] - 2026-11-16`，给一个 npm 不服务的版本盖了日期 | `## [Unreleased]`，发布轮再改成真版本与真日期 |
+
+**F. 对外文字一次重登记**
+
+- 事实包改了五处（0.4.15 重复句、R61 字节账、405 测试、51 补丁普查、CLI 半边十二条），
+  于是 13 个 live copy 条目 + 4 个模板一次重登记（frozen 的 19 份 release notes 不动）。
+  两个首页都点名 P-0051（P-0046 的规则），CHANGELOG 与 release notes 各有它的一节。
+
+**G. 实测**
+
+- Windows：**405 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` **6-6**；`cli verify` `OK 8 fixture(s)`。
+- `node packages/plugin/dist/cli.js explain --sessions ~/.dsh/sessions`：一条 `DROPPED`（9 tools）、退出 **1**；
+  `scan` 打 `dropped_tools=9`。两数一致就是那份产物的门槛。
+- 快照 `patch-registry-2026-11-17T11-00-00.000Z.json`（五十一补丁：**9 `verified` + 42 `tested`**，sha256 `ae166bd6…`）；
+  门禁 `gates-2026-11-17T14-20-00.000Z.json` / `gates-mutate-2026-11-17T14-25-00.000Z.json`；五轴 review `S66`；
+  披露行 `opencode-2026-11-17-dsh-remedy-r61`。**中间七对门禁已删**（11:20/11:25 到 14:00/14:05）——R60 的教训是
+  「每改一次文案就记一对」是噪声，交付树只留一对；这一轮每改一次都重新量，最后只保留交付树那一对。
+
+**H. 本轮未做 / 踩到的坑**
+
+- **未发布 0.4.17**：这是交接边界，五条记录都在树上。发布顺序与判据在 `docs/PUBLISH.md`，不需要 OTP。
+- **Linux 未重跑**：本轮没有常驻接缝的运行时字节改动（`explain` 是 CLI 半边），不借 R58 的 POSIX 产物。
+- **P-0051 是 `tested`**：它读报告、改一个退出码，没有常驻接缝能见证；能见证的是两条命令同数与那条 finding 行。
+- **两处当场红的真错**：第一版 `record_explain_drift.mjs` 把 `scan` 的退出码当成失败——`scan` 在量到
+  fusion failures 时本来就退出 1（本机 47 次），于是脚本以 `exit 4` 拒绝落盘直到它改成「0 或 1 都接受、并记录」
+  （这正是脚本存在的意义：先红，再判断是不是形状不对）。第二处是首次付款之后 CLI 半边落到
+  **42 285 / 42 000**，`gate_size` 当场红，说明「新字段要几百字节、只剩 677」不是估算能过关的事；
+  付款是分四轮压注释做到的，每一轮都重新量。
+
+## 当前批次（R60，2026-11-17）
+
+**R60 · 交接轮：把「发布要不要问人拿 OTP」写进仓库，并把仓库与 `.tmp/` 分开。**
+
+> 触发：用户要求「进行项目交接，整理项目文件和项目文件夹，即将切换会话」，并明确
+> 「对于电脑上已经配置 2FA 的 token 的事情，记录在仓库，下次就不用再问了」。
+
+**A. 起点**
+
+- `pnpm run verify` → **399 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` **6-6**；`cli verify` `OK 8 fixture(s)`；
+  工作树干净（`5b14122`）。字节账 plugin **82 225 / 83 000**、core **103 587 / 104 000**、registry **64 835 / 68 000**。
+
+**B. 凭据事实进了仓库（不写秘密）**
+
+- 实测：`npm whoami` 回 `jjjjjjjjnnjnn`，写操作不需要一次性密码——凭证是本机**用户级** `~/.npmrc` 里的
+  `//registry.npmjs.org/:_authToken`，在仓库之外。
+- 写进仓库的是**这条事实与它所在的位置**，不是 token 本身：`docs/PUBLISH.md` 的
+  「Publishing a release」一节与本文「明确边界」各写一遍（英文一份、中文一份），并写清
+  「401 的修法是 `npm login`，不是 OTP；只有 npm 真的回 `EOTP`（吊销或轮换的形状）才要新码」。
+- 判据没松：`tests/governance/release-procedure.test.ts` 仍然拒绝 R29 已经否证的那条断言与被退役的发布命令，
+  三处（PUBLISH / handoff / 边界）都过。**扫描过一遍：仓库里没有任何文件含 token 字符串。**
+  （写这一段时那条规则先红了一次：它钉的是形状，原文引用也会被它抓住——所以这里只点名 R29，不复述那句话。）
+
+**C. 交接审计又改出两处活文字（都不在门禁的视野里）**
+
+| 位置 | 写的是 | 实际是 |
+|---|---|---|
+| 本文「明确边界」 | 两个 profile 装的 **0.4.15**、桌面 App 加载 0.4.15 | 两个 profile 与 App 都在 **0.4.16**（`live-2026-11-16T17-20-00.000Z.json`） |
+| 本文「明确边界」 | 平台边界 **368 tests**、CI 只有两个 job | 本树 Windows **399**、Linux 最后一次 **388**（R58 产物）；CI 有第三个 job |
+| 本文「第一件事」 | 0.4.16「四十六补丁…四个未发布」 | 本树**五十补丁**（9 verified + 41 tested），四条记录未发布 |
+
+判据仍是同一句：`handoff-truth` 只解析证据索引与三行活指针，**边界段的旧数字没有读者**。
+这一轮把它们改成这棵树的值，并且每一句都指向一份可打开的产物。
+
+**D. 仓库与 scratch 分开**
+
+- `.tmp/` 13 MB / 3 310 文件：按一条规则清——**只有被受版本管理的文档点名的文件留下**
+  （补丁文档按路径引用的探针脚本、本轮自己的记账脚本），其余是一轮的临时产物（隔离 `DSH_HOME`、
+  pack tarball、redraft 副本、verify 沙盒、几百 KB 日志与备份）。
+- `data/results/` 一个字节没动：证据在那里，带 `.sha256`。
+- 清理把一条**本来就存在**的缺口放大到可见：11 份补丁文档的 Reproduction 步骤给的是
+  `.tmp/<probe>.mjs`，那是 gitignored 且逐轮清空的路径。它被记成 **`BS-20`**（open），
+  没有改写那 11 份文档——修它要么把探针进 `scripts/`（字节进包），要么让每份 Reproduction 点名一条
+  已发布的命令，两者都是一个决定，不是一次打扫。
+
+**E. INDEX 补齐**
+
+- `scripts/` 有 35 个文件，INDEX 只点名 25 个：补上 `record_completed_answer` / `record_request_error_seam` /
+  `record_empty_call_probe` / `record_adaptation` / `record_prestep_ui` / 四个 `record_linux_r*.`
+  / `copy_with_agy`（标注为已退役），现在 **35 / 35**（两个方向都量过：没有漏网的脚本，也没有指向不存在文件的指针）。
+
+**F. 实测**
+
+- Windows：**399 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` **6-6**；`cli verify` `OK 8 fixture(s)`。
+- 门禁 `gates-2026-11-17T07-40-00.000Z.json` / `gates-mutate-2026-11-17T07-45-00.000Z.json`（见证据索引）。
+
+**G. 本轮未做 / 踩到的坑**
+
+- **未发布 0.4.17**：交接轮不动 npm。
+- **Linux 未重跑**：本轮没有运行时字节。
+- **同一个四字节错误发生了第二次**：`writeFileSync('docs/HANDOFF.md', 'utf8')` 把整份交接写成
+  `utf8` 四个字节——R58 已经把这条写进「已知坑」，本轮又犯一次，靠 `handoff-truth` 的
+  「必须保留证据索引」当场抓住，并从 `git show HEAD:` 用 `execFileSync`（PowerShell 的 `>` 会写 UTF-16）恢复后重放本轮的每一处编辑。
+  这条现在写进「已知坑」的正文里，并带一个负对照式提示：**写盘函数永远是 `(path, text, 'utf8')`**。
+
+## 当前批次（R59，2026-11-17）
+
+**R59 · 产品线：上游 #12348 的那一半，本机真的发生过（P-0050）。**
+
+> 触发：用户批准「全部同意」继续产品线。R57 留下的三个候选里，#12741 本机复现不出来（130 个
+> `completed` turn 里没有一个最后一步只有 tool call），#12348 却能用一台机器的日志直接量：
+> resume 之后请求集丢了会话已经用过的工具。
+
+**A. 起点**
+
+- `pnpm run verify` → **388 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` **6-6**；工作树干净（`099d2e3`）。
+- 字节账：plugin **82 698 / 83 000**（CLI 半边 **204 B**）、core **101 309 / 104 000**、registry **63 866 / 68 000**。
+
+**B. 先把规则量出来，再写规则**
+
+`scan` 从来没读过 `request/header`。读了一遍本机 114 个会话文件：
+
+| 量到的 | 值 |
+|---|---|
+| `request/header` | **293**（109 `initial` / 50 `resume` / 43 `change` / 91 `series`） |
+| `tool/call` / `tool/result` | 25 062 / 25 091 |
+| 被某个 header 丢掉声明的工具 | 129 |
+| 其中**这个会话已经调过**的 | **9**，在 **5** 个会话里（7 个在 `resume`、2 个在 `change`） |
+| 丢掉之后又被调用 | 6 次，落 2 个会话 |
+| 宿主对这些调用的回答 | **5/6 带 `error.code: UNKNOWN_TOOL`** |
+
+两个反向形状同样重要，都被规则拒绝：**129 个掉落里 120 个是没人调过的工具**；**丢掉之后才发生的调用不算证据**
+（模型看到的请求集已经不包含它）。`series` 在这台机器上 0 增 0 减，未知 reason 一律不算——猜一个原因就是造一个发现。
+
+**C. P-0050（零运行时字节）**
+
+- 一条规则住 `packages/core/src/capability.ts`（`lostTools` 与 `capabilityDrift`，同一份状态的两种入口），
+  `scan` 报 `dropped_tools`（人读行 / `--json` / `--out` / `rows`），判定、退出码、修复路径一律不动。
+- 先红：`tests/unit/capability-drift.test.ts` 九条（掉没人调过的、丢掉之后才调的、series 不增减、change 与
+  resume 同等、同一工具只记一次、未知 reason 不算），加 `session-scan` 两条端到端；
+  取证脚本 `scripts/record_capability_drift.mjs` 先核对「扫描器与记录器的数一致」才落盘，否则 `exit 4`。
+- 产物 `data/results/capability-drift-2026-11-17T04-40-00.000Z.json`（含宿主自己的回答原文与 code）。
+
+**D. 字节付款（cap 一个没动）**
+
+- CLI 半边原来只剩 **204 B**：压掉 `session-scan.ts` 里 22 处注释（长文都在补丁文档里），取到 **677 B**。
+- 引擎多了一个 2 107 B 的模块与第 50 条记录：压 `capability.ts` / `answer.ts` 的注释与两条记录的叙述，
+  core 收在 **103 587 / 104 000（413 B）**、registry **64 835 / 68 000（3 165 B）**。
+- 中途两处真错：一次 `tsc` 把 `HeaderTools` 类型注解带进了 `.mjs` 记录器（当场红），一次重建 CHANGELOG 把
+  0.4.17/0.4.16 写成两份（`facts-truth` 与小节计数当场红）。两者都记在这里，因为「先红」不是事后声称。
+
+**E. 实测**
+
+- Windows：**399 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` **6-6**；`cli verify` `OK 8 fixture(s)`。
+- `node packages/plugin/dist/cli.js scan ~/.dsh/sessions`：`dropped_tools=9`（人读行上看得见）。
+- 快照 `patch-registry-2026-11-17T05-00-00.000Z.json`（五十补丁：**9 `verified` + 41 `tested`**）；门禁与负对照见证据索引。
+
+**F. 本轮未做**
+
+- **未发布 0.4.17**：本轮按用户决定继续不动 npm。
+- **Linux 未重跑**：本轮没有运行时字节，不借 R58 的 POSIX 产物。
+- **P-0050 是 `tested`**：它读日志，没有常驻接缝能见证；宿主那句 `UNKNOWN_TOOL` 是量出来的，不是推断的。
+
+## 当前批次（R58，2026-11-16）
+
+**R58 · 接手审计：事实包数的是一个它已经不再描述的项目，CHANGELOG 少了一个发布。**
+
+> 触发：用户要求「交接过来项目，查看目前项目进度和目标，进行下一步计划」，读完后选了 C（不发版、先开产品线），
+> 并说明机器上的 npm token 已能绕过 2FA。C 的字面意思是不动 npm，而审计在这一步读出了两件比产品线更便宜的事：
+> 一个已经发出去的版本的 CHANGELOG 缺口，以及事实包里五句过期的普查。
+
+**A. 起点（先证明是绿的）**
+
+- `pnpm run verify` → **382 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` **6-6**；工作树干净（`5eec56e`）。
+- 字节账：plugin **82 698 / 83 000**（常驻 40 902 / 44 000、CLI 41 796 / 42 000）、core **103 868 / 104 000**、
+  `registry.js` **66 425 / 68 000**；registry 里有 **48** 个补丁（9 `verified` + 39 `tested`），账本 48 行、五轴 review 62 步。
+
+**B. 审计读出来的两处缺行（都不是错数字）**
+
+| 位置 | 写的是 | 实际是 |
+|---|---|---|
+| 事实包 L53 | `41 patches are registered` | **48** |
+| 事实包 L55 | P-0013 住在 `agent/request-error` | P-0045 已把它挂到 **`agent/error`**（0.4.16 就发了）；该接缝 1 条、`agent/error` 2 条 |
+| 事实包 L56 | `Eight patches live in the CLI half` | **10**，缺 P-0042、P-0047 |
+| 事实包 L57 | `Twenty-one patches are build-side` | **24**，缺 P-0043、P-0046、P-0048 |
+| 事实包 L59 | `The other 37 are tested` | **39** |
+| `CHANGELOG.md` | 最新一节 `[0.4.15]` | npm 服务的是 **0.4.16**；0.4.17 也没有节 |
+
+两处的共同点就是 P-0046 记过的那句话：**`gate_copy` 管数字、字节与出处，对「该有的行在不在」没有意见**。
+P-0046 只把这条规则装到两个首页上；事实包（每个对外数字都拿它当来源）和 CHANGELOG 没有。
+`facts-truth` 只解析四类陈述，而它的 changelog 规则只解析**上一版**——上一版是 0.4.15，恰好有，于是绿着。
+
+**C. P-0049（build-side，零运行时字节）**
+
+- 三条规则住 `tests/governance/fact-pack-census.test.ts`：每个 registry id 必须出现在事实包；每个接缝条目
+  必须带着它那个接缝的**确切队伍**与一个与队伍相符的计数（所以「名字放错了接缝」会红，不只是「名字出现过」）；
+  事实包里被称作已发布的版本必须在 CHANGELOG 里有小节。
+- 两条规则住 `tests/governance/facts-truth.test.ts`：已发布版本必须有节；最新一节不许比它更旧
+  （未发布小节在上方是合法的，本树就在 0.4.16 之上多一个 0.4.17）。
+- **先红**：五条计数错误、P-0013 放错接缝、缺 0.4.16 节，全部在 `git show HEAD:` 的字节上被
+  `.tmp/r58-red-proof.mjs` 打出来；每条规则各带自己的负对照（掉一个 id、计数与队伍不符、changelog 少一节）。
+
+**D. 字节付款（先付再写，cap 一个没动）**
+
+- 两条前例复用：R56 的「同一测试同时出现在 evidence 与 guards 时，evidence 那条删掉」（16 条记录，783 B），
+  以及把短的 evidence / guards 数组并到一行（-1 288 B，路径一个没少）。
+- 结果：`registry.js` **66 425 → 63 866**、core **103 868 → 101 309**——**写进第 49 条记录之后引擎反而更宽**；
+  plugin 半边 **一个字节没花**（82 698 不变，CLI 41 796 不变）。
+- 逐条核对：`.tmp/r58-diff-registry.mjs` 打印 24 处字段变化、没有删除任何记录；
+  `.tmp/r58-token-check.mjs` 确认被删/被压掉的每个 token 仍在自己那份 `docs/patches/*.md` 里。
+- 中途真出一处错：并行脚本把每个元素末尾的逗号也留下，写出 `'a',, 'b',]`，`tsc` 当场红（`TS2322`）；
+  修复脚本只动这两个畸形序列，构建恢复。记在这里是因为「先红」的这一条差点被当成排版问题。
+
+**E. 产品线的第一个测量（#12741）：本机是 0**
+
+- `.tmp/r58-shape-census.mjs`（只读，走随包 zstd 读取器）走 114 个会话文件、**332 turn**：
+  `completed` **130**，其中最后一步只带 tool call 的 **0**、带文本 130、只有 reasoning **0**。
+- 所以 #12741 在本机没有形状可数——要数它必须先复现它（和 R57 对 #13169 的做法一样）。
+  这一条写进「下一件事」，不写进补丁：没有复现就没有记录，这是本项目的硬规则。
+
+**F. 实测**
+
+- Windows：**388 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` **6-6**；`cli verify` `OK 8 fixture(s)`。
+- **Linux（WSL2 Ubuntu 26.04, node 24.10.0）**：同一棵树复制进 Linux 文件系统，**388 / 6 / 6-6**、`OK 8 fixture(s)`、
+  字节账 **82 698 / 101 309 / 63 866** 与 Windows 同值、P-0049 的 13 条规则在 POSIX 上全过
+  → `data/results/live-linux-2026-11-16T23-10-00.000Z.json`（冷装与 `npx` 记 null + 原因）。
+  **它证明的是规则可移植，不是页面在 darwin 上正确**；本轮没有常驻接缝跑过。
+- 快照 `patch-registry-2026-11-16T21-30-00.000Z.json`（四十九补丁：**9 `verified` + 40 `tested`**，sha256 `ff853516…`）；
+  门禁 `gates-2026-11-17T03-40-00.000Z.json` / `gates-mutate-2026-11-17T03-45-00.000Z.json`；五轴 review `S63`；
+  披露行 `opencode-2026-11-16-dsh-remedy-r58`。
+
+**G. 本轮未做**
+
+- **未发布 0.4.17**：用户选的是 C。发布顺序与判据都在 `docs/PUBLISH.md`，token 已在本机。
+- **#12741 / #12348 / #10115 都未变成补丁**：第一个本机 0 例（114 文件 / 332 turn 里没有一个「最后一步只有 tool call」的 `completed` turn），后两个仍只是判读。
+- **两个中间教训记在「已知坑」里**：`writeFileSync(path, 'utf8')` 会把整份文件写成四字节（本轮真的发生过，被新加的 changelog 判据当场抓住）；事实包一动所有 live 条目一起失效，必须一次全登记。
 
 ## 当前批次（R57，2026-11-16）
 
@@ -200,8 +548,8 @@ git -C .. log --oneline -3
 
 - Windows：**376 tests / 0 fail / 6 gates ALL GREEN**；`--mutate` **6-6**；`cli verify` `OK 8 fixture(s)`。
 - 快照 `patch-registry-2026-11-16T15-40-00.000Z.json`（四十六补丁：**9 `verified` + 37 `tested``，sha256 `1e503ca1…`）；
-| `gates-2026-11-16T20-00-00.000Z.json` | 绿 | **当前**门禁（6 gates ALL GREEN，R57 树）；负对照见下一行 |
-| `gates-mutate-2026-11-16T20-05-00.000Z.json` | 绿 | **当前**负对照（6/6 CAUGHT，同一次 R57 树） |
+| （已删） | — | 本轮为每一次文案改动都记了一对门禁，那是噪声不是证据：中间那 11 对已删，只留 R57 的一对与交付树的一对（快照同理） |
+| `gates-2026-11-16T20-00-00.000Z.json` / `gates-mutate-2026-11-16T20-05-00.000Z.json` | 绿 | 历史门禁对儿（R57 树；被 22:00 那对取代） |
 | `gates-2026-11-16T17-30-00.000Z.json` / `gates-mutate-2026-11-16T17-35-00.000Z.json` | 绿 | 历史门禁对儿（0.4.16 发布后；被 18:35 那对取代） |
   披露行 `opencode-2026-11-16-dsh-remedy-r56`。
 - 字节账（cap 一个没动）：plugin **82 864 / 83 000（136 B；CLI 半边只剩 38 B）**、core **103 544 / 104 000（456 B）**、registry **64 993 / 68 000（3 007 B）**。
@@ -1004,7 +1352,7 @@ core 是 registry 的（没有 P-0037）。用 `createRequire(...).resolve()` �
 **D. 发布 0.4.9（2026-11-14）**
 
 - 两包 `latest = 0.4.9`；plugin **39 335 B / 36 文件 / 125 349 B 解包**（sha1 `24eaaaf5…`），
-  core **40 534 B / 23 文件 / 130 634 B 解包**（sha1 `f2b5593d…`）。从 registry 拉回的 tarball
+  core **40 538 B / 23 文件 / 130 634 B 解包**（sha1 `f2b5593d…`）。从 registry 拉回的 tarball
   与本地 packed 字节的 sha1 一致。
 - `record_publish --stamp 19:00` → `ok: true`（两包 `exact_ok` + `latest_ok`）；
   空目录装机验收 `install-acceptance-2026-11-14T19-05-00.000Z.json` → `ok: true`、`OK 6 fixture(s)`。
@@ -2849,11 +3197,14 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 
 ## 下一位 agent 的第一件事
 
-**A. 现在是哪一版。** **0.4.14 已发布**（两包 `latest`，四十三补丁：**6 `verified` + 37 `tested`**；
-在 DSH 0.2.2-rc.3 上实测，Windows 与 Linux WSL2 同值 **362 tests / 6 gates / 6-6**）。
-公开仓 `main` 推到 `c84107a`（release 提交），`v0.4.14` 的 tag 与 release 都发了、正文与
-`docs/copy/release-notes/v0.4.14.md` 逐字节相同；CI 在 `main` 与 `v0.4.14` 上都 success。
-两个 profile 还是 **0.4.13**，换装是下一件事的第一条；App 加载过的是 0.4.13，0.4.14 要等下一次重启。
+**A. 现在是哪一版。** **0.4.16 已发布**（两包 `latest`，四十六补丁：**9 `verified` + 37 `tested`**，在 DSH 0.2.2-rc.3 上实测）；
+本树在它之上多了五条记录。
+公开仓 `main` 推到 R57 的 release 提交，`v0.4.16` 的 tag 与 release 都发了、正文与
+`docs/copy/release-notes/v0.4.16.md` 逐字节相同，四个 CI job（含 `verify (macos, node 24)`）全 success。
+两个 profile 与桌面 App 都已在 **0.4.16** 上（`live-2026-11-16T17-20-00.000Z.json`）。
+**本树有五十一个补丁**（**9 `verified` + 42 `tested`**），其中 **P-0047 / P-0048 / P-0049 / P-0050 / P-0051 未发布**；
+本树实测 **405 tests / 6 gates / 6-6**（Windows）。0.4.17 等一次发布动作，而**发布不需要问人拿 OTP**
+（见下文「明确边界」第一条）。
 
 **B. 主线（R43+）：外部反馈 → 稳定补丁。** R43 结掉 L-0001 / L-0002；R45 把 #11337 做成 **P-0034**，
 把 #6035 / #9066 / #11190 判 `rejected`；R46 把 #12318 做成 **P-0035**；R47 读完同接缝的五个竞品，
@@ -2862,18 +3213,23 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 理由是本机 adapter 源码里那句失败消息不带参数原文。**39 条线索的结论全部在 `docs/research/leads.md`
 的 decision 列，A 表已空。**
 
-**C. 接手第一件事：不要再去追线索表里的旧条目，先做一次巡检。**
-`node scripts/collect_leads.mjs` 会产出 `data/results/intake-<stamp>.json`（只说哪些来源答了、哪些没答、
-有几个候选还没进账本）。R53 读过 2026-11-15 的最新一批讨论：大多是 out-of-seam（桌面、sandbox、前端），
-唯一一条看得上的是 #11620（`dsh-llm-pi-ai` 的 stream-idle watchdog 忽略 SSE `: ping`），
-但那是 **adapter 的接缝**——`llm/stream` 看不到注释帧，追它之前先把这一条写清楚。
+**C. 接手第一件事：先跑绿，再读「下一件事」。**
+```powershell
+pnpm install ; pnpm run verify ; node scripts/gate.mjs --mutate ; node packages/plugin/dist/cli.js verify
+```
+四条都绿（405 / 6 / 6-6 / `OK 8 fixture(s)`）就说明起点是好的。然后按下面的顺序挑一件事，
+**不要**再去追 `docs/research/leads.md` 里已经判过的旧条目：A 表已空，剩下的候选是 R57 逐桶判读过的那批，
+只有当本机能复现时才可能变成补丁（R57 量过 #13169、R59 量过 #12348）。
+再次巡检用 `node scripts/collect_leads.mjs`（产出 `data/results/intake-<stamp>.json`，只说哪些来源答了、
+哪些没答、有几个候选还没进账本）。
 
-**D. 下一件事的三个方向（按顺序挑一个）。**
-1. **重启桌面 App 加载 0.4.13**（只有人能点），跑一轮真实 turn，用 `record_live_mount` 记成
-   `live-desktop-*`。这一条是唯一「没做就永远缺」的证据。
-2. **`remedy-live` 仍写着 `xhigh`**：`explain --sessions <dir> --profile-file <layer>` 现在会打一行
-   `CONFLICT` 并退出 1。改不改 profile 是用户的决定，不是本项目的；本项目只负责指名。
-3. **`registry.js` 只剩 150 B**：下一条记录之前先压一条老记录（P-0032 先例），**不许抬 cap**。
+**D. 下一件事（只剩公开面与两项完整性工作）。**
+1. **公开面**：`commit-tree` 切出 → push `main` → tag `v0.4.17` → `gh release create`（正文取自
+   `docs/copy/release-notes/v0.4.17.md`，读回逐字节比对）。顺序在 `docs/PUBLISH.md` 与「仓库坐标」。
+2. **`BS-20`**（zero runtime bytes）：十一份补丁文档的 Reproduction 指向 `.tmp/`，读者复现不了。
+   修法二选一——把探针进 `scripts/`，或让每份 Reproduction 点名一条已发布的命令；两条都是决定，不是打扫。
+3. **`#12741` 仍未复现**：本机 130 个 `completed` turn 里 0 个是那个形状，要数它必须先有探针与
+   另一条规则（本项目把 tool-call 当作「看得见的工作」）。没有复现就没有补丁。
 
 
 **治理判据（R22 起，别再退化）：**
@@ -2976,10 +3332,97 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | `live-completed-2026-11-16T18-30-00.000Z.json` | 绿 | **完成却没有回答的 turn（R57 探针）**：本地端点两次 `reasoning_content` + `stop` → `turn/end` `completed`、最后一块是 `reasoning`；`text` 对照同样 `completed`、最后一块是 `text`；扫描器数 1 不数 0 |
 | `scan-r57-2026-11-16T18-30-00.000Z.json` | 绿 | 上面两个会话的 `scan --out` 产物（`completed=2 completed_without_answer=1`，`rows` 各自带数） |
 | `live-request-error-2026-11-16T15-10-00.000Z.json` | 绿 | **第二接缝的第一份真机产物（R56）**：无插件对照 1 次主步骤请求 + exit 1；`retryOnMalformed: 1` 时 3 次请求、1 个 `retry`、turn `completed` + exit 0；同一份里 `xhigh` 的已发布字节 journal 为空、本树恰好 1 条 `diagnosis` |
+| `publish-2026-11-17T07-30-00.000Z.json` | 绿 | **0.4.17 发布**：两包 `exact_ok` + `latest_ok`（`ok: true`；两包的 `dist.shasum` 与下载下来的 tarball 相同）（sha256 `16d38965…`） |
+| `install-acceptance-2026-11-17T07-40-00.000Z.json` | 绿 | **0.4.17 装机验收**：空目录从 registry 单装，三条命令 0/0/0，`OK 8 fixture(s)`（`canonical_fixtures: 8`）（sha256 `125711cd…`） |
+| `live-desktop-2026-11-17T08-55-00.000Z.json` | 绿 | **桌面真机：0.4.17 被 App 加载并跑了一个真实 turn**（答复 `R62-DESKTOP-OK`，`turn/end` `completed`，journal `streams: 1`、verdict `quiet`；tarball sha256 指 registry 的 0.4.17 包，runtime 版本读自 `runtime.json` = 0.2.2-rc.3）（sha256 `a09e9cf1…`） |
+| `live-linux-2026-11-17T08-40-00.000Z.json` | 绿 | **Linux 真机（WSL2 Ubuntu, node 24.10.0）· 0.4.17 树**：405 tests / 6 gates / 6-6、`OK 8 fixture(s)`，字节账与 Windows 同值（40 902 / 41 560 / 82 462、core 103 663、registry 64 911）；P-0051 的六条在 POSIX 上全过（sha256 `09b767c1…`） |
+| `explain-drift-2026-11-17T10-05-00.000Z.json` | 绿 | **P-0051 本机证据**：`scan --json` 与 `explain --sessions` 在同一个目录上同数（`dropped_tools` 9、114 个文件），`explain` 退出 1 并打出唯一一条 `DROPPED` 行，不需要 `--profile-file`；写盘前两条命令必须同数（sha256 `cd44c0ae…`） |
+| `capability-drift-2026-11-17T04-40-00.000Z.json` | 绿 | **P-0050 本机证据**：114 个会话文件、293 个 `request/header`（109 initial / 50 resume / 43 change / 91 series）、129 个被丢声明的工具里 9 个是本会话调过的（5 个会话）、丢掉之后 6 次调用里有 5 次带 `error.code: UNKNOWN_TOOL`；扫描器与记录器同数（sha256 `c1d69765…`） |
+| `live-linux-2026-11-16T23-10-00.000Z.json` | 绿 | **Linux 真机（WSL2 Ubuntu 26.04, node 24.10.0）· R58 树**：388 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 同值（82 698 / 101 309 / 63 866）；P-0049 的 13 条规则在 POSIX 上全过（sha256 `26c04398…`；冷装与 `npx` 记 null + 原因） |
 | `live-linux-2026-11-16T19-10-00.000Z.json` | 绿 | **Linux 真机（WSL2 Ubuntu 26.04）· R57 树**：382 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 同值（82 698 / 103 868 / 66 425）；P-0047 在 POSIX 上打出 `completed_without_answer=1` |
 | `live-linux-2026-11-16T16-40-00.000Z.json` | 绿 | **Linux 真机（WSL2 Ubuntu 26.04）· R56 树**：376 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 同值（82 864 / 103 544 / 64 993）；冷装与 `npx` 本轮没重测，产物里写 null + 原因 |
 | `live-linux-2026-11-16T12-45-00.000Z.json` | 绿 | **Linux 真机（WSL2 Ubuntu 26.04）· 0.4.15**：368 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账 82 857 / 103 867 / 65 316 与 Windows 同值；P-0044 在 POSIX 上打到 `truncated_without_answer=1`；冷装与 `npx` 本轮没重测（null + 原因） |
-| `patch-registry-2026-11-16T18-10-00.000Z.json` | 绿 | **当前**快照（R57 之后的四十八补丁：**9 `verified` + 39 `tested`**，sha256 `459b025b…`；P-0047 与 P-0048 从这一刻起在账本里） |
+| `gates-2026-11-17T17-30-00.000Z.json` | 绿 | **当前**门禁（6 gates ALL GREEN，交付的 R62 树；sha256 `ea4a8b5f…`）；负对照见下一行 |
+| `gates-2026-11-17T14-20-00.000Z.json` / `gates-mutate-2026-11-17T14-25-00.000Z.json` | （已删） | 历史门禁对儿（R61 交付树；被 16:20 / 16:25 那对取代） |
+| `gates-mutate-2026-11-17T17-35-00.000Z.json` | 绿 | **当前**负对照（6/6 CAUGHT，同一次交付树；sha256 `07f3ff51…`） |
+| `gates-2026-11-17T17-10-00.000Z.json` / `gates-mutate-2026-11-17T17-15-00.000Z.json` | （已删） | 中间门禁对儿（同一棵逻辑树的更早一次测量；被 17:30 / 17:35 取代） |
+| `gates-2026-11-17T16-20-00.000Z.json` / `gates-mutate-2026-11-17T16-25-00.000Z.json` / `gates-2026-11-17T16-50-00.000Z.json` / `gates-mutate-2026-11-17T16-55-00.000Z.json` | （已删） | 中间门禁对儿（同一棵逻辑树更早的两次测量；被 17:10 / 17:15 取代） |
+| `gates-2026-11-17T16-20-00.000Z.json` / `gates-mutate-2026-11-17T16-25-00.000Z.json` | （已删） | 中间门禁对儿（INDEX 补录之前的同一棵树；被 16:50 / 16:55 取代） |
+| `gates-2026-11-16T09-50-00.000Z.json` / `gates-mutate-2026-11-16T09-55-00.000Z.json` | （已删） | 历史门禁证据：registry 付款之后、P-0044 之前（362 tests / 6 gates）；已被 11:10 / 11:15 取代 |
+| `gates-2026-11-17T13-00-00.000Z.json` / `gates-mutate-2026-11-17T13-05-00.000Z.json` / `gates-2026-11-17T13-20-00.000Z.json` / `gates-mutate-2026-11-17T13-25-00.000Z.json` / `gates-2026-11-17T13-40-00.000Z.json` / `gates-mutate-2026-11-17T13-45-00.000Z.json` / `gates-2026-11-17T14-00-00.000Z.json` / `gates-mutate-2026-11-17T14-05-00.000Z.json` | （已删） | 中间门禁对儿（同一棵逻辑树的更早四次测量；被 14:20 / 14:25 取代） |
+| `gates-2026-11-17T11-40-00.000Z.json` / `gates-2026-11-17T11-45-00.000Z.json` / `gates-2026-11-17T12-10-00.000Z.json` / `gates-mutate-2026-11-17T12-15-00.000Z.json` / `gates-2026-11-17T12-40-00.000Z.json` / `gates-mutate-2026-11-17T12-45-00.000Z.json` | （已删） | 中间门禁对儿（同一棵逻辑树的更早三次测量；被 13:00 / 13:05 取代） |
+| `patch-registry-2026-11-16T12-50-00.000Z.json` | （已删） | 历史快照（R55 树上的四十四补丁；已被 13:40 取代） |
+| `patch-registry-2026-11-11T10-30-00.000Z.json` | （已删） | 历史快照（六个补丁；sha256 `c484300c…`） |
+| `patch-registry-2026-11-11T11-20-00.000Z.json` | （已删） | 历史快照（七个补丁：P-0001/2/3 `verified`，P-0004/5/6/7 `tested`；sha256 `b272ddfe…`） |
+| `gates-2026-11-11T13-15-00.000Z.json` / `gates-mutate-2026-11-11T13-10-00.000Z.json` | （已删） | 0.3.4 发布后的门禁证据（`ALL GREEN · 5 gates` 与 `5/5 CAUGHT`，189 tests） |
+| `gates-2026-11-11T14-35-00.000Z.json` / `gates-mutate-2026-11-11T14-30-00.000Z.json` | （已删） | 0.3.5 台账落地时的一次门禁证据，已被 15:45 的重跑取代 |
+| `gates-2026-11-16T20-00-00.000Z.json` / `gates-mutate-2026-11-16T20-05-00.000Z.json` | 绿 | 历史门禁对儿（R57 树；被 22:00 那对取代） |
+| `gates-2026-11-16T17-30-00.000Z.json` / `gates-mutate-2026-11-16T17-35-00.000Z.json` | 绿 | 历史门禁对儿（0.4.16 发布后；被 18:35 那对取代） |
+| `gates-2026-11-16T17-30-00.000Z.json` / `gates-mutate-2026-11-16T17-35-00.000Z.json` | 绿 | 历史门禁对儿（0.4.16 发布后的最终树；被 18:35 那对取代） |
+| `gates-2026-11-16T17-15-00.000Z.json` / `gates-mutate-2026-11-16T17-20-00.000Z.json` | 绿 | 历史门禁对儿（发布后、市场索引之前；被 17:30 那对取代） |
+| `gates-2026-11-16T16-10-00.000Z.json` / `gates-mutate-2026-11-16T16-15-00.000Z.json` | 绿 | 历史门禁对儿（发布前的同一棵逻辑树；被 17:15 那对取代） |
+| `gates-2026-11-16T07-30-00.000Z.json` / `gates-mutate-2026-11-16T07-32-00.000Z.json` | 绿 | 历史门禁证据：0.4.14 发布后、R54 交接终态（362 tests / 6 gates ALL GREEN 与 6-6 CAUGHT；sha256 `b9ac39a8…` / `685615bf…`） |
+| `gates-2026-11-17T09-20-00.000Z.json` / `gates-mutate-2026-11-17T09-25-00.000Z.json` | 绿 | 历史门禁对儿（R60 交付树；被 11:40 / 11:45 那对取代） |
+| `gates-2026-11-10T22-25-00.000Z.json` / `gates-mutate-2026-11-10T22-20-00.000Z.json` | 绿 | P-0004 批次的门禁证据（`ALL GREEN · 5 gates` 与 `5/5 CAUGHT`） |
+| `gates-2026-11-11T09-45-00.000Z.json` / `gates-mutate-2026-11-11T09-40-00.000Z.json` | 绿 | 0.3.3 发布后的门禁证据（事实包改成"已发布"口径、8 个对外文件重生成之后） |
+| `gates-2026-11-11T10-40-00.000Z.json` / `gates-mutate-2026-11-11T10-45-00.000Z.json` | 绿 | 历史门禁证据（P-0006 批次，175 tests） |
+| `gates-2026-11-11T11-30-00.000Z.json` / `gates-mutate-2026-11-11T11-25-00.000Z.json` | 绿 | P-0007 台账批次的门禁证据（对外文件重生成之前） |
+| `gates-2026-11-11T15-45-00.000Z.json` / `gates-mutate-2026-11-11T15-40-00.000Z.json` | 绿 | 0.3.5 发布后的门禁证据（`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，189 tests） |
+| `gates-2026-11-11T17-25-00.000Z.json` / `gates-mutate-2026-11-11T17-20-00.000Z.json` | 绿 | 历史门禁证据：P-0009 台账落地、双包 bump 0.3.6（16:40 那条红产物已删） |
+| `gates-2026-11-11T18-40-00.000Z.json` / `gates-mutate-2026-11-11T18-45-00.000Z.json` | 绿 | R17 中间一轮：census 重测 + 11 个对外文件首次重生成之后的门禁证据（192 tests） |
+| `gates-2026-11-11T20-10-00.000Z.json` / `gates-mutate-2026-11-11T20-15-00.000Z.json` | 绿 | R17 第二轮的门禁证据：事实包把测试数改成 193、全部对外文件再重生成一遍之后（192→193 tests） |
+| `gates-2026-11-12T14-15-00.000Z.json` / `gates-mutate-2026-11-12T14-20-00.000Z.json` | 绿 | 0.3.7 批次的**最终**门禁证据（P-0010 落地、双包 bump 0.3.7、11 个对外文件按「0.3.7 未发布」口径重生成之后，`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，195 tests）。已不标「当前」：0.3.8 之后有更新的记录，见 `gates-2026-11-12T19-25-00.000Z.json` |
+| `gates-2026-11-12T16-10-00.000Z.json` / `gates-mutate-2026-11-12T16-15-00.000Z.json` | 绿 | 0.3.8 台账落地后的门禁证据（`ALL GREEN · 6 gates` / `6/6 CAUGHT`，223 tests） |
+| `gates-2026-11-12T19-25-00.000Z.json` / `gates-mutate-2026-11-12T19-30-00.000Z.json` | 绿 | R21 收尾的门禁证据（十三补丁、对外文字改为本会话直写、11 个对外文件全部重新登记之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，228 tests |
+| `gates-2026-11-15T17-00-00.000Z.json` / `gates-mutate-2026-11-15T17-05-00.000Z.json` | 绿 | 历史门禁证据：R52 交接（事实包 / 两个 README / 交接 / 研究账本对齐到 0.4.12 之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，344 tests；sha256 `1475f255…` / `94052751…`） |
+| `gates-2026-11-15T16-10-00.000Z.json` / `gates-mutate-2026-11-15T16-15-00.000Z.json` | 绿 | 历史门禁证据：R51 终态（两个 release、两次推送、两个 profile 换装之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，344 tests；sha256 `a61298c7…` / `f081c35d…`） |
+| `gates-2026-11-15T15-30-00.000Z.json` / `gates-mutate-2026-11-15T15-35-00.000Z.json` | 绿 | 历史门禁证据：R51 收尾（0.4.11 与 0.4.12 两版、公开面重登记、P-0040/P-0041 之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，344 tests；sha256 `5ea31cda…` / `21a410a4…`） |
+| `gates-2026-11-15T11-30-00.000Z.json` / `gates-mutate-2026-11-15T11-35-00.000Z.json` | 绿 | 历史门禁证据：R50 终态（Linux 真机证据、P-0037 升 verified、L-0036 结案、P-0039 之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，334 tests） |
+| `gates-2026-11-15T06-40-00.000Z.json` / `gates-mutate-2026-11-15T06-45-00.000Z.json` | 绿 | R49 终态的门禁证据（P-0037 + P-0038、付款与台账全部落地之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，329 tests） |
+| `gates-2026-11-15T04-40-00.000Z.json` / `gates-mutate-2026-11-15T04-45-00.000Z.json` | 绿 | R49 收尾的门禁证据（拒绝理由带上 closer 的判断、重录快照之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，324 tests） |
+| `gates-2026-11-15T04-00-00.000Z.json` / `gates-mutate-2026-11-15T04-05-00.000Z.json` | 绿 | R49 第一次门禁证据（P-0037 与字节付款之后、拒绝理由改动之前） |
+| `gates-2026-11-13T12-10-00.000Z.json` / `gates-mutate-2026-11-13T12-15-00.000Z.json` | 绿 | R29 发布轮的门禁证据（0.4.0 已发、事实包翻口径、全部对外文件重登记之后） |
+| `gates-2026-11-13T12-30-00.000Z.json` / `gates-mutate-2026-11-13T12-35-00.000Z.json` | 绿 | R30 的门禁证据（profile 切到 0.4.0 + BS-17 桌面实测之后），255 tests |
+| `gates-2026-11-13T12-55-00.000Z.json` / `gates-mutate-2026-11-13T13-00-00.000Z.json` | 绿 | R31 的门禁证据（P-0021/22/23 落地之后），258 tests |
+| `gates-2026-11-13T13-20-00.000Z.json` / `gates-mutate-2026-11-13T13-25-00.000Z.json` | 绿 | R32 的门禁证据（0.4.1 发布 + 对外文字重登记之后），258 tests |
+| `gates-2026-11-13T13-35-00.000Z.json` / `gates-mutate-2026-11-13T13-40-00.000Z.json` | 绿 | R34 的门禁证据（P-0024 / BS-13 收口之后），258 tests |
+| `gates-2026-11-13T13-50-00.000Z.json` / `gates-mutate-2026-11-13T13-55-00.000Z.json` | 绿 | R35 中间一轮（事实包计数、市场索引时间戳、全部 live 条目重登记之后），258 tests |
+| `gates-2026-11-13T14-00-00.000Z.json` / `gates-mutate-2026-11-13T14-05-00.000Z.json` | 绿 | R35 收尾的门禁证据（`repo-metadata.json` 的 release_blurb 翻到 0.4.1 并重登记之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，258 tests（已被 18-30 / 18-35 取代） |
+| `gates-2026-11-13T18-30-00.000Z.json` / `gates-mutate-2026-11-13T18-35-00.000Z.json` | 绿 | R36 中间一轮（文档与台账改完之后、索引更新之前），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`；已被 18-45 / 18-50 取代 |
+| `gates-2026-11-13T18-45-00.000Z.json` / `gates-mutate-2026-11-13T18-50-00.000Z.json` | 绿 | R36 收尾的门禁证据（`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，264 tests；已被 19-10 / 19-15 取代） |
+| `gates-2026-11-13T19-10-00.000Z.json` / `gates-mutate-2026-11-13T19-15-00.000Z.json` | 绿 | R37 中间一轮（release notes 加 `### Added` 之前），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`；已被 19-30 / 19-35 取代 |
+| `gates-2026-11-13T19-30-00.000Z.json` / `gates-mutate-2026-11-13T19-35-00.000Z.json` | 绿 | R37 中间一轮（profile 换装与市场索引之前），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`；已被 19-45 / 19-50 取代 |
+| `gates-2026-11-13T19-45-00.000Z.json` / `gates-mutate-2026-11-13T19-50-00.000Z.json` | 绿 | （0.4.2 收尾）门禁证据：R37 最终一轮（0.4.2 发布 + 两个 profile 切到 0.4.2 + 市场索引翻 0.4.2 + 全部对外文件重登记之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，264 tests |
+| `gates-2026-11-13T20-45-00.000Z.json` / `gates-mutate-2026-11-13T20-50-00.000Z.json` | 绿 | （中间一轮）门禁证据：R38 收尾（0.4.3 发布、DSH 0.2.2-rc.3 适配实测、事实包补历史尺寸、全部对外文件重登记、P-0002 记录改写之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT` |
+| `gates-2026-11-13T20-55-00.000Z.json` / `gates-mutate-2026-11-13T21-00-00.000Z.json` | 绿 | （0.4.3 时点）门禁证据：R38 最终一轮（0.4.3 发布 + DSH 0.2.2-rc.3 适配实测 + AGENTS/HANDOFF 同步之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，264 tests |
+| `gates-2026-11-13T22-10-00.000Z.json` / `gates-mutate-2026-11-13T22-15-00.000Z.json` | 绿 | （中间一轮）门禁证据：R39 收尾（0.4.4 发布、P-0027 归因检查、冻结条目从数字规则豁免、全部对外文件重登记之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，270 tests |
+| `gates-2026-11-13T22-25-00.000Z.json` / `gates-mutate-2026-11-13T22-30-00.000Z.json` | 绿 | （0.4.4 发布时点）门禁证据：R39 最终一轮（0.4.4 发布、P-0027、冻结条目数字豁免、边界 latest 0.4.4 之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，270 tests |
+| `gates-2026-11-13T22-40-00.000Z.json` / `gates-mutate-2026-11-13T22-45-00.000Z.json` | 绿 | （0.4.4 时点）门禁证据：CI 红后的一轮（事实包 CRLF → LF、全部 live 条目重登记、新增 LF 判据之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，271 tests |
+| `gates-2026-11-14T13-50-00.000Z.json` / `gates-mutate-2026-11-14T13-55-00.000Z.json` | 绿 | （0.4.5 时点）门禁证据：R40 收尾（0.4.5 发布、P-0028 的脱敏与判据、全部对外文件重登记之后），273 tests；已被 14-15 / 14-20 取代 |
+| `gates-2026-11-14T14-15-00.000Z.json` / `gates-mutate-2026-11-14T14-20-00.000Z.json` | 绿 | （中间一轮）P-0029 之后（三处版本指针 + `handoff-bytes`；277 tests；已被 14-40 / 14-45 取代） |
+| `gates-2026-11-14T14-40-00.000Z.json` / `gates-mutate-2026-11-14T14-45-00.000Z.json` | 绿 | （发布前）R41 的 P-0029 + P-0030（288 tests；已被 15-05 / 15-10 取代） |
+| `gates-2026-11-14T15-05-00.000Z.json` / `gates-mutate-2026-11-14T15-10-00.000Z.json` | 绿 | （0.4.6 时点）0.4.6 发布与全部对外文件重登记之后（288 tests；已被 16-15 / 16-20 取代） |
+| `gates-2026-11-14T16-15-00.000Z.json` / `gates-mutate-2026-11-14T16-20-00.000Z.json` | 绿 | 门禁证据：R42 / 0.4.7（P-0031 的 core cap、0.4.7 发布与全部对外文件重登记之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，290 tests）；已被 15-58 / 16-00 取代 |
+| `gates-2026-11-14T16-25-00.000Z.json` / `gates-mutate-2026-11-14T16-30-00.000Z.json` | 红 | 一次**变红**的门禁记录：当时索引还指着已删除的 15-58，`handoff-bytes` 报红；保留而不改写（BS-10 先例） |
+| `gates-2026-11-14T16-35-00.000Z.json` / `gates-mutate-2026-11-14T16-40-00.000Z.json` | 绿 | 门禁证据：R43（P-0032 + P-0033 与真机之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，295 tests）；已被 16-52 / 16-54 取代 |
+| `gates-2026-11-14T16-52-00.000Z.json` / `gates-mutate-2026-11-14T16-54-00.000Z.json` | 绿 | 门禁证据：R44（来源登记 + 巡检脚本 + 账本两列之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，307 tests）；已被 18-30 / 18-35 取代 |
+| `gates-2026-11-14T18-30-00.000Z.json` / `gates-mutate-2026-11-14T18-35-00.000Z.json` | 绿 | 门禁证据：R45 / R46 中间一轮（已被 19-30 / 19-35 取代） |
+| `gates-2026-11-14T19-30-00.000Z.json` / `gates-mutate-2026-11-14T19-35-00.000Z.json` | 绿 | 门禁证据：R46 发布后（已被 20-10 / 20-15 取代） |
+| `gates-2026-11-14T20-10-00.000Z.json` / `gates-mutate-2026-11-14T20-15-00.000Z.json` | 绿 | 门禁证据：R46 收尾（两个 profile 切到 0.4.9、override 删掉、公开仓与 release 之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，315 tests；已被 21-40 / 21-45 取代） |：R45 / R46（P-0034 + P-0035、六条线索结案、账本与交接同步之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，315 tests；sha256 `ed1e9b23…` / `c801cfcb…`） |
+| `gates-2026-11-14T21-40-00.000Z.json` / `gates-mutate-2026-11-14T21-45-00.000Z.json` | 绿 | 门禁证据：R47（P-0036 与同接缝调研之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，319 tests） |
+| `gates-2026-11-14T23-00-00.000Z.json` / `gates-mutate-2026-11-14T23-05-00.000Z.json` | 绿 | 门禁证据：R47 收尾（0.4.10 发布、copy 通道重登记之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，320 tests） |
+| `gates-2026-11-14T23-15-00.000Z.json` / `gates-mutate-2026-11-14T23-20-00.000Z.json` | 绿 | 门禁证据：R47 收尾第二轮（core 解包尺寸按 registry 实测改正、templates 重登记、基线行改 320 之后；已被 23-30 / 23-35 取代） |
+| `gates-2026-11-14T23-30-00.000Z.json` / `gates-mutate-2026-11-14T23-35-00.000Z.json` | 绿 | 门禁证据：R47 收尾第三轮（市场索引翻 0.4.10、两个 profile 换装、copy 通道重登记之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`；已被 11-15 00-10 / 00-15 取代，320 tests） |
+| `gates-2026-11-15T00-10-00.000Z.json` / `gates-mutate-2026-11-15T00-15-00.000Z.json` | 绿 | R48 交接轮的门禁证据（AGENTS.md / INDEX.md / docs/research 三处账本对齐到 0.4.10 之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，320 tests） |
+| `gates-2026-11-13T08-10-00.000Z` / `gates-mutate-2026-11-13T08-15-00.000Z` | 绿 | 门禁证据：R23 收尾（P-0015 台账 + 事实包加段 + 对外文件重登记） |
+| `gates-2026-11-13T09-30-00.000Z` / `gates-mutate-2026-11-13T09-35-00.000Z` | 绿 | 门禁证据：R25 收尾（P-0017 台账 + 事实包加段 + 全部对外文件重登记） |
+| `gates-2026-11-13T10-15-00.000Z` / `gates-mutate-2026-11-13T10-20-00.000Z` | 绿 | 门禁证据：R26 收尾（P-0018：Windows 退出码按异常命名） |
+| `gates-2026-11-13T11-05-00.000Z` / `gates-mutate-2026-11-13T11-10-00.000Z` | 绿 | 门禁证据：R27 收尾（P-0019 台账 + 对外页面整页重写） |
+| `gates-2026-11-13T11-40-00.000Z.json` / `gates-mutate-2026-11-13T11-45-00.000Z.json` | 绿 | 门禁证据：R28 收尾（P-0020 市场来源修正 + 分发台账），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT` |
+| `patch-registry-2026-11-17T11-00-00.000Z.json` | 绿 | **当前**快照（R61 之后的五十一补丁：**9 `verified` + 42 `tested`**，sha256 `ae166bd6…`；P-0051 与它付的字节从这一刻起在账本里） |
+| `patch-registry-2026-11-17T05-00-00.000Z.json` | 绿 | 历史快照（R59 之后的五十补丁：**9 `verified` + 41 `tested`**，sha256 `2d094b2b…`；被 11:00 取代） |
+| `patch-registry-2026-11-16T21-30-00.000Z.json` | 绿 | 历史快照（R58 之后：四十九补丁、9 verified；sha256 `ff853516…`；被 05:00 取代） |
+| `patch-registry-2026-11-16T18-10-00.000Z.json` | 绿 | 历史快照（R57 之后：四十八补丁、9 verified；sha256 `459b025b…`；被 21:30 取代） |
 | `patch-registry-2026-11-16T15-40-00.000Z.json` | 绿 | 历史快照（R56 之后：四十六补丁、9 verified；sha256 `1e503ca1…`） |
 | `patch-registry-2026-11-16T15-30-00.000Z.json` | 绿 | 历史快照（R56 中间态：四十五补丁、9 verified；sha256 `b1fae4f3…`） |
 | `patch-registry-2026-11-16T13-40-00.000Z.json` | 绿 | 历史快照（0.4.15 发布之后的四十四补丁：6 `verified` + 38 `tested`；sha256 `2ad431de…`） |
@@ -2987,66 +3430,18 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | `patch-registry-2026-11-16T11-00-00.000Z.json` | 绿 | 历史快照（R55：四十四补丁、P-0044 落地；6 `verified` + 38 `tested`；sha256 `c1bd4ff8…`） |
 | `patch-registry-2026-11-16T09-40-00.000Z.json` | 绿 | 历史快照（R55 字节付款之后：四十三补丁、状态不变；registry.js 63 955 / 68 000、core 99 754 / 104 000；sha256 `978bee23…`） |
 | `patch-registry-2026-11-16T00-10-00.000Z.json` | 绿 | 历史快照（四十三补丁：P-0043 落地之后重录；6 `verified` + 37 `tested`；sha256 `23760a64…`） |
-| `publish-2026-11-15T14-20-00.000Z.json` | 绿 | **0.4.12 发布**：两包 `exact_ok` + `latest_ok`（`ok: true`；sha256 `fd5df0b9…`） |
-| `install-acceptance-2026-11-15T14-25-00.000Z.json` | 绿 | **0.4.12 装机验收**：空目录从 registry 单装，三条命令 0/0/0，`OK 8 fixture(s)`（`canonical_fixtures: 8`） |
-| `live-linux-2026-11-15T20-55-00.000Z.json` | 绿 | **Linux 真机（WSL2 Ubuntu 26.04）· 0.4.13**：361 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 同值（82717 / 103649 / 67850）；`node_modules/.bin/dsh-remedy` 在 POSIX 上是 shim、跑起来打 `OK 8 fixture(s)`、退出 0；冷装与 `npx` 本轮**没重测**（记 null + 原因，不借 R51 的数）（sha256 `c78f5bdb…`） |
-| `live-linux-2026-11-15T15-00-00.000Z.json` | 绿 | **Linux 真机（WSL2 Ubuntu 26.04）终态**：344 tests / 6 gates / 6-6、`OK 8 fixture(s)`；安装后的 `bin` 是符号链接且真的运行（P-0041 的 live 证据）；冷装版本 0.4.12（P-0043 把 `ls -l` 输出里的账号名换成 `<user>` 后重算：sha256 `4d0374d6…`） |
-| `publish-2026-11-14T22-10-00.000Z.json` | 绿 | **0.4.10 发布**：两包 `exact_ok` + `latest_ok`（`ok: true`） |
-| `install-acceptance-2026-11-14T22-15-00.000Z.json` | 绿 | **0.4.10 装机验收**：空目录从 registry 单装，三条命令 0/0/0，`OK 6 fixture(s)` |
-| `publish-2026-11-14T19-00-00.000Z.json` | 绿 | **0.4.9 发布**：两包 `exact_ok` + `latest_ok`（`ok: true`） |
-| `install-acceptance-2026-11-14T19-05-00.000Z.json` | 绿 | **0.4.9 装机验收**：空目录从 registry 单装，三条命令 0/0/0，`OK 6 fixture(s)` |
-| `live-linux-2026-11-15T10-00-00.000Z.json` | 绿 | **Linux 真机（WSL2 Ubuntu 26.04）**：同一个树 329 tests / 6 gates / 6-6、脱敏 6 形状 0 泄漏；#12819 形状被 P-0037 修好且调用被派发（`closed:1`、`key ]@143`）；无 `finish` 的流以 `TRANSPORT` 收尾（sha256 `c052d843…`） |
-| `live-2026-11-09T17-00-00.000Z.json` | 绿 | headless 真机：10 流 / 1 修复 / `completed` |
-| `live-desktop-2026-11-09T19-10-00.000Z.json` | 绿 | 桌面真机：39 流 / 2 修复 / `aborted`（人工停止） |
 | `patch-registry-2026-11-09T19-15-00.000Z.json` | 绿 | 历史快照（P-0001 单独） |
 | `patch-registry-2026-11-10T11-00-00.000Z.json` | 绿 | 历史快照（P-0002 仍是 `tested`） |
 | `patch-registry-2026-11-10T15-10-00.000Z.json` | 绿 | 历史快照（P-0001 + P-0002 `verified` + P-0003 仍 `tested`） |
-| `live-2026-11-10T14-45-00.000Z.json` | 绿 | 0.3.0 headless 真机：17 流 / 1 修复 / 8 计数器齐 / 合成 id 被派发（`cross_check.match`） |
 | `patch-registry-2026-11-10T16-45-00.000Z.json` | 绿 | 历史快照（P-0001/2/3 全 `verified`，P-0004 / P-0005 尚未登记） |
-| `live-2026-11-10T16-30-00.000Z.json` | 绿 | 0.3.0 headless 真机拒绝：5 流 / `too-many-calls` / `fused:1 refused:1 unrepaired:1` / verdict `degraded` / 会话 `turn_end=error` / 无合成 id |
 | `patch-registry-2026-11-10T22-30-00.000Z.json` | 绿 | 历史快照（五补丁：P-0001/2/3 `verified`，P-0004/5 `tested`） |
 | `patch-registry-2026-11-11T10-30-00.000Z.json` | （已删） | 历史快照（六个补丁；sha256 `c484300c…`） |
 | `patch-registry-2026-11-11T11-20-00.000Z.json` | （已删） | 历史快照（七个补丁：P-0001/2/3 `verified`，P-0004/5/6/7 `tested`；sha256 `b272ddfe…`） |
 | `patch-registry-2026-11-11T13-50-00.000Z.json` | 绿 | 历史快照（八补丁；sha256 `4ed8ae3a…`） |
 | `patch-registry-2026-11-11T16-30-00.000Z.json` | 绿 | 历史快照（九补丁；sha256 `5218a55d…`） |
-| `gates-2026-11-10T22-25-00.000Z.json` / `gates-mutate-2026-11-10T22-20-00.000Z.json` | 绿 | P-0004 批次的门禁证据（`ALL GREEN · 5 gates` 与 `5/5 CAUGHT`） |
-| `gates-2026-11-11T09-45-00.000Z.json` / `gates-mutate-2026-11-11T09-40-00.000Z.json` | 绿 | 0.3.3 发布后的门禁证据（事实包改成"已发布"口径、8 个对外文件重生成之后） |
-| `gates-2026-11-11T10-40-00.000Z.json` / `gates-mutate-2026-11-11T10-45-00.000Z.json` | 绿 | 历史门禁证据（P-0006 批次，175 tests） |
-| `gates-2026-11-11T11-30-00.000Z.json` / `gates-mutate-2026-11-11T11-25-00.000Z.json` | 绿 | P-0007 台账批次的门禁证据（对外文件重生成之前） |
-| `gates-2026-11-11T13-15-00.000Z.json` / `gates-mutate-2026-11-11T13-10-00.000Z.json` | （已删） | 0.3.4 发布后的门禁证据（`ALL GREEN · 5 gates` 与 `5/5 CAUGHT`，189 tests） |
-| `gates-2026-11-11T14-35-00.000Z.json` / `gates-mutate-2026-11-11T14-30-00.000Z.json` | （已删） | 0.3.5 台账落地时的一次门禁证据，已被 15:45 的重跑取代 |
-| `gates-2026-11-11T15-45-00.000Z.json` / `gates-mutate-2026-11-11T15-40-00.000Z.json` | 绿 | 0.3.5 发布后的门禁证据（`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，189 tests） |
-| `gates-2026-11-11T17-25-00.000Z.json` / `gates-mutate-2026-11-11T17-20-00.000Z.json` | 绿 | 历史门禁证据：P-0009 台账落地、双包 bump 0.3.6（16:40 那条红产物已删） |
-| `gates-2026-11-11T18-40-00.000Z.json` / `gates-mutate-2026-11-11T18-45-00.000Z.json` | 绿 | R17 中间一轮：census 重测 + 11 个对外文件首次重生成之后的门禁证据（192 tests） |
-| `gates-2026-11-11T20-10-00.000Z.json` / `gates-mutate-2026-11-11T20-15-00.000Z.json` | 绿 | R17 第二轮的门禁证据：事实包把测试数改成 193、全部对外文件再重生成一遍之后（192→193 tests） |
-| `gates-2026-11-12T14-15-00.000Z.json` / `gates-mutate-2026-11-12T14-20-00.000Z.json` | 绿 | 0.3.7 批次的**最终**门禁证据（P-0010 落地、双包 bump 0.3.7、11 个对外文件按「0.3.7 未发布」口径重生成之后，`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，195 tests）。已不标「当前」：0.3.8 之后有更新的记录，见 `gates-2026-11-12T19-25-00.000Z.json` |
-| `live-2026-11-12T06-00-00.000Z.json` | 绿 | **0.3.6 真机**：60 流 / 1 修复 / `fused:1 repaired:1` / 合成 id 被派发并回答 / verdict `repaired`（P-0001 已引用） |
 | `patch-registry-2026-11-12T14-10-00.000Z.json` | 绿 | 0.3.7 批次快照（十补丁；文件现为 `2bc7166f…`） |
-| `scan-full-2026-11-11T18-15-00.000Z.json` | 绿 | 全目录 `scan --out` 产物：78 文件 / 393 attempts / 38 fused / 44 fusion failures / 293 turns |
 | `patch-registry-2026-11-12T16-20-00.000Z.json` | 绿 | 0.3.8 的第一份注册表快照（十三补丁；sha256 `098ca9ed…`） |
-| `gates-2026-11-12T16-10-00.000Z.json` / `gates-mutate-2026-11-12T16-15-00.000Z.json` | 绿 | 0.3.8 台账落地后的门禁证据（`ALL GREEN · 6 gates` / `6/6 CAUGHT`，223 tests） |
 | `patch-registry-2026-11-12T19-35-00.000Z.json` | 绿 | 0.3.8 收尾快照（十三补丁；sha256 `96f9144f…`） |
-| `gates-2026-11-12T19-25-00.000Z.json` / `gates-mutate-2026-11-12T19-30-00.000Z.json` | 绿 | R21 收尾的门禁证据（十三补丁、对外文字改为本会话直写、11 个对外文件全部重新登记之后），`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，228 tests |
-| `publish-2026-11-12T16-45-00.000Z.json` | 绿 | 0.3.8 发布：两包 `exact_ok` + `latest_ok` 全 true（`git_head` `632f890…`） |
-| `publish-2026-11-13T09-45-00.000Z.json` | 绿 | **0.4.0 发布**：两包 `exact_ok` + `latest_ok` 全 true（二十补丁） |
-| `install-acceptance-2026-11-13T09-50-00.000Z.json` | 绿 | **0.4.0 空目录从 registry 单装** `OK 6 fixture(s)`（`ok: true`、三条命令退出码 0/0/0） |
-| `publish-2026-11-13T13-10-00.000Z.json` | 绿 | **0.4.1 发布**：两包 `exact_ok` + `latest_ok` 全 true（二十三补丁） |
-| `publish-2026-11-13T18-40-00.000Z.json` | 绿 | **0.4.2 发布**：两包 `exact_ok` + `latest_ok` 全 true（二十六补丁；plugin shasum `134ca137…` / core `82ab88df…`） |
-| `install-acceptance-2026-11-13T18-55-00.000Z.json` | 绿 | **0.4.2 空目录从 registry 单装** `OK 6 fixture(s)`（`ok: true`、三条命令退出码 0/0/0） |
-| `publish-2026-11-13T20-05-00.000Z.json` | 绿 | **0.4.3 发布**：两包 `exact_ok` + `latest_ok` 全 true（plugin shasum `f6862043…` / core `6db798fb…`） |
-| `install-acceptance-2026-11-13T20-15-00.000Z.json` | 绿 | **0.4.3 空目录从 registry 单装** `OK 6 fixture(s)`（`ok: true`、三条命令退出码 0/0/0） |
-| `publish-2026-11-13T21-35-00.000Z.json` | 绿 | **0.4.4 发布**：两包 `exact_ok` + `latest_ok` 全 true（plugin shasum `f310006b…` / core `84acd915…`） |
-| `install-acceptance-2026-11-13T21-45-00.000Z.json` | 绿 | **0.4.4 空目录从 registry 单装** `OK 6 fixture(s)`（`ok: true`、三条命令退出码 0/0/0） |
-| `publish-2026-11-14T13-05-00.000Z.json` | 绿 | （0.4.5 时点）两包 `exact_ok` + `latest_ok` 全 true（plugin shasum `aedec369…` / core `98f65652…`） |
-| `install-acceptance-2026-11-14T13-15-00.000Z.json` | 绿 | （0.4.5 时点）空目录从 registry 单装 `OK 6 fixture(s)`（`ok: true`、三条命令退出码 0/0/0） |
-| `publish-2026-11-14T14-50-00.000Z.json` | 绿 | （0.4.6 时点）两包 `exact_ok` + `latest_ok` 全 true（plugin shasum `1cd6d75a…` / core `f18fb209…`） |
-| `install-acceptance-2026-11-14T14-55-00.000Z.json` | 绿 | （0.4.6 时点）空目录从 registry 单装 `OK 6 fixture(s)`（`ok: true`、三条命令退出码 0/0/0） |
-| `publish-2026-11-14T16-00-00.000Z.json` | 绿 | **0.4.7 发布**：两包 `exact_ok` + `latest_ok` 全 true（plugin shasum `6c1a19a8…` / core `68931b34…`） |
-| `publish-2026-11-14T16-10-00.000Z.json` | 绿 | **0.4.8 发布**（两包 `exact_ok` + `latest_ok` 全 true；plugin shasum `6f42b442…` / core `2567629d…`；sha256 `4d8e03c0…`） |
-| `install-acceptance-2026-11-14T16-12-00.000Z.json` | 绿 | **0.4.8 空目录从 registry 单装** `OK 6 fixture(s)`（`ok: true`、三条命令退出码 0/0/0；sha256 `4713b664…`） |
-| `adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json` | 绿 | **DSH 升级适配实测**：0.4.2 挂在 0.2.2-rc.3 上跑通一次真实 turn，修好一次真实融合（`fused:1 repaired:1`），并记录 `BS-18` 的两次错误派发；sha256 `662688c2…` |
-| `install-acceptance-2026-11-13T13-15-00.000Z.json` | 绿 | **0.4.1 空目录从 registry 单装** `OK 6 fixture(s)`（`ok: true`、三条命令 0/0/0） |
-| `install-acceptance-2026-11-12T16-50-00.000Z.json` | 绿 | 0.3.8 空目录从 registry 单装 `OK 6 fixture(s)`（`ok: true`、三条命令退出码 0/0/0） |
 | `patch-registry-2026-11-13T06-20-00.000Z.json` | 绿 | R22 快照（十四补丁；sha256 `1adaa5b7…`） |
 | `patch-registry-2026-11-13T07-55-00.000Z.json` | 绿 | R23 快照（十五补丁；sha256 `7fe8b5b3…`） |
 | `patch-registry-2026-11-13T08-40-00.000Z.json` | 绿 | R24 快照（十六补丁；sha256 `761b8293…`） |
@@ -3078,15 +3473,7 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | `patch-registry-2026-11-15T06-10-00.000Z.json` | 绿 | 历史快照（三十八补丁：P-0038 与四条老记录压缩之后重录；4 `verified` + 34 `tested`；sha256 `1ac8f709…`） |
 | `patch-registry-2026-11-15T04-30-00.000Z.json` | 绿 | 历史快照（三十七补丁；P-0037 的拒绝理由带上 closer 的判断之后重录；4 `verified` + 33 `tested`；sha256 `c0799c5f…`） |
 | `patch-registry-2026-11-15T03-20-00.000Z.json` | 绿 | 历史快照（三十七补丁：P-0037 加入之后重录；4 `verified` + 33 `tested`；sha256 `2bd9c9f7…`） |
-| `gates-2026-11-15T17-00-00.000Z.json` / `gates-mutate-2026-11-15T17-05-00.000Z.json` | 绿 | 历史门禁证据：R52 交接（事实包 / 两个 README / 交接 / 研究账本对齐到 0.4.12 之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，344 tests；sha256 `1475f255…` / `94052751…`） |
-| `gates-2026-11-15T16-10-00.000Z.json` / `gates-mutate-2026-11-15T16-15-00.000Z.json` | 绿 | 历史门禁证据：R51 终态（两个 release、两次推送、两个 profile 换装之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，344 tests；sha256 `a61298c7…` / `f081c35d…`） |
-| `gates-2026-11-15T15-30-00.000Z.json` / `gates-mutate-2026-11-15T15-35-00.000Z.json` | 绿 | 历史门禁证据：R51 收尾（0.4.11 与 0.4.12 两版、公开面重登记、P-0040/P-0041 之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，344 tests；sha256 `5ea31cda…` / `21a410a4…`） |
-| `gates-2026-11-15T11-30-00.000Z.json` / `gates-mutate-2026-11-15T11-35-00.000Z.json` | 绿 | 历史门禁证据：R50 终态（Linux 真机证据、P-0037 升 verified、L-0036 结案、P-0039 之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，334 tests） |
-| `gates-2026-11-15T06-40-00.000Z.json` / `gates-mutate-2026-11-15T06-45-00.000Z.json` | 绿 | R49 终态的门禁证据（P-0037 + P-0038、付款与台账全部落地之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，329 tests） |
-| `gates-2026-11-15T04-40-00.000Z.json` / `gates-mutate-2026-11-15T04-45-00.000Z.json` | 绿 | R49 收尾的门禁证据（拒绝理由带上 closer 的判断、重录快照之后；`ALL GREEN · 6 gates` 与 `6/6 CAUGHT`，324 tests） |
-| `gates-2026-11-15T04-00-00.000Z.json` / `gates-mutate-2026-11-15T04-05-00.000Z.json` | 绿 | R49 第一次门禁证据（P-0037 与字节付款之后、拒绝理由改动之前） |
 | `patch-registry-2026-11-14T22-45-00.000Z.json` | 绿 | 历史快照（三十六补丁；sha256 `9b1fe2b0…`） |
-| `intake-2026-11-14T16-45-00.000Z.json` | 绿 | **R44 巡检**：S-DSH 93 唯一讨论 / 10 已在账本 / 83 新候选；S-NPM 0.4.8 + 月下载 2 720 / 2 692；S-CENSUS 113 文件 / 396 attempts / 47 failures；S-REDDIT 读不到（计数为 null） |
 | `patch-registry-2026-11-13T14-40-00.000Z.json` | 绿 | R36 快照（二十六补丁；sha256 `4bdaba69…`，已被 19-00 取代） |
 | `gates-2026-11-13T12-10-00.000Z.json` / `gates-mutate-2026-11-13T12-15-00.000Z.json` | 绿 | R29 发布轮的门禁证据（0.4.0 已发、事实包翻口径、全部对外文件重登记之后） |
 | `gates-2026-11-13T12-30-00.000Z.json` / `gates-mutate-2026-11-13T12-35-00.000Z.json` | 绿 | R30 的门禁证据（profile 切到 0.4.0 + BS-17 桌面实测之后），255 tests |
@@ -3177,7 +3564,7 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | 现在有哪些补丁？ | `packages/core/src/registry.ts` → `PATCHES` |
 | 某个补丁的证据和守卫？ | `audit/patch_ledger.json` |
 | 这一步 review 过吗？ | `audit/step_reviews.json` |
-| 哪里还看不见？ | `audit/blind_spots.json` | `BS-01` / `BS-05` / `BS-07` / `BS-09` / `BS-11` / `BS-18` / `BS-19` 值得先读；`BS-12` 由 P-0003、`BS-13` 由 P-0024、`BS-15` / `BS-16` 由 P-0014 关闭；`BS-17` 由 R30 关闭 |
+| 哪里还看不见？ | `audit/blind_spots.json` | `BS-01` / `BS-05` / `BS-07` / `BS-09` / `BS-11` / `BS-18` / `BS-19` / `BS-20` 值得先读；`BS-12` 由 P-0003、`BS-13` 由 P-0024、`BS-15` / `BS-16` 由 P-0014 关闭；`BS-17` 由 R30 关闭 |
 | 谁写的代码？ | `audit/AI_DISCLOSURE_LOG.md` |
 | 对外文字是谁写的？ | `docs/copy/manifest.json`（`model_default: in-session`；frozen 的 release notes 保留各自的 `writer`/`channel`） |
 | 门禁为什么红？ | `node scripts/gate.mjs`，失败行会点出 check id |
@@ -3187,6 +3574,9 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | 坑 | 说明 |
 |---|---|
 | 本目录不是 git 根 | 提交/推送在 `..`（容器）；公开仓库靠 `subtree split` |
+| `writeFileSync(path, text, 'utf8')` 三个参数，一个都不能少 | 第二个参数是**数据**，第三个才是编码。写成 `writeFileSync(path, 'utf8')` 会把整份文件变成四个字节 `utf8`——R58 与 R60 各发生一次，两次都被判据当场抓住（`handoff-truth` 的「必须保留证据索引」、`facts-truth` 的「已发布版本必须有节」）。恢复用 `execFileSync('git', […])`（PowerShell 的 `>` 会写 UTF-16），不要用重定向 |
+| 写一回事后改文件，先看门禁会不会把它算成一次测量 | 每次改文案就记一对门禁只是噪声：R60 记了 12 对、删了 11 对，最后只留交付树那一对。**stamp 是身份**，同一棵树只需要一次 |
+| 清理 `.tmp/` 会暴露「复现步骤不在仓库里」 | 十一份补丁文档的 Reproduction 给的是 `.tmp/<probe>.mjs`，那是 gitignored 且逐轮清空的路径（`BS-20`）。删之前逐份核过 `git ls-files`，留下的都是被文档点名的脚本；要真正可复现，得让那些文档点名一条已发布的命令 |
 | `llm/stream` 是同步 waterfall | 监听器不能写成 `async`，否则流被包成 Promise，报 `stream is not async iterable`。`agent/request-error` 相反，是 await 的 |
 | headless profile 的 `credentials` 默认 disabled | profile 的 `cordis.patch.yml` 要写 `- id: credentials` + `disabled: false`，否则 `MISSING_CREDENTIAL` |
 | 会话日志是多帧 zstd | `zstdDecompressSync` 只解第一帧；用 `decompressSessionLog`。**`scan` 曾经直接按 utf8 读 zstd，于是把 236 行压缩字节全记成 unreadable**（P-0004 已修） |
@@ -3202,6 +3592,10 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 | 截断与粘连不同 | `finish{kind:'max-tokens'}` 一律不修 |
 | 桌面 UI 自动化 | App 用 `--remote-debugging-port=9222` 重启；`Input.insertText` + Enter 发任务，“新建会话”按钮不一定存在 |
 | 门禁依赖构建 | `gate_registry` / `gate_namespace` 要读 `dist/`；`--fast` 会跳过它们 |
+| PowerShell 的 `Set-Content -Encoding utf8` 会写 **BOM** | R62 用 `Set-Content` 改 profile 的 `package.json`，写入的字节以 `239,187,191` 开头，App 启动时报 `dsh-desktop:boot: Unexpected token '\uFEFF'` 并停在「Loading plugins」。修法：用 `writeFileSync(path, text, 'utf8')`，写前断言首字节是 `0x7b`（`{`），并从 `.before-<ver>` 备份恢复。备份的第一个字节是 `123`，这就是判据 |
+| `writeFileSync(path, text)` 的第三个参数才是编码 | R58 写成 `writeFileSync(path, 'utf8')` 时，第三个参数被当成数据，一次把 `CHANGELOG.md` 变成四字节的 `utf8`。**修法与检查**：从 HEAD 用 `execFileSync('git', …)` 读回（PowerShell 的 `>` 会写 UTF-16），再用 `facts-truth` 的「已发布版本必须有节」当判据——它在四字节文件上当场红 |
+| facts 一变，**所有** live 条目一起失效 | `facts_sha256` 指向事实包本身，所以改包之后必须一次把 11 个 live 条目 + 4 个模板全重登记（`.tmp/r58-reregister.mjs` 的形状）；漏一个，`gate_copy` 就红在 `facts-current` 那一行 |
+| 一个散文数字不在事实包里时，先问它属于哪一句 | R58 的 0.4.16 小节引用了 `2 507`（去重省下的字节）。正确的修法是把这个测量写进事实包，而不是给 `RESERVED_DIGITS` 加一条——那个白名单是全局的，加进去等于让任何页面都能写这个数 |
 | POSIX 的 bin 是符号链接 | npm 把 `bin` 装成 `node_modules/.bin/<name> -> ../<pkg>/dist/cli.js`。任何入口守卫都必须 realpath 两侧再比较，否则 `main()` 不跑、进程退出 0 且无输出——**0.4.11 就带着这个缺陷发布过**（P-0041，0.4.12 修） |
 | 装本地包要钉住两半 | 打包会**把 `workspace:*` 改写成 registry 版本号**，所以只装本地 plugin tarball 时，pnpm 会把 core 解析成 registry 上那一份。要测一棵树的代码，得把 core 一起钉到同一批字节（profile 的 `package.json` 用 registry 版本，而不是 `.tmp` 路径——那是 P-0026 已经删掉的那种断言） |
 
@@ -3219,19 +3613,26 @@ pnpm 的过滤发版路径（`publish_packages.mjs` 正是为替代它而写的�
 
 ## 明确边界
 
-- 两个 profile（桌面与 `remedy-live`）装的都是 **0.4.15**，pin 写的是 registry 版本（不是 scratch 路径）；
+- 两个 profile（桌面与 `remedy-live`）装的都是 **0.4.17**，pin 写的是 registry 版本（不是 scratch 路径）；
   装到哪一份、什么时候装的、App 什么时候重启，都记在批次叙事与 `data/results/install-acceptance-*.json`
   里，不写在这里 —— 这台机器的 scratch 目录是 gitignored 的，写进来的是一个新克隆无法核对的断言。
-  **桌面 App 在 2026-11-16 13:31 重启并加载了 0.4.15，13:35 跑了一个真实 turn**
-  （`live-desktop-2026-11-16T12-40-00.000Z.json`：journal `streams: 4`，`turn/end` `completed`，verdict `quiet`）。
-- **平台边界**：Windows 与 Linux（WSL2 Ubuntu 26.04）实测过完整的 **368 tests / 6 gates / 6-6**
-  （`live-linux-2026-11-16T12-45-00.000Z.json`）；**macOS 没有实测**（本机无 Apple 硬件/许可宿主，
-  CI 只有 ubuntu 与 windows 两个 job），所以 P-0038 的 `/Users` 形状在 Linux 上是**字符串**，
-  不是 macOS 产的字节。
-- **npm 上 `latest` 是 0.4.16**（两包：R56 发布的就是它；0.4.15 是上一版）。0.2.0 与 0.3.1 从未进入 registry；
+  **桌面 App 加载的是 0.4.17**，发布后重启并跑了一个真实 turn（`live-2026-11-17T08-50-00.000Z.json`）；
+  上一版的桌面证据是 `live-2026-11-16T17-20-00.000Z.json`（0.4.16，答复 `R56-DESKTOP-OK`）。
+- **平台边界**：Windows 与 Linux（WSL2 Ubuntu 26.04）都实测过完整套件——本树 **405 tests / 6 gates / 6-6**
+  在 Windows 与 Linux 上都是同值（Linux 产物 `live-linux-2026-11-17T08-40-00.000Z.json`）；**macOS 没有实测**（本机无 Apple 硬件/许可宿主），
+  所以 P-0038 的 `/Users` 形状在 Linux 上是**字符串**，不是 macOS 产的字节。P-0048 把它变成 CI 判据：
+  workflow 里有第三个 job `verify (macos, node 24)`，第一次真实运行就绿，但它不产出 `data/results/live-*`，
+  所以没有补丁能凭它 `verified`。
+- **npm 上 `latest` 是 0.4.17**（两包：R62 发布的就是它；0.4.16 是上一版）。0.2.0 与 0.3.1 从未进入 registry；
   0.3.0 的 plugin 到 registry 时带着 `workspace:*`，装不上，也不能撤回（超过 24 小时）。
   发布账号是 `auth-and-writes`；`npm profile get tfa` 在 2026-11-11 回 `E403`（端点权限），
   preflight 不依赖它，只依赖 `npm whoami`。
+- **发布不需要问人拿 OTP**：这台机器的**用户级** `~/.npmrc` 里有一条
+  `//registry.npmjs.org/:_authToken`，它绕过一次性密码（2026-11-17 再测：`npm whoami` 回
+  `jjjjjjjjnnjnn`，发布不需要码）。token 本身**不进仓库、不进 artifact、不进 commit message**；
+  写入仓库的只有这条事实与它所在的位置。preflight 只依赖 `npm whoami`；若它回 401，修法是
+  `npm login`，不是 OTP；只有 npm 真的回 `EOTP`（token 被吊销或轮换的形状）才需要新码。
+  详见 `docs/PUBLISH.md` 的「Publishing a release」。
 - 容器 `main` 未推 `dsh-triage` 远端。
 - npm 上的 `0.0.0-stage` 是发布流程的占位版本，不是 `latest`。
 - 对话里出现过的两个 npm token 应作废；仓库与 artifact 里没有它们。

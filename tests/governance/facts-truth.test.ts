@@ -80,6 +80,61 @@ test('every version the pack calls the previous release has a changelog entry', 
   }
 })
 
+/** Section versions in a changelog, newest first is not assumed; the rule sorts numerically. */
+function changelogSections(text: string): string[] {
+  return [...text.matchAll(/^## \[(\d+\.\d+\.\d+)\]/gm)].map((match) => match[1] ?? '')
+}
+
+/** Versions the pack calls published, in the order it writes them. */
+function publishedVersions(text: string): string[] {
+  return [...text.matchAll(/`(\d+\.\d+\.\d+)`[^.\n]{0,80}?(?:is published|is `latest`)/g)].map((match) => match[1] ?? '')
+}
+
+test('every version the pack calls published has a changelog section', () => {
+  // P-0049: the rule beside this one resolves only the **previous** release, so on
+  // the R57 tree 0.4.15 had a section (it was the previous release) while 0.4.16 —
+  // the release npm actually served — had none, and every gate stayed green. A
+  // changelog whose newest entry is older than the published artifact tells a
+  // stranger the wrong release is the current one.
+  const published = publishedVersions(facts)
+  assert.ok(published.length > 0, 'the pack must say which version is published')
+
+  const sections = changelogSections(changelog)
+  assert.ok(sections.length > 0, 'the changelog must carry sections')
+
+  for (const version of published) {
+    assert.ok(sections.includes(version), `${version} is called published but CHANGELOG.md has no [${version}] section`)
+  }
+
+  // An unreleased section above the published one is legitimate: the file
+  // documents the tree, and the tree can be ahead of the registry. What is not
+  // legitimate is a file that stops *below* the release the pack calls published.
+  const newest = sections.reduce((best, candidate) => (compareVersions(candidate, best) > 0 ? candidate : best))
+  const current = published.reduce((best, candidate) => (compareVersions(candidate, best) > 0 ? candidate : best))
+  assert.ok(
+    compareVersions(newest, current) >= 0,
+    `the newest changelog section is ${newest} while the pack calls ${current} the published release`,
+  )
+})
+
+test('the published-release rule fails on the shape it was written for', () => {
+  // The negative control, on the measured shape rather than an invented one: a
+  // changelog that stops at 0.4.15 and a pack that calls 0.4.16 published. If this
+  // passes, the rule above proves nothing about a missed release.
+  const staleChangelog = '## [0.4.15] - 2026-11-16\n\n### Added\n\n- something\n'
+  const staleFacts = '- npm: `0.4.16` is published and is `latest` for both names.\n'
+  const published = publishedVersions(staleFacts)
+  assert.deepEqual(published, ['0.4.16'])
+  const sections = changelogSections(staleChangelog)
+  assert.deepEqual(sections, ['0.4.15'])
+  assert.equal(sections.includes(published[0]!), false, 'the stale pair must not look covered')
+  assert.equal(
+    compareVersions(sections[0]!, published[0]!) < 0,
+    true,
+    '0.4.15 must compare older than 0.4.16, or the newest-section rule cannot fire',
+  )
+})
+
 /**
  * Numeric semver comparison.
  *

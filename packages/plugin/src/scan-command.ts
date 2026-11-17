@@ -99,7 +99,7 @@ export function cmdScan(args: Args): number {
     // P-0006 census; P-0044 and P-0047 ask whether an ending answered anyone.
     const t = report.turns
     process.stdout.write(
-      `turns=${t.completed + t.max_tokens + t.aborted + t.error} completed=${t.completed} max_tokens=${t.max_tokens} aborted=${t.aborted} error=${t.error} truncated_without_answer=${report.truncated_without_answer} completed_without_answer=${report.completed_without_answer}\n`,
+      `turns=${t.completed + t.max_tokens + t.aborted + t.error} completed=${t.completed} max_tokens=${t.max_tokens} aborted=${t.aborted} error=${t.error} truncated_without_answer=${report.truncated_without_answer} completed_without_answer=${report.completed_without_answer} dropped_tools=${report.dropped_tools}\n`,
     )
     const codes = Object.entries(report.error_codes)
     if (codes.length > 0) {

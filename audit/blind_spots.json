@@ -98,7 +98,13 @@
       "status": "open",
       "note": "P-0032 moved the long form of every patch into docs/patches/ and left a one-sentence summary in the registry. gate_registry checks that a doc exists, not that it still says what the summary says, so the two can drift: a summary can drop a caveat and stay green, or a doc can be rewritten and the summary become stale. What remains narrower: the eight compacted records were checked against their docs by hand before the prose was removed, and the byte gate still forces every new record through the same decision, but nothing compares the two texts automatically.",
       "updated_at": "2026-11-14T17:05:00.000Z"
+    },
+    {
+      "id": "BS-20",
+      "status": "open",
+      "note": "A reproduction step that lives in `.tmp/` cannot be re-run by a reader: that directory is gitignored and swept between rounds, and eleven patch docs cite one (P-0002 `probe-names.mjs`, P-0004 `scan-all.json`, P-0006 three probes, P-0007 two, P-0009, P-0015, P-0033 `fake-openai.mjs`, P-0044 `r55-census.json`, P-0047 a log). What survives is the half that was durable on purpose: the artifact under `data/results/` with its `.sha256`, and the shipped `scripts/record_*.mjs` that produced it. `gate_registry` (P-0023) requires a doc to exist and does not read its Reproduction section, so nothing notices. R60 measured the gap while cleaning `.tmp/`; it kept every script that a doc names and that still existed, and did not rewrite the eleven docs — a reader who wants the numbers can run the recorder named in the patch's Evidence section instead. Closing it means either shipping the probe under `scripts/` (bytes in a package that does not need them) or making each Reproduction section name a shipped command; both are a decision, not housekeeping.",
+      "updated_at": "2026-11-17T07:30:00.000Z"
     }
   ],
-  "updated_at": "2026-11-16T15:40:00.000Z"
+  "updated_at": "2026-11-17T07:30:00.000Z"
 }

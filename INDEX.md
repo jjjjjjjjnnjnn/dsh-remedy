@@ -13,6 +13,7 @@
 | `AGENTS.md` | agent 入口：分工、结构、工作流、机器强制项 |
 | `PROJECT_RULES.md` | 硬规则（只读本机、失败即失败、证据由脚本产出） |
 | `docs/HANDOFF.md` | 交接：五分钟检查 / 当前批次 / 第一件事 / 坑 |
+| `docs/compatibility.md` | R68：waterfall 顺序规则、本机接缝拓扑、每 chunk 开销、被跳过时怎么发现；两个产物都能复跑 |
 | `docs/research/README.md` | 外部反馈 intake：来源、判据、四条约束、同类项目读法（R43 起） |
 | `docs/research/leads.md` | 线索账本：48 条（42 条 DSH + 4 条 Reddit 摘要 + 1 条市场 + 1 条上游源码），带 `source_kind` / `read_depth`；R64 把状态与 decision 对齐，R66 新增 I 表 8 条（全部 `rejected`，无新形状）：0 条 `lead`、7 条 `watching`，其余都是 `patched` / `rejected`（原因在 decision 列） |
 | `docs/research/sources.md` | 七个来源的读法、频率、边界；Reddit 读不到正文的诚实规则 |
@@ -69,6 +70,8 @@
 | `data/results/patch-registry-*.json` | 注册表快照（SSOT） |
 | `data/results/publish-2026-11-18T03-10-00.000Z.json` / `install-acceptance-2026-11-18T03-20-00.000Z.json` | **0.4.18 发布 + 空目录单装**（两包 `exact_ok` + `latest_ok`、`ok: true`；三条命令 0/0/0、`OK 8 fixture(s)`、`canonical_fixtures: 8`） |
 | `data/results/live-linux-2026-11-18T06-30-00.000Z.json` | **Linux 真机（WSL2 Ubuntu, node 24.10.0）· R66 树（R67）**：425 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 逐项同值；R66 的 19 条规则在 POSIX 上全过 |
+| `data/results/seam-inventory-2026-11-18T08-10-00.000Z.json` | **R68 接缝盘点**：123 个包 / 1 516 个源文件；`llm/stream` = remedy → ops，`agent/error` = remedy → pet；无第三方保留名占用 |
+| `data/results/bench-repair-2026-11-18T08-20-00.000Z.json` | **R68 开销基准**：文本 +1.5 ms / 4 003 chunk、工具密集 +5.9 ms / 5 251 chunk、一次修复 +0.12 ms |
 | `data/results/live-desktop-2026-11-18T05-10-00.000Z.json` | **桌面真机（R66）· 0.4.18**：答复 `R66-DESKTOP-OK`、`turn/end completed`、journal `streams: 1`、verdict `quiet`；包是 registry 的 0.4.18 tarball，runtime 0.2.2-rc.3 |
 | `data/results/intake-2026-11-18T05-20-00.000Z.json` | **R66 巡检**：3 个来源全应答；92 条去重 discussion / 76 条新候选；判读见 `docs/research/intake-r66-triage.md` |
 | `data/results/live-toolcall-2026-11-17T13-30-00.000Z.json` | **P-0052 本机证据**：conclude 末步 `["text","tool-call"]`、control 第二步 `["text"]`；`completed_on_tool_call=1`、`completed_without_answer=0` |
@@ -163,6 +166,9 @@
 | `scripts/stress_repair.mjs` | 生成式压力（固定 seed）→ `stress-repair-*` |
 | `scripts/probe_withdrawn_reachability.mjs` | 实测 `withdrawn` 在本机是否可达 → `withdrawn-reachability-*` 产物 |
 | `scripts/sync_fixtures.mjs` | `prepack`：夹具进包 |
+| `scripts/scan_plugin_seams.mjs` | R68：只读扫一个 profile 的接缝注册与顺序 → `seam-inventory-*`（不加载插件、不写 profile） |
+| `scripts/bench_repair_overhead.mjs` | R68：`llm/stream` 包装器的每 chunk 开销（三组场景，中位数）→ `bench-repair-*` |
+| `scripts/lib/seam-inventory.mjs` | R68 的纯分类器：`on(...)` / `emit(...)`、`prepend`、保留名、外层优先排序（`seam-inventory.d.mts` 提供类型） |
 | `scripts/collect_leads.mjs` | 一次社区巡检 → `intake-*` 产物（读不到的来源记 null，不记 0） |
 | `scripts/lib/intake.mjs` | 巡检的纯函数：`ok` / `unreadable` / 汇总 / 候选去重 |
 | `scripts/record_patch_registry.mjs` | 注册表快照 → `patch-registry-*` 产物 |
@@ -225,6 +231,8 @@
 | `tests/governance/ledgers.test.ts` | 台账 / 六格披露行 / 唯一 SessionID / 快照一致 |
 | `tests/governance/public-copy.test.ts` | 对外文件 / 事实包 / 模板 / 元数据 |
 | `tests/governance/leads-shape.test.ts` | 线索账本的来源 / 读深 / 状态一致性（社区面）；R64 另加两条：已经下了结论的 decision 不许还挂 `lead`、A 表只在真空时才许被叫空 |
+| `tests/governance/compatibility-notes.test.ts` | R68：`docs/compatibility.md` 必须点名 registry 的每个 `surface`、两个复跑命令、以及顺序 / 否决 / `prepend` 三条规则 |
+| `tests/unit/seam-inventory.test.ts` | R68：纯分类器——注册形状、`prepend`、外层优先排序、同接缝冲突、保留名占用；各带负对照 |
 | `tests/governance/patch-reproduction.test.ts` | R64 / BS-20：每份补丁文档的 `## Reproduction` 不许指向 `.tmp/`，段里点名的仓库路径必须存在 |
 | `tests/governance/profile-patch-resolution.test.ts` | patch 层每一行都必须解析到 manifest 的导出与已构建文件；#12318 那条坏 row 是负对照（P-0035） |
 | `tests/e2e/cli.test.ts` | 四条命令的退出码与产物 |

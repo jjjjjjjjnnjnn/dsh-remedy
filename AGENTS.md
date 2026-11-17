@@ -14,6 +14,12 @@
 > R66 的 19 条首屏 / 活状态规则在 Linux 上全过；记录器 `record_linux_r66.mjs` 先断言再写，
 > 产物 `live-linux-2026-11-18T06-30-00.000Z.json`。零运行时字节。门禁对
 > `gates-2026-11-18T07-00-00.000Z.json` / `gates-mutate-2026-11-18T07-05-00.000Z.json`。
+> R68（2026-11-17，**谁和我同一条接缝：把「会不会和别的插件打架」变成可复跑的读数**）——
+> `llm/stream` 是 waterfall（外层优先、不调 `next()` 即否决）；本机 123 个包里只有 4 个注册接缝，
+> `llm/stream` = remedy → dsh-ops（remedy 在外层）。新增只读扫描器、纯分类器与开销基准：
+> 最坏 **+5.9 ms / 5 251 个 chunk**，没有可测的负优化。产物 `seam-inventory-2026-11-18T08-10-00.000Z.json`
+> 与 `bench-repair-2026-11-18T08-20-00.000Z.json`，规则在 `docs/compatibility.md`。零运行时字节。
+> 门禁对 `gates-2026-11-18T09-00-00.000Z.json` / `gates-mutate-2026-11-18T09-05-00.000Z.json`。
 > R65（2026-11-17，**把 #12741 的那一半变成计数：`completed` 的 turn 停在 UI 不读的工具调用上**）——
 > 本机用本地端点与一个会 `concludeTurn()` 的探针工具复现了形状（末步 `["text","tool-call"]`、`turn/end completed`），
 > P-0052 让 `scan` 报 `completed_on_tool_call`、`explain` 打 `TOOLCALL` 并退出 1；P-0044 的回答规则没有改。
@@ -52,7 +58,7 @@
 > **接手先读**：`docs/HANDOFF.md` → `docs/research/README.md` → `docs/research/leads.md` → `PROJECT_RULES.md` → `INDEX.md`
 > **R43 起的主线**是外部反馈 → 稳定补丁：报告只是线索，本机复现后才有补丁；来源与方法见 `docs/research/`。R56 的教训：**接缝名写在补丁里不算数，要在宿主源码里核对接缝真的会被派发**。
 >
-> **基线（2026-11-17）**：`pnpm run verify` = **425 tests / 6 gates**（R66 的树，Windows；0.4.18 发布时 420；Linux 的 0.4.18 树是 420）；
+> **基线（2026-11-17）**：`pnpm run verify` = **433 tests / 6 gates**（R68 的树，Windows；0.4.18 发布时 420；POSIX 最近一次是 R67 的 425）；
 > `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.18`（latest）+
 > `dsh-remedy-core@0.4.18`（latest）。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
 > `v0.4.13` / `v0.4.14` / `v0.4.15` / `v0.4.16` / `v0.4.17` / `v0.4.18`。五十二个补丁：**9 `verified` + 43 `tested`**，在 DSH 0.2.2-rc.3 上实测过（0.4.17 的 Linux 是 405/6/6-6；0.4.18 是 420/6/6-6）。

@@ -1,0 +1,521 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/scan_plugin_seams.mjs",
+  "generated_at": "2026-11-18T08:10:00.000Z",
+  "question": "Which installed packages register on which DSH seam, and in what order does the llm/stream waterfall run them?",
+  "profile": {
+    "name": "desktop",
+    "dir": "<home>\\.dsh\\profiles\\desktop",
+    "packages": 123,
+    "bundle_order": [
+      "@deepseek-ai/dsh-base",
+      "@deepseek-ai/dsh-web-app",
+      "@deepseek-ai/dsh-experimental-plugin-market-bundle",
+      "@deepseek-ai/dsh-experimental-forge-bundle",
+      "@deepseek-ai/dsh-experimental-inspector-profile",
+      "@deepseek-ai/dsh-personalized-recommendations",
+      "billion-context",
+      "dshmarket",
+      "dsh-windows-mcp",
+      "@liustack/modsearch",
+      "@linxin666/dsh-client-ui-skill-explorer",
+      "@240xu/dsh-websearch",
+      "dsh-browser",
+      "dsh-unlag",
+      "@tt-a1i/archify-dsh",
+      "cc-safety-net",
+      "dsh-remedy",
+      "dsh-context",
+      "dsh-free-search",
+      "dsh-notify-me",
+      "dsh-ops",
+      "dsh-triage"
+    ]
+  },
+  "rule": {
+    "waterfall": "Cordis Context#waterfall runs listeners outermost-first; a listener that does not call next() vetoes the rest of the chain; register() unshifts when the registration passes prepend: true. So the latest prepend is outermost and, among plain registrations, the earliest load index is outermost.",
+    "reads": "it reads registrations and options; it cannot see a listener that a plugin registers dynamically after load"
+  },
+  "reserved": [
+    "remedy_unattributed"
+  ],
+  "seams": [
+    {
+      "seam": "agent/created",
+      "registrants": [
+        {
+          "name": "dsh-ops",
+          "version": "0.5.4",
+          "load_index": 20,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/session-shells.js"
+        }
+      ],
+      "same_seam": false
+    },
+    {
+      "seam": "agent/disposed",
+      "registrants": [
+        {
+          "name": "dsh-ops",
+          "version": "0.5.4",
+          "load_index": 20,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/session-shells.js"
+        }
+      ],
+      "same_seam": false
+    },
+    {
+      "seam": "agent/error",
+      "registrants": [
+        {
+          "name": "dsh-remedy",
+          "version": "0.4.18",
+          "load_index": 16,
+          "mode": "on",
+          "prepend": false,
+          "file": "dist/index.js"
+        },
+        {
+          "name": "dsh-pet",
+          "version": "0.4.5",
+          "load_index": null,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/standalone.js"
+        }
+      ],
+      "same_seam": true
+    },
+    {
+      "seam": "agent/pre-step",
+      "registrants": [
+        {
+          "name": "dsh-ops",
+          "version": "0.5.4",
+          "load_index": 20,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/publication/ptc.js"
+        }
+      ],
+      "same_seam": false
+    },
+    {
+      "seam": "agent/request-error",
+      "registrants": [
+        {
+          "name": "dsh-remedy",
+          "version": "0.4.18",
+          "load_index": 16,
+          "mode": "on",
+          "prepend": false,
+          "file": "dist/index.js"
+        }
+      ],
+      "same_seam": false
+    },
+    {
+      "seam": "dsh-ops/modes",
+      "registrants": [
+        {
+          "name": "dsh-ops",
+          "version": "0.5.4",
+          "load_index": 20,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/presets/registry.js"
+        }
+      ],
+      "same_seam": false
+    },
+    {
+      "seam": "fs/observed",
+      "registrants": [
+        {
+          "name": "dsh-ops",
+          "version": "0.5.4",
+          "load_index": 20,
+          "mode": "emit",
+          "prepend": false,
+          "file": "lib/execution/files.js"
+        }
+      ],
+      "same_seam": false
+    },
+    {
+      "seam": "internal/config",
+      "registrants": [
+        {
+          "name": "billion-context",
+          "version": "0.1.213",
+          "load_index": 6,
+          "mode": "on",
+          "prepend": false,
+          "file": "dist/agent/dsh-compaction-gate.js"
+        }
+      ],
+      "same_seam": false
+    },
+    {
+      "seam": "internal/dispatch",
+      "registrants": [
+        {
+          "name": "dsh-ops",
+          "version": "0.5.4",
+          "load_index": 20,
+          "mode": "on",
+          "prepend": true,
+          "file": "lib/publication/changes.js"
+        }
+      ],
+      "same_seam": false
+    },
+    {
+      "seam": "llm/stream",
+      "registrants": [
+        {
+          "name": "dsh-remedy",
+          "version": "0.4.18",
+          "load_index": 16,
+          "mode": "on",
+          "prepend": false,
+          "file": "dist/index.js"
+        },
+        {
+          "name": "dsh-ops",
+          "version": "0.5.4",
+          "load_index": 20,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/projections/native/read-dedup.js"
+        }
+      ],
+      "same_seam": true
+    },
+    {
+      "seam": "session/created",
+      "registrants": [
+        {
+          "name": "billion-context",
+          "version": "0.1.213",
+          "load_index": 6,
+          "mode": "on",
+          "prepend": false,
+          "file": "dist/agent/dsh-native.js"
+        }
+      ],
+      "same_seam": false
+    },
+    {
+      "seam": "session/disposed",
+      "registrants": [
+        {
+          "name": "dsh-notify-me",
+          "version": "1.19.0",
+          "load_index": 19,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/host-fallback.js"
+        },
+        {
+          "name": "dsh-ops",
+          "version": "0.5.4",
+          "load_index": 20,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/projections/native/read-dedup.js"
+        }
+      ],
+      "same_seam": true
+    },
+    {
+      "seam": "session/event",
+      "registrants": [
+        {
+          "name": "billion-context",
+          "version": "0.1.213",
+          "load_index": 6,
+          "mode": "on",
+          "prepend": false,
+          "file": "dist/agent/dsh-native.js"
+        },
+        {
+          "name": "dsh-notify-me",
+          "version": "1.19.0",
+          "load_index": 19,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/host-fallback.js"
+        },
+        {
+          "name": "dsh-ops",
+          "version": "0.5.4",
+          "load_index": 20,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/session-shells.js"
+        },
+        {
+          "name": "dsh-pet",
+          "version": "0.4.5",
+          "load_index": null,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/standalone.js"
+        }
+      ],
+      "same_seam": true
+    },
+    {
+      "seam": "settings/document-updated",
+      "registrants": [
+        {
+          "name": "@240xu/dsh-websearch",
+          "version": "2.8.8",
+          "load_index": 11,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/client.js"
+        },
+        {
+          "name": "dsh-free-search",
+          "version": "0.9.43",
+          "load_index": 18,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/index.js"
+        }
+      ],
+      "same_seam": true
+    },
+    {
+      "seam": "system-prompt/assemble",
+      "registrants": [
+        {
+          "name": "dsh-windows-mcp",
+          "version": "0.2.3",
+          "load_index": 8,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/index.js"
+        },
+        {
+          "name": "dsh-ops",
+          "version": "0.5.4",
+          "load_index": 20,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/publication/ptc.js"
+        }
+      ],
+      "same_seam": true
+    },
+    {
+      "seam": "system-prompt/change",
+      "registrants": [
+        {
+          "name": "dsh-ops",
+          "version": "0.5.4",
+          "load_index": 20,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/publication/result-admission.js"
+        }
+      ],
+      "same_seam": false
+    },
+    {
+      "seam": "tools/change",
+      "registrants": [
+        {
+          "name": "dsh-ops",
+          "version": "0.5.4",
+          "load_index": 20,
+          "mode": "on",
+          "prepend": true,
+          "file": "lib/publication/registrar.js"
+        }
+      ],
+      "same_seam": false
+    },
+    {
+      "seam": "tools/execute",
+      "registrants": [
+        {
+          "name": "dsh-ops",
+          "version": "0.5.4",
+          "load_index": 20,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/workspace-preparation.js"
+        }
+      ],
+      "same_seam": false
+    },
+    {
+      "seam": "tools/post-execute",
+      "registrants": [
+        {
+          "name": "cc-safety-net",
+          "version": "2.7.11",
+          "load_index": 15,
+          "mode": "on",
+          "prepend": false,
+          "file": "dist/chunks/index-w4hveqsw.js"
+        },
+        {
+          "name": "dsh-ops",
+          "version": "0.5.4",
+          "load_index": 20,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/shells/job-wait-guidance.js"
+        }
+      ],
+      "same_seam": true
+    },
+    {
+      "seam": "tools/pre-execute",
+      "registrants": [
+        {
+          "name": "dsh-ops",
+          "version": "0.5.4",
+          "load_index": 20,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/official-tool-hiding.js"
+        }
+      ],
+      "same_seam": false
+    },
+    {
+      "seam": "tools/result",
+      "registrants": [
+        {
+          "name": "dsh-ops",
+          "version": "0.5.4",
+          "load_index": 20,
+          "mode": "on",
+          "prepend": false,
+          "file": "lib/projections/native/read-dedup.js"
+        }
+      ],
+      "same_seam": false
+    }
+  ],
+  "conflicts": [
+    {
+      "seam": "agent/error",
+      "order": [
+        "dsh-remedy@0.4.18",
+        "dsh-pet@0.4.5"
+      ],
+      "outermost": "dsh-remedy@0.4.18",
+      "prepend_involved": false,
+      "wraps": 2,
+      "observes": 0
+    },
+    {
+      "seam": "llm/stream",
+      "order": [
+        "dsh-remedy@0.4.18",
+        "dsh-ops@0.5.4"
+      ],
+      "outermost": "dsh-remedy@0.4.18",
+      "prepend_involved": false,
+      "wraps": 2,
+      "observes": 0
+    },
+    {
+      "seam": "session/disposed",
+      "order": [
+        "dsh-notify-me@1.19.0",
+        "dsh-ops@0.5.4"
+      ],
+      "outermost": "dsh-notify-me@1.19.0",
+      "prepend_involved": false,
+      "wraps": 2,
+      "observes": 0
+    },
+    {
+      "seam": "session/event",
+      "order": [
+        "billion-context@0.1.213",
+        "dsh-notify-me@1.19.0",
+        "dsh-ops@0.5.4",
+        "dsh-pet@0.4.5"
+      ],
+      "outermost": "billion-context@0.1.213",
+      "prepend_involved": false,
+      "wraps": 4,
+      "observes": 0
+    },
+    {
+      "seam": "settings/document-updated",
+      "order": [
+        "@240xu/dsh-websearch@2.8.8",
+        "dsh-free-search@0.9.43"
+      ],
+      "outermost": "@240xu/dsh-websearch@2.8.8",
+      "prepend_involved": false,
+      "wraps": 2,
+      "observes": 0
+    },
+    {
+      "seam": "system-prompt/assemble",
+      "order": [
+        "dsh-windows-mcp@0.2.3",
+        "dsh-ops@0.5.4"
+      ],
+      "outermost": "dsh-windows-mcp@0.2.3",
+      "prepend_involved": false,
+      "wraps": 2,
+      "observes": 0
+    },
+    {
+      "seam": "tools/post-execute",
+      "order": [
+        "cc-safety-net@2.7.11",
+        "dsh-ops@0.5.4"
+      ],
+      "outermost": "cc-safety-net@2.7.11",
+      "prepend_involved": false,
+      "wraps": 2,
+      "observes": 0
+    }
+  ],
+  "warnings": [
+    "agent/error: 2 registrations, outermost dsh-remedy@0.4.18",
+    "llm/stream: 2 registrations, outermost dsh-remedy@0.4.18",
+    "session/disposed: 2 registrations, outermost dsh-notify-me@1.19.0",
+    "session/event: 4 registrations, outermost billion-context@0.1.213",
+    "settings/document-updated: 2 registrations, outermost @240xu/dsh-websearch@2.8.8",
+    "system-prompt/assemble: 2 registrations, outermost dsh-windows-mcp@0.2.3",
+    "tools/post-execute: 2 registrations, outermost cc-safety-net@2.7.11"
+  ],
+  "read": {
+    "files": 1516,
+    "bytes": 58282435,
+    "skipped_large_files": [
+      "billion-context:dist/agent/opencode-native.js",
+      "billion-context:dist/agent/pi-native.js",
+      "billion-context:dist/index.js"
+    ],
+    "unreadable_dirs": []
+  },
+  "limits": [
+    "one profile on one machine; it describes the packages installed now, not a compatibility matrix",
+    "it reads built JavaScript for the strings a registration uses; a plugin that registers through an indirection is reported as absent, not as compatible",
+    "it records order, not behaviour: whether a listener mutates chunks is not decidable by reading call sites"
+  ],
+  "redaction": {
+    "replacements": 1,
+    "kinds": [
+      "windows-home"
+    ]
+  }
+}

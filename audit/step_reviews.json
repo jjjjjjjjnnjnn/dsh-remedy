@@ -1322,7 +1322,30 @@
         "docs/HANDOFF.md",
         "INDEX.md"
       ]
+    },
+    {
+      "id": "S73",
+      "gate": "ssot",
+      "title": "Who shares the seam, and what the wrapper costs: two readings instead of a promise",
+      "axes": {
+        "correctness": "`llm/stream` is a Cordis waterfall (`dsh-llm/lib/index.js`: `this.ctx.waterfall(this, \"llm/stream\", ...)`), and `cordis/lib/index.js` says listeners run outermost-first and a listener that skips `next()` vetoes the rest. Reading 123 installed packages and 1 516 source files showed four packages registering a DSH seam: `llm/stream` runs remedy then dsh-ops (remedy is outermost, because dsh-remedy is bundle 16 and dsh-ops bundle 20), and `agent/error` runs remedy then dsh-pet, which only pushes a notification frame. `dsh-session-title` prepends itself to `llm/stream` and still calls `next()`. No third-party package claims `remedy_unattributed`. The wrapper costs +1.5 ms over 4 003 text chunks, +5.9 ms over a 5 251-chunk tool-heavy turn, and +0.12 ms on a proven repair — against turns measured in seconds.",
+        "reproducibility": "`scripts/scan_plugin_seams.mjs --profile desktop` reads `package.json` and built JavaScript, classifies call shapes through the pure `scripts/lib/seam-inventory.mjs`, redacts home paths, and writes `seam-inventory-*.json`. `scripts/bench_repair_overhead.mjs` mounts the built plugin with `createRemedy()` on a minimal context, consumes the same generator twice (with and without the listener), and refuses to write unless the fusion scenario repaired at least one call, no scenario consumed zero chunks, and no per-chunk cost is above the 100 µs sanity ceiling. The classifier has five unit tests with negative controls (unknown load order sorts last, a prepend jumps the queue, a reserved name claimed by another package is reported) and the page has three governance rules with their own controls.",
+        "compliance": "Both scripts are read-only: no plugin is loaded, no DSH is started, nothing is written to `~/.dsh`, and the profile is untouched. The inventory redacts the profile path to `<home>` before writing, so `data/results/` carries no account name. R68 moved no runtime byte: the plugin and engine dist are unchanged, the three caps read the published 0.4.18 values, and nothing was published, tagged or bumped.",
+        "ssot": "The two artifacts are produced by the scripts that name them, each with a sibling `.sha256`, and `gate_ssot` checks producer, timestamp, schema and hash. `docs/compatibility.md` points at the artifact families (`seam-inventory-`, `bench-repair-`) rather than a stamp that goes stale, names both commands, and is itself checked against the registry: every `surface` the registry declares must appear on the page, including `cli`, `scripts` and `profile`, which are not waterfalls and are the three the page marks as such.",
+        "adversarial": "The scanner reads registrations, not behaviour: it can see who registers and with which options, and it cannot see whether a listener mutates chunks, returns its own stream, or registers dynamically after load. It proves nothing about a plugin that hides its registration behind an indirection — that package is reported as absent, not as compatible. The topology is one profile on one machine, and a dsh-ops upgrade that adds `prepend` would change the order without changing this page until it is rescanned. The benchmark is a micro-benchmark: absolute milliseconds move with the host, the ratio is the claim, and a real turn is dominated by waiting on the provider. Nothing here re-proves a repair, because the round changed no runtime byte."
+      },
+      "evidence": [
+        "scripts/lib/seam-inventory.mjs",
+        "scripts/lib/seam-inventory.d.mts",
+        "scripts/scan_plugin_seams.mjs",
+        "scripts/bench_repair_overhead.mjs",
+        "docs/compatibility.md",
+        "tests/unit/seam-inventory.test.ts",
+        "tests/governance/compatibility-notes.test.ts",
+        "data/results/seam-inventory-2026-11-18T08-10-00.000Z.json",
+        "data/results/bench-repair-2026-11-18T08-20-00.000Z.json"
+      ]
     }
   ],
-  "updated_at": "2026-11-18T07:00:00.000Z"
+  "updated_at": "2026-11-18T09:00:00.000Z"
 }

@@ -104,7 +104,13 @@
       "status": "closed",
       "note": "Closed 2026-11-17 by R64, zero runtime bytes. Measured on the R63 tree: thirteen `## Reproduction` sections cited a `.tmp/` path (twenty-one patch docs mention one anywhere), not the eleven the note had carried since R60 — P-0004, P-0006, P-0007, P-0014, P-0015, P-0021, P-0036, P-0038, P-0042, P-0043, P-0044, P-0045 and P-0047. Every section now names commands a reader can run from the repository: `cli scan` over their own session directory, `node --test tests/...`, `npm pack <package>@<version>` for the published pre-fix tarballs, and `node scripts/gate_copy.mjs`. `tests/governance/patch-reproduction.test.ts` extracts each section (up to the next `##`) and rejects a `.tmp/` path and any cited `scripts/` / `tests/` / `packages/` / `docs/` / `data/` path that does not exist; both rules have synthetic negative controls, and the test was red on all thirteen docs before the edit. What the rules still cannot prove, and what the docs now say plainly: the host harness behind P-0015 (an isolated `DSH_HOME` with a rejecting listener), P-0045 (five runs over two homes and a scripted endpoint) and P-0047 (a local OpenAI-compatible server replaying the reasoning shape) is not shipped, so those three sections name the half a reader can run and point at the `data/results/` artifact plus the recorder that produced it. Existence is not semantics: a command can exist and still stop demonstrating the claim beside it, and nothing automatic compares the two.",
       "updated_at": "2026-11-17T12:35:00.000Z"
+    },
+    {
+      "id": "BS-21",
+      "status": "open",
+      "note": "P-0052 counts a transcript shape, not a user-visible incident: a `completed` turn whose last assistant message carries a tool call. The host can only end a step with tool calls when a tool result marks the turn concluded (`concludeTurn()`), so the counter names that mechanism rather than every long tool loop. The desktop UI was not driven for the probe: the \"no reply\" half is read from `turn-process.ts:160-161` and `assistant-content.ts:9-15`, not observed on screen. The probe used one route, one model, one tool and one prompt; a multi-tool batch and a multi-step conclusion were not exercised, and `max_tokens` turns on a tool call keep P-0044 meaning and are not counted here. What remains narrower after this round: the counter can be measured and named, but the decision to conclude and the decision what is visible are both outside this seam, so nothing here prevents the shape.",
+      "updated_at": "2026-11-17T13:30:00.000Z"
     }
   ],
-  "updated_at": "2026-11-17T12:35:00.000Z"
+  "updated_at": "2026-11-17T13:30:00.000Z"
 }

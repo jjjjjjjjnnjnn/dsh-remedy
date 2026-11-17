@@ -66,8 +66,11 @@
 | `data/fixtures/toolcall-fusion/ambiguous-closer.json` | 两个插入点都能 parse：拒绝而不是猜（P-0037 的负对照） |
 | `data/fixtures/toolcall-fusion/single-broken.json` | 单个坏对象不拆 |
 | `data/results/patch-registry-*.json` | 注册表快照（SSOT） |
+| `data/results/publish-2026-11-18T03-10-00.000Z.json` / `install-acceptance-2026-11-18T03-20-00.000Z.json` | **0.4.18 发布 + 空目录单装**（两包 `exact_ok` + `latest_ok`、`ok: true`；三条命令 0/0/0、`OK 8 fixture(s)`、`canonical_fixtures: 8`） |
+| `data/results/live-toolcall-2026-11-17T13-30-00.000Z.json` | **P-0052 本机证据**：conclude 末步 `["text","tool-call"]`、control 第二步 `["text"]`；`completed_on_tool_call=1`、`completed_without_answer=0` |
+| `data/results/live-linux-2026-11-18T03-40-00.000Z.json` | **Linux 真机（WSL2 Ubuntu, node 24.10.0）· 0.4.18 树**：420 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 同值 |
 | `data/results/publish-2026-11-17T07-30-00.000Z.json` / `install-acceptance-2026-11-17T07-40-00.000Z.json` | **0.4.17 发布 + 空目录单装**（两包 `exact_ok` + `latest_ok`、`ok: true`；三条命令 0/0/0、`OK 8 fixture(s)`、`canonical_fixtures: 8`） |
-| `data/results/live-desktop-2026-11-17T08-55-00.000Z.json` | **桌面真机：0.4.17 跑了一个真实 turn**（答复 `R62-DESKTOP-OK`、`turn/end` `completed`、journal `streams: 1`、verdict `quiet`；tarball 指 registry 的 0.4.17 包，runtime 0.2.2-rc.3） |
+| `data/results/live-desktop-2026-11-17T08-55-00.000Z.json` | **桌面真机：0.4.17 跑了一个真实 turn**（答复 `R62-DESKTOP-OK`、`turn/end` `completed`、journal `streams: 1`、verdict `quiet`；tarball 指 registry 的 0.4.17 包，runtime 0.2.2-rc.3）；0.4.18 的桌面 turn 本轮未做 |
 | `data/results/live-linux-2026-11-17T08-40-00.000Z.json` | **Linux 真机（WSL2 Ubuntu）· 0.4.17 树**：405 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 同值 |
 | `data/results/explain-drift-2026-11-17T10-05-00.000Z.json` | **P-0051 本机证据**：`scan --json` 与 `explain` 在 114 个会话文件上同数（`dropped_tools` 9），后者退出 1 且只打一条 `DROPPED`（sha256 `cd44c0ae…`） |
 | `data/results/capability-drift-2026-11-17T04-40-00.000Z.json` | **P-0050 本机证据**：293 个 `request/header`、9 对「调过之后被 resume 丢掉」、5 次 `UNKNOWN_TOOL` |

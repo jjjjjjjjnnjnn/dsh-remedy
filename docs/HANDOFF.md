@@ -3366,12 +3366,12 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 
 ## 下一位 agent 的第一件事
 
-**A. 现在是哪一版。** **0.4.17 已发布**（两包 `latest`，五十一个补丁：**9 `verified` + 42 `tested`**，在 DSH 0.2.2-rc.3 上实测）；
-本树就是已发布的这一版，台账里五条记录的 `since` 都写着 `0.4.17 (published 2026-11-17)`。
-公开仓 `main` 推到 `be62af3`（发布提交）与 `3c3a1e7` / `d29e9ae` / `0ff4911`（三次交接文档提交），`v0.4.17` 的 tag 与 release 都发了、正文与
-`docs/copy/release-notes/v0.4.17.md` 行尾归一后逐字节相同；**五次 CI 全 success**（含 `verify (macos, node 24)`）。
-两个 profile 与桌面 App 都在 **0.4.17** 上（`live-desktop-2026-11-17T08-55-00.000Z.json`）。
-本树实测 Windows 与 Linux **405 tests / 6 gates / 6-6**；**发布不需要问人拿 OTP**（见「明确边界」第一条）。
+**A. 现在是哪一版。** **0.4.18 已发布**（两包 `latest`，五十二个补丁：**9 `verified` + 43 `tested`**，在 DSH 0.2.2-rc.3 上实测）；
+本树就是已发布的这一版，P-0052 的 `since` 写着 `0.4.18 (published 2026-11-17)`。
+公开仓 `main` 推到 `2e9c998`（发布提交）与 `2c462d9`（记录推送的文档提交），`v0.4.18` 的 tag 与 release 都发了、正文与
+`docs/copy/release-notes/v0.4.18.md` 逐字节相同；CI run `44096337395` 与 `44096772132` 四个 job 全 success（含 `verify (macos, node 24)`）。
+两个 profile 在 **0.4.18** 上；**桌面 App 本轮没有重启，仍是 0.4.17**（没有新的桌面 turn 证据）。
+本树实测 Windows 与 Linux **420 tests / 6 gates / 6-6**；**发布不需要问人拿 OTP**（见「明确边界」第一条）。
 
 **B. 主线（R43+）：外部反馈 → 稳定补丁。** R43 结掉 L-0001 / L-0002；R45 把 #11337 做成 **P-0034**，
 把 #6035 / #9066 / #11190 判 `rejected`；R46 把 #12318 做成 **P-0035**；R47 读完同接缝的五个竞品，
@@ -3385,19 +3385,18 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 ```powershell
 pnpm install ; pnpm run verify ; node scripts/gate.mjs --mutate ; node packages/plugin/dist/cli.js verify
 ```
-四条都绿（405 / 6 / 6-6 / `OK 8 fixture(s)`）就说明起点是好的；Linux 的同一条命令应当是同一组数。然后按下面的顺序挑一件事，
+四条都绿（420 / 6 / 6-6 / `OK 8 fixture(s)`）就说明起点是好的；Linux 的同一条命令应当是同一组数。然后按下面的顺序挑一件事，
 **不要**再去追 `docs/research/leads.md` 里已经判过的旧条目：A 表没有 `lead`，只剩 L-0010 一条 `watching`；
 其余候选是 R57 逐桶判读过的那批，
 只有当本机能复现时才可能变成补丁（R57 量过 #13169、R59 量过 #12348）。
 再次巡检用 `node scripts/collect_leads.mjs`（产出 `data/results/intake-<stamp>.json`，只说哪些来源答了、
 哪些没答、有几个候选还没进账本）。
 
-**D. 下一件事（公开面已收尾，剩下两项完整性工作）。**
-1. ~~公开面~~ **R62 已完成**：`be62af3` → `main`、tag `v0.4.17`、release、market-index、三次 CI 全绿。
-2. **`BS-20`**（zero runtime bytes）：十一份补丁文档的 Reproduction 指向 `.tmp/`，读者复现不了。
-   修法二选一——把探针进 `scripts/`，或让每份 Reproduction 点名一条已发布的命令；两条都是决定，不是打扫。
-3. **`#12741` 仍未复现**：本机 130 个 `completed` turn 里 0 个是那个形状，要数它必须先有探针与
-   另一条规则（本项目把 tool-call 当作「看得见的工作」）。没有复现就没有补丁。
+**D. 下一件事（发布与两条完整性工作都已收尾，剩桌面 turn 与巡检）。**
+1. ~~公开面~~ **R65 已完成**：`2e9c998` → `main`、tag `v0.4.18`、release、market-index、CI 全绿。
+2. ~~`BS-20`~~ **R64 已完成**：十三份补丁文档的 Reproduction 改成 shipped 命令，守卫在 `patch-reproduction.test.ts`。
+3. ~~`#12741`~~ **R65 已做一半**：P-0052 复现了形状并让 `scan` / `explain` 数它；**剩下的是桌面 App 重启后跑一个真实 turn**
+   （本轮没有重启，仍是 0.4.17），以及一次新的 `collect_leads.mjs` 巡检；`#10115` 本机仍无形状。
 
 
 **治理判据（R22 起，别再退化）：**
@@ -3784,12 +3783,12 @@ pnpm 的过滤发版路径（`publish_packages.mjs` 正是为替代它而写的�
 
 ## 明确边界
 
-- 两个 profile（桌面与 `remedy-live`）装的都是 **0.4.17**，pin 写的是 registry 版本（不是 scratch 路径）；
+- 两个 profile（桌面与 `remedy-live`）装的都是 **0.4.18**，pin 写的是 registry 版本（不是 scratch 路径）；
   装到哪一份、什么时候装的、App 什么时候重启，都记在批次叙事与 `data/results/install-acceptance-*.json`
   里，不写在这里 —— 这台机器的 scratch 目录是 gitignored 的，写进来的是一个新克隆无法核对的断言。
-  **桌面 App 加载的是 0.4.17**，发布后重启并跑了一个真实 turn（`live-desktop-2026-11-17T08-55-00.000Z.json`，答复 `R62-DESKTOP-OK`）；
+  **桌面 App 本轮没有重启，仍加载 0.4.17**；上一份桌面 turn 是 `live-desktop-2026-11-17T08-55-00.000Z.json`（答复 `R62-DESKTOP-OK`）；
   上一版的桌面证据是 `live-2026-11-16T17-20-00.000Z.json`（0.4.16，答复 `R56-DESKTOP-OK`）。
-- **平台边界**：Windows 与 Linux（WSL2 Ubuntu 26.04）都实测过完整套件——本树 **405 tests / 6 gates / 6-6**
+- **平台边界**：Windows 与 Linux（WSL2 Ubuntu 26.04）都实测过完整套件——本树 **420 tests / 6 gates / 6-6**
   在 Windows 与 Linux 上都是同值（Linux 产物 `live-linux-2026-11-17T08-40-00.000Z.json`）；**macOS 没有实测**（本机无 Apple 硬件/许可宿主），
   所以 P-0038 的 `/Users` 形状在 Linux 上是**字符串**，不是 macOS 产的字节。P-0048 把它变成 CI 判据：
   workflow 里有第三个 job `verify (macos, node 24)`，第一次真实运行就绿，但它不产出 `data/results/live-*`，

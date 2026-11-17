@@ -13,7 +13,7 @@
 | 包体 | **已发布 0.4.18 = 38 394 B 压缩 / 38 文件 / 125 711 B 解包**（sha1 `bb4c5058…`），core **0.4.18 = 40 796 B / 29 / 132 371**（sha1 `783d5538…`）；两包的 `dist.shasum` 与下载下来的 tarball 逐字节相同。**已发布的那一棵就是这棵树**：emit 总量 **82 859 / 83 000**（常驻 40 902 / 44 000，CLI 41 957 / 42 000），core 的 dist 是 **103 869 / 104 000**（registry.js 66 049 / 68 000）。上一版 **0.4.17 = 38 348 / 38 / 125 076**（sha1 `5a8c1f95…`），core **41 316 / 29 / 133 257**（sha1 `e5b2e00f…`）。 |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases … `v0.4.13` / `v0.4.14` / `v0.4.15` / `v0.4.16` / `v0.4.17` / **`v0.4.18`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release）。`v0.4.18` 的正文来自 `docs/copy/release-notes/v0.4.18.md`；`v0.4.17` 的正文已冻成 `release-notes-0417-frozen`。`main` 每次都用 `commit-tree` 从容器 `main:dsh-remedy` 切出、tree 逐次比对相等；tag `v0.4.18` 打在发布提交上。**R62 的三次 CI 全 success**：`44058685218`（push）、`44058772739`（tag）与 `44059275024`（文档提交），四个 job 都对。**R63 / R64 的交接提交**每次 tree 都相等、CI 都 success；run id 以 `gh run list -R jjjjjjjjnnjnn/dsh-remedy --limit 8` 为准（这一行不枚举它自己所在的提交）。**0.4.13 已 `npm deprecate`**（随包夹具有维护者本机账号名，0.4.14 起已修，用 0.4.17 或更新）；`npm view` 读回两包都带这句话。**R65 的公开面**：提交 `2e9c998`（tree 与容器 `main:dsh-remedy` 相等）推上 `main`，tag `v0.4.18` 与 release 都发了（正文与 `docs/copy/release-notes/v0.4.18.md` 逐字节相同，2 136 字符），CI run `44096337395` 四个 job 全 success（`verify (node 22)` / `verify (node 24)` / `verify (windows, node 24)` / `verify (macos, node 24)`）；比它更晚的交接提交以 `gh run list -R jjjjjjjjnnjnn/dsh-remedy --limit 4` 为准。**R66 的公开面**：提交 `2126029`（tree 与容器 `main:dsh-remedy` 相等）推上 `main`（只推文档，不打 tag、不发 release、不 bump）；CI run `44107963490` 四个 job 全 success（`verify (node 22)` / `verify (node 24)` / `verify (windows, node 24)` / `verify (macos, node 24)`）；比它更晚的交接提交（包括记录这次推送的文档提交）以 `gh run list -R jjjjjjjjnnjnn/dsh-remedy --limit 4` 为准。 |
 | 装机验收 | **0.4.18 已从 registry 单装到空目录验过 `OK 8 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-18T03-20-00.000Z.json`（`ok: true`、三条命令 0/0/0、`canonical_fixtures: 8`）；上一版是 `install-acceptance-2026-11-17T07-40-00.000Z.json`。**两个 profile 已换到 0.4.18**（`pnpm why` 与 `node_modules/dsh-remedy/dist/cli.js verify` 两边读 0.4.18，备份 `.before-0418`）；**桌面 App 在 R66 里被启动、跑了一个 0.4.18 的真实 turn**（`live-desktop-2026-11-18T05-10-00.000Z.json`），随后关闭，回到本轮开始前的状态。Linux 同一棵 0.4.18 树全量跑过（`live-linux-2026-11-18T03-40-00.000Z.json`）。 |
-| 下一件事 | **R68 把「会不会和别的插件打架」变成了读数**：`seam-inventory-2026-11-18T08-10-00.000Z.json`（本机 `llm/stream` 上只有 `dsh-ops`，remedy 在外层；`agent/error` 上 `dsh-pet` 只观察）与 `bench-repair-2026-11-18T08-20-00.000Z.json`（最坏 **+5.9 ms / 5 251 chunk**），规则与边界在 `docs/compatibility.md`。剩下的：**(a)** #10115 本机仍无形状；**(b)** 下一次巡检会少 8 条候选（I 表已进账）；**(c)** 任何新运行时功能仍要先付账（plugin 141 B、CLI 43 B、core 131 B）；**(d)** 装了新插件就重跑一次 seam 扫描。 |
+| 下一件事 | **R69（计划，未开工）：对读不懂的 chunk 失败开放。** 探针在 R68 树上量到三条 remedy 自己抛的 `TypeError`（`null` chunk、`arguments` 不是字符串、`block-end` 没有 `block`），以及“profile 已拥有 `remedy_unattributed` 时修复片段会以该名派发”。决定与边界见 `docs/adr/0002-fail-open-on-foreign-chunks.md`，证据 `hostile-neighbours-2026-11-18T10-00-00.000Z.json`。两条补丁是 P-0053（fail open）与 P-0054（保留名不兜底）；运行时改动 → 0.4.19。其余：**(a)** #10115 无本机形状；**(b)** 下一次巡检少 8 条候选（I 表已进账）；**(c)** 装了新插件就重跑一次 seam 扫描；**(d)** 字节余量以状态表为准。 |
 | 交接边界 | 没有半成品：`pnpm run verify` = **433 tests / 0 fail / 6 gates ALL GREEN**（Windows；POSIX 的最近一次是 R67 的 425，R68 只加 scripts / tests / docs，没在 Linux 重跑）、`--mutate` **6-6**、`cli verify` `OK 8 fixture(s)`。**R66–R68 零运行时字节**：R68 新增两个只读脚本（`scan_plugin_seams.mjs`、`bench_repair_overhead.mjs`）、一个纯分类器（`scripts/lib/seam-inventory.mjs`）、三份判据与 `docs/compatibility.md`；字节账与 0.4.18 逐字相同（cap 一个没动），不改版本、不发 npm、不打 tag。 |
 
 ## 五分钟检查
@@ -56,6 +56,43 @@ git -C .. log --oneline -3
 
 - 容器 `main` **没有**推到 `dsh-triage` 远端（推上去会破坏那个仓库的根布局）。不要顺手推。
 - `dsh-triage/` 只是同级项目，规则以它自己的 `AGENTS.md` 为准。
+
+## 下一批次（R69，计划，未开工）
+
+**R69 · 对读不懂的 chunk 失败开放：remedy 不制造第四种结局。**
+
+> 触发：用户担心「我的用户会装别的插件，冲突可能造成严重后果」。R68 记录了谁在同一条链上；
+> 这一轮记录的是「邻居递来一个我们不认识的东西时会发生什么」。**只记录、探针已落盘，运行时改动未开工**：
+> 实现与 0.4.19 留给下一会话。
+
+**A. 探针与证据**
+
+- `scripts/probe_hostile_neighbours.mjs --stamp 2026-11-18T10:00:00.000Z`，七个场景，
+  直接挂 `createRemedy()` 的真 listener；产物 `hostile-neighbours-2026-11-18T10-00-00.000Z.json`。
+- 三条实测（R68 树）：`null` chunk → `TypeError: … reading 'type'`；`arguments` 是对象 →
+  `TypeError: text.trim is not a function`；`block-end` 没有 `block` → `TypeError: … reading 'type'`。
+  三条都是 **remedy 自己的异常**，不是 provider 的失败。
+- 一条命名空间实测：profile 已声明 `remedy_unattributed` 时，修复后的片段确实以该名派发。
+- 另外三个场景是安全的：自定义 chunk 类型原样放行、上游 `TRANSPORT` 原样抛回、`finish` 两次只走第一个。
+
+**B. 决定（ADR 0002）**
+
+- 契约：remedy 只能原样放行 / 修复已证实的粘连 / 原样抛回原来的失败。
+- P-0053：读不懂的 chunk → 先 flush 已持有的尾，然后原样放行，此后该流只放行；不记 `errors`。
+- P-0054：`options.tools` 已拥有 `remedy_unattributed` → 不使用兜底名，整次救援放弃。
+- 付款：预计 250–400 字节，压注释付账、不抬 cap；运行时改动 → 0.4.19。
+
+**C. 下一会话的第一件事**
+
+1. 先读 `docs/adr/0002-fail-open-on-foreign-chunks.md` 与探针产物；
+2. 把探针的七行变成 `tests/unit/neighbour-hostile.test.ts`（先红：三行会红，四行是负对照）；
+3. 写 `docs/patches/P-0053-*.md` / `P-0054-*.md`，再改 `repair-stream.ts`；付账后跑 `pnpm run verify`；
+4. 0.4.19：发布、冷装、两个 profile、桌面真机、Linux；
+5. 收口：门禁、S75、披露行、HANDOFF / INDEX、公开仓。
+
+**D. 不做**
+
+- 不替用户判断该装哪个插件；不自动禁用自己；不引入依赖。
 
 ## 当前批次（R68，2026-11-17）
 
@@ -3563,7 +3600,8 @@ pnpm install ; pnpm run verify ; node scripts/gate.mjs --mutate ; node packages/
 4. ~~一次巡检~~ **R66 已完成**：`intake-2026-11-18T05-20-00.000Z.json` 与 `docs/research/intake-r66-triage.md`；没有新形状，不发补丁。
 5. ~~Linux 的 POSIX 证据~~ **R67 已完成**：`live-linux-2026-11-18T06-30-00.000Z.json`（425 / 6 / 6-6、同一组字节账、19 条 R66 规则在 POSIX 上全过）。
 6. ~~和其他插件的冲突~~ **R68 已收口**：`docs/compatibility.md` + `seam-inventory-2026-11-18T08-10-00.000Z.json` + `bench-repair-2026-11-18T08-20-00.000Z.json`；装了新插件就重扫一次。
-7. **剩下**：`#10115` 本机仍无形状；下一次巡检会少 8 条候选（`leads.md` 的 I 表已进账）。
+7. **R69（未开工，下一会话从这里开始）**：`docs/adr/0002-fail-open-on-foreign-chunks.md` + `hostile-neighbours-2026-11-18T10-00-00.000Z.json`。三条 remedy 自己抛的 `TypeError` 与一条保留名派发已经量到；按批次 R69 的 C 节五步做，发 0.4.19。
+8. **剩下**：`#10115` 本机仍无形状；下一次巡检会少 8 条候选（`leads.md` 的 I 表已进账）。
 
 
 **治理判据（R22 起，别再退化）：**
@@ -3640,6 +3678,7 @@ pnpm install ; pnpm run verify ; node scripts/gate.mjs --mutate ; node packages/
 
 | 文件 | 状态 | 说明 |
 |---|---|---|
+| `hostile-neighbours-2026-11-18T10-00-00.000Z.json` | 红 | **R69 修前证据**：`null` chunk / 非字符串 `arguments` / 缺 `block` 三条都让 remedy 抛 `TypeError`；profile 拥有 `remedy_unattributed` 时修复片段以该名派发（sha256 `cf74ea8347f5…`） |
 | `seam-inventory-2026-11-18T08-10-00.000Z.json` | 绿 | **R68 接缝盘点**：桌面 profile 123 个包 / 1 516 个源文件；`llm/stream` 上 remedy → ops（remedy 在外层）、`agent/error` 上 remedy → pet；没有第三方占用 `remedy_unattributed`（sha256 `2c487de6dd0f…`） |
 | `bench-repair-2026-11-18T08-20-00.000Z.json` | 绿 | **R68 开销基准**：文本 +1.5 ms / 4 003 chunk、工具密集 +5.9 ms / 5 251 chunk、一次修复 +0.12 ms；三组都先断言再写盘（sha256 `f7bb424ec4c1…`） |
 | `live-linux-2026-11-18T06-30-00.000Z.json` | 绿 | **Linux 真机（WSL2 Ubuntu, node 24.10.0）· R66 树（R67 记录）**：425 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 逐项同值（40 902 / 41 957 / 82 859、core 103 869、registry 66 049）；R66 的 19 条规则在 POSIX 上全过（sha256 `ca130ca11304…`） |
@@ -3649,8 +3688,9 @@ pnpm install ; pnpm run verify ; node scripts/gate.mjs --mutate ; node packages/
 | `install-acceptance-2026-11-18T03-20-00.000Z.json` | 绿 | **0.4.18 装机验收**：空目录从 registry 单装，三条命令 0/0/0，`OK 8 fixture(s)`（`canonical_fixtures: 8`；sha256 `b88316a8db31…`） |
 | `live-toolcall-2026-11-17T13-30-00.000Z.json` | 绿 | **P-0052 本机证据**：conclude 末步 `["text","tool-call"]`、control 第二步 `["text"]`；`completed_on_tool_call=1`、`completed_without_answer=0`（sha256 `8b4a31519bf5…`） |
 | `live-linux-2026-11-18T03-40-00.000Z.json` | 绿 | **Linux 真机（WSL2 Ubuntu, node 24.10.0）· 0.4.18 发布树**：420 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 同值（sha256 `7df22afb4052…`；R67 的 06:30 是同一组数在 R66 树上重跑） |
-| `gates-2026-11-18T09-00-00.000Z.json` | 绿 | **当前**门禁（6 gates ALL GREEN，R68 的树；sha256 `79d04be05aac…`）；负对照见下一行 |
-| `gates-mutate-2026-11-18T09-05-00.000Z.json` | 绿 | **当前**负对照（6/6 CAUGHT，同一棵 R68 树；sha256 `c39a9dcac81c…`） |
+| `gates-2026-11-18T10-05-00.000Z.json` | 绿 | **当前**门禁（6 gates ALL GREEN，R69 记录树；sha256 `5ed7ffea59e4…`）；负对照见下一行 |
+| `gates-mutate-2026-11-18T10-10-00.000Z.json` | 绿 | **当前**负对照（6/6 CAUGHT，同一棵树；sha256 `a1593f2a2a5c…`） |
+| `gates-2026-11-18T09-00-00.000Z.json` / `gates-mutate-2026-11-18T09-05-00.000Z.json` | 绿 | 历史门禁对儿（R68 交付树；被 10:05 / 10:10 取代） |
 | `gates-2026-11-18T07-00-00.000Z.json` / `gates-mutate-2026-11-18T07-05-00.000Z.json` | 绿 | 历史门禁对儿（R67 交付树；被 09:00 / 09:05 取代） |
 | `gates-2026-11-18T06-00-00.000Z.json` / `gates-mutate-2026-11-18T06-05-00.000Z.json` | 绿 | 历史门禁对儿（R66 交付树；被 07:00 / 07:05 取代） |
 | `gates-2026-11-18T04-00-00.000Z.json` / `gates-mutate-2026-11-18T04-05-00.000Z.json` | 绿 | 历史门禁对儿（R65 交付树；被 06:00 / 06:05 取代） |

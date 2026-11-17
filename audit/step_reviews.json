@@ -1345,7 +1345,26 @@
         "data/results/seam-inventory-2026-11-18T08-10-00.000Z.json",
         "data/results/bench-repair-2026-11-18T08-20-00.000Z.json"
       ]
+    },
+    {
+      "id": "S74",
+      "gate": "ssot",
+      "title": "What a neighbouring plugin can do to the wrapper, measured before the fix",
+      "axes": {
+        "correctness": "Seven scenarios were run through the real listener: a `null` chunk, a `block-end` whose `arguments` is an object, and a `block-end` with no `block` each end the turn with a `TypeError` raised by remedy (`reading 'type'`, `text.trim is not a function`, `reading 'type'`). A profile that already declares `remedy_unattributed` receives the repaired fragment under that name. Four other shapes are safe: an unknown chunk type passes through, a source `TRANSPORT` error is rethrown unchanged, a second `finish` is never reached, and a consumer that stops early does not make the wrapper throw.",
+        "reproducibility": "`node scripts/probe_hostile_neighbours.mjs --stamp <ISO>` mounts the built plugin with `createRemedy()`, feeds each scenario through the captured `llm/stream` listener, and writes a stamped artifact with a judgement derived from the measurement (not typed by hand). It exits 0 because it is a probe, not a gate; R69 turns the red rows into unit tests and changes the wrapper.",
+        "compliance": "Read-only: no host process, no provider, no profile is written, no plugin is loaded. The probe adds no runtime byte; the tree it runs on is the published 0.4.18 dist (R66–R68 moved no runtime byte), so the measurement describes what users have today.",
+        "ssot": "One artifact, one producer, one hash: `hostile-neighbours-2026-11-18T10-00-00.000Z.json` is written by `scripts/probe_hostile_neighbours.mjs`, listed in the evidence index with its sha256, cited by ADR 0002 and by the handoff's next-batch section, and the ADR states the contract R69 will implement. The artifact is marked red on purpose: it records a defect that is not fixed yet.",
+        "adversarial": "The harness mounts the listener directly, so it does not prove what a full host turn does with these shapes — the host may reject a `null` chunk before remedy ever sees it. The scenarios are shapes a neighbour *could* produce, not a survey of installed plugins. The reserved-name row uses a synthetic tool list; whether a real profile owns that name is a different question (`scan_plugin_seams.mjs`). The word \"serious\" is the author's judgement about user impact, not a measurement; the measured facts are the four rows above."
+      },
+      "evidence": [
+        "scripts/probe_hostile_neighbours.mjs",
+        "docs/adr/0002-fail-open-on-foreign-chunks.md",
+        "data/results/hostile-neighbours-2026-11-18T10-00-00.000Z.json",
+        "docs/HANDOFF.md",
+        "INDEX.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-18T09:00:00.000Z"
+  "updated_at": "2026-11-18T10:05:00.000Z"
 }

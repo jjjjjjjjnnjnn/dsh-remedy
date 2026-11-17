@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/probe_hostile_neighbours.mjs",
+  "generated_at": "2026-11-18T10:00:00.000Z",
+  "question": "When a neighbouring plugin hands the llm/stream wrapper a chunk it did not expect, does the turn survive, and can a repair dispatch under a name the profile already owns?",
+  "contract_after_r69": "remedy may only pass a chunk through, repair a proven fusion, or rethrow the original failure; it must not raise an error of its own",
+  "measured_on": "the R68 tree (plugin and engine dist as published in 0.4.18; R66–R68 moved no runtime byte)",
+  "scenarios": [
+    {
+      "name": "a neighbour yields null",
+      "thrown": "TypeError: Cannot read properties of null (reading 'type')",
+      "chunks_out": 1,
+      "repaired": 0,
+      "errors": 1,
+      "judgement": "remedy raised its own error"
+    },
+    {
+      "name": "arguments is not a string",
+      "thrown": "TypeError: text.trim is not a function",
+      "chunks_out": 1,
+      "repaired": 0,
+      "errors": 1,
+      "judgement": "remedy raised its own error"
+    },
+    {
+      "name": "block-end without block",
+      "thrown": "TypeError: Cannot read properties of undefined (reading 'type')",
+      "chunks_out": 0,
+      "repaired": 0,
+      "errors": 1,
+      "judgement": "remedy raised its own error"
+    },
+    {
+      "name": "unknown chunk types",
+      "thrown": null,
+      "chunks_out": 3,
+      "repaired": 0,
+      "errors": 0,
+      "judgement": "passed through"
+    },
+    {
+      "name": "the source throws",
+      "thrown": "Error: socket hang up",
+      "chunks_out": 1,
+      "repaired": 0,
+      "errors": 1,
+      "judgement": "the source error was passed through"
+    },
+    {
+      "name": "finish appears twice",
+      "thrown": null,
+      "chunks_out": 2,
+      "repaired": 0,
+      "errors": 0,
+      "judgement": "passed through"
+    },
+    {
+      "name": "a neighbour owns remedy_unattributed",
+      "thrown": null,
+      "chunks_out": 6,
+      "repaired": 1,
+      "errors": 0,
+      "detail": [
+        "write",
+        "remedy_unattributed"
+      ],
+      "judgement": "a neighbour-owned fallback name was dispatched"
+    }
+  ],
+  "limits": [
+    "the harness mounts the listener directly; it does not run a host turn or a provider",
+    "the scenarios are the shapes a neighbour could produce, not a survey of installed plugins",
+    "the reserved-name row uses a synthetic profile: whether a real profile owns that name is what scan_plugin_seams.mjs answers"
+  ]
+}

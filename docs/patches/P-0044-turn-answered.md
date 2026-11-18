@@ -1,6 +1,6 @@
 # P-0044 — A truncated turn was counted, and nobody asked whether it answered
 
-**Status**: `tested`  **Severity**: major  **Surface**: `cli`  **Depends on**: P-0006, P-0042
+**Status**: `verified` (R71: 88 of 88 `max-tokens` turns in this machine's real corpus answered nobody — `data/results/live-census-2026-11-18T22-00-00.000Z.json`)  **Severity**: major  **Surface**: `cli`  **Depends on**: P-0006, P-0042
 
 ## Symptom
 

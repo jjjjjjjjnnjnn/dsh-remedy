@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_neighbour_turn.mjs",
+  "generated_at": "2026-11-18T22:40:00.000Z",
+  "question": "Inside a real host turn, what does the llm/stream wrapper do with a chunk it did not expect, and can a repair still dispatch under a name the profile already owns?",
+  "contract_after_r69": "remedy may only pass a chunk through, repair a proven fusion, or rethrow the original failure; it must not raise an error of its own",
+  "probe": {
+    "homes": "one isolated DSH_HOME per arm; nothing under ~/.dsh is written",
+    "client": "the installed headless CLI of DSH 0.2.2-rc.3 (plugins/plugin/dist and core/dist as packaged)",
+    "neighbour": "tests/fixtures/neighbour-bad-chunks — a plugin on llm/stream that yields the shapes the pi-ai adapter never produces",
+    "provider": "a local OpenAI-compatible endpoint that answers every request with one short text stream",
+    "arms": {
+      "control": "the neighbour only: the host outcome this stream would have without remedy",
+      "old": "the released 0.4.18 bytes (npm tarballs)",
+      "new": "this tree, which is the published 0.4.19 bytes"
+    },
+    "host": {
+      "version": "0.2.2-rc.3",
+      "source": "<home>\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\primary-runtime\\runtime.json",
+      "sha256": "ce43135cf00d7dcd9d1c52f467cf8fe533248a745226e27def0e86ba8e6abad6"
+    }
+  },
+  "runs": {
+    "empty-identity": {
+      "control": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: format v4 tool/result at seq 19 requires toolCallId matching its tool source",
+        "turn_end": null,
+        "assistant": [
+          [
+            "tool-call:"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "",
+            "id": ""
+          }
+        ],
+        "results": [],
+        "journal": {
+          "events": 0,
+          "counters": null
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "d4f5d58239c01ca872f4635755dec8e39e9a926892be834a8d05887cf41d3dc4",
+          "journal": null,
+          "neighbour": "de3ca7c2aafaa4c309bbb9e06b1ba73b4e44e7ba8e4b4f1291491d8e06fc6f24"
+        }
+      },
+      "old": {
+        "version": "0.4.9",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "tool-call:remedy_unattributed"
+          ],
+          [
+            "text"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "remedy_unattributed",
+            "id": "call_remedy_1"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_remedy_1",
+            "code": "UNKNOWN_TOOL",
+            "is_error": true
+          }
+        ],
+        "journal": {
+          "events": 4,
+          "counters": {
+            "streams": 3,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 1,
+            "withdrawn": 0,
+            "resealed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 3,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "ca345a4f5b967bd11032f39ce83af289b377484cc579517570c5ea4d2e70f77c",
+          "journal": "1bcbf7c79804563013afa2c6a53a62ecfc27217a0543d25711c5937ff4d66ba3",
+          "neighbour": "a389c72eaa317328492a659be7322da16a5ea8ad310e43f642884a773bfc4d6b"
+        }
+      },
+      "new": {
+        "version": "0.4.19",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "tool-call:remedy_unattributed"
+          ],
+          [
+            "text"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "remedy_unattributed",
+            "id": "call_remedy_2"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_remedy_2",
+            "code": "UNKNOWN_TOOL",
+            "is_error": true
+          }
+        ],
+        "journal": {
+          "events": 5,
+          "counters": {
+            "streams": 3,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 2,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 3,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "45a083b8fbaf904720e533ff8303ff3e9d7fd843bf5e4aeaa8d64b300065f0be",
+          "journal": "fa7dfee317569b3aa93cfdf8f32cd0f4c4845789c4a1f56b0b8ffef3a1b3ac1b",
+          "neighbour": "a1a634a86eab778e8008f2ec4f570784cc16755a6161ae20afbeaea5b9c8b94a"
+        }
+      },
+      "same_new_control": false,
+      "same_old_control": false,
+      "old_owns_fallback": false,
+      "new_owns_fallback": false,
+      "control_has_journal": false
+    }
+  },
+  "claims": {
+    "p0053_a_chunk_whose_arguments_is_not_a_string": "the 0.4.18 bytes ended the turn with \"text.trim is not a function\"; this tree reproduces the neighbour-only outcome",
+    "p0053_a_finish_without_a_reason": "the 0.4.18 bytes ended the turn with \"Cannot read properties of undefined (reading 'kind')\"; this tree reproduces the neighbour-only outcome",
+    "p0053_null_chunk": "identical in all three arms: the host itself reads `type`, so this shape cannot attribute an author",
+    "p0053_block_end_without_a_block": "identical in all three arms: the host itself reads `block.type`, so this shape cannot attribute an author",
+    "p0054_a_fused_fragment": "the 0.4.18 bytes dispatched the repaired fragment under `remedy_unattributed`; this tree abandons the rescue and the turn carries the provider failure",
+    "p0054_a_nameless_block_end": "the 0.4.18 bytes dispatched a nameless call under `remedy_unattributed`; this tree keeps the original bytes and the host answers UNKNOWN_TOOL",
+    "p0033_an_empty_identity_never_reaches_the_session": "without the plugin the host cannot write the tool result (`format v4 tool/result at seq N requires toolCallId matching its tool source`, upstream #11151 / #10732); this tree completes the turn and the call leaves under the fallback name"
+  },
+  "not_proven": [
+    "the shapes are synthesized by a neighbour plugin at the seam, not produced by the pi-ai adapter; the adapter that produces the measured incidents is dsh-llm-deepseek, which this harness does not drive",
+    "the provider is local and synthetic: one text stream per turn, one turn per run",
+    "`null` and a `block-end` with no `block` are non-discriminating here: the host fails with the same message in every arm, so no author can be attributed from the session",
+    "one machine, one profile shape, Windows; the same tree was run on Linux for the build and gates, not for these turns"
+  ],
+  "verdict": {
+    "p0053": "verified — inside a real turn, two shapes the 0.4.18 bytes turned into remedy's own TypeError now reproduce the neighbour-only outcome",
+    "p0054": "verified — inside a real turn, a profile that owns `remedy_unattributed` no longer receives the repaired fragment or the nameless call"
+  },
+  "redaction": {
+    "replacements": 0,
+    "kinds": []
+  }
+}

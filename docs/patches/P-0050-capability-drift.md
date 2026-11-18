@@ -1,6 +1,6 @@
 # P-0050 — A resumed session can lose a tool it had already used, and nothing counted that
 
-**Status**: `tested`  **Severity**: `major`  **Surface**: `cli`  **Depends on**: P-0004, P-0006
+**Status**: `verified` (R71: 9 tool(s) dropped across 5 real sessions, and `explain` printed the DROPPED finding — `data/results/live-census-2026-11-18T22-00-00.000Z.json`)  **Severity**: `major`  **Surface**: `cli`  **Depends on**: P-0004, P-0006
 
 ## Symptom
 

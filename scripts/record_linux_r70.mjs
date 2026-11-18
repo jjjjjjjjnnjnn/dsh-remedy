@@ -72,7 +72,7 @@ const account = {
   core_total: sizeOf('size/core-total'),
   registry: sizeOf('size/core-file:registry\\.js'),
 }
-const expected = { residency: 39632, cli: 41957, total: 81589, core_total: 103518, registry: 67782 }
+const expected = { residency: 39632, cli: 41957, total: 81589, core_total: 103531, registry: 67795 }
 for (const [key, bytes] of Object.entries(expected)) {
   if (account[key]?.bytes !== bytes) problems.push(`byte account ${key} is ${String(account[key]?.bytes)}, not ${bytes}`)
 }
@@ -118,7 +118,7 @@ const payload = {
     what: 'the fourteen measured/control cases for P-0053 and P-0054',
   },
   byte_account: account,
-  windows_tree: { what: 'the same tree measured on Windows before this run', total: 81589, core_total: 103518, registry: 67782 },
+  windows_tree: { what: 'the same tree measured on Windows before this run', total: 81589, core_total: 103531, registry: 67795 },
   not_measured: {
     live_turns: 'the R70 harness drives the desktop CLI and the Windows host; it was not re-run on POSIX this round',
     cold_directory_install: 'not re-run on POSIX: 0.4.19 was installed from the registry on Windows (install-acceptance-2026-11-18T16-20-00.000Z.json)',

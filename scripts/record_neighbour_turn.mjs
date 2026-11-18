@@ -46,7 +46,13 @@ for (const [arm, root] of Object.entries(roots)) {
 }
 
 /** The scenarios this artifact owns; the repair family lives in the other one. */
-const SCENARIOS = ['null-chunk', 'object-arguments', 'no-block', 'finish-no-reason', 'reserved-fused', 'reserved-nameless']
+const ALL_SCENARIOS = ['null-chunk', 'object-arguments', 'no-block', 'finish-no-reason', 'reserved-fused', 'reserved-nameless', 'empty-identity']
+const only = (flag('only') ?? '').split(',').filter((name) => name !== '')
+const SCENARIOS = only.length === 0 ? ALL_SCENARIOS : ALL_SCENARIOS.filter((name) => only.includes(name))
+if (SCENARIOS.length === 0) {
+  process.stderr.write(`record_neighbour_turn: --only named no scenario this artifact owns\n`)
+  process.exit(2)
+}
 
 /** One run reduced to what a claim may point at. */
 function observe(dir) {
@@ -128,6 +134,21 @@ for (const scenario of ['reserved-fused', 'reserved-nameless']) {
   }
 }
 
+// Upstream #11151 / #10732: a tool call whose id and name are both empty. The
+// plugin-free host cannot write the tool result; the wrapper must not let that
+// identity reach the session.
+{
+  const row = runs['empty-identity']
+  if (row !== undefined) {
+    if (row.control.exit_code === 0) problems.push('empty-identity: the plugin-free host completed, so there is no crash to prevent')
+    if (!/requires toolCallId/.test(String(row.control.stderr_first ?? ''))) {
+      problems.push(`empty-identity: the control did not fail on the tool-call identity (${String(row.control.stderr_first ?? '')})`)
+    }
+    if (row.new.exit_code !== 0) problems.push('empty-identity: this tree did not complete the turn')
+    if (row.new.turn_end?.kind !== 'completed') problems.push('empty-identity: this tree did not end the turn as completed')
+  }
+}
+
 if (problems.length > 0) {
   process.stderr.write(
     `record_neighbour_turn: the runs do not have the shape this artifact claims: ${problems.join('; ')}\n`,
@@ -147,6 +168,8 @@ const claims = {
     'the 0.4.18 bytes dispatched the repaired fragment under `remedy_unattributed`; this tree abandons the rescue and the turn carries the provider failure',
   p0054_a_nameless_block_end:
     'the 0.4.18 bytes dispatched a nameless call under `remedy_unattributed`; this tree keeps the original bytes and the host answers UNKNOWN_TOOL',
+  p0033_an_empty_identity_never_reaches_the_session:
+    'without the plugin the host cannot write the tool result (`format v4 tool/result at seq N requires toolCallId matching its tool source`, upstream #11151 / #10732); this tree completes the turn and the call leaves under the fallback name',
 }
 
 const payload = {

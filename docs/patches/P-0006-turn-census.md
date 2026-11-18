@@ -1,6 +1,6 @@
 # P-0006 — A scan that counts only the class it repairs is a map with one road
 
-- **Status**: `tested` (no live artifact: this patch changes the offline reader, not the resident seam)
+- **Status**: `verified` (R71: the census ran over the real corpus — completed 132, max-tokens 88, aborted 11, error 104; `data/results/live-census-2026-11-18T22-00-00.000Z.json`)
 - **Severity**: minor
 - **Surface**: `cli` (`packages/plugin/src/session-scan.ts`)
 - **Depends on**: P-0004 (the scanner that reads the right log)

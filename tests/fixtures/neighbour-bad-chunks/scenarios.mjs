@@ -20,6 +20,7 @@ export const SCENARIOS = [
   'delta-only',
   'reserved-fused',
   'reserved-nameless',
+  'empty-identity',
 ]
 
 export const TOOLS_BY_SCENARIO = {
@@ -35,4 +36,5 @@ export const TOOLS_BY_SCENARIO = {
   'delta-only': ['capture'],
   'reserved-fused': ['alpha', 'beta', 'remedy_unattributed'],
   'reserved-nameless': ['remedy_unattributed', 'capture'],
+  'empty-identity': ['capture'],
 }

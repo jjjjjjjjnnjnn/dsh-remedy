@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_live_census.mjs",
+  "generated_at": "2026-11-18T22:00:00.000Z",
+  "question": "Do the shipped readers say the truth about the sessions this machine actually wrote — every file opened, every ending counted, a truncated turn that answered nobody, a resume that dropped a tool?",
+  "corpus": {
+    "sessions": "<home>\\.dsh\\sessions",
+    "files": 115,
+    "attempts": 397,
+    "window": {
+      "oldest": 1794126627986,
+      "newest": 1795022916866
+    },
+    "redaction": {
+      "replacements": 24,
+      "kinds": [
+        "windows-home"
+      ]
+    },
+    "note": "counts only; the session text stays on this machine, and the examples the CLI collects are dropped here"
+  },
+  "scan": {
+    "fused_calls": 38,
+    "fusion_failures": 47,
+    "repairable_failures": 39,
+    "unreadable_lines": 0,
+    "turns": {
+      "completed": 132,
+      "max_tokens": 88,
+      "aborted": 11,
+      "error": 104
+    },
+    "truncated_without_answer": 88,
+    "completed_without_answer": 0,
+    "completed_on_tool_call": 0,
+    "dropped_tools": 9,
+    "error_codes": {
+      "AUTH": 1,
+      "INVALID_REQUEST": 1,
+      "MALFORMED_RESPONSE": 47,
+      "MISSING_CREDENTIAL": 1,
+      "SERVER": 16,
+      "UNKNOWN": 1,
+      "UNSUPPORTED_REASONING_EFFORT": 37
+    },
+    "refused_efforts": {
+      "opendesign/deepseek-v4.1-flash-eco xhigh": 37
+    }
+  },
+  "explain": {
+    "exit_code": 1,
+    "class_table": [
+      "failure class            turns  covered by        enabled here",
+      "-----------------------  -----  -----------------  --------------",
+      "completed                  132  (none)             (none)",
+      "max-tokens                  88  by design          no (by design)",
+      "MALFORMED_RESPONSE          47  P-0001,P-0002,P-0003,P-0005,P-0011  unknown",
+      "UNSUPPORTED_REASONING_EFFORT     37  P-0013             unknown",
+      "SERVER                      16  by design          no (by design)",
+      "aborted                     11  (none)             (none)",
+      "AUTH                         1  (none)             (none)",
+      "INVALID_REQUEST              1  P-0013             unknown",
+      "MISSING_CREDENTIAL           1  P-0013             unknown",
+      "UNKNOWN                      1  (none)             (none)"
+    ],
+    "dropped_finding": "DROPPED — 9 tool(s) this session had called are missing from a later resume/change header; a later call was answered UNKNOWN_TOOL (P-0050).",
+    "enabled_here": "unknown without --profile-file, which is the three-state rule the artifact depends on"
+  },
+  "claims": {
+    "p0004_the_reader_opened_every_file": "115 rows for 115 files, 0 unreadable lines",
+    "p0006_every_ending_is_counted": "completed 132, max-tokens 88, aborted 11, error 104",
+    "p0044_every_max_tokens_turn_answered_nobody": "88 of 88",
+    "p0050_a_dropped_tool_is_counted": "9 tool(s)",
+    "p0051_explain_names_it_without_a_profile": "DROPPED — 9 tool(s) this session had called are missing from a later resume/change header; a later call was answered UNKNOWN_TOOL (P-0050).",
+    "p0047_completed_without_answer_has_no_real_case": "recorded as 0; the probe artifact remains the only witness",
+    "p0052_completed_on_tool_call_has_no_real_case": "recorded as 0; the probe artifact remains the only witness"
+  },
+  "sources": {
+    "scan --json": "17fabbfcff51aefdc76ea7d25b5f0e5b8d3e2d5c6c8c36d629851f2aac5378ad",
+    "explain": "598584f83096899b1de323da911303e5c2dced10df24b3536a52049c6876d2a0"
+  },
+  "not_proven": [
+    "this is the corpus on this machine at this stamp, not a distribution: another host writes other sessions",
+    "the readers are not a resident seam, so nothing here re-proves a repair, a retry or a refusal",
+    "P-0042's CONFLICT line is not exercised: the desktop profile no longer pins the effort the host refuses (37 such turns exist in the corpus)",
+    "P-0009's window is not exercised by this run: the scan ran unwindowed"
+  ],
+  "redaction": {
+    "replacements": 0,
+    "kinds": []
+  }
+}

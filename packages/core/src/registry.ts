@@ -7,6 +7,8 @@ import type { PatchRecord } from './types.js'
 
 const LIVE_NEIGHBOURS = 'data/results/live-neighbours-2026-11-18T20-00-00.000Z.json'
 const LIVE_REPAIRS = 'data/results/live-repairs-2026-11-18T20-00-00.000Z.json'
+const LIVE_CENSUS = 'data/results/live-census-2026-11-18T22-00-00.000Z.json'
+const LIVE_IDENTITY = 'data/results/live-identity-2026-11-18T22-40-00.000Z.json'
 const FAIL_OPEN_LIMITS = [
   'a fail-open stream reads quiet: the foreign chunk moves no counter',
   'only the fields the wrapper reads are checked; an ignored field is not validated',
@@ -67,8 +69,8 @@ export const PATCHES: readonly PatchRecord[] = [
     failureClasses: ['MALFORMED_RESPONSE'],
     switchKey: 'repair',
     limits: [
-      'on rc.1 the adapter never closed a tool-call block; on rc.3 it closes the first fragment and leaves the surplus to the finish path',
-      'a synthesized block-start is proven on the finish path only (BS-11); a two-tool fusion sends the surplus out as remedy_unattributed (BS-18)',
+      'on rc.1 the adapter never closed a tool-call block; on rc.3 it leaves the surplus to the finish path',
+      'a synthesized block-start is proven on the finish path only (BS-11/BS-18)',
       'a tool name that arrives twice with different values stays unrepairable',
     ],
   },
@@ -133,7 +135,7 @@ export const PATCHES: readonly PatchRecord[] = [
     failureClasses: ['MALFORMED_RESPONSE'],
     switchKey: 'retryOnMalformed',
     limits: [
-      'only MALFORMED_RESPONSE is retried; SERVER, TRANSPORT and TIMEOUT already self-heal upstream, so a second layer would compete',
+      'only MALFORMED_RESPONSE is retried; SERVER, TRANSPORT and TIMEOUT self-heal upstream',
       'the retry budget defaults to 0: nothing is retried unless a deployment asks for it',
       'the bound is 256 cache entries; an evicted entry lets a very long turn spend a fresh retry',
       'the live artifact is a synthetic endpoint: it reproduces the adapter failure, not a relay incident',
@@ -187,9 +189,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'cmdScan read a multi-frame zstd log with readFileSync(file, "utf8") instead of the decompressSessionLog reader the plugin ships, and core/redact.ts matched only a single-backslash C:\\Users\\<name>',
     surface: 'cli',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0004-scan-fidelity.md'],
+    evidence: ['docs/patches/P-0004-scan-fidelity.md', LIVE_CENSUS],
     guards: [
       'tests/e2e/cli.test.ts',
       'tests/unit/session-scan.test.ts',
@@ -201,7 +203,7 @@ export const PATCHES: readonly PatchRecord[] = [
       'a filtered scan reports before_since instead of guessing; an unstamped event is unreadable',
       'one undecompressable file is a failure line and exit 3, not a silent zero',
       'it does not deduplicate a repair seen by both the journal and the session file',
-      'matches a home path only when the directory starts with a drive letter; another spelling is unmeasured',
+      'the live corpus only carries the windows home shape; the other two are fixture-tested',
     ],
   },
   {
@@ -212,9 +214,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'session-scan.ts returned early on `kind !== "error"` and on `code !== "MALFORMED_RESPONSE"`: a filter for "can this layer repair it" carried into a map of "how the turn ended"',
     surface: 'cli',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0006-turn-census.md'],
+    evidence: ['docs/patches/P-0006-turn-census.md', LIVE_CENSUS],
     guards: ['tests/unit/session-scan.test.ts', 'tests/e2e/cli.test.ts', 'scripts/gate_registry.mjs'],
     limits: [
       'reported, never promoted: the exit code still turns on fused_calls and fusion_failures',
@@ -253,7 +255,7 @@ export const PATCHES: readonly PatchRecord[] = [
     evidence: ['docs/patches/P-0008-byte-budget-gate.md', 'audit/gate_ledger.json'],
     guards: ['scripts/gate_size.mjs', 'tests/governance/ledgers.test.ts', 'scripts/gate.mjs'],
     limits: [
-      'the gate measures the emitted plugin only: core does not load at startup, so the ceiling protects what is loaded there',
+      'the gate measures the emitted plugin only: core does not load at startup',
       'it does not shrink anything; the measured numbers stay what they were when the gate was written',
       'it does not measure dist/*.d.ts, which is paid at build time rather than load time',
       'it cannot decide how to split a file that crosses a cap: it only refuses the crossing',
@@ -425,7 +427,7 @@ export const PATCHES: readonly PatchRecord[] = [
     guards: ['tests/governance/distribution-entry.test.ts', 'docs/market-index.json'],
     limits: [
       'it does not turn the repository into a published artifact: the patches it names stay merged and unreleased',
-      'a git source needs an explicit unreleased marker; "newest" is a fact read at release time, not checked over the network',
+      'a git source needs an explicit unreleased marker; "newest" is read at release time',
       'it fixes the index this project publishes; a third party that already read this repository is out of reach',
     ],
   },
@@ -659,7 +661,7 @@ export const PATCHES: readonly PatchRecord[] = [
     surface: 'llm/stream',
     status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0033-empty-identity.md', 'packages/plugin/src/repair-stream.ts', 'data/results/live-empty-call-2026-11-14T16-02-00.000Z.json'],
+    evidence: ['docs/patches/P-0033-empty-identity.md', 'packages/plugin/src/repair-stream.ts', 'data/results/live-empty-call-2026-11-14T16-02-00.000Z.json', LIVE_IDENTITY],
     guards: ['tests/unit/repair-stream.test.ts', 'scripts/gate_size.mjs'],
     limits: [
       'the adapter that emits an incomplete call is not fixed: this seam names it and keeps the session resumable',
@@ -852,9 +854,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'the census reads `turn/end` only, and `assistant/message` carries the block types that answer the second half of the question; nothing in `session-scan.ts` had ever looked at one',
     surface: 'cli',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0044-turn-answered.md', 'packages/core/src/answer.ts', 'data/results/scan-r55-2026-11-16T10-20-00.000Z.json'],
+    evidence: ['docs/patches/P-0044-turn-answered.md', 'packages/core/src/answer.ts', 'data/results/scan-r55-2026-11-16T10-20-00.000Z.json', LIVE_CENSUS],
     guards: ['tests/unit/turn-answer.test.ts', 'tests/e2e/cli.test.ts'],
     limits: [
       'it does not repair, retry or re-end a truncation; the host decides when to stop',
@@ -962,9 +964,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'scan read attempts, turns and codes, never request/header, so no rule compared a header with what the session had already called',
     surface: 'cli',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0050-capability-drift.md', 'data/results/capability-drift-2026-11-17T04-40-00.000Z.json'],
+    evidence: ['docs/patches/P-0050-capability-drift.md', 'data/results/capability-drift-2026-11-17T04-40-00.000Z.json', LIVE_CENSUS],
     guards: ['tests/unit/capability-drift.test.ts', 'tests/unit/session-scan.test.ts'],
     limits: [
       'it proves the request set lost a tool the session used, not what the model remembers',
@@ -979,9 +981,9 @@ export const PATCHES: readonly PatchRecord[] = [
       'P-0050 counted lost tools in scan; explain printed turn endings only, so the shape #12348 reports stayed invisible where a decision is made',
     rootCause: 'explain kept turns, codes and refused efforts from the scan report and dropped dropped_tools',
     surface: 'cli',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0051-explain-drift.md', 'data/results/explain-drift-2026-11-17T10-05-00.000Z.json'],
+    evidence: ['docs/patches/P-0051-explain-drift.md', 'data/results/explain-drift-2026-11-17T10-05-00.000Z.json', LIVE_CENSUS],
     guards: ['tests/e2e/explain-drift.test.ts'],
     limits: [
       'a finding, not a coverage row: coverage needs a resident seam',

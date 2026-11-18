@@ -108,9 +108,11 @@ reproduction is synthetic at the endpoint, exactly like the upstream report's ow
 
 ## What this does not do
 
-- It does not fix the adapter that emits an incomplete call. The upstream report asks the
-  host to validate the completed call before committing the assistant message; that is
-  out-of-seam and is recorded in `docs/research/leads.md`, not patched here.
+- It does not fix the adapter that emits an incomplete call. Two later reports (#11151 and
+  #10732) measure the same chain from the `llm-pi-ai` side and ask for a guard in the adapter;
+  R71 reproduced the crash here (the plugin-free control dies exactly as they describe) and
+  confirmed this patch prevents it, so the reports are `patched` on this seam and the adapter
+  half stays out-of-seam (`docs/research/leads.md` L-0049 / L-0050).
 - A block whose arguments are **fused** and whose identity is **empty** is still refused as
   `missing-id` before any split is attempted, so it goes out as one call with the fused text
   under the refusal name. Splitting it would require synthesizing identities for fragments

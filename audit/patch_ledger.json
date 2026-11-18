@@ -86,14 +86,15 @@
     },
     {
       "id": "P-0004",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.3.3",
       "evidence": [
         "docs/patches/P-0004-scan-fidelity.md",
         "tests/e2e/cli.test.ts",
         "tests/unit/session-scan.test.ts",
-        "tests/unit/redact.test.ts"
+        "tests/unit/redact.test.ts",
+        "data/results/live-census-2026-11-18T22-00-00.000Z.json"
       ],
       "guards": [
         "tests/e2e/cli.test.ts",
@@ -105,13 +106,14 @@
     },
     {
       "id": "P-0006",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.3.4",
       "evidence": [
         "docs/patches/P-0006-turn-census.md",
         "tests/unit/session-scan.test.ts",
-        "tests/e2e/cli.test.ts"
+        "tests/e2e/cli.test.ts",
+        "data/results/live-census-2026-11-18T22-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/session-scan.test.ts",
@@ -723,14 +725,15 @@
     },
     {
       "id": "P-0044",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.15",
       "evidence": [
         "docs/patches/P-0044-turn-answered.md",
         "tests/unit/turn-answer.test.ts",
         "tests/e2e/cli.test.ts",
-        "data/results/scan-r55-2026-11-16T10-20-00.000Z.json"
+        "data/results/scan-r55-2026-11-16T10-20-00.000Z.json",
+        "data/results/live-census-2026-11-18T22-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/turn-answer.test.ts",
@@ -810,12 +813,13 @@
     },
     {
       "id": "P-0050",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.17 (published 2026-11-17)",
       "evidence": [
         "docs/patches/P-0050-capability-drift.md",
-        "data/results/capability-drift-2026-11-17T04-40-00.000Z.json"
+        "data/results/capability-drift-2026-11-17T04-40-00.000Z.json",
+        "data/results/live-census-2026-11-18T22-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/capability-drift.test.ts",
@@ -824,12 +828,13 @@
     },
     {
       "id": "P-0051",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.17 (published 2026-11-17)",
       "evidence": [
         "docs/patches/P-0051-explain-drift.md",
-        "data/results/explain-drift-2026-11-17T10-05-00.000Z.json"
+        "data/results/explain-drift-2026-11-17T10-05-00.000Z.json",
+        "data/results/live-census-2026-11-18T22-00-00.000Z.json"
       ],
       "guards": [
         "tests/e2e/explain-drift.test.ts"

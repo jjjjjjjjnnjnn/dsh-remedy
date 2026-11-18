@@ -178,6 +178,8 @@
 | `scripts/record_repair_turn.mjs` | R70：五条修复补丁的真宿主 turn（P-0005 / P-0027 / P-0030 / P-0034 / P-0036，old 各取补丁前版本）→ `live-repairs-*` |
 | `scripts/lib/turn-run.mjs` | R70 的只读观测层：读一个 run 目录的 session / journal / 邻居日志，定义「同样的结局」 |
 | `scripts/record_linux_r70.mjs` | R70 的 Linux 半边：读 WSL2 的七个日志、先断言再写 `live-linux-*`（R70 没有运行时字节，所以只主张同树同数） |
+| `scripts/record_live_census.mjs` | R71：把 shipped 的 `scan` / `explain` 跑在本机真语料上 → `live-census-*`；只留计数与类表，**不带会话原文** |
+| `scripts/record_credential_probe.mjs` | R71：隔离 home 复用同一份 `.credentials.yaml` 打真实路由 → `live-credential-*`，回答「是 key 死了还是 App 读不到」 |
 | `scripts/scan_plugin_seams.mjs` | R68：只读扫一个 profile 的接缝注册与顺序 → `seam-inventory-*`（不加载插件、不写 profile） |
 | `scripts/bench_repair_overhead.mjs` | R68：`llm/stream` 包装器的每 chunk 开销（三组场景，中位数）→ `bench-repair-*` |
 | `scripts/lib/seam-inventory.mjs` | R68 的纯分类器：`on(...)` / `emit(...)`、`prepend`、保留名、外层优先排序（`seam-inventory.d.mts` 提供类型） |

@@ -1,8 +1,7 @@
 # P-0004 — A scan that cannot read the log, and a redaction that misses the path
 
-- **Status**: `tested` (unit + e2e negative controls and one measured host run;
-  no live journal of its own, because the patch changes the offline reader, not
-  the resident seam)
+- **Status**: `verified` (R71: the shipped reader run over 115 real session files,
+  397 attempts, zero unreadable lines, 24 redactions; `data/results/live-census-2026-11-18T22-00-00.000Z.json`)
 - **Severity**: major
 - **Surface**: `cli` (+ the shared `core/redact.ts`, which is not a runtime seam)
 - **Depends on**: none (it reads the same session logs P-0001 was measured on)

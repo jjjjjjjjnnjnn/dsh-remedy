@@ -179,6 +179,17 @@ function chunksOf(scenario, seen) {
         stop(),
       ]
 
+    case 'empty-identity':
+      // Upstream #11151 / #10732: the adapter forwards a tool call whose id and
+      // name are both empty strings. The host dispatches `unknown tool ""` with
+      // an empty callId, and the V4 session write rejects the result.
+      return [
+        { type: 'block-start', index: 0, blockType: 'tool-call' },
+        toolCall(0, '', '', '{}'),
+        blockEnd(0, { type: 'tool-call', id: '', name: '', arguments: '{}' }),
+        stop(),
+      ]
+
     default:
       throw new Error(`r70-neighbour: unknown scenario "${scenario}"`)
   }

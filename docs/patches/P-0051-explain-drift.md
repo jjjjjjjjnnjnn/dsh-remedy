@@ -1,6 +1,6 @@
 # P-0051 — The command a person runs had no word for the tool a resume dropped
 
-**Status**: `tested`  **Severity**: `minor`  **Surface**: `cli`  **Depends on**: P-0025, P-0050
+**Status**: `verified` (R71: `explain` named the same 9 dropped tools as one finding, without a profile, exit 1 — `data/results/live-census-2026-11-18T22-00-00.000Z.json`)  **Severity**: `minor`  **Surface**: `cli`  **Depends on**: P-0025, P-0050
 
 ## Symptom
 

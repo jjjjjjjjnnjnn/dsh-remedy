@@ -1,0 +1,778 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_repair_turn.mjs",
+  "generated_at": "2026-11-18T20:00:00.000Z",
+  "question": "Do the five repair rules that are still `tested` behave as claimed inside a real host turn, against the released bytes of the version before each patch?",
+  "probe": {
+    "homes": "one isolated DSH_HOME per arm; nothing under ~/.dsh is written",
+    "client": "the installed headless CLI of DSH 0.2.2-rc.3",
+    "neighbour": "tests/fixtures/neighbour-bad-chunks — it yields the adapter-shaped failure chunk, and the follow-up request is an ordinary answer",
+    "provider": "a local OpenAI-compatible endpoint that answers every request with one short text stream",
+    "arms": {
+      "control": "the neighbour only: what the host does with the shape when remedy is absent",
+      "old": "the published tarballs of the last release before the patch (see runs.*.old_release)",
+      "new": "this tree, which is the published 0.4.19 bytes"
+    },
+    "host": {
+      "version": "0.2.2-rc.3",
+      "source": "<home>\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\primary-runtime\\runtime.json",
+      "sha256": "ce43135cf00d7dcd9d1c52f467cf8fe533248a745226e27def0e86ba8e6abad6"
+    }
+  },
+  "runs": {
+    "bare-value": {
+      "patch": "P-0005",
+      "old_release": "0.3.0",
+      "control": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: MALFORMED_RESPONSE: Tool call \"capture\": Unexpected token 'c', ...\"{\\\"code\\\": is not valid JSON",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Tool call \"capture\": Unexpected token 'c', ...\"{\\\"code\\\": is not valid JSON\n\nReceived arguments:\n{\"code\": \nconsole.log(1)\nconsole.log(2)\n, \"note\": \"r70\"}",
+            "code": "MALFORMED_RESPONSE"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 0,
+          "counters": null
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "643ba174fb2091ad716b1ed922f8f97a99d0145155933297fa8d87938fd6a2db",
+          "journal": null,
+          "neighbour": "925cddc1414644f89155afd4ba94de32b5ee194530501686857377564acbbaba"
+        }
+      },
+      "old": {
+        "version": "0.3.0",
+        "exit_code": 1,
+        "stderr_first": "dsh: MALFORMED_RESPONSE: Tool call \"capture\": Unexpected token 'c', ...\"{\\\"code\\\": is not valid JSON",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Tool call \"capture\": Unexpected token 'c', ...\"{\\\"code\\\": is not valid JSON\n\nReceived arguments:\n{\"code\": \nconsole.log(1)\nconsole.log(2)\n, \"note\": \"r70\"}",
+            "code": "MALFORMED_RESPONSE"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 3,
+          "counters": {
+            "streams": 2,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 1,
+            "withdrawn": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "adce6ca2dd009f461d0261b810af981cc69b71687527d2af6d5bed004e8486af",
+          "journal": "a9feb6b36217c383962919c0aa17cfa4baa96b0a3067492fafa6c96369b3756f",
+          "neighbour": "c4c6669ea3697a2d32174dd77a36dd83e06b5aa1e5a8a9feaa13ac74c4bebedf"
+        }
+      },
+      "new": {
+        "version": "0.4.19",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "tool-call:capture"
+          ],
+          [
+            "text"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "capture",
+            "id": "call_remedy_1"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_remedy_1",
+            "code": "ok",
+            "is_error": false
+          }
+        ],
+        "journal": {
+          "events": 4,
+          "counters": {
+            "streams": 3,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 1,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [
+          "capture"
+        ],
+        "requests": 3,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "55915b8878505c7673549eaf91f03104ad25b9b3e943e3cc8c05c24fe15a9d1b",
+          "journal": "1e7c7e5789102454696322fb7c4c8aba159533193a50cdff04886feddd21eb0e",
+          "neighbour": "31d8bb23c0311833f003945f8eb5779eb24354251cd2561ed19cd785738c71e5"
+        }
+      }
+    },
+    "cross-tool": {
+      "patch": "P-0027",
+      "old_release": "0.4.3",
+      "control": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: MALFORMED_RESPONSE: Tool call \"alpha\": Unexpected non-whitespace character after JSON at position 24",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Tool call \"alpha\": Unexpected non-whitespace character after JSON at position 24\n\nReceived arguments:\n{\"file_path\":\"a.ts\"}{\"command\":\"echo hi\"}",
+            "code": "MALFORMED_RESPONSE"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 0,
+          "counters": null
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "b9a02e064b258aa2d6110e703219bf606f90ba25b4fc72abed4361e131932652",
+          "journal": null,
+          "neighbour": "9b8e775fbfb5f5a69e02041a4e2442c54a68b850e852057563bac1f5e207b603"
+        }
+      },
+      "old": {
+        "version": "0.4.3",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "tool-call:alpha",
+            "tool-call:alpha"
+          ],
+          [
+            "text"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "alpha",
+            "id": "call_remedy_1"
+          },
+          {
+            "name": "alpha",
+            "id": "call_remedy_1#remedy-1"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_remedy_1",
+            "code": "ok",
+            "is_error": false
+          },
+          {
+            "id": "call_remedy_1#remedy-1",
+            "code": "ok",
+            "is_error": false
+          }
+        ],
+        "journal": {
+          "events": 4,
+          "counters": {
+            "streams": 3,
+            "fused": 1,
+            "repaired": 1,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [
+          "alpha",
+          "alpha"
+        ],
+        "requests": 3,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "f27277058650b7faf7a81ea2b55dcbfb39359aed9ac1c8e8e978450a575c898d",
+          "journal": "e05990542a0ff42de0b9147c98635e94a5ffa60c38b61dca0dafa2ecfaeece06",
+          "neighbour": "c1202d7aac143775f299605c2d3b2c8ff386c3266dd8859b3fd617c18e319b27"
+        }
+      },
+      "new": {
+        "version": "0.4.19",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "tool-call:alpha",
+            "tool-call:remedy_unattributed"
+          ],
+          [
+            "text"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "alpha",
+            "id": "call_remedy_1"
+          },
+          {
+            "name": "remedy_unattributed",
+            "id": "call_remedy_1#remedy-1"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_remedy_1",
+            "code": "ok",
+            "is_error": false
+          },
+          {
+            "id": "call_remedy_1#remedy-1",
+            "code": "UNKNOWN_TOOL",
+            "is_error": true
+          }
+        ],
+        "journal": {
+          "events": 4,
+          "counters": {
+            "streams": 3,
+            "fused": 1,
+            "repaired": 1,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [
+          "alpha"
+        ],
+        "requests": 3,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "9f5ed410dbc8f6bab6a464eeb94e6a662adc491863872f538914c1c802ffd561",
+          "journal": "f2f9b5ff82a92d3c62f2f064029bf6a557589ae9c482182ae162226f4be5860f",
+          "neighbour": "aba4926d87db620f7bb41fd69487cb3c1c9ef3e58f7bcffc427adb0a24b7f150"
+        }
+      }
+    },
+    "closed-schema": {
+      "patch": "P-0030",
+      "old_release": "0.4.5",
+      "control": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: MALFORMED_RESPONSE: Tool call \"gamma\": Unexpected non-whitespace character after JSON at position 24",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Tool call \"gamma\": Unexpected non-whitespace character after JSON at position 24\n\nReceived arguments:\n{\"strict\":\"a\"}{\"extra\":\"b\"}",
+            "code": "MALFORMED_RESPONSE"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 0,
+          "counters": null
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "7b2396576c7fd3d3d009136c5d3a1a63cbd63e1d9363dbb554608e10dbf1b77e",
+          "journal": null,
+          "neighbour": "38ca3f48ea801e70d53b1a7188c334fd171ea9be21f9007e55e5ebe76266b433"
+        }
+      },
+      "old": {
+        "version": "0.4.5",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "tool-call:gamma",
+            "tool-call:gamma"
+          ],
+          [
+            "text"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "gamma",
+            "id": "call_remedy_1"
+          },
+          {
+            "name": "gamma",
+            "id": "call_remedy_1#remedy-1"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_remedy_1",
+            "code": "ok",
+            "is_error": false
+          },
+          {
+            "id": "call_remedy_1#remedy-1",
+            "code": "ok",
+            "is_error": false
+          }
+        ],
+        "journal": {
+          "events": 4,
+          "counters": {
+            "streams": 3,
+            "fused": 1,
+            "repaired": 1,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [
+          "gamma",
+          "gamma"
+        ],
+        "requests": 3,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "ed17f9f86399a34d74e0514a5bb8d4e6dff461f16e0c0372209ba5c836b89c32",
+          "journal": "c8cfda2e9344991c8855c87fe02c72da68bc86ea8c8fdd1e39fbdebd2df1d739",
+          "neighbour": "cba128f6c694f8b9b6fbe33f0c7827fbf355fe8e9a3b34aeb317ab6806d513b1"
+        }
+      },
+      "new": {
+        "version": "0.4.19",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "tool-call:gamma",
+            "tool-call:remedy_unattributed"
+          ],
+          [
+            "text"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "gamma",
+            "id": "call_remedy_1"
+          },
+          {
+            "name": "remedy_unattributed",
+            "id": "call_remedy_1#remedy-1"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_remedy_1",
+            "code": "ok",
+            "is_error": false
+          },
+          {
+            "id": "call_remedy_1#remedy-1",
+            "code": "UNKNOWN_TOOL",
+            "is_error": true
+          }
+        ],
+        "journal": {
+          "events": 4,
+          "counters": {
+            "streams": 3,
+            "fused": 1,
+            "repaired": 1,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [
+          "gamma"
+        ],
+        "requests": 3,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "112f3117f5522e88cf5b7e965fdd7bf1685b3e77e09415cf420da52960fadd18",
+          "journal": "659e3c08a3b06cf4f619addb28dfddff6b0edddb2ae43bdc0d04f9d172a9f3ce",
+          "neighbour": "b2008afa6312b31237509b648668d72426913046c8a68a8e65c0f362849d2554"
+        }
+      }
+    },
+    "reasoning-error": {
+      "patch": "P-0034",
+      "old_release": "0.4.8",
+      "control": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: reasoning:",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "DeepSeek Messages stream: unsupported stop reason refusal",
+            "code": "MALFORMED_RESPONSE"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 0,
+          "counters": null
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "c0e4783b9ab211304b9fc8e327f9496639afcd99f7f9acdf8c0a4a313c2da115",
+          "journal": null,
+          "neighbour": "fb73802e1c1e66caaf77877bd73cbaa8cb4ab24698f63742c1e00c6e4f94f1df"
+        }
+      },
+      "old": {
+        "version": "0.4.8",
+        "exit_code": 1,
+        "stderr_first": "dsh: reasoning:",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "DeepSeek Messages stream: unsupported stop reason refusal",
+            "code": "MALFORMED_RESPONSE"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 2,
+          "counters": {
+            "streams": 2,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "3f38a69857472c7e36031cebd8b4f5e230d379769abf276f923879d02d2b44bd",
+          "journal": "b4e4fca193ac1cbef7a73449a85669616cd35798f98fa80aff617ab012c137f8",
+          "neighbour": "979f2c6c0a1428d2d1cac217e27fc83cdefe30f2edc609bddd7f547870250687"
+        }
+      },
+      "new": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: reasoning:",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "DeepSeek Messages stream: unsupported stop reason refusal",
+            "code": "MALFORMED_RESPONSE"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 2,
+          "counters": {
+            "streams": 2,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 1,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "f5b97cc75ee13e5a213db714d9300137296ac354bf4bb1cb34c011551749b856",
+          "journal": "6cf1b8a31956e5c1806e7b1c4b88dc4ca64c2cd41ffb7b8be1bc5c20c4aee803",
+          "neighbour": "7143ac64f2e8a481144203bfc030947c49b027fa1d742357c049fcf37863fcfe"
+        }
+      }
+    },
+    "delta-only": {
+      "patch": "P-0036",
+      "old_release": "0.4.9",
+      "control": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: format v4 tool/result at seq 19 requires toolCallId matching its tool source",
+        "turn_end": null,
+        "assistant": [
+          [
+            "tool-call:capture"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "capture",
+            "id": ""
+          }
+        ],
+        "results": [],
+        "journal": {
+          "events": 0,
+          "counters": null
+        },
+        "neighbour_tools": [
+          "capture"
+        ],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "e2c19b70a1616ac7d272afa744d58e54b69cd933a11dec329e591a56153e33ce",
+          "journal": null,
+          "neighbour": "24dba28adf9514b7ea0bc5b6a91f53cd8cba47f94e3fd65bdeab6897f2a5247e"
+        }
+      },
+      "old": {
+        "version": "0.4.9",
+        "exit_code": 1,
+        "stderr_first": "dsh: format v4 tool/result at seq 19 requires toolCallId matching its tool source",
+        "turn_end": null,
+        "assistant": [
+          [
+            "tool-call:capture"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "capture",
+            "id": ""
+          }
+        ],
+        "results": [],
+        "journal": {
+          "events": 2,
+          "counters": {
+            "streams": 2,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [
+          "capture"
+        ],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "84f7f9dbc061553b90fd814c1d0ce87a89c010edf485099d9860a5aebbd80838",
+          "journal": "d5aa20c3ea4345857b8f91ae293f943f60f396a6ef2488d078e2f8bdf2c89053",
+          "neighbour": "f574ddf4789285d5ba2665ee175e2a9f496e628835088c5316dde7128e37cb1e"
+        }
+      },
+      "new": {
+        "version": "0.4.19",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "tool-call:capture"
+          ],
+          [
+            "text"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "capture",
+            "id": "call_remedy_1"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_remedy_1",
+            "code": "ok",
+            "is_error": false
+          }
+        ],
+        "journal": {
+          "events": 5,
+          "counters": {
+            "streams": 3,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 2,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [
+          "capture"
+        ],
+        "requests": 3,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "7783692cfded676956d38e317cb63c0f468baed2b1ed8bca29f2fb13c1d6aca6",
+          "journal": "43ff734bdf0d8e34c71c7134410d66f5c9e0fa0a9c9bad8b63fb0362bb825bf7",
+          "neighbour": "0d20d5e51e46a549abd3e8a465558843883308fb6b779049dbe865e3d99c0a3e"
+        }
+      }
+    }
+  },
+  "claims": {
+    "p0005_the_reseal_runs_live": {
+      "holds": true,
+      "detail": "this tree did not dispatch the resealed call in a completed turn"
+    },
+    "p0005_the_pre_patch_bytes_refused_and_the_turn_died": {
+      "holds": true,
+      "detail": "0.3.0 or the plugin-free control completed, so the reseal has nothing to explain"
+    },
+    "p0027_the_surplus_fragment_goes_out_under_the_fallback_name": {
+      "holds": true,
+      "detail": "the second call was remedy_unattributed answered UNKNOWN_TOOL"
+    },
+    "p0027_the_pre_patch_bytes_dispatched_it_as_the_streams_tool": {
+      "holds": true,
+      "detail": "the second call on 0.4.3 was alpha"
+    },
+    "p0027_without_any_plugin_the_turn_fails": {
+      "holds": true,
+      "detail": "the control completed"
+    },
+    "p0030_a_closed_schema_proves_the_fragment_foreign": {
+      "holds": true,
+      "detail": "the second call was remedy_unattributed answered UNKNOWN_TOOL"
+    },
+    "p0030_the_pre_patch_bytes_kept_the_streams_name": {
+      "holds": true,
+      "detail": "the second call on 0.4.5 was gamma"
+    },
+    "p0034_a_failure_no_refusal_explains_is_booked_as_an_error": {
+      "holds": true,
+      "detail": "the new run booked 1 error(s)"
+    },
+    "p0034_the_pre_patch_bytes_booked_it_as_a_quiet_stream": {
+      "holds": true,
+      "detail": "the 0.4.8 run booked 0 error(s)"
+    },
+    "p0034_naming_does_not_change_the_turn": {
+      "holds": true,
+      "detail": "the turn ending differs between the two arms, so the patch changed more than the ledger"
+    },
+    "p0036_a_delta_only_call_is_dispatchable": {
+      "holds": true,
+      "detail": "the new run did not dispatch the delta-only call"
+    },
+    "p0036_the_pre_patch_bytes_and_the_control_cannot_replay_it": {
+      "holds": true,
+      "detail": "the pre-patch bytes or the control did not fail on the tool-call identity"
+    }
+  },
+  "not_proven": [
+    "the failure bytes are synthesized by a neighbour plugin at the seam; the adapter that produces the measured incidents is dsh-llm-deepseek, which this harness does not drive",
+    "the provider is local and synthetic: one text stream per turn, one turn per run, one tool declaration set per scenario",
+    "P-0030 witnesses the closed-schema half of the patch (the fragment a closed declaration proves foreign); the per-decision counter half is unit-tested, not witnessed here",
+    "P-0036 witnesses the delta-only half through a neighbour that yields deltas without an id and without a block-end; the pi-ai adapter always emits a block-end, so the host path exercised here is the assembler-from-deltas one",
+    "one machine, one profile shape, Windows; the same tree was run on Linux for the build and gates, not for these turns"
+  ],
+  "verdict": {
+    "p0005": "verified — the resealed call is dispatched and answered inside a completed turn; the 0.3.0 bytes refused it",
+    "p0027": "verified — the surplus fragment leaves under `remedy_unattributed` and the runtime answers UNKNOWN_TOOL, where 0.4.3 dispatched it as the stream's tool",
+    "p0030": "verified (closed-schema half) — 0.4.5 kept the stream's name; this tree proves the fragment foreign",
+    "p0034": "verified — the same failing turn is booked as one error, where 0.4.8 booked silence",
+    "p0036": "verified — a delta-only call is dispatched and answered; 0.4.9 and the plugin-free control both fail on the identity"
+  },
+  "redaction": {
+    "replacements": 0,
+    "kinds": []
+  }
+}

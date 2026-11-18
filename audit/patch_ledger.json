@@ -65,7 +65,7 @@
     },
     {
       "id": "P-0005",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.3.2",
       "evidence": [
@@ -73,7 +73,8 @@
         "data/fixtures/toolcall-fusion/bare-code-value.json",
         "tests/unit/reseal.test.ts",
         "tests/unit/toolcall-repair.test.ts",
-        "tests/unit/verdict.test.ts"
+        "tests/unit/verdict.test.ts",
+        "data/results/live-repairs-2026-11-18T20-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/reseal.test.ts",
@@ -446,13 +447,14 @@
     },
     {
       "id": "P-0027",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.4",
       "evidence": [
         "packages/plugin/src/repair-stream.ts",
         "tests/unit/attribution.test.ts",
-        "data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json"
+        "data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json",
+        "data/results/live-repairs-2026-11-18T20-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/attribution.test.ts",
@@ -493,7 +495,7 @@
     },
     {
       "id": "P-0030",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.6",
       "evidence": [
@@ -501,7 +503,8 @@
         "packages/core/src/attribute.ts",
         "packages/plugin/src/repair-stream.ts",
         "tests/unit/attribute.test.ts",
-        "tests/unit/attribution.test.ts"
+        "tests/unit/attribution.test.ts",
+        "data/results/live-repairs-2026-11-18T20-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/attribute.test.ts",
@@ -561,13 +564,14 @@
     },
     {
       "id": "P-0034",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.9",
       "evidence": [
         "docs/patches/P-0034-unbooked-failure.md",
         "packages/plugin/src/repair-stream.ts",
-        "tests/unit/repair-stream.test.ts"
+        "tests/unit/repair-stream.test.ts",
+        "data/results/live-repairs-2026-11-18T20-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/repair-stream.test.ts",
@@ -591,13 +595,14 @@
     },
     {
       "id": "P-0036",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.10",
       "evidence": [
         "docs/patches/P-0036-delta-identity.md",
         "packages/plugin/src/repair-stream.ts",
-        "tests/unit/repair-stream.test.ts"
+        "tests/unit/repair-stream.test.ts",
+        "data/results/live-repairs-2026-11-18T20-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/repair-stream.test.ts",
@@ -846,12 +851,13 @@
     },
     {
       "id": "P-0053",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
-      "since": "0.4.19 (unreleased on the tree)",
+      "since": "0.4.19",
       "evidence": [
         "docs/patches/P-0053-fail-open-foreign-chunks.md",
-        "data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json"
+        "data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json",
+        "data/results/live-neighbours-2026-11-18T20-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/neighbour-hostile.test.ts"
@@ -859,12 +865,13 @@
     },
     {
       "id": "P-0054",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
-      "since": "0.4.19 (unreleased on the tree)",
+      "since": "0.4.19",
       "evidence": [
         "docs/patches/P-0054-reserved-name-no-fallback.md",
-        "data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json"
+        "data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json",
+        "data/results/live-neighbours-2026-11-18T20-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/reserved-name.test.ts"

@@ -1,0 +1,822 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_neighbour_turn.mjs",
+  "generated_at": "2026-11-18T20:00:00.000Z",
+  "question": "Inside a real host turn, what does the llm/stream wrapper do with a chunk it did not expect, and can a repair still dispatch under a name the profile already owns?",
+  "contract_after_r69": "remedy may only pass a chunk through, repair a proven fusion, or rethrow the original failure; it must not raise an error of its own",
+  "probe": {
+    "homes": "one isolated DSH_HOME per arm; nothing under ~/.dsh is written",
+    "client": "the installed headless CLI of DSH 0.2.2-rc.3 (plugins/plugin/dist and core/dist as packaged)",
+    "neighbour": "tests/fixtures/neighbour-bad-chunks — a plugin on llm/stream that yields the shapes the pi-ai adapter never produces",
+    "provider": "a local OpenAI-compatible endpoint that answers every request with one short text stream",
+    "arms": {
+      "control": "the neighbour only: the host outcome this stream would have without remedy",
+      "old": "the released 0.4.18 bytes (npm tarballs)",
+      "new": "this tree, which is the published 0.4.19 bytes"
+    },
+    "host": {
+      "version": "0.2.2-rc.3",
+      "source": "<home>\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\primary-runtime\\runtime.json",
+      "sha256": "ce43135cf00d7dcd9d1c52f467cf8fe533248a745226e27def0e86ba8e6abad6"
+    }
+  },
+  "runs": {
+    "null-chunk": {
+      "control": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: UNKNOWN: Cannot read properties of null (reading 'type')",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Cannot read properties of null (reading 'type')",
+            "code": "UNKNOWN"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 0,
+          "counters": null
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "d31bbce9d0dbfa0cd836fa0f1549422f22bd838782566242dce7b45bd2735978",
+          "journal": null,
+          "neighbour": "398df541fd4159ee1a48425e0c15063ccb942b3fc89ecaabb0987fa31780fbc3"
+        }
+      },
+      "old": {
+        "version": "0.4.18",
+        "exit_code": 1,
+        "stderr_first": "dsh: UNKNOWN: Cannot read properties of null (reading 'type')",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Cannot read properties of null (reading 'type')",
+            "code": "UNKNOWN"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 2,
+          "counters": {
+            "streams": 2,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 1,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "0441ee6b60e1438c5d3b40f37964796b83a25ab9476a8f225255279434bd2231",
+          "journal": "1b3125874615141c8eeaed192d42bd40775a99aabeb83cfaea6f7abdc6969520",
+          "neighbour": "1fc9a6b925ab8093c651ee5bdaf927dad41d090ed36c08fe6274fa313b8b5c25"
+        }
+      },
+      "new": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: UNKNOWN: Cannot read properties of null (reading 'type')",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Cannot read properties of null (reading 'type')",
+            "code": "UNKNOWN"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 2,
+          "counters": {
+            "streams": 2,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "c0b4407826c8e28042e341d673ca4913abef2a93ab0e08ca5c8a2c2653a360e4",
+          "journal": "074827e55c90f224f0c21fe81cd27bfbff25bc8fc6fe7792223a99eeecfb178b",
+          "neighbour": "74a59e1f1dfe4406e1fbaa2f4c5807c7d97448afc3cc02024fbb7e858d80bfc8"
+        }
+      },
+      "same_new_control": true,
+      "same_old_control": true,
+      "old_owns_fallback": false,
+      "new_owns_fallback": false,
+      "control_has_journal": false
+    },
+    "object-arguments": {
+      "control": {
+        "version": "0.4.19",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "tool-call:capture"
+          ],
+          [
+            "text"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "capture",
+            "id": "call_r70_object"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_r70_object",
+            "code": "ok",
+            "is_error": false
+          }
+        ],
+        "journal": {
+          "events": 0,
+          "counters": null
+        },
+        "neighbour_tools": [
+          "capture"
+        ],
+        "requests": 3,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "09336d465b6a5e3df26ae265a3385b109f4bd738ab66d09c341e3707df7030ee",
+          "journal": null,
+          "neighbour": "624deab2a65710444fb20cab73ed89d6a1d4f0b048188c3c7602cff7b691a0ea"
+        }
+      },
+      "old": {
+        "version": "0.4.18",
+        "exit_code": 1,
+        "stderr_first": "dsh: UNKNOWN: text.trim is not a function",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "text.trim is not a function",
+            "code": "UNKNOWN"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 2,
+          "counters": {
+            "streams": 2,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 1,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "84ff8a66927397f93628153d8b6becbb54d42377683e225eb5239f17ead68533",
+          "journal": "17480240564d02eec443ae319e03d2857f9c1ed0d96f92568f33b87bab8345bd",
+          "neighbour": "71fbf8f3d5891f8d332366d2d3aceb9fe63cc15c0def86755407ddd3f1270e0b"
+        }
+      },
+      "new": {
+        "version": "0.4.19",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "tool-call:capture"
+          ],
+          [
+            "text"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "capture",
+            "id": "call_r70_object"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_r70_object",
+            "code": "ok",
+            "is_error": false
+          }
+        ],
+        "journal": {
+          "events": 3,
+          "counters": {
+            "streams": 3,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [
+          "capture"
+        ],
+        "requests": 3,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "aaa9090897f3321f7cd43304dc8e23c864987d3b9bdd36b3269994479d57f5f1",
+          "journal": "269a5685b7dfb1b3a964004e6e90cde03d355f5f875202695d2e17fb36f8e7a7",
+          "neighbour": "4c1d7b34967bcdba6f92d8bdc9e3753f3aae582812f431c5a8b90d61650925c2"
+        }
+      },
+      "same_new_control": true,
+      "same_old_control": false,
+      "old_owns_fallback": false,
+      "new_owns_fallback": false,
+      "control_has_journal": false
+    },
+    "no-block": {
+      "control": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: UNKNOWN: Cannot read properties of undefined (reading 'type')",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Cannot read properties of undefined (reading 'type')",
+            "code": "UNKNOWN"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 0,
+          "counters": null
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "29fd9b599f29140354b13ced4ea82ddea33e84e72f5d703766bae2e3527f1e7b",
+          "journal": null,
+          "neighbour": "17a7d90c096d682b5a194a52827603df767b91dacfb294edcb117ed8768d5843"
+        }
+      },
+      "old": {
+        "version": "0.4.18",
+        "exit_code": 1,
+        "stderr_first": "dsh: UNKNOWN: Cannot read properties of undefined (reading 'type')",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Cannot read properties of undefined (reading 'type')",
+            "code": "UNKNOWN"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 2,
+          "counters": {
+            "streams": 2,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 1,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "9d1fc5e6cb35924bbccc23526975fe048d5f0693ae3e6bab43ca05ce2cfb4204",
+          "journal": "7d5e3cc27ce46a0fc19d4b26b216fa0a0e45e645032433fcf10b83a1e0b5e26a",
+          "neighbour": "bba4bf59a39a9563cac1f55cbbe5ce4dcd2f2a5cb574301afbdf259a1a0819fa"
+        }
+      },
+      "new": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: UNKNOWN: Cannot read properties of undefined (reading 'type')",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Cannot read properties of undefined (reading 'type')",
+            "code": "UNKNOWN"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 2,
+          "counters": {
+            "streams": 2,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "3978d226dc950e46c14da9a20f43ec02f3e84b9e0fbd152dfd7c4c31b6c0b2ca",
+          "journal": "fa3cc09d531cc003d4de88832cf54900cf52497973fdc5da34c50f2e133ce773",
+          "neighbour": "ca9c593c7f8644341e55fa3f7911cd721f755980bf99b2ee344f00a396a44973"
+        }
+      },
+      "same_new_control": true,
+      "same_old_control": true,
+      "old_owns_fallback": false,
+      "new_owns_fallback": false,
+      "control_has_journal": false
+    },
+    "finish-no-reason": {
+      "control": {
+        "version": "0.4.19",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "text"
+          ]
+        ],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 0,
+          "counters": null
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "144db20589118c59acceeb59bb236cd944ec2f25a7abcf667551c8ca6582cfe1",
+          "journal": null,
+          "neighbour": "c2329cb0969dfd162187626568b8799f2bd8730a6333d5c32df15637700ff46b"
+        }
+      },
+      "old": {
+        "version": "0.4.18",
+        "exit_code": 1,
+        "stderr_first": "dsh: UNKNOWN: Cannot read properties of undefined (reading 'kind')",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Cannot read properties of undefined (reading 'kind')",
+            "code": "UNKNOWN"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 2,
+          "counters": {
+            "streams": 2,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 1,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "c05a6151295b2221805c56f3116fd567618b09beb24e0068786bc283396704c0",
+          "journal": "15a37d4273ea0a244712b4d2ead3fc7469c07bc3fcbbca0cbe7a4d0e8c6e83a3",
+          "neighbour": "fb925fd1b9979b4846a3ffedc6a0fc12b9e5cc1466f966f1503b2c635317d744"
+        }
+      },
+      "new": {
+        "version": "0.4.19",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "text"
+          ]
+        ],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 2,
+          "counters": {
+            "streams": 2,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "333be11fc05128b7dfe85f04cd9390194a8c9a54cab0fa3ce6e5ea1c78676ccd",
+          "journal": "c0148ba7756225eb195df4d1e6bb43d3f57c2a475b11352acf2b04c364e3e243",
+          "neighbour": "df8ec83da6800c5a8bef56d3b8cc387d300619fc3aaeea84324a4d937e3132eb"
+        }
+      },
+      "same_new_control": true,
+      "same_old_control": false,
+      "old_owns_fallback": false,
+      "new_owns_fallback": false,
+      "control_has_journal": false
+    },
+    "reserved-fused": {
+      "control": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: MALFORMED_RESPONSE: Tool call \"alpha\": Unexpected non-whitespace character after JSON at position 24",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Tool call \"alpha\": Unexpected non-whitespace character after JSON at position 24\n\nReceived arguments:\n{\"file_path\":\"a.ts\"}{\"command\":\"echo hi\"}",
+            "code": "MALFORMED_RESPONSE"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 0,
+          "counters": null
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "c097c51e4c0e8bcb67734c40fb16f49a5bc8f5ed0d1726b87f94b96cf98c3c92",
+          "journal": null,
+          "neighbour": "570fe077dd1dab9e1b9d1d5ad6f38935dcd016211d371479a4bd8b265a8fdc76"
+        }
+      },
+      "old": {
+        "version": "0.4.18",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "tool-call:alpha",
+            "tool-call:remedy_unattributed"
+          ],
+          [
+            "text"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "alpha",
+            "id": "call_remedy_1"
+          },
+          {
+            "name": "remedy_unattributed",
+            "id": "call_remedy_1#remedy-1"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_remedy_1",
+            "code": "ok",
+            "is_error": false
+          },
+          {
+            "id": "call_remedy_1#remedy-1",
+            "code": "ok",
+            "is_error": false
+          }
+        ],
+        "journal": {
+          "events": 4,
+          "counters": {
+            "streams": 3,
+            "fused": 1,
+            "repaired": 1,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [
+          "alpha",
+          "remedy_unattributed"
+        ],
+        "requests": 3,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "49c6a22f5252902dc6fda9234900f0612f5ee8be184354256a754b75f4f71b96",
+          "journal": "9f5969d4958131c4b8790e60226f102398501baed6f7ad492cd410ddc4d585b1",
+          "neighbour": "f356d00f07117ef86be98bb790a6b152b7de1fd757dd8bc523e48ddaaebe0a8d"
+        }
+      },
+      "new": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: MALFORMED_RESPONSE: Tool call \"alpha\": Unexpected non-whitespace character after JSON at position 24",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Tool call \"alpha\": Unexpected non-whitespace character after JSON at position 24\n\nReceived arguments:\n{\"file_path\":\"a.ts\"}{\"command\":\"echo hi\"}",
+            "code": "MALFORMED_RESPONSE"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 2,
+          "counters": {
+            "streams": 2,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 1,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 2,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "c7e27982aa27d449cdbff8b4f185c9d93e1c36880cbb99ba4e9e15dca09fdb4d",
+          "journal": "09a9f9fec50bf74f515d3c4fbced89ff1de2f0bcaa994fb37780a5f3d4a8396a",
+          "neighbour": "6a839311ef6f49a63854d740ef3e8321b05f2937eb99210badafb586ba81215b"
+        }
+      },
+      "same_new_control": true,
+      "same_old_control": false,
+      "old_owns_fallback": true,
+      "new_owns_fallback": false,
+      "control_has_journal": false
+    },
+    "reserved-nameless": {
+      "control": {
+        "version": "0.4.19",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "tool-call:"
+          ],
+          [
+            "text"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "",
+            "id": "call_r70_nameless"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_r70_nameless",
+            "code": "UNKNOWN_TOOL",
+            "is_error": true
+          }
+        ],
+        "journal": {
+          "events": 0,
+          "counters": null
+        },
+        "neighbour_tools": [],
+        "requests": 3,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "d6a34cfe004b4ce505cdefbe880eeabee1cafdee7ef30c0ef05a43c6cb1cd14d",
+          "journal": null,
+          "neighbour": "4f0f74088ebe81fe96d5bddf66cdcf36ec47b0fdf829162b18c5075a36c1696d"
+        }
+      },
+      "old": {
+        "version": "0.4.18",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "tool-call:remedy_unattributed"
+          ],
+          [
+            "text"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "remedy_unattributed",
+            "id": "call_r70_nameless"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_r70_nameless",
+            "code": "ok",
+            "is_error": false
+          }
+        ],
+        "journal": {
+          "events": 4,
+          "counters": {
+            "streams": 3,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 1,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [
+          "remedy_unattributed"
+        ],
+        "requests": 3,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "2b88891317cf40d79c3b8b5915c7f3715fa96b038e424803ab5d6e3156a075f9",
+          "journal": "a9a8fcc0943c3f8fff5897a3b61501ed5773043f6b89ae1295bb2394f11fe4cd",
+          "neighbour": "9c5341bf7807629495da32828cd3bf4488a528a33ef6bc26b07eebfd3081cf06"
+        }
+      },
+      "new": {
+        "version": "0.4.19",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "tool-call:"
+          ],
+          [
+            "text"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "",
+            "id": "call_r70_nameless"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_r70_nameless",
+            "code": "UNKNOWN_TOOL",
+            "is_error": true
+          }
+        ],
+        "journal": {
+          "events": 4,
+          "counters": {
+            "streams": 3,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 0,
+            "refused": 1,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 3,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "54aa8609e7e7c9a1bb153bc9f18426df8cd1cd63c7c1caa5574ce090bc724d1f",
+          "journal": "cf9019a8097339d8cc9a039a770482b15aa1ae8318f93b8c26e30a2d847da5b7",
+          "neighbour": "fa0cef2d2fbafa066e8891494e4a158c4626db4beca8a111e2135f9c0132d226"
+        }
+      },
+      "same_new_control": true,
+      "same_old_control": false,
+      "old_owns_fallback": true,
+      "new_owns_fallback": false,
+      "control_has_journal": false
+    }
+  },
+  "claims": {
+    "p0053_a_chunk_whose_arguments_is_not_a_string": "the 0.4.18 bytes ended the turn with \"text.trim is not a function\"; this tree reproduces the neighbour-only outcome",
+    "p0053_a_finish_without_a_reason": "the 0.4.18 bytes ended the turn with \"Cannot read properties of undefined (reading 'kind')\"; this tree reproduces the neighbour-only outcome",
+    "p0053_null_chunk": "identical in all three arms: the host itself reads `type`, so this shape cannot attribute an author",
+    "p0053_block_end_without_a_block": "identical in all three arms: the host itself reads `block.type`, so this shape cannot attribute an author",
+    "p0054_a_fused_fragment": "the 0.4.18 bytes dispatched the repaired fragment under `remedy_unattributed`; this tree abandons the rescue and the turn carries the provider failure",
+    "p0054_a_nameless_block_end": "the 0.4.18 bytes dispatched a nameless call under `remedy_unattributed`; this tree keeps the original bytes and the host answers UNKNOWN_TOOL"
+  },
+  "not_proven": [
+    "the shapes are synthesized by a neighbour plugin at the seam, not produced by the pi-ai adapter; the adapter that produces the measured incidents is dsh-llm-deepseek, which this harness does not drive",
+    "the provider is local and synthetic: one text stream per turn, one turn per run",
+    "`null` and a `block-end` with no `block` are non-discriminating here: the host fails with the same message in every arm, so no author can be attributed from the session",
+    "one machine, one profile shape, Windows; the same tree was run on Linux for the build and gates, not for these turns"
+  ],
+  "verdict": {
+    "p0053": "verified — inside a real turn, two shapes the 0.4.18 bytes turned into remedy's own TypeError now reproduce the neighbour-only outcome",
+    "p0054": "verified — inside a real turn, a profile that owns `remedy_unattributed` no longer receives the repaired fragment or the nameless call"
+  },
+  "redaction": {
+    "replacements": 0,
+    "kinds": []
+  }
+}

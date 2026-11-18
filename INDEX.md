@@ -174,6 +174,10 @@
 | `scripts/probe_withdrawn_reachability.mjs` | 实测 `withdrawn` 在本机是否可达 → `withdrawn-reachability-*` 产物 |
 | `scripts/sync_fixtures.mjs` | `prepack`：夹具进包 |
 | `scripts/probe_hostile_neighbours.mjs` | R69：邻居给了坏 chunk 时会发生什么（七个场景）→ `hostile-neighbours-*`；先记录、不改运行时 |
+| `scripts/record_neighbour_turn.mjs` | R70：把 `llm/stream` 的坏 chunk 场景放进**真宿主 turn**（邻居 / 补丁前版本 / 本树三份）→ `live-neighbours-*`；形状不成立就 `exit 4` |
+| `scripts/record_repair_turn.mjs` | R70：五条修复补丁的真宿主 turn（P-0005 / P-0027 / P-0030 / P-0034 / P-0036，old 各取补丁前版本）→ `live-repairs-*` |
+| `scripts/lib/turn-run.mjs` | R70 的只读观测层：读一个 run 目录的 session / journal / 邻居日志，定义「同样的结局」 |
+| `scripts/record_linux_r70.mjs` | R70 的 Linux 半边：读 WSL2 的七个日志、先断言再写 `live-linux-*`（R70 没有运行时字节，所以只主张同树同数） |
 | `scripts/scan_plugin_seams.mjs` | R68：只读扫一个 profile 的接缝注册与顺序 → `seam-inventory-*`（不加载插件、不写 profile） |
 | `scripts/bench_repair_overhead.mjs` | R68：`llm/stream` 包装器的每 chunk 开销（三组场景，中位数）→ `bench-repair-*` |
 | `scripts/lib/seam-inventory.mjs` | R68 的纯分类器：`on(...)` / `emit(...)`、`prepend`、保留名、外层优先排序（`seam-inventory.d.mts` 提供类型） |
@@ -204,6 +208,7 @@
 | `tests/unit/on-tool-call.test.ts` | P-0052 的规则：末步有 tool-call 才算；文本+tool-call、只有 tool-call、控制 run、max_tokens、缺消息五种形状 |
 | `tests/unit/neighbour-hostile.test.ts` | P-0053 的八条：四条 remedy 自抛的 `TypeError` 变成原样放行，外加三条负对照与一条「foreign 之后不再修复」 |
 | `tests/unit/reserved-name.test.ts` | P-0054 的六条：保留名被拥有时救援放弃、无名 `block-end` 保留原字节，以及三条 P-0027 / P-0030 的负对照 |
+| `tests/fixtures/neighbour-bad-chunks/` | R70 的探针插件（不进包）：在同一条 seam 上产出适配器不会产出的 chunk，并注册场景需要的工具；`scenarios.mjs` 是三个脚本共用的词表 |
 | `tests/e2e/explain-toolcall.test.ts` | P-0052 的 finding：正值打 `TOOLCALL` 并退出 1；文本-only、reasoning-only、无 `--sessions` 三条负对照 |
 | `tests/e2e/explain-drift.test.ts` | P-0051 的六条：掉的是调过的才打 finding；带 profile 也打；没人调过、丢掉之后才调、没有 `--sessions`、会话保住了工具这四种都不打（四条负对照） |
 | `tests/unit/capability-drift.test.ts` | P-0050 的九条：掉的是调过的才算；没人调过不算；丢掉之后才调不算；series 不增减；change 同 resume；同一工具只记一次；未知 reason 不算；以及一条按实测形状复算 |

@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_linux_r70.mjs",
+  "generated_at": "2026-11-18T20:50:00.000Z",
+  "question": "Does the R70 tree pass on a POSIX host with the same suite, the same six gates and the same byte account as Windows, given that R70 added scripts, a probe plugin and tests but no runtime byte?",
+  "host": {
+    "kernel": "Linux rjjRobert 6.6.114.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Mon Dec  1 20:46:23 UTC 2025 x86_64 GNU/Linux",
+    "node": "24.10.0",
+    "pnpm": "12.15.0",
+    "how": "WSL2; the tracked tree copied into the Linux filesystem and never run through /mnt/c; node_modules, dist and *.tsbuildinfo excluded so tsc -b could emit on this host"
+  },
+  "verify": {
+    "tests": 447,
+    "pass": 447,
+    "fail": 0,
+    "gates": 6,
+    "negative_control": "6/6"
+  },
+  "installed_dist_cli": {
+    "what": "node packages/plugin/dist/cli.js verify on this host, against the fixture set the package ships",
+    "printed": "OK  8 fixture(s)"
+  },
+  "governance_files_on_posix": {
+    "tests": 42,
+    "fail": 0,
+    "files": [
+      "tests/governance/facts-truth.test.ts",
+      "tests/governance/handoff-truth.test.ts",
+      "tests/governance/fact-pack-census.test.ts",
+      "tests/governance/public-pages-complete.test.ts",
+      "tests/governance/ledgers.test.ts"
+    ],
+    "what": "the fact pack, the handoff evidence index, the patch census, both first screens and the four ledgers"
+  },
+  "r69_unit_files_on_posix": {
+    "tests": 14,
+    "fail": 0,
+    "files": [
+      "tests/unit/neighbour-hostile.test.ts",
+      "tests/unit/reserved-name.test.ts"
+    ],
+    "what": "the fourteen measured/control cases for P-0053 and P-0054"
+  },
+  "byte_account": {
+    "residency": {
+      "bytes": 39632,
+      "cap": 44000
+    },
+    "cli": {
+      "bytes": 41957,
+      "cap": 42000
+    },
+    "total": {
+      "bytes": 81589,
+      "cap": 83000
+    },
+    "core_total": {
+      "bytes": 103518,
+      "cap": 104000
+    },
+    "registry": {
+      "bytes": 67782,
+      "cap": 68000
+    }
+  },
+  "windows_tree": {
+    "what": "the same tree measured on Windows before this run",
+    "total": 81589,
+    "core_total": 103518,
+    "registry": 67782
+  },
+  "not_measured": {
+    "live_turns": "the R70 harness drives the desktop CLI and the Windows host; it was not re-run on POSIX this round",
+    "cold_directory_install": "not re-run on POSIX: 0.4.19 was installed from the registry on Windows (install-acceptance-2026-11-18T16-20-00.000Z.json)",
+    "desktop_app": "not a POSIX claim: the app is measured on Windows only"
+  },
+  "sources": {
+    "versions.log": "462f750f1e17a5957081e1e64b0178e9fd724e049362cb304f9aa551f4a47641",
+    "verify.log": "3caafa131f1f4b96ffcb06700f56a3a8d35b85a970de4b04dfb294cb0dba4061",
+    "mutate.log": "8eaa4edbfe8cfee8dc438c7301fc4b9e8fa939be2b580fc1f44544a490092766",
+    "size.log": "d888b2b63df2f833020fa093de59f29c3a730b36235f6134e4417f1d74ff162b",
+    "cli.log": "199944426ebba4225f3ebdddb75e4c161c7d23b1b2e1ef570a1019ebc14dc561",
+    "rules.log": "25124ea87bc3ea0ada55828a5cdefec249e273f93be55ebc8cc7e3cf887e5d78",
+    "hostile.log": "d986da981e63bc2b7d7287b98566ba65853a8a0e83dccc44131426a6615988e0"
+  },
+  "limits": [
+    "one Linux host (WSL2) and one node build; this is not a distribution matrix",
+    "the suite reads files, so a POSIX pass proves the tests are portable, not that the pages are right on darwin",
+    "the two R70 artifacts are Windows runs; nothing here re-proves a live turn on Linux"
+  ]
+}

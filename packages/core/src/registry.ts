@@ -5,6 +5,14 @@
 
 import type { PatchRecord } from './types.js'
 
+const LIVE_NEIGHBOURS = 'data/results/live-neighbours-2026-11-18T20-00-00.000Z.json'
+const LIVE_REPAIRS = 'data/results/live-repairs-2026-11-18T20-00-00.000Z.json'
+const FAIL_OPEN_LIMITS = [
+  'a fail-open stream reads quiet: the foreign chunk moves no counter',
+  'only the fields the wrapper reads are checked; an ignored field is not validated',
+  'a neighbour that returns its own stream or mutates chunks is outside this rule',
+]
+
 export const PATCHES: readonly PatchRecord[] = [
   {
     id: 'P-0001',
@@ -92,9 +100,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'a bare unquoted multi-line blob as one member value is neither a fusion nor splittable, so P-0001 refused it as `single-object` and the call never dispatched',
     surface: 'llm/stream',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0005-bare-value-reseal.md', 'data/fixtures/toolcall-fusion/bare-code-value.json', 'data/results/malformed-replay-2026-11-12T11-30-00.000Z.json'],
+    evidence: ['docs/patches/P-0005-bare-value-reseal.md', 'data/fixtures/toolcall-fusion/bare-code-value.json', 'data/results/malformed-replay-2026-11-12T11-30-00.000Z.json', LIVE_REPAIRS],
     guards: [
       'tests/unit/reseal.test.ts',
       'tests/unit/toolcall-repair.test.ts',
@@ -190,7 +198,7 @@ export const PATCHES: readonly PatchRecord[] = [
       'scripts/redact_artifacts.mjs',
     ],
     limits: [
-      'a filtered scan reports before_since instead of guessing; an unstamped event is unreadable, never assumed in the window',
+      'a filtered scan reports before_since instead of guessing; an unstamped event is unreadable',
       'one undecompressable file is a failure line and exit 3, not a silent zero',
       'it does not deduplicate a repair seen by both the journal and the session file',
       'matches a home path only when the directory starts with a drive letter; another spelling is unmeasured',
@@ -220,7 +228,7 @@ export const PATCHES: readonly PatchRecord[] = [
     symptom:
       'the two longest outward files could not be regenerated at all: every attempt printed `agy exited null`, so two different faults had one unreadable name',
     rootCause:
-      'the request (35509 chars for changelog, 33530 for readme) exceeded the 32767-character Windows command line, so spawnSync failed with ENAMETOOLONG and a null status; a spawn killed by the timeout reported the same null. Transport is now chosen by request length',
+      'the request (35509 chars for changelog, 33530 for readme) exceeded the 32767-character Windows command line: spawnSync returned ENAMETOOLONG and a null status, as did a timeout kill; transport is now chosen by length',
     surface: 'scripts',
     status: 'tested',
     severity: 'minor',
@@ -266,7 +274,7 @@ export const PATCHES: readonly PatchRecord[] = [
     limits: [
       'the gate set still does not cover packages/*/README.md: the test compares the two scan lines, not the page as a whole',
       'moving the page into the copy channel would make it generated, which is a separate decision',
-      'the one-line-per-command rewrite pays for the flag list, so the per-command prose is thinner; the detail lives in the patch document',
+      'the one-line-per-command rewrite pays for the flag list; the detail lives in the patch document',
     ],
   },
   {
@@ -282,7 +290,7 @@ export const PATCHES: readonly PatchRecord[] = [
     evidence: ['docs/patches/P-0009-session-header-window.md'],
     guards: ['tests/unit/session-scan.test.ts', 'tests/e2e/cli.test.ts', 'packages/plugin/src/session-scan.ts'],
     limits: [
-      'only the `session` header is dated by createdAt; an event with no instant stays unreadable, because there is no second field to fall back to',
+      'only the `session` header is dated by createdAt; an event with no instant stays unreadable',
       'a header inside the window adds its instant but no attempts or turns, so the census does not move',
     ],
   },
@@ -398,7 +406,7 @@ export const PATCHES: readonly PatchRecord[] = [
     ],
     guards: ['tests/unit/cli-usage.test.ts', 'tests/governance/package-readme-prose.test.ts', 'tests/governance/facts-truth.test.ts', 'scripts/gate_copy.mjs'],
     limits: [
-      'the root README still has no structural guard: a page could describe behaviour the code does not have (BS-13 own family)',
+      'the root README still has no structural guard (BS-13 own family)',
       'it does not change what npm renders until a release carries the new pages',
       'no live artifact: these are pages, not a seam',
     ],
@@ -425,7 +433,7 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0021',
     title: 'The published package advertised a subpath that never had a module',
     symptom:
-      'the manifest exported "./retry-listener" -> ./dist/retry-listener.js, a module that has never existed (the second seam is failure-listener.ts), so the import answered ERR_MODULE_NOT_FOUND while the manifest promised it; it shipped in 0.3.8 and 0.4.0',
+      'the manifest exported "./retry-listener" -> ./dist/retry-listener.js, a module that never existed (the seam is failure-listener.ts): the import answered ERR_MODULE_NOT_FOUND; it shipped in 0.3.8 and 0.4.0',
     rootCause:
       'the test compared the target string against a regex and never the file behind it, so a plausible path passed as well as a real one',
     surface: 'scripts',
@@ -461,7 +469,7 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0023',
     title: 'The workflow first step was a sentence nobody read',
     symptom:
-      'AGENTS.md says every patch starts with a doc, but gate_registry resolved only evidence and guards: at the start of R31 the registry held twenty-one patches and docs/patches held nineteen, P-0016 among the missing, while every check stayed green',
+      'AGENTS.md says every patch starts with a doc, but gate_registry resolved only evidence and guards: at R31 the registry held 21 patches and docs/patches 19, P-0016 missing, every check green',
     rootCause:
       'the doc was read as prose about the patch rather than as part of it: evidence and guards are paths the gate resolves, so a doc in neither list could be missing with no check noticing',
     surface: 'scripts',
@@ -489,7 +497,7 @@ export const PATCHES: readonly PatchRecord[] = [
     evidence: ['docs/patches/P-0024-package-readme-copy-channel.md', 'packages/plugin/README.md', 'packages/core/README.md'],
     guards: ['scripts/gate_copy.mjs', 'tests/governance/package-readme-prose.test.ts', 'tests/unit/cli-usage.test.ts'],
     limits: [
-      'the copy gate checks numbers, bytes and provenance, not truth: a page can still describe behaviour the code does not have',
+      'the copy gate checks numbers, bytes and provenance, not truth',
       'the pages ship inside the tarball, so a change reaches npm only with a release',
       'the pages stay hand-written prose that is now registered; a generated page is a separate decision',
     ],
@@ -537,12 +545,12 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'the rescue proves the JSON split and nothing else; the stream names one tool per index and the engine reused it for every fragment',
     surface: 'llm/stream',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json'],
+    evidence: ['data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json', LIVE_REPAIRS],
     guards: ['tests/unit/attribution.test.ts', 'packages/plugin/src/repair-stream.ts'],
     limits: [
-      'the proof needs a required list, a closed schema, or a declared value that breaks its own type; an open schema books the residue',
+      'the proof needs a required list, a closed schema, or a declared value that breaks its own type',
       'the fallback name is not a tool, so the model pays one UNKNOWN_TOOL round trip: the cost of not running the wrong tool',
       'a fragment that satisfies the wrong tool schema is still dispatched as that tool; a schema is a filter',
       'the declarations come from options.tools; a hand-built call carries none',
@@ -552,7 +560,7 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0028',
     title: 'A published sample carried this machine\'s home path',
     symptom:
-      'every tarball since 0.1.0 shipped a fixture whose fused arguments carried the real workspace path, and the repository carried that account name in six patch docs, the handoff, a step review and one artifact (reported upstream on 2026-11-14)',
+      'every tarball since 0.1.0 shipped a fixture whose fused arguments carried the real workspace path; six patch docs, the handoff, a step review and one artifact carried that account name (reported 2026-11-14)',
     rootCause:
       'redaction was wired into the artifact writers and never into the fixture corpus; P-0004 fixed the reader for three path shapes, not the files already tracked',
     surface: 'scripts',
@@ -592,11 +600,12 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'the check was written against an imagined schema: dsh-tools never sets additionalProperties (dsh-tools/lib/index.js:800-808), so an undeclared key is not proof; the counter bug was a scoping mistake above the per-decision loop',
     surface: 'llm/stream',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0030-attribution-proof.md', 'packages/core/src/attribute.ts'],
+    evidence: ['docs/patches/P-0030-attribution-proof.md', 'packages/core/src/attribute.ts', LIVE_REPAIRS],
     guards: ['tests/unit/attribute.test.ts', 'tests/unit/attribution.test.ts', 'packages/plugin/src/repair-stream.ts'],
     limits: [
+      'the live turn witnesses the closed-schema half; the per-decision counter half stays unit-tested',
       'an open schema cannot prove a fragment foreign by its keys, which is every first-party tool',
       'fits is not identity: a fragment valid for the named tool is still dispatched as that tool',
       'only the dsh-tools dialect was read; another dialect reads unproven more often, the safe direction',
@@ -667,14 +676,14 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       '`isFusionFailure` read the code alone, so every MALFORMED_RESPONSE inherited the fusion path\'s assumption that a refusal had already booked it',
     surface: 'llm/stream',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0034-unbooked-failure.md', 'packages/plugin/src/repair-stream.ts'],
+    evidence: ['docs/patches/P-0034-unbooked-failure.md', 'packages/plugin/src/repair-stream.ts', LIVE_REPAIRS],
     guards: ['tests/unit/repair-stream.test.ts', 'scripts/gate_size.mjs'],
     limits: [
       'the adapter is not fixed: `stopReason()` still rejects `refusal`, so the turn still ends; this seam names it',
       'the verdict is untouched, so `quiet` still means the fusion defect was not seen',
-      'the reproduction is synthetic at the seam; the host half is the shipped `stopReason()` source',
+      'the live turn carries the failure from a neighbour at the seam, not from the adapter that produces it',
     ],
   },
   {
@@ -702,13 +711,13 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'assembler.ts:72 assigns toolCallId unguarded while :73 guards the name, and :115 falls back only from null',
     surface: 'llm/stream',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0036-delta-identity.md', 'packages/plugin/src/repair-stream.ts'],
+    evidence: ['docs/patches/P-0036-delta-identity.md', 'packages/plugin/src/repair-stream.ts', LIVE_REPAIRS],
     guards: ['tests/unit/repair-stream.test.ts', 'scripts/gate_size.mjs'],
     limits: [
       'the host is not fixed; a different real id on one index passes through, so id-collision-split stays open',
-      'not verified: the red is at the seam, no live turn this round produced the shape',
+      'the live turn is assembled from deltas by the host; the pi-ai adapter always emits a block-end, so P-0033 covers that path',
     ],
   },
   {
@@ -726,7 +735,7 @@ export const PATCHES: readonly PatchRecord[] = [
     limits: [
       'pi-ai route only: dsh-llm-deepseek reports "tool input is invalid JSON" without the text, so nothing reaches this seam',
       'a missing final delimiter and an ambiguous text are refused, never guessed',
-      'verified on Linux (WSL2) against a scripted provider, not on a real model turn: the repair and the dispatch are live, the shape is synthesized',
+      'verified on Linux against a scripted provider, not a model turn: the repair and dispatch are live, the shape is synthesized',
     ],
   },
   {
@@ -857,7 +866,7 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0045',
     title: 'A refusal thrown before the stream starts never reaches the seam that names it',
     symptom:
-      'a requested effort the adapter does not map dies in prepareCall with UNSUPPORTED_REASONING_EFFORT; the loop catch emits `agent/error` (never `agent/request-error`), so a listener on the latter alone names nothing (37 such turns on this host)',
+      'a requested effort the adapter does not map dies in prepareCall with UNSUPPORTED_REASONING_EFFORT; the loop catch emits `agent/error`, never `agent/request-error` (37 such turns here)',
     rootCause:
       '`agent/request-error` is dispatched only after a started stream fails (dsh-agent-loop line 942); prepareCall throws before that and the loop catch emits `agent/error` instead (line 657)',
     surface: 'agent/error',
@@ -894,9 +903,9 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0047',
     title: 'A turn that finished without answering anyone was never counted',
     symptom:
-      'P-0044 counted truncations that answered nobody and left the other ending out: a `completed` turn whose last message is one `reasoning` block (upstream #13169) produced 0 cases here, so nothing in the scanner could even say whether it happened',
+      'P-0044 counted truncations that answered nobody and left the other ending out: a `completed` turn whose last message is one `reasoning` block (#13169) happened 0 times here, so the scanner never said',
     rootCause:
-      'the census asks how a turn ended and the answer rule asks what the last step showed, but only the max-tokens branch joined them; the adapter guard counts blocks rather than usable content, so a reasoning-only message passes as a normal stop',
+      'the census asks how a turn ended and the answer rule what the last step showed, but only the max-tokens branch joined them; the adapter guard counts blocks, so a reasoning-only message passes as a normal stop',
     surface: 'cli',
     status: 'tested',
     severity: 'major',
@@ -904,7 +913,7 @@ export const PATCHES: readonly PatchRecord[] = [
     guards: ['tests/unit/completed-answer.test.ts', 'tests/e2e/cli.test.ts'],
     limits: [
       'it counts `completed` only: an error already names its code and an abort was the operator decision',
-      'a reasoning block a client renders to the user still counts as no answer: the rule is what the transcript gives a reader',
+      'a reasoning block a client renders still counts as no answer',
       'the adapter guard that lets the shape through is upstream; this patch names the consequence, it does not repair it',
     ],
   },
@@ -1006,14 +1015,13 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'the loop cast every yielded value and read type / block.type / block.arguments.trim() / reason.kind without a shape check, and the outer catch only recognised a proven fusion',
     surface: 'llm/stream',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0053-fail-open-foreign-chunks.md', 'data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json'],
+    evidence: ['docs/patches/P-0053-fail-open-foreign-chunks.md', 'data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json', LIVE_NEIGHBOURS],
     guards: ['tests/unit/neighbour-hostile.test.ts'],
     limits: [
-      'a fail-open stream reads quiet: the foreign chunk moves no counter',
-      'only the fields the wrapper reads are checked; an ignored field is not validated',
-      'a neighbour that returns its own stream or mutates chunks is outside this rule',
+      ...FAIL_OPEN_LIMITS,
+      'a null chunk and a block-end with no block stay unattributable: the host reads the same field and fails the same way',
     ],
   },
   {
@@ -1024,9 +1032,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'both dispatch sites (the foreign fragment in planRescue and the missing-name branch) wrote UNATTRIBUTED_NAME without asking whether options.tools already used it',
     surface: 'llm/stream',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0054-reserved-name-no-fallback.md', 'data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json'],
+    evidence: ['docs/patches/P-0054-reserved-name-no-fallback.md', 'data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json', LIVE_NEIGHBOURS],
     guards: ['tests/unit/reserved-name.test.ts'],
     limits: [
       'a rescue that might not have needed the fallback name is abandoned on purpose',

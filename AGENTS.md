@@ -15,9 +15,9 @@
 > **基线（2026-11-18）**：`pnpm run verify` = **447 tests / 6 gates**（R69 的树，Windows）；
 > `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.19`（latest）+
 > `dsh-remedy-core@0.4.19`（latest）。
-> 公开仓库 CI 绿，release `v0.1.0` … `v0.4.19`。五十四个补丁：**9 `verified` + 45 `tested`**。
-> **字节余量（下一轮的第一个约束）**：plugin **81 589 / 83 000（1 411 B；CLI 半边 43 B）**、core **103 560 / 104 000（440 B）**、
-> registry **67 824 / 68 000（176 B —— P-0053 / P-0054 已付清，下一条记录必须先压缩或签署抬 cap）**。
+> 公开仓库 CI 绿，release `v0.1.0` … `v0.4.19`。五十四个补丁：**16 `verified` + 38 `tested`**（R70 把 `llm/stream` 上剩下的 7 条放进了真宿主的一轮）。
+> **字节余量（下一轮的第一个约束）**：plugin **81 589 / 83 000（1 411 B；CLI 半边 43 B）**、core **103 518 / 104 000（482 B）**、
+> registry **67 782 / 68 000（218 B —— R70 靠压散文付清，下一条记录仍须先压缩或签署抬 cap）**。
 > **平台边界：Windows 与 Linux 实测（同一棵树、同一组数），macOS 未实测**；P-0038 的 `/Users` 形状在 Linux 上是字符串，CI 里有一个 `verify (macos, node 24)` job。
 > **本目录不是 git 根**：提交在 `..`（容器），公开仓库由 `git subtree split --prefix=dsh-remedy` 切出。
 

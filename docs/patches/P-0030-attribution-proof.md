@@ -1,6 +1,6 @@
 # P-0030 — The name check read `required` and nothing else, and its counter was a running total
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `llm/stream`  **Depends on**: P-0027
+**Status**: `verified` (R70: closed-schema half witnessed live)  **Severity**: minor  **Surface**: `llm/stream`  **Depends on**: P-0027
 
 ## Symptom
 
@@ -81,8 +81,11 @@ first decision's counts to both events: it reported `[1, 1]` where the correct a
 - Only `dsh-tools`' compiled first-party shape was read. A third-party declaration that
   sends a different schema dialect may be classified `unproven` more often than necessary,
   which is the safe direction.
-- No live artifact: the runtime was not driven for this patch, and the measured rc.3
-  corpus did not contain a tool without a `required` list. `tested`, not `verified`.
+- R70 drove the runtime with a **closed** schema and no `required` list: the
+  fragment carrying an undeclared key leaves as `remedy_unattributed` and the
+  runtime answers `UNKNOWN_TOOL`, where 0.4.5 kept `gamma`
+  (`data/results/live-repairs-2026-11-18T20-00-00.000Z.json`). The witnessed half
+  is the schema proof; the per-decision counter stays unit-tested.
 
 ## Reproduction
 

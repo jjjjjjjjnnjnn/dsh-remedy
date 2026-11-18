@@ -1,6 +1,6 @@
 # P-0027 — A fragment dispatched under a name nobody proved
 
-**Status**: `tested`  **Severity**: major  **Surface**: `llm/stream`  **Depends on**: P-0001, P-0002
+**Status**: `verified` (R70: real host turn)  **Severity**: major  **Surface**: `llm/stream`  **Depends on**: P-0001, P-0002
 
 ## Symptom
 
@@ -110,10 +110,13 @@ next patch's problem, not a reason to move a cap.
 - It does not attribute the *stage* that glued the objects (P-0001 limit,
   unchanged). `BS-18` stays open with this narrower note: the wrong dispatch is
   now visible as `UNKNOWN_TOOL` instead of executed under the wrong tool.
-- The probe that would have measured the whole path live could not be layered
-  inside the wrapper on rc.3 (its row is inserted outside `dsh-remedy`), so the
-  two halves are measured separately: the engine by these tests, the runtime's
-  answer to the fallback name by the probe run above.
+- R70 layered the probe inside the wrapper after all: a neighbour plugin on the
+  same seam (it injects `tools`, so it applies after remedy) hands over the fused
+  text inside the adapter-shaped failure. In a real turn the surplus fragment
+  leaves as `remedy_unattributed` and the runtime answers `UNKNOWN_TOOL`, while
+  the 0.4.3 bytes dispatched it as `alpha`
+  (`data/results/live-repairs-2026-11-18T20-00-00.000Z.json`). The shape is
+  synthesized at the seam, not produced by this host's adapter.
 
 ## Reproduction
 

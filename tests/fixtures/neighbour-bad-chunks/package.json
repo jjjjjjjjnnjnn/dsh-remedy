@@ -1,0 +1,8 @@
+{
+  "name": "r70-neighbour",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "description": "R70 probe only: a plugin on llm/stream that hands the wrapper chunk shapes the adapter never produces. Not packed into either published package."
+}

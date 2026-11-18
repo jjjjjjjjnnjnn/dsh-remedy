@@ -1,6 +1,6 @@
 # P-0036 — The host assembler erases the id a delta-only stream already proved
 
-**Status**: `tested`  **Severity**: major  **Surface**: `llm/stream`  **Depends on**: P-0033, P-0030
+**Status**: `verified` (R70: delta-only call dispatched in a real turn)  **Severity**: major  **Surface**: `llm/stream`  **Depends on**: P-0033, P-0030
 
 ## Symptom
 
@@ -89,8 +89,13 @@ The two red ones are the same host rule from two directions: "erase what arrived
   an empty name still reaches the P-0033 path at `block-end`.
 - **`blocks()` from deltas only** still yields `arguments: ""` when no delta carried text — this patch
   does not invent arguments.
-- **Not `verified`**: the red is at the seam, and no live host run this round produced a delta-only
-  empty-id stream. The host half is source-read, not measured on a live turn.
+- **R70 measured the host half live**: a neighbour yields deltas without an id and
+  no `block-end`; this tree mints one id and the call is dispatched and answered,
+  while 0.4.9 and the plugin-free control both die with
+  `format v4 tool/result … requires toolCallId matching its tool source`
+  (`data/results/live-repairs-2026-11-18T20-00-00.000Z.json`). The pi-ai adapter
+  always emits a `block-end`, so the path exercised is the assembler-from-deltas
+  one; the shape is synthesized at the seam.
 
 ## Reproduction
 

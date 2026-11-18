@@ -1,6 +1,6 @@
 # P-0053 — a neighbouring plugin's chunk is not this plugin's failure
 
-**Status:** `tested` · **Seam:** `llm/stream` (waterfall) · **Artifacts:** `data/results/hostile-neighbours-2026-11-18T10-00-00.000Z.json` (before), `data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json` (after)
+**Status:** `verified` · **Seam:** `llm/stream` (waterfall) · **Artifacts:** `data/results/hostile-neighbours-2026-11-18T10-00-00.000Z.json` (before), `data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json` (after), `data/results/live-neighbours-2026-11-18T20-00-00.000Z.json` (real host turn, R70)
 
 ## Symptom
 
@@ -87,8 +87,13 @@ into silence.
 - A neighbour that returns its own stream instead of calling `next()` is not on this
   code path; so is a neighbour that mutates chunks before yielding them. This patch only
   promises “we do not add an exception”, not “we still repair”.
-- The harness mounts the listener directly; no full host turn was run with a hostile
-  neighbour. Status stays `tested`.
+- R70 ran the whole host: a neighbour plugin inside the wrapper hands over four shapes in a
+  real turn. `arguments` that is not a string and a `finish` with no `reason` both reproduce
+  the neighbour-only outcome here, where 0.4.18 ended the turn with remedy's own
+  `TypeError` (`text.trim is not a function` / `reading 'kind'`). A `null` chunk and a
+  `block-end` with no `block` stay unattributable: the host reads the same field and fails
+  the same way in every arm, so the artifact records them as non-discriminating rather than
+  claiming them.
 - macOS is still a CI criterion, not hardware.
 
 ## Reproduction

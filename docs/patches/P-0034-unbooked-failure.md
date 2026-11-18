@@ -1,6 +1,6 @@
 # P-0034 — A failed stream that we never refused was booked as a quiet one
 
-**Status**: `tested`  **Severity**: major  **Surface**: `llm/stream`  **Depends on**: P-0001, P-0003, P-0013
+**Status**: `verified` (R70: real host turn; 0.4.8 booked silence)  **Severity**: major  **Surface**: `llm/stream`  **Depends on**: P-0001, P-0003, P-0013
 
 ## Symptom
 
@@ -89,10 +89,10 @@ The first red is the one the report describes: the stream failed and the ledger 
 - **`refusal` is still an error, not a content decision.** The model declined; the turn ends. The
   plugin names it, it does not retry it — the retry budget (`retryOnMalformed`) is off by
   default and this patch does not touch it.
-- **The reproduction is synthetic at the seam.** No relay in this repository produced a
-  `refusal`; the test builds the chunk sequence the report printed. The host-side half that is
-  proven is the adapter source (`stopReason()` above, read out of the shipped `app.asar`), not a
-  live incident.
+- **The adapter is still not fixed, but the ledger is now witnessed live.** R70 ran the shape
+  through a real host turn: 0.4.8 booked `errors: 0` for it, this tree books `errors: 1`, and the
+  turn ends the same way in both arms (`data/results/live-repairs-2026-11-18T20-00-00.000Z.json`).
+  The failure bytes still come from a neighbour at the seam, not from a relay incident.
 - **`errors` still does not move the verdict.** A profile that only reads `remedy status` will not
   see this; the journal line and the counters are the record.
 - **`refusedHere` is stream-wide.** A stream that refused one call and then failed for an unrelated

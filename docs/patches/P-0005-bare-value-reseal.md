@@ -1,7 +1,7 @@
 # P-0005 — A bare value after a member key must be resealed, or refused
 
-- **Status**: `tested` (unit tests, fixtures, and negative controls; no live host
-  run yet)
+- **Status**: `verified` (R70: resealed and dispatched inside a real host turn)
+- **Evidence**: `data/results/live-repairs-2026-11-18T20-00-00.000Z.json`
 - **Severity**: major
 - **Surface**: `llm/stream`
 - **Depends on**: P-0001 (fusion split), P-0003 (refusal bookkeeping)
@@ -95,9 +95,10 @@ predict, which is worse than the original failure.
   stay refusals, by design and with named negative controls.
 - Only the stream seam is touched. The adapter, the relay and the provider retry
   policy are untouched.
-- No live host run yet: this host's measured adapter only surfaces the fusion
-  family. The reseal is proven by unit tests plus a fixture replay through the
-  shipped CLI path.
+- R70 measured it live: a neighbour plugin handed the seam the adapter-shaped
+  failure, the resealed call was dispatched and answered, and the 0.3.0 bytes
+  refused the same stream (`live-repairs-2026-11-18T20-00-00.000Z.json`). The
+  shape is synthesized at the seam, not produced by this host's adapter.
 
 ## Reproduction
 

@@ -1,6 +1,6 @@
 # P-0054 — the fallback name is not a name this plugin gets to borrow
 
-**Status:** `tested` · **Seam:** `llm/stream` (waterfall) · **Artifacts:** `data/results/hostile-neighbours-2026-11-18T10-00-00.000Z.json` (before), `data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json` (after)
+**Status:** `verified` · **Seam:** `llm/stream` (waterfall) · **Artifacts:** `data/results/hostile-neighbours-2026-11-18T10-00-00.000Z.json` (before), `data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json` (after), `data/results/live-neighbours-2026-11-18T20-00-00.000Z.json` (real host turn, R70)
 
 ## Symptom
 
@@ -60,8 +60,11 @@ ADR 0002 is amended to say so.
 - The abandoned rescue is visible only as the provider's error; there is no journal event
   that says “a fallback name was taken”. Adding a counter would change the verdict
   vocabulary, which is out of scope.
-- Status stays `tested`: the probe mounts the listener with a synthetic tool list, not a
-  full host turn with a profile that owns the name.
+- R70 ran a full host turn with a profile that owns the name: a real tool called
+  `remedy_unattributed` is registered by a neighbour. The 0.4.18 bytes dispatched the
+  repaired fragment under it (and the nameless call too); this tree abandons the rescue and
+  the turn carries the provider failure, so the neighbour's tool is never invoked
+  (`data/results/live-neighbours-2026-11-18T20-00-00.000Z.json`).
 - macOS is still a CI criterion, not hardware.
 
 ## Reproduction

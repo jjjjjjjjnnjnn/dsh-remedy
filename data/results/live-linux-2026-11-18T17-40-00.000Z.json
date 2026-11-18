@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_linux_r69.mjs",
+  "generated_at": "2026-11-18T17:40:00.000Z",
+  "question": "Does the 0.4.19 tree pass on a POSIX host with 447 tests, six gates, 6/6 negative controls, the same byte account as Windows, and the two R69 unit files green?",
+  "host": {
+    "kernel": "Linux rjjRobert 6.6.114.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Mon Dec  1 20:46:23 UTC 2025 x86_64 GNU/Linux",
+    "node": "24.10.0",
+    "pnpm": "12.15.0",
+    "how": "WSL2; the tracked tree copied into the Linux filesystem and never run through /mnt/c; node_modules, dist and *.tsbuildinfo excluded so tsc -b could emit on this host"
+  },
+  "verify": {
+    "tests": 447,
+    "pass": 447,
+    "fail": 0,
+    "gates": 6,
+    "negative_control": "6/6"
+  },
+  "installed_dist_cli": {
+    "what": "node packages/plugin/dist/cli.js verify on this host, against the fixture set the package ships",
+    "printed": "OK  8 fixture(s)"
+  },
+  "r69_unit_files_on_posix": {
+    "tests": 14,
+    "fail": 0,
+    "files": [
+      "tests/unit/neighbour-hostile.test.ts",
+      "tests/unit/reserved-name.test.ts"
+    ],
+    "what": "the fourteen measured/control cases for P-0053 and P-0054"
+  },
+  "governance_files_on_posix": {
+    "tests": 31,
+    "fail": 0,
+    "files": [
+      "tests/governance/facts-truth.test.ts",
+      "tests/governance/handoff-truth.test.ts",
+      "tests/governance/fact-pack-census.test.ts",
+      "tests/governance/public-pages-complete.test.ts"
+    ],
+    "what": "the fact pack, the handoff evidence index and live claims, the patch census, and both first screens"
+  },
+  "byte_account": {
+    "residency": {
+      "bytes": 39632,
+      "cap": 44000
+    },
+    "cli": {
+      "bytes": 41957,
+      "cap": 42000
+    },
+    "total": {
+      "bytes": 81589,
+      "cap": 83000
+    },
+    "core_total": {
+      "bytes": 103560,
+      "cap": 104000
+    },
+    "registry": {
+      "bytes": 67824,
+      "cap": 68000
+    }
+  },
+  "windows_tree": {
+    "what": "the same tree measured on Windows before this run",
+    "total": 81589,
+    "core_total": 103560,
+    "registry": 67824
+  },
+  "not_measured": {
+    "cold_directory_install": "not re-run on POSIX this round: the 0.4.19 registry copy was installed on Windows (install-acceptance-2026-11-18T16-20-00.000Z.json)",
+    "npx": "not re-run this round for the same reason",
+    "explain_sessions_on_this_host": "this Linux home has no ~/.dsh/sessions, so the live findings are measured on the Windows host and by the fixtures/tests",
+    "desktop_app": "not a POSIX claim: the app is measured on Windows only"
+  },
+  "sources": {
+    "versions.log": "462f750f1e17a5957081e1e64b0178e9fd724e049362cb304f9aa551f4a47641",
+    "verify.log": "166b3c2981ef79661ee185e39f61c12199548035f66d3762097372177de0d5c1",
+    "mutate.log": "52da4c684e066b65791fe76058942fd1d6a6509dc4c70000203d06acef06c19a",
+    "size.log": "903c998bd03a4eed8b07ff1ef839d734ef44bc1babd27f423af19b37b942e42b",
+    "cli.log": "199944426ebba4225f3ebdddb75e4c161c7d23b1b2e1ef570a1019ebc14dc561",
+    "rules.log": "ca98734f31b025f4d8e05732ef60946be2459a91a511c550bb77163eee6d6960",
+    "hostile.log": "dc16c47dc6e901940e285786d7fa0dd2a9d84c93e94b56f63d9dc372a06f741e"
+  },
+  "limits": [
+    "one Linux host (WSL2) and one node build; this is not a distribution matrix",
+    "the suite reads files, so a POSIX pass proves the tests are portable, not that the pages are right on darwin",
+    "no resident provider ran on this host: the probe mounts the listener directly, so nothing here re-proves a repair on Linux"
+  ]
+}

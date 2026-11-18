@@ -1,9 +1,7 @@
 /**
- * Redaction for evidence that leaves the machine: keys, tokens, emails and home
- * paths, in every shape the three platforms write them. Each rule's measurement
- * (and the two platform shapes P-0038 added) is in
- * `docs/patches/P-0038-cross-platform-home-paths.md`; a scanner counts
- * replacements so a reader can see redaction ran instead of trusting it did.
+ * Redaction for evidence that leaves the machine (keys, tokens, emails, home paths).
+ * Each rule's measurement is in `docs/patches/P-0038-cross-platform-home-paths.md`;
+ * a scanner counts replacements, so redaction running is evidence, not trust.
  */
 
 import type { RedactionSummary } from './types.js'
@@ -31,8 +29,7 @@ const RULES: readonly Rule[] = [
     replacement: '<home>',
   },
   {
-    // P-0038: `/home/<name>` (Linux) and `/Users/<name>` (macOS) are the same
-    // host code on other platforms, and both used to pass through untouched.
+    // P-0038: `/home/<name>` (Linux) and `/Users/<name>` (macOS), the same code on other hosts.
     kind: 'posix-home',
     pattern: /(^|[\s"'(=,:;\/])\/(?:home|Users)\/[^\/\s"']+/g,
     replacement: '$1<home>',

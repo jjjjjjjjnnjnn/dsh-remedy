@@ -1,9 +1,6 @@
 /**
- * P-0030 — what a fragment's name can prove. The host never sets
- * `additionalProperties` (`dsh-tools/lib/index.js:800-808`), so an undeclared
- * key proves nothing; the proof and its over-claim are in
- * docs/patches/P-0030-attribution-proof.md. Returns `foreign`, `fits` or
- * `unproven`.
+ * P-0030: what a fragment's name can prove (`fits` / `foreign` / `unproven`).
+ * The proof and its over-claim are in `docs/patches/P-0030-attribution-proof.md`.
  */
 
 export type FragmentFit = 'fits' | 'foreign' | 'unproven'

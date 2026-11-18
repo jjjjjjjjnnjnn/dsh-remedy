@@ -1,10 +1,6 @@
 /**
- * The `llm/stream` repair wrapper. Measured order (session 9045e2ec, seq 524):
- * `block-start` → `tool-call-delta`* → `usage` → `finish{kind:'error'}`, no
- * `block-end` for the fused call, so the terminal finish is the repair point
- * (throw path too); rc.3 closes the first block itself. Refusals: no unproven
- * success; no `max-tokens` repair; no unnamed dispatch; no commit while a later
- * block could still reject; no dropped `replayState`.
+ * The `llm/stream` repair wrapper: proof and refusals are in
+ * `docs/patches/P-0001-toolcall-fusion.md`, P-0053 and P-0054.
  */
 
 import {
@@ -27,14 +23,11 @@ import type {
   ToolDeclaration,
 } from './stream-types.js'
 
-// The counter ledger moved to `monitor.ts` (the split P-0012 pays for) because
-// the reasoning behind each counter is the largest part of it and the stream
-// wrapper has its own cap to stay under.
+// The counter ledger moved to `monitor.ts` (P-0012's payment); the wrapper has its own cap.
 export { RemedyMonitor } from './monitor.js'
 
-// The data vocabulary moved to `stream-types.ts` (P-0005 seam split); every name
-// still resolves through this module, so `index.ts` and the `./repair-stream`
-// export map keep their public surface unchanged.
+// The data vocabulary moved to `stream-types.ts` (P-0005); re-exported so the
+// public surface of this module does not move.
 export type {
   BlockEndChunk,
   BlockStartChunk,
@@ -56,8 +49,7 @@ function ceilingOf(options: RepairStreamOptions): number {
   return value
 }
 
-/** Sent when a fragment's name cannot be proven (P-0027); the runtime answers
- * `UNKNOWN_TOOL` and continues (measured rc.3). */
+/** The sanctioned way to ask for a tool call whose name is unproven (P-0027). */
 export const UNATTRIBUTED_NAME = 'remedy_unattributed'
 
 /** Core owns the proof (P-0030); this side finds the declaration. */
@@ -81,6 +73,8 @@ export async function* repairStream(
   monitor.enterStream()
 
   const ceiling = ceilingOf(options)
+  // P-0054: the profile may already own the name used for an unproven tool.
+  const fallbackOwned = options.tools?.some((tool) => tool.name === UNATTRIBUTED_NAME) === true
   const open = new Map<number, OpenCall>()
   const seenIds = new Set<string>()
   const pending: PendingBlock[] = []
@@ -97,6 +91,8 @@ export async function* repairStream(
   let nameConflict = false
   /** True once a refusal already accounts for this stream's failure (P-0034). */
   let refusedHere = false
+  /** P-0053: set once a chunk arrived that this wrapper cannot read. */
+  let passOnly = false
 
   const track = (index: number): void => {
     if (index > highestIndex) highestIndex = index
@@ -143,7 +139,7 @@ export async function* repairStream(
 
   /** All-or-nothing: one unrepairable buffer or two names on an index aborts. */
   const planRescue = (failure: LlmFailure | undefined): RescuePlan | null => {
-    if (nameConflict || blockRejected) return null
+    if (nameConflict || blockRejected || fallbackOwned) return null
     if (!isFusionFailure(failure)) return null
 
     const entries = [...open.entries()].sort((a, b) => a[0] - b[0])
@@ -180,9 +176,7 @@ export async function* repairStream(
       if (result.status === 'rejected') {
         refusedHere = true
         monitor.recordRejected(candidate.call.name, id, result.code, result.detail)
-        // One candidate was already proven splittable and the all-or-nothing rule drops
-        // the rescue: the proof is real, no call dispatched, so this is the one place that
-        // books `unrepaired`. The refusal above names a different candidate.
+        // The proof is real and no call was dispatched: this is the one place that books `unrepaired` (P-0003).
         if (fusedSeen && proven !== null) {
           monitor.recordAbandoned(
             proven.name,
@@ -194,8 +188,7 @@ export async function* repairStream(
       }
       if (result.status === 'repaired') {
         fusedSeen = true
-        // A reseal (P-0005) or a closer restore (P-0037) rewrites one call in
-        // place: it synthesizes nothing, so it must not consume the call budget.
+        // A reseal (P-0005) or closer restore (P-0037) rewrites one call in place: same id, no budget.
         if (result.code === 'split') planned += result.calls.length
         // Write the synthesized ids back so the next candidate cannot mint the same one.
         for (const call of result.calls) seenIds.add(call.id)
@@ -230,8 +223,7 @@ export async function* repairStream(
           chunks.push(closeCall(decision.index, call))
           continue
         }
-        // A synthesized call needs its own opening block: a bare `block-end` for an
-        // index the consumer never saw start is not a well-formed block sequence.
+        // A synthesized call needs its own opening block; a bare `block-end` is not a block sequence (BS-11).
         const index = nextIndex()
         chunks.push({ type: 'block-start', index, blockType: 'tool-call' })
         // P-0027: a proven mismatch goes out under a name the runtime rejects.
@@ -274,9 +266,7 @@ export async function* repairStream(
     for (const entry of blocks) {
       if (entry.resealed !== undefined) {
         if (withdrawing !== null) {
-          // The rewrite was proven and then given back. Nothing was dispatched, so
-          // `withdrawn` alone carries it: `fused` would claim a second call, `unrepaired`
-          // would claim bytes were lost.
+          // The rewrite was proven and then given back: `withdrawn` alone carries it (P-0003).
           if (withdrawing === 'rejected') {
             monitor.recordRejected(
               entry.resealed.tool,
@@ -296,8 +286,7 @@ export async function* repairStream(
         // A withdrawn repair never ran, so its calls go back to the stream budget.
         synthesized -= entry.spent
         if (withdrawing === 'rejected') {
-          // The split was proven and then given back: a fusion was seen and no call
-          // was dispatched, so it is `fused` + `unrepaired` plus `withdrawn`.
+        // The split was proven and then given back: `fused` + `unrepaired` + `withdrawn` (P-0003).
           monitor.recordAbandoned(
             entry.repaired.tool,
             entry.repaired.callId,
@@ -334,8 +323,42 @@ export async function* repairStream(
     if (pending.some((entry) => entry.repaired !== null)) withdrawing = reason
   }
 
+  // P-0053: a chunk whose declared fields this wrapper cannot read (long form in the patch doc).
+  const foreign = (chunk: unknown): boolean => {
+    const c = chunk as {
+      readonly type?: unknown
+      readonly block?: { readonly type?: unknown; readonly arguments?: unknown; readonly id?: unknown; readonly name?: unknown } | null
+      readonly reason?: { readonly kind?: unknown } | null
+    } | null
+    if (c === null || typeof c !== 'object' || typeof c.type !== 'string') return true
+    if (c.type === 'block-end') {
+      const b = c.block
+      return b === null || typeof b !== 'object' || (b.type === 'tool-call' && (typeof b.arguments !== 'string' || typeof b.id !== 'string' || typeof b.name !== 'string'))
+    }
+    if (c.type === 'finish') return c.reason === null || typeof c.reason !== 'object' || typeof c.reason.kind !== 'string'
+    return false
+  }
+
   try {
     for await (const raw of source) {
+      if (passOnly) {
+        const seen = raw as StreamChunk
+        if (seen?.type === 'finish') {
+          finished = true
+        // P-0034: a provider failure we only passed through is not quiet.
+          if (seen.reason?.kind === 'error') monitor.recordError()
+        }
+        yield seen
+        continue
+      }
+      if (foreign(raw)) {
+        // P-0053: flush the held tail, then only pass this stream through.
+        yield* flushPending()
+        passOnly = true
+        open.clear()
+        yield raw as StreamChunk
+        continue
+      }
       const chunk = raw as StreamChunk
       switch (chunk.type) {
         case 'block-start': {
@@ -416,10 +439,7 @@ export async function* repairStream(
                 chunks.push({ type: 'block-start', index, blockType: 'tool-call' })
                 chunks.push(closeCall(index, call))
               }
-              // A reseal (P-0005) or a closer restore (P-0037) rewrites the one call
-              // in place: same index and id, no synthesized call, no budget. Booked
-              // as that in-place rewrite, never as a fusion, because no second call
-              // existed.
+              // A reseal (P-0005) or closer restore (P-0037) rewrites the one call in place: same index and id, no budget.
               if (result.code !== 'split') {
                 hold({
                   original: chunk,
@@ -445,6 +465,13 @@ export async function* repairStream(
               // UNKNOWN_TOOL, turn continues. P-0036: an identity the same index's
               // deltas already proved is the better answer than a fresh synthetic one.
               if (result.code === 'missing-id' || result.code === 'missing-name') {
+                // P-0054: a call with no name keeps its original bytes when the
+                // profile owns the fallback name; borrowing it would execute the
+                // model's arguments against the user's tool.
+                if (chunk.block.name.trim() === '' && fallbackOwned) {
+                  holdPlain(chunk)
+                  break
+                }
                 const id = chunk.block.id.trim() === '' ? syntheticId() : chunk.block.id
                 const name = chunk.block.name.trim() === '' ? UNATTRIBUTED_NAME : chunk.block.name
                 hold({ original: chunk, synthesized: [closeCall(chunk.index, { id, name, arguments: chunk.block.arguments })], repaired: null, spent: 0 })

@@ -1,6 +1,6 @@
 # ADR 0002 — 对读不懂的 chunk 失败开放（fail open）
 
-> 状态：**提出**（R69 实施）。记录轮：R68 收口后、R69 开工前。
+> 状态：**已实施**（R69，随 0.4.19 发布）。记录轮：R68 收口后、R69 开工前。
 > 证据：`data/results/hostile-neighbours-2026-11-18T10-00-00.000Z.json`，
 > 探针 `scripts/probe_hostile_neighbours.mjs`。两者都在 R68 的树上跑（0.4.18 的 dist，R66–R68 零运行时字节）。
 
@@ -68,3 +68,18 @@ R68 的接缝盘点回答的是“谁在同一条链上”；这一份回答的�
   fail open 只保证“我们不添乱”，不保证“我们还能修”。
 - **动态注册**：扫描器读静态注册，运行时才知道的注册看不见。
 - **macOS 硬件**：仍只有 CI job，没有真机。
+
+
+## 实施结果（R69，0.4.19）
+
+- 执行的是本文的两处，**外加读代码时找到的第三处**：ADR 只写了 `planRescue`，但
+  `repair-stream.ts` 的 `missing-id` / `missing-name` 分支也直接写 `UNATTRIBUTED_NAME`。
+  两处都改之后，profile 拥有该名字时，fused 救援放弃、无名字的 `block-end` 保留原字节。
+- 探针从七行扩到九行：多了 `finish` 没有 `reason` 与「无名字 + 保留名」两个场景。
+  修前产物 `data/results/hostile-neighbours-2026-11-18T10-00-00.000Z.json`，
+  修后 `data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json`；修后没有一行是
+  remedy 自己的异常。
+- 契约没有变宽：读不懂的 chunk 不记 `errors`；之后可读的 `finish{error}` 仍记一次（P-0034）。
+- 代价比估计高：代码净增约 2.2 KB，而不是 250–400 B。付款是压注释，plugin 从 82 859 降到
+  81 589，core 103 560，registry 67 824（余量 176 B）。cap 一个没动。
+- 仍未做：`verified` 需要一次带邻居插件的真实 turn；本轮两条都是 `tested`。

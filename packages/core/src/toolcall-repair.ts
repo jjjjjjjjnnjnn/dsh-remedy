@@ -1,23 +1,8 @@
 /**
- * Tool-call argument repair (P-0001), with two in-place exceptions.
- *
- * One decision: a call whose `arguments` text failed to parse is either handed
- * back untouched or handed back as the proven list of calls it should have been.
- *
- * SAFETY PROPERTIES (each one has a negative-control test):
- *  - a value that already parses is never rewritten;
- *  - a single object that fails to parse is never split (that would fabricate a
- *    second call). The two exceptions rewrite the same call in place, keeping
- *    its id and name: a proven bare-value reseal (P-0005) and a proven single
- *    missing closer (P-0037). Two different proven repairs of one text is an
- *    ambiguity, and both proofs are disjoint by construction, so the closer runs
- *    first and a reseal only happens when it did not fire;
- *  - a `max-tokens` truncation is never repaired (the tail is missing);
- *  - every fragment must parse to a plain object before any call is returned;
- *  - a call without an id or without a tool name is rejected: an untraceable or
- *    undispatched call is worse than the original failure;
- *  - the first call keeps the original id; synthetic ids are suffixed and
- *    collision-checked.
+ * Tool-call argument repair (P-0001): one call is handed back untouched, or as the
+ * proven list it should have been. Two in-place exceptions keep the id and name
+ * (bare-value reseal P-0005, one missing closer P-0037). Safety rules and the
+ * negative controls are in `docs/patches/P-0001-toolcall-fusion.md`.
  */
 
 import { closeMissingDelimiter } from './closer.js'

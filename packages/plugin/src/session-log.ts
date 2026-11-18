@@ -1,14 +1,6 @@
 /**
- * Read a DSH v4 session log.
- *
- * MEASURED FORMAT: `session.v4.jsonl.zstd` is **not one zstd frame** — the
- * session persistence layer appends a frame per flush, so a 50 KB file can hold
- * 17 frames and 180 KB of JSONL. `zlib.zstdDecompressSync` stops after the first
- * frame, which silently turns a 40-event session into a 1-event session. The
- * reader walks frame starts and merges a candidate that is not a real frame
- * boundary (the magic can occur inside compressed data) into the next one.
- *
- * Plain JSONL is returned as-is, so the same reader works for exported logs.
+ * Read a DSH v4 session log: one zstd frame per flush, so the reader walks frame
+ * starts and merges false boundaries; plain JSONL is returned as-is.
  */
 
 import { zstdDecompressSync } from 'node:zlib'
@@ -27,12 +19,7 @@ function frameStarts(buffer: Buffer): number[] {
   return starts
 }
 
-/**
- * Decompress a concatenated-frame zstd log, or pass plain JSONL through.
- *
- * @param buffer - the file bytes.
- * @returns the full JSONL text.
- */
+/** Decompress a concatenated-frame zstd log, or pass plain JSONL through. */
 export function decompressSessionLog(buffer: Buffer): string {
   if (buffer.length === 0) return ''
   if (buffer[0] === 0x7b) return buffer.toString('utf8') // `{` — plain JSONL

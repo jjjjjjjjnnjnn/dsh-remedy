@@ -1,10 +1,6 @@
 /**
- * P-0013 — the reasoning-effort preflight (pure decision, no I/O).
- *
- * Given a declared effort and a model's declared capabilities, answer `ok`,
- * `refuse` or `unknown`. `unknown` is a first-class answer, it never guesses and
- * never substitutes a level. The adapter rule this mirrors, the 37 measured turns
- * and the full table are in docs/patches/P-0013-named-refusals.md.
+ * P-0013 reasoning-effort preflight (pure): `ok` / `refuse` / `unknown`, never a guess.
+ * The adapter rule and the 37 measured turns are in `docs/patches/P-0013-named-refusals.md`.
  */
 
 export type EffortLevel = 'off' | 'low' | 'high' | 'xhigh' | 'max'

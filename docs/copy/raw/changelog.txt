@@ -3,6 +3,39 @@
 All notable changes to this project are documented here.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.4.19] - 2026-11-18
+
+### Added
+
+- **P-0053 — a chunk this plugin cannot read is passed through, not turned into its own
+  exception.** A neighbouring plugin can hand the `llm/stream` wrapper a `null` chunk, a
+  `block-end` whose `arguments` is not a string, a `block-end` with no `block`, or a
+  `finish` with no `reason`. On the 0.4.18 bytes each of those ended the turn with a
+  `TypeError` raised by this plugin, because the loop read `chunk.type`, `chunk.block.type`,
+  `chunk.block.arguments.trim()` and `chunk.reason.kind` without a shape check and the
+  outer `catch` only recognised a proven fusion. The wrapper now checks only the fields it
+  reads; on the first foreign chunk it flushes the tail it already holds and then only
+  passes the rest of that stream through. A provider failure that arrives afterwards is
+  still counted as an error, so a stream that failed never reads quiet.
+- **P-0054 — the fallback name is not borrowed when the profile already owns it.**
+  `remedy_unattributed` is the name this plugin sends a call to when it cannot prove the
+  tool. If `options.tools` already declares that name, a rescue is abandoned whole and the
+  provider's original failure goes back. The same rule covers the second dispatch site:
+  a `block-end` with no tool name keeps its own bytes instead of borrowing the name.
+
+### Changed
+
+- ADR 0002 writes the `llm/stream` contract down: a stream may only pass through, be
+  repaired where a fusion is proven, or rethrow the provider's failure. A fourth kind of
+  ending — this plugin's own exception — is no longer reachable from a neighbour's shape.
+
+### Notes
+
+- 447 tests, 6 gates, 6/6 negative controls, `OK 8 fixture(s)` on Windows before the
+  release. The before/after probe pair is
+  `data/results/hostile-neighbours-2026-11-18T10-00-00.000Z.json` and
+  `data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json`.
+
 ## [0.4.18] - 2026-11-17
 
 ### Added

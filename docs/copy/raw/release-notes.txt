@@ -1,42 +1,42 @@
-## dsh-remedy 0.4.18
+## dsh-remedy 0.4.19
 
 ### Added
 
-- **P-0052 — a completed turn that ends on the tool call the UI does not read is now
-  counted.** Upstream #12741 reports a long tool loop that finishes with tool rows and no
-  sentence. The host can end a turn `completed` on a step that still carries a tool call
-  when a tool result marks the turn concluded, while the client accepts a final step only
-  when it has visible content and no tool-call block. A local probe reproduced the shape:
-  the last step is a text block and a tool call, and the turn ends `completed`; the
-  control, same endpoint and prompt with the concluding call off, takes a second
-  text-only step. `scan` now reports `completed_on_tool_call` beside
-  `completed_without_answer`, and `explain` prints one `TOOLCALL` finding and exits 1 when
-  the count is positive. P-0044's answer rule is unchanged: a tool call is still visible
-  work; this is a second, narrower count.
+- **P-0053 — a chunk this plugin cannot read is passed through, not turned into its own
+  exception.** A neighbouring plugin can hand the `llm/stream` wrapper a `null` chunk, a
+  `block-end` whose `arguments` is not a string, a `block-end` with no `block`, or a
+  `finish` with no `reason`. On the 0.4.18 bytes each of those ended the turn with a
+  `TypeError` raised by this plugin. The wrapper now checks only the fields it reads;
+  on the first foreign chunk it flushes the tail it already holds and then only passes the
+  rest of that stream through. A provider failure that arrives afterwards is still counted
+  as an error.
+- **P-0054 — the fallback name is not borrowed when the profile already owns it.**
+  `remedy_unattributed` is a name this plugin sends a call to when it cannot prove the
+  tool; if `options.tools` already declares that name, a rescue is abandoned whole and the
+  provider's original failure goes back. The same rule now covers the second dispatch
+  site: a `block-end` with no tool name keeps its own bytes instead of borrowing that
+  name.
 
 ### Changed
 
-- `scan` also reports `completed_on_tool_call`, and `explain` names it as a `TOOLCALL`
-  finding; the existing answer rule is unchanged.
+- The `llm/stream` wrapper's contract is now written down in ADR 0002: a stream may only
+  pass through, be repaired where a fusion is proven, or rethrow the provider's failure.
 
 ### Fixed
 
-- **The first screens quote the suite they are on.** The two READMEs still said "the
-  suite is 399 tests" while the fact pack said 0.4.17 ships 405; the number is bound to
-  the release and a governance rule reads it against the pack.
-- **The handoff no longer repeats an older round's byte account.** The status table is
-  the single home, and a rule rejects an expired byte pair in live prose.
-- **The patch docs' reproduction steps run from the repository.** Thirteen sections
-  cited paths under `.tmp/`; they now name shipped commands, and a rule rejects a
-  `.tmp/` path or a cited path that does not exist.
+- Two `TypeError`s that were reachable from a neighbour's shape no longer end a turn.
+- A repaired fragment can no longer be dispatched into a profile tool that happens to be
+  named `remedy_unattributed`.
 
 ### Package size
 
-- `dsh-remedy@0.4.18`: 38394 bytes compressed, 38 files, 125711 bytes unpacked.
-- `dsh-remedy-core@0.4.18`: 40796 bytes compressed, 29 files, 132371 bytes unpacked.
+- `dsh-remedy@0.4.19`: 36666 bytes compressed, 38 files, 121801 bytes unpacked.
+- `dsh-remedy-core@0.4.19`: 39297 bytes compressed, 29 files, 129673 bytes unpacked.
 
 ### Notes
 
-- 420 tests, 6 gates, 6/6 negative controls, `OK 8 fixture(s)` on Windows. macOS is a CI
-  job rather than a measured host; a cold directory installed 0.4.18 from the registry
-  and `dsh-remedy verify` printed `OK 8 fixture(s)`.
+- 447 tests, 6 gates, 6/6 negative controls, `OK 8 fixture(s)` on Windows and on Linux
+  (WSL2 Ubuntu, node 24.10.0) before the release. The probe's before/after pair is
+  `hostile-neighbours-2026-11-18T10-00-00.000Z.json` and
+  `hostile-neighbours-2026-11-18T11-30-00.000Z.json`. macOS is still a CI job rather than
+  a measured host.

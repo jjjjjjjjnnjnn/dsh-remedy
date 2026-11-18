@@ -843,6 +843,32 @@
         "tests/unit/on-tool-call.test.ts",
         "tests/e2e/explain-toolcall.test.ts"
       ]
+    },
+    {
+      "id": "P-0053",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.19 (unreleased on the tree)",
+      "evidence": [
+        "docs/patches/P-0053-fail-open-foreign-chunks.md",
+        "data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/neighbour-hostile.test.ts"
+      ]
+    },
+    {
+      "id": "P-0054",
+      "status": "tested",
+      "owner": "remedy",
+      "since": "0.4.19 (unreleased on the tree)",
+      "evidence": [
+        "docs/patches/P-0054-reserved-name-no-fallback.md",
+        "data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json"
+      ],
+      "guards": [
+        "tests/unit/reserved-name.test.ts"
+      ]
     }
   ]
 }

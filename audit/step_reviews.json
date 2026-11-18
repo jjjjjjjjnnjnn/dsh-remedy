@@ -1364,7 +1364,31 @@
         "docs/HANDOFF.md",
         "INDEX.md"
       ]
+    },
+    {
+      "id": "S75",
+      "gate": "registry",
+      "title": "The wrapper could raise its own exception when a neighbour handed it a shape it did not expect",
+      "axes": {
+        "correctness": "The probe measured four shapes on the R68 tree: a null chunk, a block-end whose arguments is not a string, a block-end with no block, and (added this round) a finish with no reason. Each ended the turn with a TypeError whose stack was inside dsh-remedy, because the loop read chunk.type, chunk.block.type, chunk.block.arguments.trim() and chunk.reason.kind without a shape check and the outer catch only recognised a proven fusion. P-0053 adds a predicate over exactly the fields the wrapper reads and, on the first foreign chunk, flushes the held tail then only passes the stream through; a later readable finish{error} still books one error (P-0034). P-0054 found a second dispatch site the ADR had not named: the missing-name branch also wrote UNATTRIBUTED_NAME. Both now refuse to borrow a name the profile already declares.",
+        "reproducibility": "`node --test tests/unit/neighbour-hostile.test.ts tests/unit/reserved-name.test.ts` runs 14 cases; 8 were red against the 0.4.18 dist (four TypeErrors, the reserved-name rescue, the nameless block, the finish-without-reason and the after-foreign repair) and 6 were controls that stayed green. The probe is `node scripts/probe_hostile_neighbours.mjs --stamp <ISO>` with nine scenarios; the before artifact is hostile-neighbours-2026-11-18T10-00-00.000Z.json and the after artifact is hostile-neighbours-2026-11-18T11-30-00.000Z.json. The Linux half is read from `.tmp/r69-linux/` by `scripts/record_linux_r69.mjs`, which asserts 447 tests, 6 gates, 6/6, 8 fixtures, 14 R69 unit cases, 31 governance cases and five byte figures before writing.",
+        "compliance": "No cap moved. The code added about 2.2 KB; the payment is comments whose long form lives in docs/patches and ADR 0002, so the plugin settled at 81589 / 83000 (residency 39632 / 44000, CLI 41957 / 42000), core 103560 / 104000 and registry 67824 / 68000. Both packages were published as 0.4.19 (exact_ok + latest_ok) and a cold directory installed them. No secret was written: the desktop probe failed with AUTH because the provider key is absent from this machine, and that failure is recorded instead of being worked around.",
+        "ssot": "The contract has one home (ADR 0002) and the runtime rule has one home (packages/plugin/src/repair-stream.ts). The registry holds two records with the same evidence and guards as the patch docs; the ledger, the snapshot patch-registry-2026-11-18T12-00-00.000Z.json and the two first screens name the same ids. The probe measures one artifact per run rather than transcribing numbers: the after artifact is written by the script, and the Linux artifact derives every figure from hashed logs.",
+        "adversarial": "No full host turn ran with a hostile neighbour, so both patches stay `tested`. A fail-open stream reads quiet: the foreign chunk moves no counter, which is a documented blind spot. Only the fields the wrapper reads are checked; a block-start with a non-number index or a stream a neighbour replaces is outside the rule. P-0054 is deliberately conservative: a rescue that would not have needed the fallback name is abandoned too, and that cost is pinned by a test. The desktop turn for 0.4.19 was not run because the App answered AUTH, so the desktop claim still rests on the 0.4.18 artifact."
+      },
+      "evidence": [
+        "docs/patches/P-0053-fail-open-foreign-chunks.md",
+        "docs/patches/P-0054-reserved-name-no-fallback.md",
+        "docs/adr/0002-fail-open-on-foreign-chunks.md",
+        "tests/unit/neighbour-hostile.test.ts",
+        "tests/unit/reserved-name.test.ts",
+        "data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json",
+        "data/results/patch-registry-2026-11-18T12-00-00.000Z.json",
+        "data/results/live-linux-2026-11-18T17-40-00.000Z.json",
+        "data/results/publish-2026-11-18T16-10-00.000Z.json",
+        "data/results/install-acceptance-2026-11-18T16-20-00.000Z.json"
+      ]
     }
   ],
-  "updated_at": "2026-11-18T10:05:00.000Z"
+  "updated_at": "2026-11-18T18:00:00.000Z"
 }

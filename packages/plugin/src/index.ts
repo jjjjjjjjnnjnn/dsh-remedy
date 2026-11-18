@@ -1,14 +1,4 @@
-/**
- * DSH loader entry for `dsh-remedy`.
- *
- * Three listeners:
- *  - `llm/stream` (waterfall): repair a fused call before the loop assembles it (P-0001);
- *  - `agent/request-error` (waterfall): the retry for MALFORMED_RESPONSE, and the
- *    namer for refusals that reach it (P-0011, P-0013);
- *  - `agent/error` (emit): the seam a preparation refusal reaches; names only (P-0045).
- *
- * Resident but silent: no route, no tool, no writes unless `journalPath` is set.
- */
+/** DSH loader entry: `llm/stream` (P-0001), `agent/request-error` (P-0011/P-0013), `agent/error` (P-0045). Silent unless `journalPath` is set. */
 
 import { appendFileSync, mkdirSync } from 'node:fs'
 import { dirname } from 'node:path'

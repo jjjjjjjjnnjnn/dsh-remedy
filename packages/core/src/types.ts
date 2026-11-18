@@ -1,10 +1,6 @@
 /**
- * Domain types for `dsh-remedy-core`.
- *
- * The vocabulary is deliberately narrow: a *patch* names one defect and the
- * evidence that it is fixed; a *tool call* is the exact block shape the DSH
- * assembler emits; a *repair* is either a byte-identical pass-through or a
- * proven split — never a "best effort" rewrite.
+ * Domain types for `dsh-remedy-core`: a patch names one defect and its evidence;
+ * a repair is a byte-identical pass-through or a proven split, never "best effort".
  */
 
 /** Lifecycle of a patch. `verified` requires live evidence, not just tests. */

@@ -1,71 +1,25 @@
 # dsh-remedy AGENTS.md
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
-> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.18`（已发布，两包 `latest`；两个 profile 在 0.4.18 上，桌面 App 在 R66 里跑过一个 0.4.18 的真实 turn；本树就是已发布的那一版，发布不需要 OTP）
-> **Stand**：R66（2026-11-17，**首屏第三次少一个补丁：开篇数字、漏掉的 P-0042、研究页 §6 的三处漂移**）——
-> registry 52、两个首页开篇却写 51，CLI 接缝行只有 12 个 id（漏 P-0042），`docs/research/README.md` §6 还在说
-> `0.4.17 已发布` / 下一个是 P-0052 / 上一轮付款前的字节账。三条规则先红后绿：开篇计数对 `PATCHES.length`、
-> 每个接缝行对 registry 的 `surface`、§6 只许指向 HANDOFF；活段里的单体 `N B` 数字也纳入状态表比对。
-> 同一轮补齐了 R65 的未做项：桌面 0.4.18 真机 turn（`live-desktop-2026-11-18T05-10-00.000Z.json`）与一次巡检
-> （92 条 discussion / 76 条候选，`intake-r66-triage.md`；无新形状，所以没有 P-0053）。**零运行时字节**，cap 一个没动；
-> 门禁对 `gates-2026-11-18T06-00-00.000Z.json` / `gates-mutate-2026-11-18T06-05-00.000Z.json`。
-> R67（2026-11-17，**POSIX 半边：R66 的树在 WSL2 上跑出同一组数**）——425 tests / 6 gates / 6-6、
-> `OK 8 fixture(s)`、字节账与 Windows 逐项同值（五个数都在状态表那一行），
-> R66 的 19 条首屏 / 活状态规则在 Linux 上全过；记录器 `record_linux_r66.mjs` 先断言再写，
-> 产物 `live-linux-2026-11-18T06-30-00.000Z.json`。零运行时字节。门禁对
-> `gates-2026-11-18T07-00-00.000Z.json` / `gates-mutate-2026-11-18T07-05-00.000Z.json`。
-> R68（2026-11-17，**谁和我同一条接缝：把「会不会和别的插件打架」变成可复跑的读数**）——
-> `llm/stream` 是 waterfall（外层优先、不调 `next()` 即否决）；本机 123 个包里只有 4 个注册接缝，
-> `llm/stream` = remedy → dsh-ops（remedy 在外层）。新增只读扫描器、纯分类器与开销基准：
-> 最坏 **+5.9 ms / 5 251 个 chunk**，没有可测的负优化。产物 `seam-inventory-2026-11-18T08-10-00.000Z.json`
-> 与 `bench-repair-2026-11-18T08-20-00.000Z.json`，规则在 `docs/compatibility.md`。零运行时字节。
-> 门禁对 `gates-2026-11-18T09-00-00.000Z.json` / `gates-mutate-2026-11-18T09-05-00.000Z.json`。
-> R65（2026-11-17，**把 #12741 的那一半变成计数：`completed` 的 turn 停在 UI 不读的工具调用上**）——
-> 本机用本地端点与一个会 `concludeTurn()` 的探针工具复现了形状（末步 `["text","tool-call"]`、`turn/end completed`），
-> P-0052 让 `scan` 报 `completed_on_tool_call`、`explain` 打 `TOOLCALL` 并退出 1；P-0044 的回答规则没有改。
-> 0.4.18 已发布（两包 `exact_ok` + `latest_ok`、冷装 `OK 8 fixture(s)`、两个 profile 换到 0.4.18、Linux 420/6/6-6）；
-> 字节账 plugin **82 859 / 83 000（141 B；CLI 半边 43 B）**、core **103 869 / 104 000（131 B）**、registry **66 049 / 68 000（1 951 B）**，
-> 付款是压缩 `answer.ts` / `attribute.ts` / `reseal.ts` 的注释与 P-0052 记录；cap 一个没动。门禁对 `gates-2026-11-18T04-00-00.000Z.json` /
-> `gates-mutate-2026-11-18T04-05-00.000Z.json`。
-> R64（2026-11-17，**交接真相第二轮：把结论写进状态列，把公开首屏的数字改对，把 Reproduction 从 `.tmp/` 里救出来**）——
-> R63 的交接审计只修了四处活文字；本轮从同一句判据出发又读出五处（首屏的 399、HANDOFF 里 R41/R42 的字节块、
-> 「39 条 / A 表已空」、`leads.md` 尾部的 R55 字节账、BS-20 自己的「eleven」）。三件事：数字只有一个家
-> （首屏测试数绑定版本、活段字节对只能来自状态表）、13 份补丁文档的 Reproduction 不再指向 `.tmp/`（BS-20 关闭）、
-> 线索账本的 22 行状态与 decision 对齐。**零运行时字节**：与 R63 同值，cap 一个没动（当时的账户在 R63 状态表）。
-> 门禁对 `gates-2026-11-18T02-50-00.000Z.json` / `gates-mutate-2026-11-18T02-55-00.000Z.json`。
-> 上一轮（R62）发布 0.4.17 并在两个平台、两个 profile 与桌面 App 上各量一遍。
-> 发布不需要 OTP；两包 `exact_ok` + `latest_ok`，冷装验收 `ok`，桌面真实 turn 与 Linux 全量都已落盘。
-> R61（2026-11-17，**产品线收官：`scan` 数出来的那个形状，`explain` 现在会指名它**）——
-> P-0051 让 `explain --sessions` 打出唯一一条 `DROPPED` 行并退出 1（不需要 profile：丢掉的工具属于会话），
-> 取证脚本要求 `scan --json` 与 `explain` 在同一个目录上同数才允许写盘；CLI 半边花了 237 字节、引擎的新记录
-> 由删掉 30 条空 `failureClasses: []` 付掉，cap 一个没动。R60（2026-11-17，**交接轮：两条只在本机成立的事实进了仓库，scratch 与仓库分开**）——
-> 发布用的 npm token 在本机**用户级 `~/.npmrc`** 里、绕过一次性密码（`npm whoami` 回 `jjjjjjjjnnjnn`），
-> 仓库里只写这条事实与它的位置、不写值（扫过一遍：没有任何受版本管理的文件含 token 字符串）；
-> `.tmp/` 从 13 MB / 3 310 文件收到「被受版本管理的文档点名过的探针脚本」为止，`data/results/` 一字节没动；
-> 交接审计还改出三行仍写着 R55 的活文字（profile 0.4.15 / 368 tests / 四十六补丁），并记下 **`BS-20`**：
-> 十一份补丁文档的复现步骤给的是 `.tmp/` 里早就清掉的探针；`INDEX.md` 从 25/35 补到 **35/35**。
-> 本轮把 0.4.17 发了出去：两包 `exact_ok` + `latest_ok`、冷装验收 `ok`、两个 profile 与桌面 App 都在 0.4.17 上、公开仓 tag 与 release 都发了。
-> R59 是上游 #12348 的那一半（`scan` 数 `dropped_tools`，P-0050）；R58 是事实包普查（P-0049）；
-> R57 是「结束却没有回答」的另一个结局（P-0047）与 macOS 判据（P-0048）；
-> R56 是两条「测过」变成「真机见过」（P-0045 / P-0046），并把 0.4.16 发出去；
-> R55 是 registry 付款 + P-0044 + 0.4.15；R54 是那个已经把账号名发出去的守卫（P-0043）。
-> 更早的 R53…R1 见 `docs/HANDOFF.md` 的批次叙事。
-> **R66 的树（0.4.18，已发布）**：plugin **82 859 / 83 000（剩 141 B；CLI 半边 41 957 / 42 000，剩 43 B）**、core **103 869 / 104 000（131 B）**、registry **66 049 / 68 000（1 951 B）**。0.4.17 的账户是 82 462 / 103 663 / 64 911。
-> **平台边界：Windows 与 Linux 实测（同一棵树、同一组数），macOS 未实测**；P-0038 的 `/Users` 形状在 Linux 上是字符串，CI 里有一个 `verify (macos, node 24)` job。
-> R53（P-0042 的 profile 与拒绝第一次被摆在一起）、R52 与 R51（旧数字对齐）、R49（P-0037 / P-0038）、
-> R47（同接缝的五个竞品与上游源码，借来的那一块成了 P-0036）、R46（P-0035）、R44（社区面），
-> 更早的 R43…R1 见 `docs/HANDOFF.md` 的批次叙事。｜
+> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.19`（已发布，两包 `latest`；两个 profile 在 0.4.19 上；桌面 0.4.19 turn 因 App 的 provider key 缺失未做成）
+> **Stand**：R69（2026-11-18，**对读不懂的 chunk 失败开放**）——
+> remedy 只能原样放行 / 修复已证实的粘连 / 原样抛回原来的失败，不再制造第四种结局；
+> P-0053 让四条邻居形状从 `TypeError` 变成原样放行，P-0054 让 profile 已拥有的
+> `remedy_unattributed` 不再被借用（两处派发点都改）。证据：`hostile-neighbours-2026-11-18T10-00-00.000Z.json`
+> （修前）/ `hostile-neighbours-2026-11-18T11-30-00.000Z.json`（修后）；决定见 `docs/adr/0002-fail-open-on-foreign-chunks.md`。
+> R68 是接缝盘点（waterfall 顺序、本机 remedy → ops、每 chunk 开销）；R67 是 POSIX 半边；
+> R66 是首屏第三次少一个补丁；R65 是 P-0052；更早的批次见 `docs/HANDOFF.md` 的批次叙事。
 > **接手先读**：`docs/HANDOFF.md` → `docs/research/README.md` → `docs/research/leads.md` → `PROJECT_RULES.md` → `INDEX.md`
 > **R43 起的主线**是外部反馈 → 稳定补丁：报告只是线索，本机复现后才有补丁；来源与方法见 `docs/research/`。R56 的教训：**接缝名写在补丁里不算数，要在宿主源码里核对接缝真的会被派发**。
 >
-> **基线（2026-11-17）**：`pnpm run verify` = **433 tests / 6 gates**（R68 的树，Windows；0.4.18 发布时 420；POSIX 最近一次是 R67 的 425）；
-> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.18`（latest）+
-> `dsh-remedy-core@0.4.18`（latest）。公开仓库 CI 绿，release `v0.1.0` / `v0.1.1` / `v0.3.2` …
-> `v0.4.13` / `v0.4.14` / `v0.4.15` / `v0.4.16` / `v0.4.17` / `v0.4.18`。五十二个补丁：**9 `verified` + 43 `tested`**，在 DSH 0.2.2-rc.3 上实测过（0.4.17 的 Linux 是 405/6/6-6；0.4.18 是 420/6/6-6）。
-> **字节余量（下一轮的第一个约束）**：plugin **82 859 / 83 000（141 B；CLI 半边 43 B）**、core **103 869 / 104 000（131 B）**、
-> registry **66 049 / 68 000（1 951 B —— P-0052 已付清，下一条记录仍有余额，不许抬 cap）**。
-> **本目录不是 git 根**：提交在 `..`（容器），公开仓库由
-> `git subtree split --prefix=dsh-remedy` 切出。
+> **基线（2026-11-18）**：`pnpm run verify` = **447 tests / 6 gates**（R69 的树，Windows）；
+> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.19`（latest）+
+> `dsh-remedy-core@0.4.19`（latest）。
+> 公开仓库 CI 绿，release `v0.1.0` … `v0.4.19`。五十四个补丁：**9 `verified` + 45 `tested`**。
+> **字节余量（下一轮的第一个约束）**：plugin **81 589 / 83 000（1 411 B；CLI 半边 43 B）**、core **103 560 / 104 000（440 B）**、
+> registry **67 824 / 68 000（176 B —— P-0053 / P-0054 已付清，下一条记录必须先压缩或签署抬 cap）**。
+> **平台边界：Windows 与 Linux 实测（同一棵树、同一组数），macOS 未实测**；P-0038 的 `/Users` 形状在 Linux 上是字符串，CI 里有一个 `verify (macos, node 24)` job。
+> **本目录不是 git 根**：提交在 `..`（容器），公开仓库由 `git subtree split --prefix=dsh-remedy` 切出。
 
 ---
 

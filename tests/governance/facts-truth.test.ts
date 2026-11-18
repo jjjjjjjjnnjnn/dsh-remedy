@@ -337,7 +337,7 @@ test('a live section may only quote byte figures the status table measures', () 
     '538', '440', '337', '3 089',
   ])
   assert.deepEqual(byteFigures('plugin **538 B**').filter((figure) => !measured.has(figure)), ['538'])
-  assert.deepEqual(byteFigures('只剩 **141 B**').filter((figure) => !measured.has(figure)), [])
+  assert.deepEqual(byteFigures('只剩 **1 411 B**').filter((figure) => !measured.has(figure)), [])
   assert.deepEqual(byteFigures('82 859 / 83 000'), [], 'a pair without a `B` suffix is not a lone figure')
 })
 

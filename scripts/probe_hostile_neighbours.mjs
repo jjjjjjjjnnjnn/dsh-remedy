@@ -6,15 +6,16 @@
  *   node scripts/probe_hostile_neighbours.mjs --stamp 2026-11-18T10:00:00.000Z
  *
  * This is a probe, not a gate: it reports the measured behaviour and exits 0.
- * R69 turns the interesting rows into red tests and changes the wrapper so that
- * it can only pass through, repair a proven fusion, or rethrow the original
- * failure — never raise an error of its own.
+ * R69 turned the red rows into red tests and changed the wrapper so that it can
+ * only pass through, repair a proven fusion, or rethrow the original failure —
+ * never raise an error of its own.
  *
- * Measured on the R68 tree (artifact `hostile-neighbours-2026-11-18T10-00-00.000Z`):
+ * The before run is `hostile-neighbours-2026-11-18T10-00-00.000Z` (R68 tree):
  * a `null` chunk, a `block-end` whose `arguments` is not a string, and a
- * `block-end` with no `block` each end the turn with a `TypeError` raised by
- * remedy; a profile that already owns the name `remedy_unattributed` receives
- * the repaired fragment under that name.
+ * `block-end` with no `block` each ended the turn with a `TypeError` raised by
+ * remedy, and a profile that owns `remedy_unattributed` received the repaired
+ * fragment under that name. The after run is the same probe on the R69 tree;
+ * every row should read as passed through or abandoned.
  */
 
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
@@ -72,6 +73,7 @@ async function run(name, source, options = {}) {
     chunks_out: result.chunks.length,
     repaired: after.repaired - before.repaired,
     errors: after.errors - before.errors,
+    refused: after.refused - before.refused,
     ...(options.extra === undefined ? {} : { detail: options.extra(result) }),
   }
 }
@@ -98,6 +100,13 @@ scenarios.push(
   await run('block-end without block', async function* () {
     yield { type: 'block-end', index: 0 }
     yield { type: 'finish', reason: { kind: 'stop' } }
+  }),
+)
+
+scenarios.push(
+  await run('finish without a reason', async function* () {
+    yield { type: 'block-start', index: 0, blockType: 'text' }
+    yield { type: 'finish' }
   }),
 )
 
@@ -151,13 +160,35 @@ scenarios.push(
       },
     ),
   )
+
+  scenarios.push(
+    await run(
+      'a nameless block-end while the fallback name is owned',
+      async function* () {
+        yield { type: 'block-start', index: 0, blockType: 'tool-call' }
+        yield { type: 'block-end', index: 0, block: { type: 'tool-call', id: 'c1', name: '', arguments: '{}' } }
+        yield { type: 'finish', reason: { kind: 'stop' } }
+      },
+      {
+        tools,
+        extra: (result) =>
+          result.chunks
+            .filter((chunk) => chunk?.type === 'block-end' && chunk.block?.type === 'tool-call')
+            .map((chunk) => chunk.block.name),
+      },
+    ),
+  )
 }
 
 /** The sentence a reader acts on, derived from the measurement rather than written by hand. */
 function judgement(scenario) {
   if (scenario.thrown !== null && /^TypeError/.test(scenario.thrown)) return 'remedy raised its own error'
   if (scenario.thrown !== null) return 'the source error was passed through'
-  if (scenario.detail?.includes?.('remedy_unattributed')) return 'a neighbour-owned fallback name was dispatched'
+  if (scenario.detail !== undefined) {
+    if (scenario.detail.includes('remedy_unattributed')) return 'a neighbour-owned fallback name was dispatched'
+    if (scenario.errors > 0) return 'the rescue was abandoned, so the borrowed name was never dispatched'
+    if (scenario.refused > 0) return 'the borrowed name was not used; the call kept its own bytes'
+  }
   return 'passed through'
 }
 
@@ -171,7 +202,7 @@ const payload = {
     'When a neighbouring plugin hands the llm/stream wrapper a chunk it did not expect, does the turn survive, and can a repair dispatch under a name the profile already owns?',
   contract_after_r69:
     'remedy may only pass a chunk through, repair a proven fusion, or rethrow the original failure; it must not raise an error of its own',
-  measured_on: 'the R68 tree (plugin and engine dist as published in 0.4.18; R66–R68 moved no runtime byte)',
+  measured_on: flag('measured-on', 'the R69 tree (plugin and engine dist; the before run is the R68 tree as published in 0.4.18)'),
   scenarios,
   limits: [
     'the harness mounts the listener directly; it does not run a host turn or a provider',

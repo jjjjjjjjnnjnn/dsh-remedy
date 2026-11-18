@@ -1,14 +1,6 @@
 /**
- * The patch registry: the single list of defects this project claims to fix.
- *
- * Rules (enforced by `scripts/gate_registry.mjs`):
- *  - ids are `P-NNNN`, unique, and never reused;
- *  - every patch names at least one evidence file and one guard, both of which
- *    must exist on disk;
- *  - `status: 'verified'` requires a live artifact under `data/results/`, so a
- *    patch cannot call itself verified on unit tests alone;
- *  - the registry is compared byte-for-byte with the snapshot in
- *    `data/results/patch-registry-*.json`.
+ * The patch registry: the one list of defects this project claims to fix. Rules are
+ * enforced by `scripts/gate_registry.mjs`; a `verified` patch needs a live artifact.
  */
 
 import type { PatchRecord } from './types.js'
@@ -1004,6 +996,42 @@ export const PATCHES: readonly PatchRecord[] = [
       'a counter, not a repair: the host decides to conclude and the UI decides what is visible',
       'counts completed only; a max_tokens turn on a tool call keeps P-0044 meaning',
       'a finding, not a coverage row: no resident seam',
+    ],
+  },
+  {
+    id: 'P-0053',
+    title: "A chunk the wrapper cannot read became this plugin's exception",
+    symptom:
+      'a null chunk, a block-end whose arguments is not a string, a block-end with no block, or a finish with no reason ended the turn with a TypeError raised by remedy',
+    rootCause:
+      'the loop cast every yielded value and read type / block.type / block.arguments.trim() / reason.kind without a shape check, and the outer catch only recognised a proven fusion',
+    surface: 'llm/stream',
+    status: 'tested',
+    severity: 'major',
+    evidence: ['docs/patches/P-0053-fail-open-foreign-chunks.md', 'data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json'],
+    guards: ['tests/unit/neighbour-hostile.test.ts'],
+    limits: [
+      'a fail-open stream reads quiet: the foreign chunk moves no counter',
+      'only the fields the wrapper reads are checked; an ignored field is not validated',
+      'a neighbour that returns its own stream or mutates chunks is outside this rule',
+    ],
+  },
+  {
+    id: 'P-0054',
+    title: 'The fallback name was borrowed even when the profile already owned it',
+    symptom:
+      'a profile that declares remedy_unattributed received a repaired fragment under that name, and a nameless block-end was dispatched with it too',
+    rootCause:
+      'both dispatch sites (the foreign fragment in planRescue and the missing-name branch) wrote UNATTRIBUTED_NAME without asking whether options.tools already used it',
+    surface: 'llm/stream',
+    status: 'tested',
+    severity: 'major',
+    evidence: ['docs/patches/P-0054-reserved-name-no-fallback.md', 'data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json'],
+    guards: ['tests/unit/reserved-name.test.ts'],
+    limits: [
+      'a rescue that might not have needed the fallback name is abandoned on purpose',
+      'it only sees the declarations the request carries; a later or hidden tool is invisible',
+      'the abandoned rescue is visible only as the provider error, with no counter of its own',
     ],
   },
 ]

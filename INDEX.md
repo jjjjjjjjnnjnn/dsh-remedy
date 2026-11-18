@@ -69,8 +69,11 @@
 | `data/fixtures/toolcall-fusion/single-broken.json` | 单个坏对象不拆 |
 | `data/results/patch-registry-*.json` | 注册表快照（SSOT） |
 | `data/results/publish-2026-11-18T03-10-00.000Z.json` / `install-acceptance-2026-11-18T03-20-00.000Z.json` | **0.4.18 发布 + 空目录单装**（两包 `exact_ok` + `latest_ok`、`ok: true`；三条命令 0/0/0、`OK 8 fixture(s)`、`canonical_fixtures: 8`） |
+| `data/results/publish-2026-11-18T16-10-00.000Z.json` / `install-acceptance-2026-11-18T16-20-00.000Z.json` | **0.4.19 发布 + 空目录单装**（两包 `exact_ok` + `latest_ok`、`ok: true`；三条命令 0/0/0、`OK 8 fixture(s)`、`canonical_fixtures: 8`） |
 | `data/results/live-linux-2026-11-18T06-30-00.000Z.json` | **Linux 真机（WSL2 Ubuntu, node 24.10.0）· R66 树（R67）**：425 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 逐项同值；R66 的 19 条规则在 POSIX 上全过 |
+| `data/results/live-linux-2026-11-18T17-40-00.000Z.json` | **Linux 真机（WSL2 Ubuntu, node 24.10.0）· 0.4.19 树（R69）**：447 tests / 6 gates / 6-6、`OK 8 fixture(s)`、字节账与 Windows 同值（81 589 / 39 632 / 41 957、core 103 560、registry 67 824）；R69 的两个 unit 文件 14/14、四个治理文件 31/31 |
 | `data/results/hostile-neighbours-2026-11-18T10-00-00.000Z.json` | **R69 修前证据**：三条 remedy 自己抛的 `TypeError`（`null` chunk / 非字符串 `arguments` / 缺 `block`）与一条保留名派发；R69 修完后这张表应变成「原样放行」 |
+| `data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json` | **R69 修后证据**：九行；四条 remedy 自抛的 `TypeError` 全部变成原样放行，保留名两处都不再派发（sha256 `fc41ee25…`） |
 | `data/results/seam-inventory-2026-11-18T08-10-00.000Z.json` | **R68 接缝盘点**：123 个包 / 1 516 个源文件；`llm/stream` = remedy → ops，`agent/error` = remedy → pet；无第三方保留名占用 |
 | `data/results/bench-repair-2026-11-18T08-20-00.000Z.json` | **R68 开销基准**：文本 +1.5 ms / 4 003 chunk、工具密集 +5.9 ms / 5 251 chunk、一次修复 +0.12 ms |
 | `data/results/live-desktop-2026-11-18T05-10-00.000Z.json` | **桌面真机（R66）· 0.4.18**：答复 `R66-DESKTOP-OK`、`turn/end completed`、journal `streams: 1`、verdict `quiet`；包是 registry 的 0.4.18 tarball，runtime 0.2.2-rc.3 |
@@ -103,7 +106,8 @@
 | `data/results/publish-2026-11-11T17-35-00.000Z.json` | 0.3.6 发布后两包 `latest`（`ok: true`） |
 | `docs/patches/P-0001-toolcall-fusion.md` … `P-0009-session-header-window.md` | 每个补丁的症状 / 机制 / 反证 / 边界 |
 | `docs/patches/P-0010-cli-usage-truth.md` … `P-0030-attribution-proof.md` | 同上；P-0015 是 `agent/pre-step` 拒绝语义的实测记录；P-0016 的文档在 R31 补写；P-0024 把两个包内 README 收进 copy 通道；P-0025 让 `explain` 的三态落地；P-0026 把发布流程收成一个家；P-0027 给「名字证不出来」的片段一个不可执行的名字；P-0028 把随包夹具里的本机路径换成 `<home>`；P-0029 把继任者的版本指针与字节账接上判据；P-0030 把归因证明搬进 core，按 schema 能证明的部分判定并记录 `unproven` |
-| `docs/patches/P-0045-preparation-refusal-seam.md` … `P-0052-completed-on-tool-call.md` | P-0045 把 P-0013 的命名挂到 `agent/error`（准备阶段的拒绝只抵达那里）；P-0046 让首页点名它数到的每个补丁并列出已发布版本的尺寸；P-0047 把 P-0044 的问题问给 `completed` turn（探针复现 #13169 形状）；P-0048 把 macOS 从一句话变成 CI 判据；P-0049 让事实包的接缝普查按注册表重数，并补回 0.4.16 / 0.4.17 的 CHANGELOG 小节（零运行时字节）；P-0050 让 `scan` 数「resume 丢掉会话已经用过的工具」（规则住 `core/capability.ts`，宿主真答过 `UNKNOWN_TOOL`）；P-0051 让 `explain` 把同一条计数指名成 finding 并退出 1（finding，不是覆盖行；CLI 读者）；P-0052 数 `completed` 的 turn 停在 UI 不读的工具调用上（`completed_on_tool_call`，`explain` 打 `TOOLCALL`），P-0044 的回答规则不动 |
+| `docs/patches/P-0045-preparation-refusal-seam.md` … `P-0052-completed-on-tool-call.md` |
+| `docs/patches/P-0053-fail-open-foreign-chunks.md` / `P-0054-reserved-name-no-fallback.md` | P-0053 把读不懂的 chunk 变成放行而不是 remedy 自己的异常；P-0054 在 profile 已拥有 `remedy_unattributed` 时不借用它（两处派发点） | P-0045 把 P-0013 的命名挂到 `agent/error`（准备阶段的拒绝只抵达那里）；P-0046 让首页点名它数到的每个补丁并列出已发布版本的尺寸；P-0047 把 P-0044 的问题问给 `completed` turn（探针复现 #13169 形状）；P-0048 把 macOS 从一句话变成 CI 判据；P-0049 让事实包的接缝普查按注册表重数，并补回 0.4.16 / 0.4.17 的 CHANGELOG 小节（零运行时字节）；P-0050 让 `scan` 数「resume 丢掉会话已经用过的工具」（规则住 `core/capability.ts`，宿主真答过 `UNKNOWN_TOOL`）；P-0051 让 `explain` 把同一条计数指名成 finding 并退出 1（finding，不是覆盖行；CLI 读者）；P-0052 数 `completed` 的 turn 停在 UI 不读的工具调用上（`completed_on_tool_call`，`explain` 打 `TOOLCALL`），P-0044 的回答规则不动 |
 | `docs/patches/P-0031-core-budget.md` … `P-0044-turn-answered.md` | P-0031 给引擎立 cap；P-0032 把台账的长叙述搬回补丁文档（registry.js 66 303 → 63 217，cap 不动）；P-0033 让空 id/空名的 tool call 不再被持久化（合成 id + `remedy_unattributed`）；P-0034 让「没有一个拒绝记账解释过的失败」记成 error 而不是安静的一轮；P-0035 把 patch 层每个 `name:` 解析到 manifest exports 与已构建文件（0 运行时字节）；P-0036 让纯 delta 协议的 tool call 保留流里已经证过的 id（宿主 `assembler.ts:72` 无条件写 id、`:115` 的 `??` 不兜空串）；P-0037 让「单个对象少一个闭合符」在唯一插入点上被补回，末尾与歧义一律拒（上游 #12819，`pi-ai` 回显 `Received arguments:` 才让字节到得了接缝）；P-0040 把装机验收的夹具数从 `data/fixtures/` 数出来；P-0041 让安装后的 `bin` 在 POSIX 上真的运行；P-0042 让 `scan` 记住宿主拒绝的那个档位、让 `explain` 在 profile 仍写着它时打一行 CONFLICT 并退出 1（零常驻字节，`agent/pre-step` 不能改 selection 是实测的）；P-0043 把为夹具写的那条守卫放宽到任意层转义，并新增「产物里不许出现本机账号」，夹具改用 `<home>`；P-0044 让 `scan` 在截断的 turn 上补一句「它到底有没有回答」（规则住 `core/answer.ts`，只数 `max-tokens`，只报告不升级） |
 | `docs/adr/0001-stream-repair-over-asar-patch.md` | 为什么在 `llm/stream` 修 |
 | `docs/adr/0002-fail-open-on-foreign-chunks.md` | R69 的决定：对读不懂的 chunk 失败开放——remedy 只能放行 / 修已证实的粘连 / 抛回原错误（含实测与付款计划） |
@@ -157,6 +161,7 @@
 | `scripts/record_toolcall_turn.mjs` | P-0052 的探针取证：conclude 与 control 两 run 的末步块集合、`completed_on_tool_call=1`、`completed_without_answer=0`，否则 `exit 4`（R65） |
 | `scripts/record_linux_r65.mjs` | R65 的 Linux 半边：读 `.tmp/r65-linux/` 的日志，420/6/6-6 与字节账同值才写 `live-linux-*`（R65） |
 | `scripts/record_linux_r66.mjs` | R67 的 Linux 半边：读 `.tmp/r66-linux/` 的六份日志，425/6/6-6、8 fixtures、19 条 R66 规则与五个字节数全对才写 `live-linux-*`（R67） |
+| `scripts/record_linux_r69.mjs` | R69 的 Linux 半边：读 `.tmp/r69-linux/` 的七份日志，447/6/6-6、8 fixtures、14 条 R69 unit 与 31 条治理规则、五个字节数全对才写 `live-linux-*` |
 | `scripts/record_explain_drift.mjs` | P-0051 的本机证据：`scan --json` 与 `explain` 在同目录上必须同数、后者退出 1 且只有一条 `DROPPED`，否则 `exit 4`（R61） |
 | `scripts/record_session_sample.mjs` | 本机故障样本（必须带 `--until`；会话根走 `lib/session-root.mjs`） |
 | `scripts/record_install_acceptance.mjs` | 空目录从 registry 单装 → `install-acceptance-*` 产物 |
@@ -197,6 +202,8 @@
 | `tests/governance/public-pages-complete.test.ts` | P-0046 的两条规则：每个 registry id 都出现在两个首页；状态句点名的版本是尺寸表第一行。R66 另加两条：开篇计数必须等于 `PATCHES.length`、每个接缝行的 id 集合必须等于 registry 按 `surface` 的分组 |
 | `tests/governance/fact-pack-census.test.ts` | P-0049 的三条规则：事实包点名每个 registry id；每个接缝条目的计数与队伍等于该接缝的实际集合；包里称作已发布的版本有 CHANGELOG 小节 |
 | `tests/unit/on-tool-call.test.ts` | P-0052 的规则：末步有 tool-call 才算；文本+tool-call、只有 tool-call、控制 run、max_tokens、缺消息五种形状 |
+| `tests/unit/neighbour-hostile.test.ts` | P-0053 的八条：四条 remedy 自抛的 `TypeError` 变成原样放行，外加三条负对照与一条「foreign 之后不再修复」 |
+| `tests/unit/reserved-name.test.ts` | P-0054 的六条：保留名被拥有时救援放弃、无名 `block-end` 保留原字节，以及三条 P-0027 / P-0030 的负对照 |
 | `tests/e2e/explain-toolcall.test.ts` | P-0052 的 finding：正值打 `TOOLCALL` 并退出 1；文本-only、reasoning-only、无 `--sessions` 三条负对照 |
 | `tests/e2e/explain-drift.test.ts` | P-0051 的六条：掉的是调过的才打 finding；带 profile 也打；没人调过、丢掉之后才调、没有 `--sessions`、会话保住了工具这四种都不打（四条负对照） |
 | `tests/unit/capability-drift.test.ts` | P-0050 的九条：掉的是调过的才算；没人调过不算；丢掉之后才调不算；series 不增减；change 同 resume；同一工具只记一次；未知 reason 不算；以及一条按实测形状复算 |

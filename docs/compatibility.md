@@ -96,3 +96,16 @@ node scripts/bench_repair_overhead.mjs --stamp <ISO>
 - **`cli`、`scripts`、`profile` 三个 surface 不是 waterfall**：`cli` 是离线读取器，`scripts` 是构建与门禁，
   `profile` 是只实测未挂载的接缝。它们没有“顺序”问题，只有“装没装”的问题。
 - 它不替代真机 turn：拓扑与开销都只是**前置条件**，接缝是否真的跑过仍由 `data/results/live-*` 说话。
+
+
+## 4. 邻居递来一个我们读不懂的 chunk（P-0053 / P-0054）
+
+R68 量的是「谁在链上」；R69 量的是「邻居递给我们的东西不是我们预期的形状时会怎样」，并把结论写成运行时规则：
+
+- 一条流只允许三种结局：原样放行、修复已证实的粘连、原样抛回 provider 的失败。remedy 不再产生
+  第四种（自己的 `TypeError`）。读不懂的 chunk 会先 flush 已持有的尾，然后原样放行，此后该流只放行；
+  它本身不记 `errors`，但之后可读的 `finish{error}` 仍记一次（P-0034）。
+- `remedy_unattributed` 是 P-0027 的兜底名，不是 remedy 的私有命名空间。profile 的 `options.tools`
+  已经声明它时，`planRescue` 整次放弃，`block-end` 缺名字时也保留原字节，不借用该名。
+- 这仍然不解决顺序与否决：一个外层 listener 不调 `next()`，remedy 还是静默不在链上；
+  这一条只由 `scan_plugin_seams.sh` 的扫描结果与 `unmeasured` 回答。

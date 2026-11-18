@@ -1,16 +1,7 @@
 /**
- * Split a text that contains several concatenated top-level JSON objects.
- *
- * WHY THIS EXISTS (P-0001): the DeepSeek relay sometimes streams two tool calls
- * into one index, so the adapter hands the assembler `{"a":1}{"b":2}`. That is
- * not valid JSON, `parseToolCallArguments` throws `MALFORMED_RESPONSE`, and the
- * whole turn stops. The objects themselves are well-formed — only the boundary
- * is missing. This scanner finds the boundaries without ever splitting inside a
- * string, so `{"text":"}{"}{"b":2}` still yields exactly two objects.
- *
- * The scanner is deliberately strict: anything that is not `{...}` at depth 0
- * is reported as a failure instead of being skipped. A repair engine that
- * guesses is worse than one that refuses.
+ * Split concatenated top-level JSON objects (P-0001: the relay streams two calls
+ * into one index). Never splits inside a string; anything else is a failure.
+ * The measurement is in `docs/patches/P-0001-toolcall-fusion.md`.
  */
 
 export type SplitFailureCode =

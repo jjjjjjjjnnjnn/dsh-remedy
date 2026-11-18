@@ -109,9 +109,13 @@ git -C .. log --oneline -3
   长文本来就在 `docs/patches/`。落盘后 **registry 67 782 / 68 000（218 B）**、core **103 518 / 104 000（482 B）**，
   plugin 一个字节没动（81 589 / 83 000，余量 1 411 B）。
 
-**E. 未做**
+**E. 未做 / 教训**
 
 - 桌面 App 的 0.4.19 turn 仍没做成（provider 凭据读不到，见状态表「装机验收」）。
+- **公开面第一次红**：提交后 CI 在 `handoff-truth` 上红——索引里留着一对**已被删除**的 gates 行
+  （20:20 / 20:25 在 README 再登记前录的那对）。我在删掉文件后只跑了 `gate.mjs`（不跑测试），
+  于是本机是绿的。规则照旧：**提交前跑 `pnpm run verify`，不是 `gate.mjs`**。修法是把那两行删掉，
+  让 18:30 那行直接指向 20:40。
 - 深度适配器（`dsh-llm-deepseek`）没有被这个 harness 驱动：失败字节由邻居在 seam 上合成，
   这是两份产物 `not_proven` 里写明的第一条。
 - Linux 同树同数已补：`live-linux-2026-11-18T20-50-00.000Z.json`（447 / 6 / 6-6、`OK 8 fixture(s)`、
@@ -3779,8 +3783,7 @@ pnpm install ; pnpm run verify ; node scripts/gate.mjs --mutate ; node packages/
 | `gates-2026-11-18T21-00-00.000Z.json` | 绿 | **当前**门禁（6 gates ALL GREEN，R70 交付树；sha256 见同名 `.sha256`）；负对照见下一行 |
 | `gates-mutate-2026-11-18T21-05-00.000Z.json` | 绿 | **当前**负对照（6/6 CAUGHT，同一棵树） |
 | `gates-2026-11-18T20-40-00.000Z.json` / `gates-mutate-2026-11-18T20-45-00.000Z.json` | 绿 | 历史门禁对儿（R70 树，Linux 收据与索引行之前；被 21:00 / 21:05 取代） |
-| `gates-2026-11-18T20-20-00.000Z.json` / `gates-mutate-2026-11-18T20-25-00.000Z.json` | 绿 | 历史门禁对儿（R70 树，README 再登记之前；被 20:40 / 20:45 取代） |
-| `gates-2026-11-18T18-30-00.000Z.json` | 绿 | 历史门禁（R69 交付树；sha256 `eac94573d780…`；被 20:20 取代） |
+| `gates-2026-11-18T18-30-00.000Z.json` | 绿 | 历史门禁（R69 交付树；sha256 `eac94573d780…`；被 20:40 取代） |
 | `gates-mutate-2026-11-18T18-35-00.000Z.json` | 绿 | 历史负对照（6/6 CAUGHT，R69 树；sha256 `56337acc2629…`；被 20:25 取代） |
 | `gates-mutate-2026-11-18T18-05-00.000Z.json` | 绿 | 历史负对照（同一棵逻辑树；被 18:35 取代） |
 | `gates-mutate-2026-11-18T10-10-00.000Z.json` | 绿 | 历史负对照（同一棵树；被 18:05 取代） |

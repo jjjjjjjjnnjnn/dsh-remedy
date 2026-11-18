@@ -113,12 +113,6 @@ git -C .. log --oneline -3
 - 装了新插件就重跑 `scripts/scan_plugin_seams.mjs`；下一次巡检少 8 条候选（I 表已进账）。
 - registry 只剩 176 B：下一条记录必须先用压缩或签署抬 cap 付清。
 
-- 给 P-0053 / P-0054 一次真机见证：往隔离 `DSH_HOME` 放一个会递坏 chunk 的邻居插件，跑一个真实 turn，
-  产物进 `data/results/live-*` 后再决定是否升 `verified`（现在两条都是 `tested`）。
-- 桌面 App 的 0.4.19 turn：先恢复 provider 凭据，再按 R66 的 CDP 路线跑一次；这是本轮的未做项。
-- 装了新插件就重跑 `scripts/scan_plugin_seams.mjs`；下一次巡检少 8 条候选（I 表已进账）。
-- registry 只剩 176 B：下一条记录必须先用压缩或签署抬 cap 付清。
-
 ## 当前批次（R68，2026-11-17）
 
 **R68 · 谁和我同一条接缝：把「会不会和别的插件打架」变成可复跑的读数。**

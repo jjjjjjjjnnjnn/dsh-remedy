@@ -34,6 +34,14 @@ jobs:
       - run: pnpm run verify
       - name: negative controls
         run: node scripts/gate.mjs --mutate
+      # Informational promotion readouts. They are deliberately never a gate:
+      # a directory's crawler is not our CI's responsibility to be available.
+      - name: catalogue status (informational)
+        continue-on-error: true
+        run: node scripts/catalog-status.mjs
+      - name: traffic readout (informational)
+        continue-on-error: true
+        run: node scripts/traffic-report.mjs
 
   windows:
     name: verify (windows, node 24)

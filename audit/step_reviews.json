@@ -1485,7 +1485,28 @@
         "data/results/malformed-replay-2026-11-19T09-00-00.000Z.json",
         "docs/copy/release-notes/v0.4.20.md"
       ]
+    },
+    {
+      "id": "S81",
+      "gate": "step-review",
+      "title": "Can a promotion pipeline be ported without turning outreach claims into evidence?",
+      "axes": {
+        "correctness": "The port kept the distinction between lead and evidence: the playbook and PROMOTION.md point every number at the fact pack, the reach ledger records only measured reads, and catalog-status returns five verdicts including unreadable. The first measurement found latest share 6.9% / 5.9%, which the playbook forbids reading as users.",
+        "reproducibility": "traffic-report.mjs, daily-reach.mjs and catalog-status.mjs are zero-dependency Node scripts with stdout/--json modes and exported, testable latestShare/versionRank. Four new governance tests run under the existing suite. The first reach artifacts are docs/reach/2026-11-19.md and latest.md.",
+        "compliance": "No runtime byte, cap, version or patch changed. All outward text still goes through copy_record; the new promotion docs are internal process/record files, not copy-channel outputs. CI promo steps are informational with continue-on-error, so a directory outage cannot gate our build. Human-only channels (HN/V2EX) are explicitly not automated.",
+        "ssot": "The fact pack remains the only source of numbers; PROMOTION.md carries no versions the fact pack lacks (governance test enforces this). The distribution ledger and the new reach ledger reference each other instead of duplicating status. Audit trail: S81, disclosure line, INDEX entries.",
+        "adversarial": "Reddit is unreachable from this host via TLS and is recorded as such; the manual checklist exists precisely for sources the script cannot see. A catalog that has not updated its row is upstream/pending, never our failure. No votes, stars or reposts are requested, and a filtered Reddit post is never reposted."
+      },
+      "evidence": [
+        "docs/PROMOTION-PLAYBOOK.md",
+        "docs/PROMOTION.md",
+        "docs/reach/README.md",
+        "docs/reach/2026-11-19.md",
+        "scripts/traffic-report.mjs",
+        "scripts/daily-reach.mjs",
+        "scripts/catalog-status.mjs"
+      ]
     }
   ],
-  "updated_at": "2026-11-19T10:10:00.000Z"
+  "updated_at": "2026-11-19T08:05:00.000Z"
 }

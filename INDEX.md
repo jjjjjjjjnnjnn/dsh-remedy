@@ -22,6 +22,9 @@
 | `docs/research/community-2026-11-14.md` | 2026-11-14 的社区盘面事实底稿（star / issue / 下载 / Discussions） |
 | `docs/research/intake-r57-triage.md` | R55 巡检留下的 **79 个候选**的逐桶判读：每个桶的接缝决定、三家值得再读的、以及「这只是判读不是复现」 |
 | `data/results/publish-2026-11-19T09-30-00.000Z.json` / `install-acceptance-2026-11-19T09-35-00.000Z.json` | R76：发布 0.4.20 + 空目录从 registry 单装验收 |
+| `docs/PROMOTION-PLAYBOOK.md` / `docs/PROMOTION.md` | R77：可复用推广流程 + 本项目事实卡/渠道状态/草稿/发布记录 |
+| `docs/reach/README.md` / `latest.md` / `2026-11-19.md` | R77：每日触达台账（机器一半 + 人工清单） |
+| `scripts/traffic-report.mjs` / `daily-reach.mjs` / `catalog-status.mjs` | R77：latest share / 触达汇总 / 目录状态（零依赖，unreachable 不写 0） |
 | `docs/research/negative-feedback-2026-11-19.md` | R75：全网 57 次查询 + 两篇批评报道原文的收集与判读；外部印证已有方案，不当证据、不扩范围 |
 | `docs/research/intake-r74-triage.md` | R74 巡检留下的 **65 个候选**的逐桶判读：九桶正好覆盖、3 条读全文的结论进 `leads.md` 的 J 表、以及「没有新形状所以不发补丁」 |
 | `docs/research/intake-r66-triage.md` | R66 巡检留下的 **76 个候选**的逐桶判读：五桶 76 条正好覆盖、8 条读全文的结论进 `leads.md` 的 I 表、以及「没有新形状所以不发补丁」 |
@@ -215,6 +218,7 @@
 | `tests/unit/turn-answer.test.ts` | P-0044 的判据：文本 / tool-call 算回答，只有 reasoning 与空白不算，只有 turn 最后一步决定，没有 assistant 消息算没回答 |
 | `tests/unit/completed-answer.test.ts` | P-0047 的判据：`completed` 的同样形状被数，文本/工具调用不数，两个结局各自计数，rows 与总数对得上 |
 | `tests/governance/public-pages-complete.test.ts` | P-0046 的两条规则：每个 registry id 都出现在两个首页；状态句点名的版本是尺寸表第一行。R66 另加两条：开篇计数必须等于 `PATCHES.length`、每个接缝行的 id 集合必须等于 registry 按 `surface` 的分组 |
+| `tests/governance/promotion.test.ts` | R77：推广手册规则、事实卡版本、触达台账、latestShare 区分爬虫与真人 |
 | `tests/governance/fact-pack-census.test.ts` | P-0049 的三条规则：事实包点名每个 registry id；每个接缝条目的计数与队伍等于该接缝的实际集合；包里称作已发布的版本有 CHANGELOG 小节 |
 | `tests/unit/on-tool-call.test.ts` | P-0052 的规则：末步有 tool-call 才算；文本+tool-call、只有 tool-call、控制 run、max_tokens、缺消息五种形状 |
 | `tests/unit/neighbour-hostile.test.ts` | P-0053 的八条：四条 remedy 自抛的 `TypeError` 变成原样放行，外加三条负对照与一条「foreign 之后不再修复」 |

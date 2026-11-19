@@ -98,6 +98,7 @@ git -C .. log --oneline -3
   按平台要求标注 `Fully Autonomous`。
 - **Reddit**：r/SideProject 帖子 1y044lf 被站级过滤（`removed_by_category: "reddit"`）；按手册不重发，
   尝试 modmail 但界面未返回确认，记为未确认。
+- **Reddit 广撒网**：另读了 10 个版的当期规则，排除 r/programming（禁 LLM 正文）与 r/commandline（禁 AI 文本 / AI 项目）；r/DeepSeekHarness 文本帖 1y04d7f 已发并验证 `removed: null`。其余版与定制文案排进 `docs/reddit-outreach.md`，按「每天最多两版、文案不同」逐日推进。
 - **HN / V2EX**：未发——平台禁止 AI 生成正文，只交事实卡。
 - 每日触达计划任务 `DshRemedy-DailyReach` 已注册（每天 09:00，StartWhenAvailable）。
 

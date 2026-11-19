@@ -79,3 +79,10 @@ MIT licensed: https://github.com/jjjjjjjjnnjnn/dsh-remedy
 2. 看 `removed_by_category`：`null` 正常；`"reddit"` → modmail 不重发；`"moderator"` → 读 `mod_reason_title`，不重发。
 3. 24h 内回每条评论，把作者与结论追加进 `docs/reach/<date>.md`。
 4. 结果同步写回 `docs/PROMOTION.md` 的发布记录表。
+
+## 与总线的分工
+
+本文件只放**每版的规则与定制文案**，不做全局排期/去重。真实发帖后用知识库总线登记：
+`kb promo record --project dsh-remedy --channel reddit --url <post-url> --outcome visible|filtered --method reddit_json --result 'removed_by_category=...'`。
+被站级过滤的帖子要同时写一条 `promotion_inbound`（`requires_reply: true`），由总线跟踪 modmail 回音；
+本文件只记本机读数。

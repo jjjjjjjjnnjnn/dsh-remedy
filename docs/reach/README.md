@@ -26,3 +26,10 @@ HN / V2EX 是否由本人发帖、dsh.so 表单是否 `Submitted`、DSH Discussi
 3. 不刷 star、不刷票、不重复发帖；「submitted」≠「listed」，「listed」≠「recommended」。
 4. 安静的一天是有效结果，写「no change」即可。
 5. 对外文字仍走 `scripts/copy_record.mjs`；本目录是内部台账，不是对外页面。
+
+## 与知识库宣传总线的关系
+
+本目录是**人读的 signal 副本，不是渠道状态机**。排期、去重、发布台账、评论回收与跨项目汇总都在
+`C:\Users\rongj\Desktop\本地知识库\知识库内容\Promotion`，由 `kb promo status / plan / record / collect`
+统一管理。`node scripts/daily-reach.mjs --json` 输出总线契约 `promotion-snapshot/v1`，
+`kb promo collect` 直接消费；本机 markdown 台账只用于现场核对。

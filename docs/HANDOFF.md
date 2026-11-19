@@ -9,12 +9,12 @@
 |---|---|
 | 版本 | `0.4.20` **已发布**，两包 `latest = 0.4.20`；这一版把 P-0053（读不懂的 chunk 原样放行，不再变成 remedy 自己的 `TypeError`）与 P-0054（profile 已拥有 `remedy_unattributed` 时不再借用兜底名，两处派发点都改）发了出去。0.4.18 带 P-0052 与 R64 的首屏修复；0.4.17 带 P-0047…P-0051。**R69 改了运行时**，所以是 0.4.19。**R70 只改证据与台账**（7 条 `tested` → `verified`），运行时一个字节没加，版本不动。**R71 同样只动证据与台账**（`cli` 面 5 条 → `verified`），也不升版本。**R72 把余下 33 条全升 `verified`**（`scripts` 25 + `cli` 7 + `profile` 1），运行时一个字节没加，版本仍不动。**R73 完成桌面 turn 与 DSH 0.2.2-rc.5 升级复验**，仍不改运行时、不升版本。**R74 做了一次外部巡检**：65 条新候选按标题归九桶、三条读全文，没有一条落回本项目的接缝，不开新补丁。**R75 在当前 0.2.2-rc.5 上再跑一遍升级三件套做稳定性确认，并全网收集 DSH 负面反馈**——两篇独立报道印证了 R68 的接缝扫描与 R73/R75 的升级复验，但没有新的本机形状，仍不开补丁。**R76 把 R70–R75 的证据与台账发成 0.4.20**，零运行时字节。 |
 | 补丁 | 五十四个，按 registry 顺序：P-0001 `verified` 拆开已证实的粘连调用；P-0002 `verified` 救援必须可证、可归因、原子；P-0003 `verified` 拒绝必须可观测，撤回不许读成修复；P-0005 `verified` 裸值成员值要么 reseal、要么拒绝；P-0011 `verified` 第二接缝按上游契约重写 + 有界重试（**R56 真机见证**）；P-0012 `verified` 一个加载路径一个字节上限；P-0013 `verified` 确定性的拒绝只命名一次（**R56 改挂 `agent/error` 并见证**）；P-0004 `verified` scan 读得懂 zstd 目录，脱敏看见每种路径形状；P-0006 `verified` scan 统计每一种 turn 结束方式；P-0007 `verified` copy 通道按长度选传输；P-0008 `verified` 字节预算变成脚本检查的门；P-0010 `verified` 用法文本必须与二进制一致；P-0009 `verified` 窗口化扫描按 createdAt 计头记录；P-0014 `verified` 事实包 / 交接 / 包内页面三处自述必须成立；P-0015 `verified` agent/pre-step 拒绝语义的实测；P-0016 `verified` 覆盖表只能住在 registry；P-0017 `verified` 两个包内页面钉住「无散文数字 + 命令真能跑」；P-0018 `verified` Windows 退出码按异常命名；P-0019 `verified` 首屏按补丁集重写；P-0020 `verified` 市场索引说清字节从哪里来；P-0021 `verified` 删掉指向不存在模块的导出；P-0022 `verified` 漂移测试先只读检查再比较；P-0023 `verified` 每个补丁必须有 docs/patches 文档；P-0024 `verified` 两个包内页面进 copy 通道；P-0025 `verified` 没读到的 profile 不算发现；P-0026 `verified` 发布流程只留一个家；P-0027 `verified` 证不出名字的片段用 remedy_unattributed 发出；P-0028 `verified` 随包样本里的本机路径换成 <home>；P-0029 `verified` 继任者的版本指针与字节账接上判据；P-0030 `verified` 归因证明搬进 core；P-0031 `verified` 引擎有了自己的字节上限；P-0032 `verified` 台账不再重复补丁文档的长叙述；P-0033 `verified` 空身份的调用不再被持久化；P-0034 `verified` 没有拒绝记账解释的失败不再记成安静的一轮；P-0035 `verified` patch 层每一行都要能在 manifest 里解析；P-0036 `verified` 纯 delta 的调用保留流里证过的 id；P-0037 `verified` 少一个闭合符时只在唯一内部插入点补回；P-0038 `verified` 脱敏认三个平台的家目录与会话键；P-0039 `verified` 会话目录在三个平台上只有一个定义；P-0040 `verified` 装机验收的夹具数从 data/fixtures 数出来；P-0041 `verified` 安装后的 bin 在 POSIX 上真的运行；P-0042 `verified` profile 仍写着的档位与宿主实测拒绝的档位第一次被摆在一起；P-0043 `verified` 为夹具写的那条守卫看不见夹具的 JSON 转义形状；P-0044 `verified` 截断的 turn 现在也说它到底有没有回答；P-0045 `verified` 准备阶段的拒绝只抵达 `agent/error`，此前挂错接缝因此静默；P-0046 `verified` 首页必须点名它数到的每个补丁、并列出已发布版本的尺寸；P-0047 `verified` `scan` 也数「结束却没回答」的 `completed` turn（探针复现）；P-0048 `verified` macOS 从一句话变成一个 CI 判据；P-0049 `verified` 事实包按注册表重数它自己描述的补丁；P-0050 `verified` `scan` 数「resume 丢掉了这个会话已经调过的工具」，规则住 `core/capability.ts`（宿主在这台机器上真的答了 `UNKNOWN_TOOL`）；P-0051 `verified` `explain` 把同一条计数指名成 finding（不需要 profile，退出 1），证据是扫描器与它自己同数。逐条的症状 / 机制 / 反证 / 边界在 `docs/patches/`；状态以 `dsh-remedy status` 为准。；P-0052 `verified` `completed` 的 turn 停在工具调用上时单独计数，`explain` 打 `TOOLCALL`（上游 #12741）；R66 没有新增补丁——巡检的 76 条候选里没有本机可复现的新形状（判读见 `docs/research/intake-r66-triage.md`）；P-0053 `verified` 读不懂的 chunk 先 flush 再原样放行（此后该流只放行）；P-0054 `verified` profile 已拥有 `remedy_unattributed` 时整次救援放弃、无名字的调用保留原字节。 |
-| 基线 | **451 tests / 6 gates / `--mutate` 6-6**（R70 / R71 / R72 / R77 的树；Windows 与 Linux WSL2 同组数，见 `live-linux-2026-11-18T23-10-00.000Z.json`），`cli verify` `OK 8 fixture(s)`；字节账 plugin **81 589 / 83 000**（常驻 39 632 / 44 000、CLI 41 957 / 42 000 —— 剩 **1 411 B / 43 B**）、core **97 717 / 104 000（6 283 B）**、`registry.js` **61 981 / 68 000（6 019 B）**。三轮都运行时零净增：R72 的 33 条状态与证据路径靠压 12 条散文付清，cap 一个没动。 |
+| 基线 | **453 tests / 6 gates / `--mutate` 6-6**（R70 / R71 / R72 / R77 的树；Windows 与 Linux WSL2 同组数，见 `live-linux-2026-11-18T23-10-00.000Z.json`），`cli verify` `OK 8 fixture(s)`；字节账 plugin **81 589 / 83 000**（常驻 39 632 / 44 000、CLI 41 957 / 42 000 —— 剩 **1 411 B / 43 B**）、core **97 717 / 104 000（6 283 B）**、`registry.js` **61 981 / 68 000（6 019 B）**。三轮都运行时零净增：R72 的 33 条状态与证据路径靠压 12 条散文付清，cap 一个没动。 |
 | 包体 | **已发布 0.4.20 = 36 666 B 压缩 / 38 文件 / 121 801 B 解包**（sha1 `245a07b2…`），core **0.4.20 = 36 392 B / 29 / 123 830**（sha1 `20f35012…`）；两包的 `dist.shasum` 与 registry 元数据相同（插件 tarball 的 CDN 副本在本机仍 404，但空目录从 registry 单装成功并读了同一字节）。上一版 0.4.19 是 36 666 / 39 297（sha1 `d56ae177…` / `6372360b…`）。**这一棵树**：emit 总量 **81 589 / 83 000**（常驻 39 632 / 44 000，CLI 41 957 / 42 000），core 的 dist 是 **97 717 / 104 000**（registry.js 61 981 / 68 000）。上一版 **0.4.18 = 38 394 / 38 / 125 711**（sha1 `bb4c5058…`），core **40 796 / 29 / 132 371**（sha1 `783d5538…`）。 |
 | 公开仓库 | <https://github.com/jjjjjjjjnnjnn/dsh-remedy> · releases … `v0.4.13` / `v0.4.14` / `v0.4.15` / `v0.4.16` / `v0.4.17` / `v0.4.18` / `v0.4.19` / **`v0.4.20`**（0.2.0 / 0.3.0 / 0.3.1 从不单独发 release）。`v0.4.20` 的正文来自 `docs/copy/release-notes/v0.4.20.md`；`v0.4.19` 的正文已冻成 `release-notes-0419-frozen`，`v0.4.18` 的正文已冻成 `release-notes-0418-frozen`，`v0.4.17` 的正文已冻成 `release-notes-0417-frozen`。`main` 每次都用 `commit-tree` 从容器 `main:dsh-remedy` 切出、tree 逐次比对相等；tag `v0.4.19` 打在发布提交上（R76 的发版公开面随后补记）。**R62 的三次 CI 全 success**：`44058685218`（push）、`44058772739`（tag）与 `44059275024`（文档提交），四个 job 都对。**R63 / R64 的交接提交**每次 tree 都相等、CI 都 success；run id 以 `gh run list -R jjjjjjjjnnjnn/dsh-remedy --limit 8` 为准（这一行不枚举它自己所在的提交）。**0.4.13 已 `npm deprecate`**（随包夹具有维护者本机账号名，0.4.14 起已修，用 0.4.17 或更新）；`npm view` 读回两包都带这句话。**R65 的公开面**：提交 `2e9c998`（tree 与容器 `main:dsh-remedy` 相等）推上 `main`，tag `v0.4.18` 与 release 都发了（正文与当时的 release 页逐字节相同，2 136 字符），CI run `44096337395` 四个 job 全 success（`verify (node 22)` / `verify (node 24)` / `verify (windows, node 24)` / `verify (macos, node 24)`）；比它更晚的交接提交以 `gh run list -R jjjjjjjjnnjnn/dsh-remedy --limit 4` 为准。**R69 的公开面**：提交 `a431576`（tree 与容器 `main:dsh-remedy` 相等）推上 `main`，tag `v0.4.19` 与 release 都发了（正文与 `docs/copy/release-notes/v0.4.19.md` 去掉末尾换行后相同：GH 回读 2047 字符、文件 2046 字符）；`main` 的 CI run `44361248548` 四个 job 全 success；tag 的 run `44361330916` 第一次的 macOS job 被并发取消，rerun 后四个 job 全 success。比它更晚的交接提交以 `gh run list -R jjjjjjjjnnjnn/dsh-remedy --limit 4` 为准。**R66 的公开面**：提交 `2126029`（tree 与容器 `main:dsh-remedy` 相等）推上 `main`（只推文档，不打 tag、不发 release、不 bump）；CI run `44107963490` 四个 job 全 success（`verify (node 22)` / `verify (node 24)` / `verify (windows, node 24)` / `verify (macos, node 24)`）；**R70 的公开面**：一轮里推了两次——`ebb8284`（tree 与容器 `main:dsh-remedy` 相等）在 CI 上红于 `handoff-truth`（索引里留着一对已删除的 gates 行），修好后 `257ad77`（tree 同样相等）让 run `44381580759` 四个 job 全 success（`verify (node 22)` / `verify (node 24)` / `verify (windows, node 24)` / `verify (macos, node 24)`）；本轮不打 tag、不发 release、不 bump。记录这次推送的文档提交比它更晚，其 run id 以 `gh run list -R jjjjjjjjnnjnn/dsh-remedy --limit 4` 为准。**R71 的公开面**：`99c0b008`（tree 与容器 `main:dsh-remedy` 相等）推上 `main`，第一次的 run `44389155654` 三个 job success、**macOS job 两次被 runner 队列取消**（`steps: {}`、15 分钟后 `cancelled`，不是失败）；补一句公开面记录后，run `44394934479` **四个 job 全 success（47 秒）**，同一个 macOS job 也就绿了——所以那次取消是队列，不是这棵树。比它更晚的文档提交以 `gh run list -R jjjjjjjjnnjnn/dsh-remedy --limit 4` 为准。比它更晚的交接提交（包括记录这次推送的文档提交）以 `gh run list -R jjjjjjjjnnjnn/dsh-remedy --limit 4` 为准。  **R73 的公开面**：本轮开始时远端 `main` 是 `b4f9a66`（R70 行；上面 R71 行写的 `99c0b008` 不在远端）。把容器 `main:dsh-remedy` 的树用 `commit-tree` 切为提交 `b1f76df`（tree 逐字节相等）推上 `main`，CI run `44473730893` 四个 job 全 success（`verify (node 22)` / `verify (node 24)` / `verify (windows, node 24)` / `verify (macos, node 24)`；四条 Node 20 弃用提示是告警不是失败）。本轮不打 tag、不发 release、不 bump。  **R74 的公开面**：提交 `a0a6d22`（tree 与容器 `main:dsh-remedy` 相等）推上 `main`，CI run `44474878185` 四个 job 全 success；记录这次推送的文档提交更晚，其 run id 同样以 `gh run list` 为准。两轮都只推文档与证据，不打 tag、不发 release、不 bump。  **R75 的公开面**：提交 `10e2f4c`（tree 与容器 `main:dsh-remedy` 相等）推上 `main`，CI run `44476472539` 四个 job 全 success；记录这次推送的文档提交更晚，run id 以 `gh run list -R jjjjjjjjnnjnn/dsh-remedy --limit 4` 为准。本轮仍只推文档与证据，不打 tag、不发 release、不 bump。  **R76 的发版公开面**：提交 `13ebc9b`（tree 与容器 `main:dsh-remedy` 相等）推上 `main`，CI run `44481575240` 四个 job 全 success；tag `v0.4.20` 与 release 已发（release 正文与 `docs/copy/release-notes/v0.4.20.md` 去掉末尾换行后逐字节相同，2721 字符），tag 的 CI run `44481622810` 四个 job 全 success。记录这次推送的文档提交更晚，run id 以 `gh run list -R jjjjjjjjnnjnn/dsh-remedy --limit 4` 为准。 |
 | 装机验收 | **0.4.20 已从 registry 单装到空目录验过 `OK 8 fixture(s)`**，产物 `data/results/install-acceptance-2026-11-19T09-35-00.000Z.json`（`ok: true`、三条命令 0/0/0、`canonical_fixtures: 8`）；发布产物 `publish-2026-11-19T09-30-00.000Z.json` 两包 `exact_ok` + `latest_ok`。**两个 profile 已换到 0.4.20**（`pnpm why` 与各自的 `cli verify` 都读到 0.4.20，备份 `.before-0420`）；R76 又在桌面 App 上跑通一轮 0.4.20 真 turn：`live-desktop-2026-11-19T10-00-00.000Z.json`，答复 `R76-DESKTOP-0420-OK`、`turn/end completed`、verdict `quiet`。0.4.19 的旧验收是 `install-acceptance-2026-11-18T16-20-00.000Z.json`。R71 量清旧 key 被吊销（`live-credential-2026-11-18T22-50-00.000Z.json`）；**R73 已换新 key 并在 DSH 0.2.2-rc.5 的桌面 App 上跑通 0.4.19 真 turn**：`live-desktop-2026-11-19T06-15-00.000Z.json`，答复 `R73-DESKTOP-RC5-OK`、`turn/end completed`、journal `streams: 1`、verdict `quiet`，runtime 版本读自安装目录的 `resources/runtime/primary-runtime/runtime.json`；Linux 0.4.19 树全量见 `live-linux-2026-11-18T17-40-00.000Z.json`。 |
-| 下一件事 | **R78（计划）：按推广手册逐渠道执行并 24h/1 周复盘；宿主再升级时重复三件套。** 台账 **54 verified + 0 tested**，桌面 turn 已在 DSH 0.2.2-rc.5 上跑通。**(a)** 若宿主再升级：读安装目录 `runtime.json` 定版本 → 跑 `scan_plugin_seams` 看拓扑 → 跑一次桌面真 turn 与隔离邻居 harness（`live-neighbours-rc5-*` 是 0.2.2-rc.5 的判据）→ 更新事实包与状态表；**(b)** 一次新巡检（R71 做过，不急）；**(c)** registry 余量 **6 019 B**，新记录仍按 P-0032 先压散文，不抬 cap；**(d)** 公开仓库尚未推 R70–R73 的台账，需要推时按 `commit-tree` 路线并如实写 CI run id。 |
-| 交接边界 | `pnpm run verify` = **451 tests / 0 fail / 6 gates ALL GREEN**（Windows 与 Linux WSL2 同数）、`--mutate` **6-6**、`cli verify` `OK 8 fixture(s)`。**R70 / R71 / R72 都不改运行时**：证据是真宿主 turn、真语料 census 与 R72 的构建/宿主见证（`live-r72-*`），台账字节靠压散文付清（R72 落盘 core 97 717、registry 61 981），cap 与版本都没动。**R73 也不改运行时**：新证据是 rc.5 的桌面 turn、接缝盘点、邻居复验与语料复读，字节账与 R72 同值。 |
+| 下一件事 | **R79（计划）：以知识库总线为准做 24h/1 周复盘；宿主再升级时重复三件套。** 台账 **54 verified + 0 tested**，桌面 turn 已在 DSH 0.2.2-rc.5 上跑通。**(a)** 若宿主再升级：读安装目录 `runtime.json` 定版本 → 跑 `scan_plugin_seams` 看拓扑 → 跑一次桌面真 turn 与隔离邻居 harness（`live-neighbours-rc5-*` 是 0.2.2-rc.5 的判据）→ 更新事实包与状态表；**(b)** 一次新巡检（R71 做过，不急）；**(c)** registry 余量 **6 019 B**，新记录仍按 P-0032 先压散文，不抬 cap；**(d)** 公开仓库尚未推 R70–R73 的台账，需要推时按 `commit-tree` 路线并如实写 CI run id。 |
+| 交接边界 | `pnpm run verify` = **453 tests / 0 fail / 6 gates ALL GREEN**（Windows 与 Linux WSL2 同数）、`--mutate` **6-6**、`cli verify` `OK 8 fixture(s)`。**R70 / R71 / R72 都不改运行时**：证据是真宿主 turn、真语料 census 与 R72 的构建/宿主见证（`live-r72-*`），台账字节靠压散文付清（R72 落盘 core 97 717、registry 61 981），cap 与版本都没动。**R73 也不改运行时**：新证据是 rc.5 的桌面 turn、接缝盘点、邻居复验与语料复读，字节账与 R72 同值。 |
 
 ## 五分钟检查
 
@@ -56,6 +56,38 @@ git -C .. log --oneline -3
 
 - 容器 `main` **没有**推到 `dsh-triage` 远端（推上去会破坏那个仓库的根布局）。不要顺手推。
 - `dsh-triage/` 只是同级项目，规则以它自己的 `AGENTS.md` 为准。
+
+## 当前批次（R78，2026-11-19）
+
+**R78 · 把宣传管线接进本机知识库宣传总线，项目仓库只留事实与读数。**
+
+**A. 接入**
+
+- 知识库 `Promotion/SIGNALS.md` 约定 dsh-remedy 的快照命令是
+  `node scripts/daily-reach.mjs --json`。本仓库的脚本已输出 `promotion-snapshot/v1`：
+  release / github / npm / catalogue / releases / social / upstream / unreachable / source。
+- 修掉一个真实缺口：`--json` 在子进程管道捕获下被 undici + Windows libuv 断言崩掉
+  （exit `3221226505`）；把 dev.to 抓取改成 `curl` 子进程后稳定。
+  `kb promo collect --project dsh-remedy` 现在直接读到本树，`stale: false`，
+  `unreachable` 如实保留 referrers 的 404。
+- 快照的 `social.reddit` / `social.x` 从本仓库 `docs/PROMOTION.md` 的发布记录现取，
+  不伪造读数。
+
+**B. 边界设计**
+
+- `docs/PROMOTION.md` / `PROMOTION-PLAYBOOK.md` / `docs/reach/README.md` /
+  `docs/reddit-outreach.md` 统一声明：**唯一宣传状态机在知识库 Promotion Bus**
+  （queue / ledger / facts / inbound / reach），本仓库只提供事实包与只读快照；
+  本地 `docs/reach/*.md` 是人读的 signal 副本，不是第二份渠道状态。
+- 新增两条治理测试（总数 451 → **453**）：一条守住「文档指向总线」的边界，
+  一条跑 `daily-reach --json` 验证 `promotion-snapshot/v1` 契约与必需字段。
+- 知识库侧 today 的 ledger 已有 X / GitHub social preview / dsh.so / Discussions /
+  dev.to / Reddit 两条帖的真实 URL 与验证结果；`kb promo status` 版本读到 0.4.20。
+
+**C. 验证**
+
+- `pnpm run verify` = **453 tests / 6 gates ALL GREEN**；`gate --mutate` 6/6；`cli verify` OK 8。
+- 零运行时字节、零 cap、零版本变化；对外 copy 条目按新 facts hash 重登记。
 
 ## 当前批次（R77，2026-11-19）
 
@@ -3968,7 +4000,7 @@ pnpm install ; pnpm run verify ; node scripts/gate.mjs --mutate ; node packages/
 
 四条应当是 **451 / 6 gates ALL GREEN / 6-6 / OK 8 fixture(s)**；Linux 用同一组数（`live-linux-2026-11-18T23-10-00.000Z.json`）。不绿先修根因，再读 D。**提交前跑 `pnpm run verify`，不要只跑 `gate.mjs`**（R70 的红就是只跑后者放过去的）。
 
-**D. 下一件事（R78）**
+**D. 下一件事（R79）**
 
 1. **宿主再升级的套路**：读安装目录 `runtime.json` 定版本 → `scan_plugin_seams` 看拓扑 → CDP 跑一轮桌面真 turn → 隔离邻居 harness 复验判别形状 → 更新事实包与状态表。R73 是首发样例，R75 的 08:00 / 08:05 / 08:10 / 08:20 四份产物是第二遍稳定性样例，照抄即可。
 2. **#10115**（workflow / subagent 截断输出）：本机仍无形状，R66 与 R71 两次结论一致；不要回头追 `leads.md` 里已判过的旧条目。

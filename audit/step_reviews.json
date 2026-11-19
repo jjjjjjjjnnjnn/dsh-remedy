@@ -1506,7 +1506,27 @@
         "scripts/daily-reach.mjs",
         "scripts/catalog-status.mjs"
       ]
+    },
+    {
+      "id": "S82",
+      "gate": "step-review",
+      "title": "Can the project keep one promotion state machine while the KB owns the bus?",
+      "axes": {
+        "correctness": "The repo now emits the promotion-snapshot/v1 contract that Promotion/SIGNALS.md specifies, and the bus collect reads it without staleness. The undici/libuv crash under piped stdout was reproduced and fixed by using curl for dev.to. Local docs explicitly defer queue/ledger/status to the KB bus.",
+        "reproducibility": "`node scripts/daily-reach.mjs --json` was run through spawnSync and validated field-by-field in tests/governance/promotion.test.ts. `kb promo collect` reported version 0.4.20, stale false, and kept the referrers 404 as unreachable rather than zero.",
+        "compliance": "No runtime byte, cap, version, release or patch changed. No secrets are in the snapshot; unreachable sources are preserved. The bus remains the only place that records cross-project status; the repo reach ledger is labelled a signal copy.",
+        "ssot": "Facts still come from the repo fact pack and the CLI; the bus fact card points at those commands. PROMOTION.md, the playbook, the reach README and the Reddit queue all name the same bus paths and commands, enforced by a governance test.",
+        "adversarial": "A project-local status table would drift from the bus, so the docs were rewritten to point rather than duplicate. A stale or failed snapshot must not be turned into numbers; the contract keeps unreachable explicit and the collect result would mark it stale."
+      },
+      "evidence": [
+        "scripts/daily-reach.mjs",
+        "docs/PROMOTION.md",
+        "docs/PROMOTION-PLAYBOOK.md",
+        "docs/reach/README.md",
+        "docs/reddit-outreach.md",
+        "tests/governance/promotion.test.ts"
+      ]
     }
   ],
-  "updated_at": "2026-11-19T08:05:00.000Z"
+  "updated_at": "2026-11-19T08:45:00.000Z"
 }

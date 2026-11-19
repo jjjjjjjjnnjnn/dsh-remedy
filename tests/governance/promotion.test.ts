@@ -63,3 +63,48 @@ test('latestShare separates a crawler fleet from human concentration', async () 
   assert.ok(concentrated.share > flat.share + 0.3, 'humans concentrate on the newest two versions')
   assert.equal(mod.latestShare({}), null, 'no data is not a zero share')
 })
+
+test('the repo defers status to the knowledge-base bus', () => {
+  const page = read('docs/PROMOTION.md')
+  const play = read('docs/PROMOTION-PLAYBOOK.md')
+  const reach = read('docs/reach/README.md')
+  const reddit = read('docs/reddit-outreach.md')
+  assert.ok(page.includes('唯一宣传状态机'), 'PROMOTION.md must name the KB bus as the state machine')
+  assert.ok(page.includes('kb promo status'), 'the bus commands must be discoverable from the repo')
+  assert.ok(play.includes('宣传总线'), 'the playbook must keep the bus boundary')
+  assert.ok(reach.includes('不是渠道状态机'), 'the local reach ledger must not claim to be status')
+  assert.ok(reddit.includes('kb promo record'), 'real posts must be registered in the bus')
+})
+
+test('daily-reach --json speaks promotion-snapshot/v1 for the bus', async () => {
+  const { spawnSync } = await import('node:child_process')
+  const { fileURLToPath } = await import('node:url')
+  const r = spawnSync(process.execPath, ['scripts/daily-reach.mjs', '--json'], {
+    cwd: fileURLToPath(new URL('../../', import.meta.url)),
+    encoding: 'utf8',
+    maxBuffer: 32 << 20,
+    timeout: 240000,
+  })
+  assert.equal(r.status, 0, String(r.stderr ?? '').slice(0, 300))
+  const snap = JSON.parse(r.stdout) as {
+    schema: string
+    project_id: string
+    generated_at: string
+    release: { version: string }
+    github: object
+    npm: unknown[]
+    catalogue: unknown[]
+    releases: unknown[]
+    social: { devto: unknown[]; reddit: unknown[]; x: unknown[] }
+    upstream: unknown[]
+    unreachable: unknown[]
+    source: { command: string }
+  }
+  assert.equal(snap.schema, 'promotion-snapshot/v1')
+  assert.equal(snap.project_id, 'dsh-remedy')
+  assert.match(snap.release.version, /^\d+\.\d+\.\d+$/)
+  for (const key of ['github', 'npm', 'catalogue', 'releases', 'social', 'upstream', 'unreachable', 'source'] as const) {
+    assert.ok(key in snap, `snapshot is missing ${key}`)
+  }
+  assert.ok(snap.source.command.includes('daily-reach.mjs --json'))
+})

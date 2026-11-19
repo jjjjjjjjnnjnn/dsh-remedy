@@ -1,5 +1,8 @@
 # Promotion Playbook（可复用流程）
 
+> **2026-11-19 起**：可执行流程以本地知识库 `Promotion/PLAYBOOK.md` 为准（`C:\Users\rongj\Desktop\本地知识库\知识库内容\Promotion\`）。
+> 本文件保留为方法参考与历史；渠道状态、排期与发布台账已迁到总线，这里不再新增。
+
 > 适用：本地优先的开发者工具、桌面工具、CLI、插件。本文只写**流程、判据和验证方法**。
 > 换项目时整份复制，只替换「事实卡」和链接；数字必须从该项目的代码/构建现场取，不能沿用本文。
 >
@@ -132,6 +135,18 @@
 - awesome 入口可能只对 collaborator 开放；看到 `Action restricted` 就停。
 
 ---
+
+## 7b. 本机知识库宣传总线（状态机的家）
+
+流程与判据留在本仓库；**状态不再留在项目里**：
+
+- 事实卡：知识库 `Promotion/facts/remedy.yaml`，由总线 `kb promo facts dsh-remedy` 刷新；
+  项目侧的真值仍是 `docs/copy/facts/public-repo-facts.md`。
+- 排期与去重：`Promotion/queue/`；发布台账：`Promotion/ledger/`；待回评论：`Promotion/inbound/`。
+- 本仓库的 `node scripts/daily-reach.mjs --json` 输出 `promotion-snapshot/v1`，
+  总线 `kb promo collect` 直接消费；`docs/reach/*.md` 只是人读的 signal 副本。
+- 发帖后由总线 `kb promo record` 记 URL 与验证结果；本仓库的发布记录只做本机复核。
+- HN / V2EX 的「只交事实卡、本人写」规则在两边都成立。
 
 ## 8. 交接清单
 

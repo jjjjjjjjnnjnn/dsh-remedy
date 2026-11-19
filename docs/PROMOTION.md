@@ -1,8 +1,24 @@
 # Promotion — dsh-remedy
 
+> **发布与渠道状态已统一到本地知识库 `Promotion/` 总线**
+> （`C:\Users\rongj\Desktop\本地知识库\知识库内容\Promotion\`）。
+> 本文件保留事实卡与历史记录；新的排期、七道门禁与发布台账在总线里，这里不再新增渠道状态。
+
 > 流程、判据与验证见 [PROMOTION-PLAYBOOK.md](PROMOTION-PLAYBOOK.md)。
 > 本文件只放**本项目的**事实卡、渠道状态、草稿与发布记录。
 > 数字唯一来源是 `docs/copy/facts/public-repo-facts.md`；对外文字必须经 `scripts/copy_record.mjs` 登记。
+
+## 0. 与本机知识库宣传总线的边界
+
+**唯一宣传状态机在** `C:\Users\rongj\Desktop\本地知识库\知识库内容\Promotion`（知识库宣传总线）。
+本仓库只负责两件事：**提供事实与读数**（`docs/copy/facts/` 与 `scripts/daily-reach.mjs --json`），
+以及**记录本机实际动作**（`docs/reach/` 是 signal，不是第二份渠道状态）。
+排期（`queue/`）、发布台账（`ledger/`）、事实卡（`facts/`）、评论回收（`inbound/`）与
+每日汇总（`reach/`）都在知识库，由 `kb promo status / plan / record / collect` 统一查询。
+
+总线契约见知识库 `Promotion/SIGNALS.md`：本仓库的命令必须输出 `promotion-snapshot/v1` 到 stdout，
+读不到写 `unreachable`，绝不伪造数字。本文件下面的「渠道状态」与「发布记录」只是本机可复核的现场，
+与总线不一致时**以总线为准**并修正本文件。
 
 ## 0. 人与自动化的分工
 

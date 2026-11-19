@@ -24,7 +24,8 @@
 | `data/results/publish-2026-11-19T09-30-00.000Z.json` / `install-acceptance-2026-11-19T09-35-00.000Z.json` | R76：发布 0.4.20 + 空目录从 registry 单装验收 |
 | `docs/PROMOTION-PLAYBOOK.md` / `docs/PROMOTION.md` | R77：可复用推广流程 + 本项目事实卡/渠道状态/草稿/发布记录 |
 | `docs/reach/README.md` / `latest.md` / `2026-11-19.md` | R77：每日触达台账（机器一半 + 人工清单） |
-| `scripts/traffic-report.mjs` / `daily-reach.mjs` / `catalog-status.mjs` | R77：latest share / 触达汇总 / 目录状态（零依赖，unreachable 不写 0） |
+| `scripts/daily-reach.mjs --json` | R78：输出 `promotion-snapshot/v1`，本机知识库宣传总线 `kb promo collect` 直接消费 |
+| `scripts/traffic-report.mjs` / `catalog-status.mjs` | R77：latest share / 触达汇总 / 目录状态（零依赖，unreachable 不写 0） |
 | `docs/research/negative-feedback-2026-11-19.md` | R75：全网 57 次查询 + 两篇批评报道原文的收集与判读；外部印证已有方案，不当证据、不扩范围 |
 | `docs/research/intake-r74-triage.md` | R74 巡检留下的 **65 个候选**的逐桶判读：九桶正好覆盖、3 条读全文的结论进 `leads.md` 的 J 表、以及「没有新形状所以不发补丁」 |
 | `docs/research/intake-r66-triage.md` | R66 巡检留下的 **76 个候选**的逐桶判读：五桶 76 条正好覆盖、8 条读全文的结论进 `leads.md` 的 I 表、以及「没有新形状所以不发补丁」 |

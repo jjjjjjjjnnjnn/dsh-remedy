@@ -88,4 +88,6 @@ dsh-remedy 0.4.20 已发布：在 DSH 的 llm/stream 接缝上拆开已证实的
 | 2026-11-19 | dev.to | [What a repair layer can and cannot do on DSH's llm/stream seam](https://dev.to/jjjjjjjjnnjnn/what-a-repair-layer-can-and-cannot-do-on-dshs-llmstream-seam-2ejm) | 页面读回标题、四标签、AI 披露 `Fully Autonomous` | 已发布 |
 | 2026-11-19 | Reddit r/SideProject | 帖子 [1y044lf](https://www.reddit.com/r/SideProject/comments/1y044lf/) | JSON `removed_by_category: "reddit"` = 站级过滤；**不重发**，已尝试 modmail（界面未返回确认，记为未确认） | 被过滤 |
 | 2026-11-19 | HN / V2EX | 无 | 平台禁止 AI 生成正文，只交事实卡 | 未发（本人写） |
+| 2026-11-19 | Reddit r/DeepSeekHarness | [文本帖 1y04d7f](https://www.reddit.com/r/DeepSeekHarness/comments/1y04d7f/) | JSON `removed_by_category: null`，正常显示 | 已发布 |
+| 2026-11-19 | Reddit 排期 | `docs/reddit-outreach.md` | 每版定制文案 + 发后 JSON 验证 + 站级过滤不重发 | 队列，逐日最多两版 |
 

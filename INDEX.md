@@ -21,6 +21,7 @@
 | `docs/research/similar-projects-2026-11-14.md` | 同接缝的五个竞品与上游源码：借了什么机制、拒了什么取舍、每条指回本机 `app.asar` 的行号（R47） |
 | `docs/research/community-2026-11-14.md` | 2026-11-14 的社区盘面事实底稿（star / issue / 下载 / Discussions） |
 | `docs/research/intake-r57-triage.md` | R55 巡检留下的 **79 个候选**的逐桶判读：每个桶的接缝决定、三家值得再读的、以及「这只是判读不是复现」 |
+| `docs/research/negative-feedback-2026-11-19.md` | R75：全网 57 次查询 + 两篇批评报道原文的收集与判读；外部印证已有方案，不当证据、不扩范围 |
 | `docs/research/intake-r74-triage.md` | R74 巡检留下的 **65 个候选**的逐桶判读：九桶正好覆盖、3 条读全文的结论进 `leads.md` 的 J 表、以及「没有新形状所以不发补丁」 |
 | `docs/research/intake-r66-triage.md` | R66 巡检留下的 **76 个候选**的逐桶判读：五桶 76 条正好覆盖、8 条读全文的结论进 `leads.md` 的 I 表、以及「没有新形状所以不发补丁」 |
 

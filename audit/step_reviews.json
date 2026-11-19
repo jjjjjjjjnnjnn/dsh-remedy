@@ -1446,7 +1446,27 @@
         "docs/research/intake-r74-triage.md",
         "docs/research/leads.md"
       ]
+    },
+    {
+      "id": "S79",
+      "gate": "step-review",
+      "title": "Does a second stability pass plus 57 web queries change the project, or only its evidence?",
+      "axes": {
+        "correctness": "The host did not change version, so R75 re-ran the R73 routine as a stability confirmation: a CDP desktop turn (R75-STABILITY-OK, completed, one stream, quiet), a seam scan with unchanged topology, a reader re-check with the same counts, and three neighbour shapes that still satisfy new==control and old!=control. The web survey found two relevant external reports: a 2026-11-07 Tencent article about breaking updates crashing plugins and a 2026-08-28 Sina/Leiphone analysis of plugin conflicts with no detection tool. Both corroborate R68/R73/R75; neither yields a locally reproducible in-seam shape.",
+        "reproducibility": "Four new artifacts (08:00 / 08:05 / 08:10 / 08:20) carry produced_by, stamps and sha256 sidecars. The 57 web queries used the local search MCP with raw output in .tmp/r75-search-results*.json; the two articles were fetched from their origin domains and are cited by URL and date in docs/research/negative-feedback-2026-11-19.md and docs/compatibility.md §9.",
+        "compliance": "No runtime byte, cap, version, release or tag changed; no patch was opened, so P-0055 remains free. External report text is explicitly labelled as leads, not evidence (README §0). The plan update adds boundaries rather than scope: no plugin market, no permission/sandbox changes, no UI arbitration. No secret or session text entered any artifact.",
+        "ssot": "The research document is the single home for the non-GitHub survey; compatibility.md cites it and the two URLs without restating external numbers as local measurements. The handoff state table, evidence index and R75 batch name the same four new receipts. leads.md was not polluted with reports that have no seam.",
+        "adversarial": "Bing returned empty results for most English queries from this host, and the HN thread had no comments; absence in the survey is not absence elsewhere. The external conflict finding is about other plugins (UI paths) that this project cannot arbitrate. A future host upgrade may still break the wrapper in a new way, which is why the three-piece routine stays in the plan."
+      },
+      "evidence": [
+        "data/results/live-desktop-2026-11-19T08-00-00.000Z.json",
+        "data/results/seam-inventory-2026-11-19T08-05-00.000Z.json",
+        "data/results/live-census-2026-11-19T08-10-00.000Z.json",
+        "data/results/live-neighbours-rc5-2026-11-19T08-20-00.000Z.json",
+        "docs/research/negative-feedback-2026-11-19.md",
+        "docs/compatibility.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-19T07:10:00.000Z"
+  "updated_at": "2026-11-19T08:30:00.000Z"
 }

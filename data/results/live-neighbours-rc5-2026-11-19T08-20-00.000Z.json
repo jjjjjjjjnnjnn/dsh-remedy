@@ -1,0 +1,446 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_neighbour_turn.mjs",
+  "generated_at": "2026-11-19T08:20:00.000Z",
+  "question": "Inside a real host turn, what does the llm/stream wrapper do with a chunk it did not expect, and can a repair still dispatch under a name the profile already owns?",
+  "contract_after_r69": "remedy may only pass a chunk through, repair a proven fusion, or rethrow the original failure; it must not raise an error of its own",
+  "probe": {
+    "homes": "one isolated DSH_HOME per arm; nothing under ~/.dsh is written",
+    "client": "the installed headless CLI of DSH 0.2.2-rc.3 (plugins/plugin/dist and core/dist as packaged)",
+    "neighbour": "tests/fixtures/neighbour-bad-chunks — a plugin on llm/stream that yields the shapes the pi-ai adapter never produces",
+    "provider": "a local OpenAI-compatible endpoint that answers every request with one short text stream",
+    "arms": {
+      "control": "the neighbour only: the host outcome this stream would have without remedy",
+      "old": "the released 0.4.18 bytes (npm tarballs)",
+      "new": "this tree, which is the published 0.4.19 bytes"
+    },
+    "host": {
+      "version": "0.2.2-rc.5",
+      "source": "<home>\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\primary-runtime\\runtime.json",
+      "sha256": "67eb75d68a29871e04e245346351e89224c86d0d0d5298984f9a9de519c074f6"
+    }
+  },
+  "runs": {
+    "object-arguments": {
+      "control": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: TRANSPORT: Connection error.",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Connection error.",
+            "code": "TRANSPORT"
+          }
+        },
+        "assistant": [
+          [
+            "tool-call:capture"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "capture",
+            "id": "call_r70_object"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_r70_object",
+            "code": "ok",
+            "is_error": false
+          }
+        ],
+        "journal": {
+          "events": 0,
+          "counters": null
+        },
+        "neighbour_tools": [
+          "capture"
+        ],
+        "requests": 0,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "051b279217ffbc0a53fd5f77f1eb7e48dfe626981ee62cef3d8fc1f8f3a1795c",
+          "journal": null,
+          "neighbour": "b7fdd61327cc33b2671ac8a62e041ad2eb05232f03eff63e24a3914991cf4e69"
+        }
+      },
+      "old": {
+        "version": "0.4.18",
+        "exit_code": 1,
+        "stderr_first": "dsh: UNKNOWN: text.trim is not a function",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "text.trim is not a function",
+            "code": "UNKNOWN"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 2,
+          "counters": {
+            "streams": 2,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 2,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 0,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "2d72834f69651805a3b6a44225f6c3b30aac3a3075db91954ad9947392b05587",
+          "journal": "d793f573c5ca4c802553aa76f355896852508a21e0913c2235d4c985a69d2874",
+          "neighbour": "2e00739f98212d766d6999c50206ad4aae17e3779a0d079fc5e013da564afe9b"
+        }
+      },
+      "new": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: TRANSPORT: Connection error.",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Connection error.",
+            "code": "TRANSPORT"
+          }
+        },
+        "assistant": [
+          [
+            "tool-call:capture"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "capture",
+            "id": "call_r70_object"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_r70_object",
+            "code": "ok",
+            "is_error": false
+          }
+        ],
+        "journal": {
+          "events": 8,
+          "counters": {
+            "streams": 8,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 7,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [
+          "capture"
+        ],
+        "requests": 0,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "c73265c4c39d5706569b4f325c5d9c6a37b5fd301a98b36a462707c21201ad94",
+          "journal": "125b50d7ff758bbce7e1f0d87518f0bc78afd0d6369ba8808f6b5829586a812f",
+          "neighbour": "d4137e2b31aa200d55c405b4bc0d692fbff055fc8d2d7c17b6f6b77796f18217"
+        }
+      },
+      "same_new_control": true,
+      "same_old_control": false,
+      "old_owns_fallback": false,
+      "new_owns_fallback": false,
+      "control_has_journal": false
+    },
+    "finish-no-reason": {
+      "control": {
+        "version": "0.4.19",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "text"
+          ]
+        ],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 0,
+          "counters": null
+        },
+        "neighbour_tools": [],
+        "requests": 0,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "2defbc3827d414a2894314e47596e0759a913d7facdddcb096899385ee20a9e9",
+          "journal": null,
+          "neighbour": "77c5de42e6e227a94651609685b98a97d8e383436010f5d1049c34464e89c599"
+        }
+      },
+      "old": {
+        "version": "0.4.18",
+        "exit_code": 1,
+        "stderr_first": "dsh: UNKNOWN: Cannot read properties of undefined (reading 'kind')",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Cannot read properties of undefined (reading 'kind')",
+            "code": "UNKNOWN"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 2,
+          "counters": {
+            "streams": 2,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 2,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 0,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "6aaeb1ce75449f6c75e55de0ffbe3f0d97c325064c57290b1801868462ff7b57",
+          "journal": "31e0930bcbbef931dd044b20b0c6b3d6cdc0420d9b08623b7c91270475203b5e",
+          "neighbour": "4ff88599b5c6748e79ced6c92d718f4f2e17f1cafca3b96bf24863346176f1b3"
+        }
+      },
+      "new": {
+        "version": "0.4.19",
+        "exit_code": 0,
+        "stderr_first": "",
+        "turn_end": {
+          "kind": "completed"
+        },
+        "assistant": [
+          [
+            "text"
+          ]
+        ],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 2,
+          "counters": {
+            "streams": 2,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 1,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 0,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "1f2dbb95759fb33301762cbc0abe765ed2215c6ded629d8f8e4f4c07830fa51e",
+          "journal": "e36beb77c3db7149d03ccee1581fbbb59883b67986607859e6f0e0ae5b09cced",
+          "neighbour": "ee5cf36313fefaf3623b9fdf37a62b9641114f5747a72a060e5446a7ed59cddd"
+        }
+      },
+      "same_new_control": true,
+      "same_old_control": false,
+      "old_owns_fallback": false,
+      "new_owns_fallback": false,
+      "control_has_journal": false
+    },
+    "reserved-fused": {
+      "control": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: MALFORMED_RESPONSE: Tool call \"alpha\": Unexpected non-whitespace character after JSON at position 24",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Tool call \"alpha\": Unexpected non-whitespace character after JSON at position 24\n\nReceived arguments:\n{\"file_path\":\"a.ts\"}{\"command\":\"echo hi\"}",
+            "code": "MALFORMED_RESPONSE"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 0,
+          "counters": null
+        },
+        "neighbour_tools": [],
+        "requests": 0,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "8e512cc932900e6511d624c0eed94b91326e106e68f83b6a9b743a787503c33a",
+          "journal": null,
+          "neighbour": "3555443ae0350f02edf3676ccb50c4283e5099f4d1c439d0f066ba7499558635"
+        }
+      },
+      "old": {
+        "version": "0.4.18",
+        "exit_code": 1,
+        "stderr_first": "dsh: TRANSPORT: Connection error.",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Connection error.",
+            "code": "TRANSPORT"
+          }
+        },
+        "assistant": [
+          [
+            "tool-call:alpha",
+            "tool-call:remedy_unattributed"
+          ]
+        ],
+        "calls": [
+          {
+            "name": "alpha",
+            "id": "call_remedy_1"
+          },
+          {
+            "name": "remedy_unattributed",
+            "id": "call_remedy_1#remedy-1"
+          }
+        ],
+        "results": [
+          {
+            "id": "call_remedy_1",
+            "code": "ok",
+            "is_error": false
+          },
+          {
+            "id": "call_remedy_1#remedy-1",
+            "code": "ok",
+            "is_error": false
+          }
+        ],
+        "journal": {
+          "events": 9,
+          "counters": {
+            "streams": 8,
+            "fused": 1,
+            "repaired": 1,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 7,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [
+          "alpha",
+          "remedy_unattributed"
+        ],
+        "requests": 0,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "0d9ab8cf7308c22b8929963bf0bbf9bfd4eb80e401175059535902fa4390d0ff",
+          "journal": "0a6f7f5ffc07074293aad5c724abd6f00c71fc09629b19a49b1756caf0707bec",
+          "neighbour": "b08d2bc43ea6421daa43bc5414431522c4d872b58b32b8d27412ab73b6c4316c"
+        }
+      },
+      "new": {
+        "version": "0.4.19",
+        "exit_code": 1,
+        "stderr_first": "dsh: MALFORMED_RESPONSE: Tool call \"alpha\": Unexpected non-whitespace character after JSON at position 24",
+        "turn_end": {
+          "kind": "error",
+          "error": {
+            "message": "Tool call \"alpha\": Unexpected non-whitespace character after JSON at position 24\n\nReceived arguments:\n{\"file_path\":\"a.ts\"}{\"command\":\"echo hi\"}",
+            "code": "MALFORMED_RESPONSE"
+          }
+        },
+        "assistant": [],
+        "calls": [],
+        "results": [],
+        "journal": {
+          "events": 2,
+          "counters": {
+            "streams": 2,
+            "fused": 0,
+            "repaired": 0,
+            "unrepaired": 0,
+            "truncated": 0,
+            "errors": 2,
+            "refused": 0,
+            "withdrawn": 0,
+            "resealed": 0,
+            "closed": 0,
+            "diagnoses": 0
+          }
+        },
+        "neighbour_tools": [],
+        "requests": 0,
+        "saw_main_stream": true,
+        "artefact_sha256": {
+          "session": "f39b679e70bef7553441c0ee47a36734949fab3f4a12e720c77128844ae25c7b",
+          "journal": "665de7329a2ca31cd882ea50d1285bdb1ff3dd7993b25e7cc70efe5e318ceb9e",
+          "neighbour": "c8b62da24dae27317746fcdc1db980337fa546d4b632d14fc44b54979aedcc2a"
+        }
+      },
+      "same_new_control": true,
+      "same_old_control": false,
+      "old_owns_fallback": true,
+      "new_owns_fallback": false,
+      "control_has_journal": false
+    }
+  },
+  "claims": {
+    "p0053_a_chunk_whose_arguments_is_not_a_string": "the 0.4.18 bytes ended the turn with \"text.trim is not a function\"; this tree reproduces the neighbour-only outcome",
+    "p0053_a_finish_without_a_reason": "the 0.4.18 bytes ended the turn with \"Cannot read properties of undefined (reading 'kind')\"; this tree reproduces the neighbour-only outcome",
+    "p0053_null_chunk": "identical in all three arms: the host itself reads `type`, so this shape cannot attribute an author",
+    "p0053_block_end_without_a_block": "identical in all three arms: the host itself reads `block.type`, so this shape cannot attribute an author",
+    "p0054_a_fused_fragment": "the 0.4.18 bytes dispatched the repaired fragment under `remedy_unattributed`; this tree abandons the rescue and the turn carries the provider failure",
+    "p0054_a_nameless_block_end": "the 0.4.18 bytes dispatched a nameless call under `remedy_unattributed`; this tree keeps the original bytes and the host answers UNKNOWN_TOOL",
+    "p0033_an_empty_identity_never_reaches_the_session": "without the plugin the host cannot write the tool result (`format v4 tool/result at seq N requires toolCallId matching its tool source`, upstream #11151 / #10732); this tree completes the turn and the call leaves under the fallback name"
+  },
+  "not_proven": [
+    "the shapes are synthesized by a neighbour plugin at the seam, not produced by the pi-ai adapter; the adapter that produces the measured incidents is dsh-llm-deepseek, which this harness does not drive",
+    "the provider is local and synthetic: one text stream per turn, one turn per run",
+    "`null` and a `block-end` with no `block` are non-discriminating here: the host fails with the same message in every arm, so no author can be attributed from the session",
+    "one machine, one profile shape, Windows; the same tree was run on Linux for the build and gates, not for these turns"
+  ],
+  "verdict": {
+    "p0053": "verified — inside a real turn, two shapes the 0.4.18 bytes turned into remedy's own TypeError now reproduce the neighbour-only outcome",
+    "p0054": "verified — inside a real turn, a profile that owns `remedy_unattributed` no longer receives the repaired fragment or the nameless call"
+  },
+  "redaction": {
+    "replacements": 0,
+    "kinds": []
+  }
+}

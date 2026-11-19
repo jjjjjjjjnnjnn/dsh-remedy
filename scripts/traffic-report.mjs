@@ -90,6 +90,10 @@ let clones = null
 let referrers = null
 let releases = null
 let ciRuns = null
+let meta = null
+try {
+  meta = gh(`repos/${REPO}`)
+} catch (error) { fail('repo metadata', error) }
 try {
   views = gh(`repos/${REPO}/traffic/views`)
   clones = gh(`repos/${REPO}/traffic/clones`)
@@ -114,6 +118,10 @@ const report = {
   window: PERIOD,
   npm,
   github: {
+    stars: typeof meta?.stargazers_count === 'number' ? meta.stargazers_count : null,
+    forks: typeof meta?.forks_count === 'number' ? meta.forks_count : null,
+    watchers: typeof meta?.subscribers_count === 'number' ? meta.subscribers_count : null,
+    open_issues: typeof meta?.open_issues_count === 'number' ? meta.open_issues_count : null,
     views: views === null ? 'unreachable' : { count: views.count, unique: views.unique },
     clones: clones === null ? 'unreachable' : { count: cloneCount, unique: clones.unique, ciCloneBaseline, humanish: cloneCount === null ? null : Math.max(0, cloneCount - (ciCloneBaseline ?? 0)) },
     referrers: referrers === null ? 'unreachable' : referrers.slice(0, 10).map((r) => ({ source: r.referrer, views: r.count })),

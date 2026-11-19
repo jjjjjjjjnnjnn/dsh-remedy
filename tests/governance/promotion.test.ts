@@ -74,6 +74,7 @@ test('the repo defers status to the knowledge-base bus', () => {
   assert.ok(play.includes('宣传总线'), 'the playbook must keep the bus boundary')
   assert.ok(reach.includes('不是渠道状态机'), 'the local reach ledger must not claim to be status')
   assert.ok(reddit.includes('kb promo record'), 'real posts must be registered in the bus')
+  assert.ok(read('docs/AGENT-WORKFLOW.md').includes('agent-promotion'), 'posting must be delegated to the KB agent-promotion')
 })
 
 test('daily-reach --json speaks promotion-snapshot/v1 for the bus', async () => {
@@ -106,6 +107,11 @@ test('daily-reach --json speaks promotion-snapshot/v1 for the bus', async () => 
   for (const key of ['github', 'npm', 'catalogue', 'releases', 'social', 'upstream', 'unreachable', 'source'] as const) {
     assert.ok(key in snap, `snapshot is missing ${key}`)
   }
+  assert.ok(snap.social.reddit.length > 0, 'reddit records from PROMOTION.md must reach the bus')
+  assert.ok(
+    (snap.catalogue as Array<{ name?: string }>).some((item) => item.name === 'dsh-remedy'),
+    'docs/market-index.json must reach the bus as catalogue'
+  )
   assert.ok(snap.source.command.includes('daily-reach.mjs --json'))
 })
 

@@ -5,7 +5,7 @@
 > 本文件保留事实卡与历史记录；新的排期、七道门禁与发布台账在总线里，这里不再新增渠道状态。
 
 > 流程、判据与验证见 [PROMOTION-PLAYBOOK.md](PROMOTION-PLAYBOOK.md)。
-> 本文件只放**本项目的**事实卡、渠道状态、草稿与发布记录。
+> 本文件只放**本项目的**事实卡、草稿与本机现场记录。
 > 数字唯一来源是 `docs/copy/facts/public-repo-facts.md`；对外文字必须经 `scripts/copy_record.mjs` 登记。
 
 ## 0. 与本机知识库宣传总线的边界
@@ -55,9 +55,9 @@
 | imsai-sh | PR + 商店 | #928 已合并；商店巡检曾停摆（它的 #19） | 只读复查，不重复提 PR |
 | dshopen | issue | #472 已关闭（收录 0.4.4） | 有新版可回帖，不重开 |
 | AllDSH | issue | #3 仍 open | 等人工审，不刷 |
-| dsh.so | 站上表单 | 条目存在，历史读数写 `0.4.7` | 用 0.4.20 重提（人工/浏览器） |
-| DSH Discussions | Show Your Plugins! | #13206 已发布（0.4.1 时代） | 追加一条 0.4.20 的说明/回帖 |
-| X / Reddit / dev.to | 社交帖 | 待本轮执行 | 见 §3 草稿 |
+| dsh.so | 站上表单 | 已用 `0.4.20` 提交：FORMAT / SECURITY 全 Pass，页面 `✓ Submitted` | 等维护者合并；只读复查，不重复提 |
+| DSH Discussions | Show Your Plugins! | #13206 已追加 `0.4.20` 回帖（[comment](https://github.com/deepseek-ai/deepseek-harness/discussions/13206#discussioncomment-19729583)） | 有新回复时再回 |
+| X / Reddit / dev.to | 社交帖 | X 英/中根帖、Reddit r/SideProject（站级过滤）/r/DeepSeekHarness、dev.to 文章均已发 | 以总线 `ledger/` 为准，不重发 |
 | Hacker News / V2EX | 发帖 | 未发 | 只交事实卡，本人写 |
 | 自动采集（radar / marketplace 等） | topic 扫描 | 等下一次采集 | 不申请 |
 
@@ -97,8 +97,6 @@ dsh-remedy 0.4.20 已发布：在 DSH 的 llm/stream 接缝上拆开已证实的
 |---|---|---|---|---|
 | 2026-11-13 | DSH Discussions | [#13206](https://github.com/deepseek-ai/deepseek-harness/discussions/13206) | 已发布 | 见 distribution 台账 |
 | 2026-11-19 | npm / GitHub | `dsh-remedy@0.4.20` / release `v0.4.20` | `exact_ok` + `latest_ok`、正文逐字节相同 | 已发布 |
-
-本轮新增记录由 `scripts/daily-reach.mjs` 写入 `docs/reach/<date>.md`，人工渠道的回帖与结论写回本表。
 | 2026-11-19 | X / @JJjj1955714 | 英文根帖 + 中文根帖（各一条，中文重复的一条已删除） | profile 读回文本一致 | 已发布 |
 | 2026-11-19 | GitHub social preview | `docs/distribution/social-preview.png`（1280×640，41 543 B） | DOM `repository-images.githubusercontent.com/...`；下载 41 543 B / 1280×640 与本地一致 | 已上传 |
 | 2026-11-19 | dsh.so | npm 通道 `dsh-remedy@0.4.20` | FORMAT VALIDATION Pass、SECURITY SCAN Pass（0 Critical / 0 Warnings / 0 Info、29 files）、`✓ Submitted` | 已提交，等维护者合并 |
@@ -108,4 +106,6 @@ dsh-remedy 0.4.20 已发布：在 DSH 的 llm/stream 接缝上拆开已证实的
 | 2026-11-19 | HN / V2EX | 无 | 平台禁止 AI 生成正文，只交事实卡 | 未发（本人写） |
 | 2026-11-19 | Reddit r/DeepSeekHarness | [文本帖 1y04d7f](https://www.reddit.com/r/DeepSeekHarness/comments/1y04d7f/) | JSON `removed_by_category: null`，正常显示 | 已发布 |
 | 2026-11-19 | Reddit 排期 | `docs/reddit-outreach.md` | 每版定制文案 + 发后 JSON 验证 + 站级过滤不重发 | 队列，逐日最多两版 |
+
+> 本轮新增记录由 `scripts/daily-reach.mjs` 写入 `docs/reach/<date>.md`；人工渠道的回帖与结论写回本表，并在总线 `ledger/` 登记。两处不一致时以总线为准。
 

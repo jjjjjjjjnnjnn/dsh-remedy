@@ -55,7 +55,7 @@ npm view dsh-remedy version
 2. **需要跨项目或跨渠道协调的**：用知识库总线登记——
    - 一般性需求/线索：`kb_create` 合适类型（如 `reference` / `inbox_item`）并写清来源与判据；
    - 明确要有人或其他 Agent 做的：`kb_dispatch`（title / target_agent / deliverables / deadline）；
-   - 宣传相关的发布动作：`kb promo record`，不在这里另开状态表。
+   - 宣传相关的发布动作：`kb promo record`，不在这里另开状态表；需要总线派发时 `target_agent` 用 `agent-promotion`，不要用 `agent-tech`。
 3. **需要人类决定的**：登录/2FA/验证码、HN/V2EX 正文、是否发版，列出事实卡与选项后交本人，
    不替人过验证、不代写平台禁止的 AI 文本。
 4. **不许静默丢弃**：不值得回的评论/想法也要写一句为什么不跟进。
@@ -87,7 +87,9 @@ npm view dsh-remedy version
 
 ---
 
-## 6. 宣传流程（状态在总线，动作在本机）
+## 6. 宣传流程（状态与发帖都在总线，本仓库只供事实）
+
+> 发帖、回帖与 `kb promo record` 只由知识库 `agent-promotion` 执行；本仓库 Agent 不直接发帖、不写 `ledger/`。
 
 1. `kb promo plan dsh-remedy` 决定**今天该发什么**；`done/post/wait/blocked/human` 五态里，
    `human` 只交事实卡，不代写。

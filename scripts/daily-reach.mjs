@@ -81,19 +81,57 @@ const manual = [
 if (process.argv.includes('--json')) {
   const gh = t.github || {}
   const unreachable = [...(t.unreachable ?? [])]
+    .map((item) => String(item).split('\n')[0].slice(0, 160))
   if (d?.error) unreachable.push('devto')
   let pluginVersion = null
   try { pluginVersion = JSON.parse(readFileSync(join(root, 'packages', 'plugin', 'package.json'), 'utf8')).version } catch { pluginVersion = null }
+  const catalogue = (() => {
+    try {
+      const doc = JSON.parse(readFileSync(join(root, 'docs', 'market-index.json'), 'utf8'))
+      return (doc.plugins ?? []).map((plugin) => ({
+        name: plugin.name,
+        version: plugin.versions?.[0]?.version ?? null
+      }))
+    } catch { return [] }
+  })()
+  const reddit = (() => {
+    try {
+      const page = readFileSync(join(root, 'docs', 'PROMOTION.md'), 'utf8')
+      return page.split(/\r?\n/)
+        .filter((line) => line.includes('reddit.com/r/') && line.includes('/comments/'))
+        .map((line) => {
+          const url = (line.match(/https:\/\/www\.reddit\.com\/r\/[A-Za-z0-9_]+\/comments\/[A-Za-z0-9]+\/[^)\s|]*/) || [])[0]
+          if (!url) return null
+          const outcome = /removed_by_category:\s*"reddit"|被过滤|filtered/i.test(line) ? 'filtered'
+            : /removed_by_category:\s*"moderator"|被版主/i.test(line) ? 'removed'
+              : /已发布|正常显示|visible/i.test(line) ? 'visible'
+                : 'recorded'
+          return { url, outcome }
+        })
+        .filter(Boolean)
+    } catch { return [] }
+  })()
+  const x = (() => {
+    try {
+      const page = readFileSync(join(root, 'docs', 'PROMOTION.md'), 'utf8')
+      return page.split(/\r?\n/)
+        .filter((line) => /X \/ @JJjj1955714|https:\/\/x\.com\/JJjj1955714/.test(line))
+        .map((line) => ({
+          account: '@JJjj1955714',
+          outcome: /已发布|posted/i.test(line) ? 'posted' : 'recorded'
+        }))
+    } catch { return [] }
+  })()
   const snapshot = {
     schema: 'promotion-snapshot/v1',
     project_id: 'dsh-remedy',
     generated_at: stamp,
     release: { version: pluginVersion },
     github: {
-      stars: null,
-      forks: null,
-      watchers: null,
-      open_issues: null,
+      stars: gh.stars ?? null,
+      forks: gh.forks ?? null,
+      watchers: gh.watchers ?? null,
+      open_issues: gh.open_issues ?? null,
       views: gh.views === 'unreachable' ? { unavailable: true } : { count: gh.views?.count, uniques: gh.views?.unique, window_days: 14 },
       clones: gh.clones === 'unreachable' ? { unavailable: true } : { count: gh.clones?.count, uniques: gh.clones?.unique, ci: gh.clones?.ciCloneBaseline, humanish: gh.clones?.humanish, window_days: 14 },
       referrers: gh.referrers === 'unreachable' ? [] : gh.referrers
@@ -105,23 +143,12 @@ if (process.argv.includes('--json')) {
       share: p.latestShare?.share ?? null,
       window: t.window
     })),
-    catalogue: [],
+    catalogue,
     releases: gh.releases === 'unreachable' ? [] : gh.releases,
     social: {
       devto: Array.isArray(d) ? d : [],
-      reddit: (() => {
-        try {
-          const page = readFileSync(join(root, 'docs', 'PROMOTION.md'), 'utf8')
-          const rows = [...page.matchAll(/Reddit\s+(?:r\/[A-Za-z0-9_]+[^|]*?)\((https:\/\/www\.reddit\.com\/r\/[A-Za-z0-9_]+\/comments\/[a-z0-9]+\/[^)]*)\)[^|]*\|[^|]*\|[^|]*\|\s*([^\n|]+)/g)]
-          return rows.map((m) => ({ url: m[1], outcome: String(m[2] ?? '').trim() }))
-        } catch { return [] }
-      })(),
-      x: (() => {
-        try {
-          const page = readFileSync(join(root, 'docs', 'PROMOTION.md'), 'utf8')
-          return [...page.matchAll(/\(https:\/\/x\.com\/JJjj1955714\/status\/\d+\)/g)].map((m) => ({ url: m[1] }))
-        } catch { return [] }
-      })(),
+      reddit,
+      x
     },
     upstream: u,
     unreachable,

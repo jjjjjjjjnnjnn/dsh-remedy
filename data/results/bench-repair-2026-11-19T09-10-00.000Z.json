@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/bench_repair_overhead.mjs",
+  "generated_at": "2026-11-19T09:10:00.000Z",
+  "question": "What does the llm/stream repair wrapper cost per chunk, against iterating the same stream without it?",
+  "host": {
+    "node": "v24.15.0",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "method": "createRemedy() from the built plugin, mounted on a minimal context; the control consumes the same async generator without the listener; median of the runs listed per scenario",
+  "scenarios": [
+    {
+      "name": "text: 4000 deltas",
+      "chunks": 4003,
+      "runs": 7,
+      "control_ms_median": 0.79,
+      "wrapped_ms_median": 3.61,
+      "delta_ms": 2.81,
+      "ns_per_chunk": 703
+    },
+    {
+      "name": "tools: 50 calls, 4 KB arguments each",
+      "chunks": 5251,
+      "runs": 3,
+      "control_ms_median": 2.82,
+      "wrapped_ms_median": 11.54,
+      "delta_ms": 8.71,
+      "ns_per_chunk": 1659
+    },
+    {
+      "name": "fusion: one proven repair",
+      "chunks": 6,
+      "runs": 9,
+      "control_ms_median": 0.01,
+      "wrapped_ms_median": 0.14,
+      "delta_ms": 0.13,
+      "ns_per_chunk": 22083
+    }
+  ],
+  "repair": {
+    "repaired": 9,
+    "reason": "the third scenario is a proven fusion, so a wrapper that never ran would show zero here"
+  },
+  "limits": [
+    "one machine and one node build; absolute milliseconds move with the host, the ratio is the claim",
+    "synthetic chunks: real turns spend most of their time waiting on the provider, so this measures the tax, not the turn",
+    "the wrapper is synchronous by contract; a thenable stream re-enters through .then and is not exercised here"
+  ]
+}

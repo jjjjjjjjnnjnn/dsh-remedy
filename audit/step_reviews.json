@@ -1466,7 +1466,26 @@
         "docs/research/negative-feedback-2026-11-19.md",
         "docs/compatibility.md"
       ]
+    },
+    {
+      "id": "S80",
+      "gate": "copy",
+      "title": "Can the evidence-only ledger be released without changing runtime behavior?",
+      "axes": {
+        "correctness": "0.4.20 carries the R70–R75 evidence and the 54-verified ledger. The three manifests were bumped, both packages published with exact_ok + latest_ok, a cold directory installed the published bytes and printed OK 8 fixture(s), both profiles resolved 0.4.20, and a clean desktop turn answered R76-DESKTOP-0420-OK on DSH 0.2.2-rc.5. The repair engine itself is unchanged: the real-MALFORMED replay repaired 39 / rejected 8 / misdispatched 0.",
+        "reproducibility": "publish, install-acceptance, live-desktop, malformed-replay, stress-repair and bench-repair artifacts carry stamps and sha256 sidecars. WSL2 node 24.10.0 reproduced 447 tests / 6 gates / 6-6 / OK 8 and registry.js 61981. The first CDP attempt left debug text in the composer; it was discarded and a new session produced the clean turn that was recorded.",
+        "compliance": "No cap moved, no runtime byte changed, no new patch opened. The fact pack, both first screens, CHANGELOG, the v0.4.20 release notes and the frozen v0.4.19 notes were re-registered through copy_record. Restoring v0.4.19 notes from git after an accidental overwrite kept the frozen record byte-exact.",
+        "ssot": "The version lives in the three manifests and the fact pack; handoff-truth and release-procedure tests were used to drive every live string to 0.4.20. The public release notes are compared byte-for-byte with docs/copy/release-notes/v0.4.20.md. Evidence index names the publish, install and desktop receipts.",
+        "adversarial": "The plugin tarball URL returned 404 from this host for a while after publish; instead of guessing, the artifact cites the registry dist.shasum and the successful cold install. The desktop journal shows cumulative counters from the long-lived process, which record_live_mount reports as journal scope rather than hiding. No macOS host run is claimed."
+      },
+      "evidence": [
+        "data/results/publish-2026-11-19T09-30-00.000Z.json",
+        "data/results/install-acceptance-2026-11-19T09-35-00.000Z.json",
+        "data/results/live-desktop-2026-11-19T10-00-00.000Z.json",
+        "data/results/malformed-replay-2026-11-19T09-00-00.000Z.json",
+        "docs/copy/release-notes/v0.4.20.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-19T08:30:00.000Z"
+  "updated_at": "2026-11-19T10:10:00.000Z"
 }

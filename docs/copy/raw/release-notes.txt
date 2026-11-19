@@ -1,42 +1,49 @@
-## dsh-remedy 0.4.19
+## dsh-remedy 0.4.20
 
 ### Added
 
-- **P-0053 — a chunk this plugin cannot read is passed through, not turned into its own
-  exception.** A neighbouring plugin can hand the `llm/stream` wrapper a `null` chunk, a
-  `block-end` whose `arguments` is not a string, a `block-end` with no `block`, or a
-  `finish` with no `reason`. On the 0.4.18 bytes each of those ended the turn with a
-  `TypeError` raised by this plugin. The wrapper now checks only the fields it reads;
-  on the first foreign chunk it flushes the tail it already holds and then only passes the
-  rest of that stream through. A provider failure that arrives afterwards is still counted
-  as an error.
-- **P-0054 — the fallback name is not borrowed when the profile already owns it.**
-  `remedy_unattributed` is a name this plugin sends a call to when it cannot prove the
-  tool; if `options.tools` already declares that name, a rescue is abandoned whole and the
-  provider's original failure goes back. The same rule now covers the second dispatch
-  site: a `block-end` with no tool name keeps its own bytes instead of borrowing that
-  name.
+- **A build/host witness for every patch that previously had only tests.** The 33 patches
+  that R70–R71 had not advanced are now `verified`. `live-r72-2026-11-19T00-00-00.000Z.json`
+  runs the shipped build, six gates, their mutation control and five CLI commands on one machine,
+  asserts one claim per patch before writing, and records the witness kind beside the row:
+  a green suite, a shipped reader on the real corpus, a governance gate, an isolated `DSH_HOME`
+  probe, or a recorded absence. No resident journal is claimed to have seen them.
+- **A reason for the two absent findings.** `live-absence-2026-11-19T00-00-00.000Z.json`
+  records that `completed_without_answer` and `completed_on_tool_call` are both 0 in the
+  corpus and quotes the host source lines that explain why.
+- **A real desktop turn on DSH 0.2.2-rc.5 after the provider key was replaced.**
+  `live-desktop-2026-11-19T06-15-00.000Z.json` records `R73-DESKTOP-RC5-OK` with
+  `turn/end completed` and verdict `quiet`; a second stability pass
+  (`live-desktop-2026-11-19T08-00-00.000Z.json`) answered `R75-STABILITY-OK`.
+- **Re-verification on the new runtime.** `seam-inventory-2026-11-19T08-05-00.000Z.json`
+  found the same seam topology, and `live-neighbours-rc5-2026-11-19T08-20-00.000Z.json`
+  again matched each hostile-neighbour shape to the plugin-free control while 0.4.18 did not.
+- **External negative-feedback triage.** `docs/research/negative-feedback-2026-11-19.md`
+  collects 57 web queries plus two full articles about DSH compatibility and plugin conflicts;
+  `docs/compatibility.md` cites them as corroboration of the existing conflict detector.
 
 ### Changed
 
-- The `llm/stream` wrapper's contract is now written down in ADR 0002: a stream may only
-  pass through, be repaired where a fusion is proven, or rethrow the provider's failure.
+- All 54 patches are `verified`, in the registry, the ledger, the patch documents and the
+  fact pack. The published 0.4.19 tarball carried 21 `verified` + 33 `tested` on the same
+  runtime bytes.
+- The engine shrank because twelve registry records were compacted to pay for the new
+  evidence paths. No cap moved and the plugin half did not change.
 
 ### Fixed
 
-- Two `TypeError`s that were reachable from a neighbour's shape no longer end a turn.
-- A repaired fragment can no longer be dispatched into a profile tool that happens to be
-  named `remedy_unattributed`.
+- Nothing in runtime behavior changed. This release carries evidence, ledger and public
+  text only; the repair contract from 0.4.19 (pass through / repair a proven fusion / rethrow)
+  is untouched.
 
 ### Package size
 
-- `dsh-remedy@0.4.19`: 36666 bytes compressed, 38 files, 121801 bytes unpacked.
-- `dsh-remedy-core@0.4.19`: 39297 bytes compressed, 29 files, 129673 bytes unpacked.
+- `dsh-remedy@0.4.20`: 36666 bytes compressed, 38 files, 121801 bytes unpacked.
+- `dsh-remedy-core@0.4.20`: 36392 bytes compressed, 29 files, 123830 bytes unpacked.
 
 ### Notes
 
 - 447 tests, 6 gates, 6/6 negative controls, `OK 8 fixture(s)` on Windows and on Linux
-  (WSL2 Ubuntu, node 24.10.0) before the release. The probe's before/after pair is
-  `hostile-neighbours-2026-11-18T10-00-00.000Z.json` and
-  `hostile-neighbours-2026-11-18T11-30-00.000Z.json`. macOS is still a CI job rather than
-  a measured host.
+  (WSL2 Ubuntu, node 24.10.0). A cold directory installed 0.4.20 from the registry and
+  `dsh-remedy verify` printed `OK 8 fixture(s)`. macOS is still a CI job rather than a
+  measured host.

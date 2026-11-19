@@ -3,6 +3,29 @@
 All notable changes to this project are documented here.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.4.20] - 2026-11-19
+
+### Added
+
+- A build/host witness for the 33 patches that previously had only tests; all 54 patches
+  are now `verified` (`live-r72-2026-11-19T00-00-00.000Z.json`).
+- An explanation of why P-0047 and P-0052 have no real case in the corpus
+  (`live-absence-2026-11-19T00-00-00.000Z.json`).
+- A real desktop turn and a stability re-run on DSH 0.2.2-rc.5 after the provider key was
+  replaced, plus a seam re-scan and hostile-neighbour re-verification on the new runtime.
+- External negative-feedback collection and triage, cited from `docs/compatibility.md`.
+
+### Changed
+
+- The engine record was compacted to pay for the new evidence paths: core 97717 / 104000,
+  `registry.js` 61981 / 68000. The plugin account is unchanged at 81589 / 83000.
+- No cap moved; no runtime behavior changed.
+
+### Notes
+
+- 447 tests, 6 gates, 6/6 negative controls, `OK 8 fixture(s)` on Windows and Linux.
+  Cold-directory install of 0.4.20 from the registry passed.
+
 ## [0.4.19] - 2026-11-18
 
 ### Added

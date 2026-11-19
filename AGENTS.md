@@ -1,7 +1,7 @@
 # dsh-remedy AGENTS.md
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
-> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.19`（已发布，两包 `latest`；两个 profile 在 0.4.19 上；桌面 0.4.19 turn 因 provider key 被吊销未做成）
+> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.20`（已发布，两包 `latest`；两个 profile 在 0.4.20 上；桌面 0.4.20 turn 已在 DSH 0.2.2-rc.5 上跑通（R76））
 > **Stand**：R69（2026-11-18，**对读不懂的 chunk 失败开放**）——
 > remedy 只能原样放行 / 修复已证实的粘连 / 原样抛回原来的失败，不再制造第四种结局；
 > P-0053 让四条邻居形状从 `TypeError` 变成原样放行，P-0054 让 profile 已拥有的
@@ -13,9 +13,9 @@
 > **R43 起的主线**是外部反馈 → 稳定补丁：报告只是线索，本机复现后才有补丁；来源与方法见 `docs/research/`。R56 的教训：**接缝名写在补丁里不算数，要在宿主源码里核对接缝真的会被派发**。
 >
 > **基线（2026-11-18）**：`pnpm run verify` = **447 tests / 6 gates**（R69 的树，Windows）；
-> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.19`（latest）+
-> `dsh-remedy-core@0.4.19`（latest）。
-> 公开仓库 CI 绿，release `v0.1.0` … `v0.4.19`。五十四补丁**全部 `verified`、0 `tested`**（R70 升 7 条 `llm/stream`，R71 升 5 条 `cli`，R72 用一份构建/宿主见证升余下 33 条）。
+> `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.20`（latest）+
+> `dsh-remedy-core@0.4.20`（latest）。
+> 公开仓库 CI 绿，release `v0.1.0` … `v0.4.20`。五十四补丁**全部 `verified`、0 `tested`**（R70 升 7 条 `llm/stream`，R71 升 5 条 `cli`，R72 用一份构建/宿主见证升余下 33 条）。
 > **字节余量（下一轮的第一个约束）**：plugin **81 589 / 83 000（1 411 B；CLI 半边 43 B）**、core **97 717 / 104 000（6 283 B）**、
 > registry **61 981 / 68 000（6 019 B —— 三轮都靠压散文付清；新记录仍按 P-0032 先压缩，不抬 cap）**。
 > **平台边界：Windows 与 Linux 实测（同一棵树、同一组数），macOS 未实测**；P-0038 的 `/Users` 形状在 Linux 上是字符串，CI 里有一个 `verify (macos, node 24)` job。

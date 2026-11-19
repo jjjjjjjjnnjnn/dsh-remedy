@@ -9,10 +9,10 @@
 > （修前）/ `hostile-neighbours-2026-11-18T11-30-00.000Z.json`（修后）；决定见 `docs/adr/0002-fail-open-on-foreign-chunks.md`。
 > R68 是接缝盘点（waterfall 顺序、本机 remedy → ops、每 chunk 开销）；R67 是 POSIX 半边；
 > R66 是首屏第三次少一个补丁；R65 是 P-0052；更早的批次见 `docs/HANDOFF.md` 的批次叙事。
-> **接手先读**：`docs/HANDOFF.md` → `docs/research/README.md` → `docs/research/leads.md` → `PROJECT_RULES.md` → `INDEX.md`
+> **接手先读**：`docs/AGENT-WORKFLOW.md`（负责 Agent 的单一入口）→ `docs/HANDOFF.md` → `docs/research/README.md` → `docs/research/leads.md` → `PROJECT_RULES.md` → `INDEX.md`
 > **R43 起的主线**是外部反馈 → 稳定补丁：报告只是线索，本机复现后才有补丁；来源与方法见 `docs/research/`。R56 的教训：**接缝名写在补丁里不算数，要在宿主源码里核对接缝真的会被派发**。
 >
-> **基线（2026-11-18）**：`pnpm run verify` = **453 tests / 6 gates**（含 R77/R78 的六条推广治理测试，Windows）；
+> **基线（2026-11-18）**：`pnpm run verify` = **454 tests / 6 gates**（含 R77/R78/R79 的七条推广治理测试，Windows）；
 > `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.20`（latest）+
 > `dsh-remedy-core@0.4.20`（latest）。
 > 公开仓库 CI 绿，release `v0.1.0` … `v0.4.20`。五十四补丁**全部 `verified`、0 `tested`**（R70 升 7 条 `llm/stream`，R71 升 5 条 `cli`，R72 用一份构建/宿主见证升余下 33 条）。

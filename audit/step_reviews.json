@@ -1526,7 +1526,26 @@
         "docs/reddit-outreach.md",
         "tests/governance/promotion.test.ts"
       ]
+    },
+    {
+      "id": "S83",
+      "gate": "step-review",
+      "title": "Can one workflow document reduce information gap without duplicating the rules?",
+      "axes": {
+        "correctness": "AGENT-WORKFLOW.md only navigates and orders; hard rules stay in PROJECT_RULES, details stay in topical docs. The ownership table names one source per topic, including the KB bus for promotion state and the repo for patches/facts/evidence.",
+        "reproducibility": "The entry starts with the four green-check commands already used every session. A new governance test checks the doc exists and is linked from AGENTS, INDEX, playbook, reach README and rules.",
+        "compliance": "No runtime byte, cap, version or release changed. Needs/ideas cannot vanish: they go to repo changes, KB create/dispatch, or a human decision with a fact card. Human-only platforms remain human-only.",
+        "ssot": "Promotion state stays in the KB bus; the new doc points at it rather than restating channel status. The full-file map prevents a second handoff or second status table from appearing.",
+        "adversarial": "A workflow doc that copies all rules would drift from the real gates, so it deliberately links instead. A need that cannot be placed in any of the three destinations must be escalated, not silently dropped."
+      },
+      "evidence": [
+        "docs/AGENT-WORKFLOW.md",
+        "PROJECT_RULES.md",
+        "AGENTS.md",
+        "INDEX.md",
+        "tests/governance/promotion.test.ts"
+      ]
     }
   ],
-  "updated_at": "2026-11-19T08:45:00.000Z"
+  "updated_at": "2026-11-19T09:00:00.000Z"
 }

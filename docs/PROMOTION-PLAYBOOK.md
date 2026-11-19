@@ -6,6 +6,7 @@
 > 适用：本地优先的开发者工具、桌面工具、CLI、插件。本文只写**流程、判据和验证方法**。
 > 换项目时整份复制，只替换「事实卡」和链接；数字必须从该项目的代码/构建现场取，不能沿用本文。
 >
+> 负责 Agent 的单一入口在 [AGENT-WORKFLOW.md](AGENT-WORKFLOW.md)；
 > 本项目的具体文案与发布记录在 [PROMOTION.md](PROMOTION.md)；分发渠道台账在 [distribution/README.md](distribution/README.md)；
 > 每日触达读数在 [reach/README.md](reach/README.md)。本项目的唯一数字来源是
 > `docs/copy/facts/public-repo-facts.md`，对外文字必须经 `scripts/copy_record.mjs` 登记。

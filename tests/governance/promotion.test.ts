@@ -108,3 +108,21 @@ test('daily-reach --json speaks promotion-snapshot/v1 for the bus', async () => 
   }
   assert.ok(snap.source.command.includes('daily-reach.mjs --json'))
 })
+
+test('the single-entry agent workflow is wired through the file chain', () => {
+  const flow = read('docs/AGENT-WORKFLOW.md')
+  const rules = read('PROJECT_RULES.md')
+  const agents = read('AGENTS.md')
+  const play = read('docs/PROMOTION-PLAYBOOK.md')
+  const reach = read('docs/reach/README.md')
+  const index = read('INDEX.md')
+  assert.ok(flow.includes('开工第一屏'), 'the workflow must start with the green-check commands')
+  assert.ok(flow.includes('需求与想法'), 'the workflow must own the agent needs/ideas protocol')
+  assert.ok(flow.includes('知识库 Promotion Bus'), 'the workflow must name the KB bus as promotion state machine')
+  assert.ok(flow.includes('发版流程'), 'the workflow must include the release chain')
+  assert.ok(rules.includes('## 9. 工作流与需求入口'), 'PROJECT_RULES must carry the workflow rule')
+  assert.ok(agents.includes('docs/AGENT-WORKFLOW.md'), 'AGENTS.md must point at the entry')
+  assert.ok(play.includes('AGENT-WORKFLOW.md'), 'the playbook must point at the entry')
+  assert.ok(reach.includes('docs/AGENT-WORKFLOW.md'), 'the reach ledger must point at the entry')
+  assert.ok(index.includes('docs/AGENT-WORKFLOW.md'), 'INDEX must list the entry')
+})

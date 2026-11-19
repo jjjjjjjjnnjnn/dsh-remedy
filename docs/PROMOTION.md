@@ -10,6 +10,8 @@
 
 ## 0. 与本机知识库宣传总线的边界
 
+负责 Agent 的完整工作顺序见 `docs/AGENT-WORKFLOW.md`；本节只讲宣传状态的归属。
+
 **唯一宣传状态机在** `C:\Users\rongj\Desktop\本地知识库\知识库内容\Promotion`（知识库宣传总线）。
 本仓库只负责两件事：**提供事实与读数**（`docs/copy/facts/` 与 `scripts/daily-reach.mjs --json`），
 以及**记录本机实际动作**（`docs/reach/` 是 signal，不是第二份渠道状态）。

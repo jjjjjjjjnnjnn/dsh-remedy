@@ -1,6 +1,6 @@
 # P-0038 — A platform is not a defect, but the redaction was written for one platform
 
-**Status**: `tested`  **Severity**: `major`  **Surface**: `scripts` + `core/redact.ts`  **Depends on**: P-0004, P-0028
+**Status**: `verified`  **Severity**: `major`  **Surface**: `scripts` + `core/redact.ts`  **Depends on**: P-0004, P-0028
 
 ## Symptom
 
@@ -117,3 +117,7 @@ The two probes that measured the macOS-shaped homes were one-off and are not shi
 their readings — 5 of 8 shapes leaked before, 0 after — became the six cases in
 `tests/unit/redact-platform.test.ts`. The `/Users` bytes themselves were not produced on
 a Mac here (see the platform boundary and P-0048).
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

@@ -1,6 +1,6 @@
 # P-0043 — The guard that protects a fixture could not see the fixture's shape, and 0.4.13 shipped the account name
 
-**Status**: `tested`  **Severity**: `major`  **Surface**: `scripts`  **Depends on**: P-0028, P-0038
+**Status**: `verified`  **Severity**: `major`  **Surface**: `scripts`  **Depends on**: P-0028, P-0038
 
 ## Symptom
 
@@ -101,3 +101,7 @@ The pre-fix pack is the published 0.4.13 tarball, so a reader with network can s
 it; the guard itself is the test above, which walks every tracked result artifact for the
 account this machine runs as. The one-off script that first demonstrated the red is not
 shipped.
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

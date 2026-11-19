@@ -1,6 +1,6 @@
 # P-0021 — The package advertised a subpath that never had a module
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0017
+**Status**: `verified`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0017
 
 ## Symptom
 
@@ -65,7 +65,7 @@ filesystem check.
 - It does not verify that an exported subpath is documented, or that a documented
   subpath is exported. Only `packages/*/README.md` prose is guarded (P-0017), and
   it mentions no subpath.
-- No live artifact is possible: this is a manifest, not a resident seam.
+- No resident-journal artifact is possible (see R72 witness): this is a manifest, not a resident seam.
 
 ## Reproduction
 
@@ -75,3 +75,7 @@ npm view dsh-remedy@0.4.0 exports --json            # before this release: ./ret
 npm pack dsh-remedy@0.3.8                                  # the published pre-fix tarball
 tar -tzf dsh-remedy-0.3.8.tgz | grep -c retry-listener   # 0
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

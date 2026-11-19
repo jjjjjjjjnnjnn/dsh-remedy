@@ -1,6 +1,6 @@
 # P-0017 — The two pages npm renders had no mechanism at all
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0014
+**Status**: `verified`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0014
 
 ## Symptom
 
@@ -64,7 +64,7 @@ pinned by P-0014).
   generalises it.
 - The engine page is held to the weaker half only (no prose numbers, no CLI block),
   because it documents a library rather than a command.
-- No live artifact is possible: these are package pages, not a resident seam.
+- No resident-journal artifact is possible (see R72 witness): these are package pages, not a resident seam.
 
 ## Reproduction
 
@@ -73,3 +73,7 @@ node --test tests/governance/package-readme-prose.test.ts    # green
 node --test tests/unit/cli-usage.test.ts                     # the block equality from P-0014
 node --input-type=module -e "import {proseNumbers} from './scripts/lib/copy-policy.mjs'; console.log(proseNumbers('...'))"
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

@@ -1,6 +1,6 @@
 # P-0012 — One byte cap for two load paths is a cap that taxes the wrong half
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0008
+**Status**: `verified`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0008
 
 ## Symptom
 
@@ -91,3 +91,7 @@ node scripts/gate_size.mjs --mutate       # residency, cli and total all caught
 node --test tests/governance/budget-split.test.ts
 grep -n 'approved_by' scripts/lib/budgets.mjs
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

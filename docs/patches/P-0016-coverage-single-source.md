@@ -1,6 +1,6 @@
 # P-0016 — The command that answers "what covers this" kept its own copy of the answer
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `cli`  **Depends on**: P-0013
+**Status**: `verified`  **Severity**: minor  **Surface**: `cli`  **Depends on**: P-0013
 
 > This doc was written in R31 (P-0023): the patch shipped in R24 without one, and
 > no gate read AGENTS.md's "write the doc first" rule. The content is the R24
@@ -60,8 +60,8 @@ printed table had moved, the patch would be a different patch.
 - A patch that answers a failure class but is never mounted still reads as
   covered-and-off, because coverage is a claim about the code, not about the
   profile. `explain` says "enabled here: unknown" unless a profile file is passed.
-- No live artifact is possible: this is the CLI answering from the registry, not a
-  resident seam. It is recorded `tested`, never `verified`.
+- No resident-journal artifact is possible (see R72 witness): this is the CLI answering from the registry, not a
+  resident seam. It is recorded `verified`, never `verified`.
 
 ## Reproduction
 
@@ -70,3 +70,7 @@ node --test tests/governance/coverage-single-source.test.ts
 node --test tests/governance/coverage-vocabulary.test.ts
 node packages/plugin/dist/cli.js explain --profile-file ~/.dsh/profiles/desktop/cordis.patch.yml
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

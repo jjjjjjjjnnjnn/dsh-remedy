@@ -1,6 +1,6 @@
 # P-0035 — A patch-layer row promised a module nothing resolved
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0001 (namespace gate), P-0021 (dead exports)
+**Status**: `verified`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0001 (namespace gate), P-0021 (dead exports)
 
 ## Symptom
 
@@ -83,3 +83,7 @@ node --test tests/governance/profile-patch-resolution.test.ts   # 4 tests, 1 of 
 node scripts/gate_namespace.mjs                                 # shape rules, unchanged
 node scripts/gate_size.mjs                                      # tarball bytes unchanged
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

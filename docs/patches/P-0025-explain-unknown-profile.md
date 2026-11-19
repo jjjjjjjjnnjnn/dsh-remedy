@@ -1,6 +1,6 @@
 # P-0025 — An unread profile was reported as a finding
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `cli`  **Depends on**: P-0016
+**Status**: `verified`  **Severity**: minor  **Surface**: `cli`  **Depends on**: P-0016
 
 ## Symptom
 
@@ -84,8 +84,8 @@ twice; the emitted CLI half settled at **41362 / 42000** and the total at
 - Exit `0` without a profile means *nothing was found*, not *nothing is wrong*. A
   script that wants the old strictness must pass `--profile-file`.
 - Only the row text is tested, not the column widths.
-- No live artifact is possible: this is the CLI answering from the registry and an
-  optional file, not a resident seam. It stays `tested`.
+- No resident-journal artifact is possible (see R72 witness): this is the CLI answering from the registry and an
+  optional file, not a resident seam. It stays `verified`.
 
 ## Reproduction
 
@@ -97,3 +97,7 @@ node packages/plugin/dist/cli.js explain --sessions ~/.dsh/sessions \
   --profile-file ~/.dsh/profiles/desktop/cordis.patch.yml
   # exit 0, column names P-0001,P-0002,P-0003,P-0005
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

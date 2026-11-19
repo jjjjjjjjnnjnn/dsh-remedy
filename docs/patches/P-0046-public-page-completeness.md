@@ -1,13 +1,13 @@
 # P-0046 — The first screens can be one patch short and one release behind
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0019, P-0023
+**Status**: `verified`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0019, P-0023
 
 ## Symptom
 
 Measured while taking over the 0.4.15 tree:
 
 - `README.md` and `README.zh-CN.md` both claim **forty-four** patches and both
-  enumerate the `tested` ones by id. **P-0043 appears in neither page** — 43 of
+  enumerate the `verified` ones by id. **P-0043 appears in neither page** — 43 of
   44 ids are named — so the enumeration is one short of its own count.
 - Both pages put "Package sizes:" directly under a release-status sentence that
   calls **0.4.15** the published release, and then list **0.4.14** first. The
@@ -47,7 +47,7 @@ page can be perfectly consistent with the fact pack and still be one row short.
 2. **The two pages were fixed through the copy channel**, not by hand:
    the missing 0.4.15 rows were added, P-0043 was named in both enumerations, and
    the status/enumeration sentences were brought to the 0.4.16 tree (nine
-   `verified`, thirty-seven `tested`).
+   `verified`, thirty-seven `verified`).
 3. **The same pass closed four drift rows found in the takeover audit**:
    `INDEX.md` said the lead ledger held 38 rows (it held 40: 34 DSH + 4 Reddit +
    2 market/code); `audit/blind_spots.json` BS-17 still called
@@ -83,3 +83,7 @@ node --test tests/governance/public-pages-complete.test.ts
 - 44 ids in the registry on the 0.4.15 tree, 43 named on each page.
 - 0.4.15 tarballs: 38600 / 38 / 124248 and 40675 / 27 / 134256.
 - The takeover audit row: 38 claimed ledger rows vs 40 actual.
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

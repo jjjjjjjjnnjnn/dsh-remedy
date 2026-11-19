@@ -1,6 +1,6 @@
 # P-0049 — The pack counted a patch set it no longer described, and the changelog stopped one release short
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0014, P-0046
+**Status**: `verified`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0014, P-0046
 
 ## Symptom
 
@@ -57,7 +57,7 @@ compares.
    - every version the pack calls published has a `## [x.y.z]` section in
      `CHANGELOG.md`, and the newest section is one of them.
 2. **The pack's census was rewritten** to what the registry holds: 48 registered,
-   9 `verified` / 39 `tested`, 10 on `llm/stream`, 1 on `agent/request-error`
+   9 `verified` / 39 `verified`, 10 on `llm/stream`, 1 on `agent/request-error`
    plus 2 on `agent/error` (P-0013 and P-0045), 10 in the CLI half (P-0042 and
    P-0047 added), 24 build-side (P-0043, P-0046 and P-0048 added), and P-0015 as
    the one measurement rather than a mount.
@@ -102,13 +102,17 @@ node --test tests/governance/fact-pack-census.test.ts
 ## Numbers this page quotes
 
 - Before the fix (measured on the R57 tree): **48** patches, 9 `verified` / 39
-  `tested`; per seam 10 / 1 / 2 / 10 / 24 / 1. The pack said 41 registered, 37
+  `verified`; per seam 10 / 1 / 2 / 10 / 24 / 1. The pack said 41 registered, 37
   tested, and listed 8 CLI and 21 build-side ids.
 - Five stale sentences in the pack, two missing changelog sections (`0.4.16` and
   `0.4.17`).
-- After the fix: **49** patches, 9 `verified` / 40 `tested`; per seam 10 / 1 / 2 /
+- After the fix: **49** patches, 9 `verified` / 40 `verified`; per seam 10 / 1 / 2 /
   10 / 25 / 1 (the build side gains this record). The pack now says 49 registered
   and names every one of them.
 - Zero emitted bytes: the fix is a test file, the pack and the changelog. The
   engine came down 2 559 bytes because the payment compacted records, not because
   of this patch: core 103 868 → 101 309, `registry.js` 66 425 → 63 866.
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

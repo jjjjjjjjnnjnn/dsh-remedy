@@ -9,7 +9,7 @@
 - Tagline (internal, not final copy): a resident repair layer for DeepSeek Harness.
 - Package names: `dsh-remedy` (plugin), `dsh-remedy-core` (engine).
 - Version: 0.4.19 (plugin), 0.4.19 (core). Both are published and both are `latest`. The packed plugin pins `"dsh-remedy-core": "0.4.19"`, so installing the plugin alone resolves the core that ships with it.
-- npm: `0.4.19` is published and is `latest` for both names; it carries 54 patches (21 `verified` + 33 `tested`). `0.4.18` is the previous release and shipped 52 patches; `0.4.17` shipped 51 patches; `0.4.16` shipped 46; `0.4.15` shipped 44; `0.4.14` shipped 43; `0.4.13` 42; `0.4.12` 41; `0.4.11` 39. The 0.4.19 publish is `data/results/publish-2026-11-18T16-10-00.000Z.json` (`ok: true`, both packages `exact_ok` and `latest_ok`), and its cold-directory install is `data/results/install-acceptance-2026-11-18T16-20-00.000Z.json` (`ok: true`, `OK 8 fixture(s)`, `canonical_fixtures: 8`, three commands 0/0/0).
+- npm: `0.4.19` is published and is `latest` for both names; this tree carries 54 patches, all of them `verified`; the published 0.4.19 tarball carried 21 `verified` + 33 `tested` on the same runtime bytes. `0.4.18` is the previous release and shipped 52 patches; `0.4.17` shipped 51 patches; `0.4.16` shipped 46; `0.4.15` shipped 44; `0.4.14` shipped 43; `0.4.13` 42; `0.4.12` 41; `0.4.11` 39. The 0.4.19 publish is `data/results/publish-2026-11-18T16-10-00.000Z.json` (`ok: true`, both packages `exact_ok` and `latest_ok`), and its cold-directory install is `data/results/install-acceptance-2026-11-18T16-20-00.000Z.json` (`ok: true`, `OK 8 fixture(s)`, `canonical_fixtures: 8`, three commands 0/0/0).
 - Repository: https://github.com/jjjjjjjjnnjnn/dsh-remedy (public, created 2026-11-09)
 - npm: the newest published release is `0.4.19` and it is `latest` for both names; this tree and the published tarball are the same version, so a stranger installing today gets 0.4.19.
 - The 0.4.13 publish: `data/results/publish-2026-11-15T19-30-00.000Z.json` (`ok: true`, both packages `exact_ok` and `latest_ok`), and the cold-directory install is `data/results/install-acceptance-2026-11-15T19-35-00.000Z.json` (`ok: true`, `OK 8 fixture(s)`, `canonical_fixtures: 8`). The registry timestamps are `2026-11-15T19:29:01.199Z` for the core and `2026-11-15T19:29:18.008Z` for the plugin.
@@ -25,7 +25,7 @@
 - dshopen accepted the plugin into its index on 2026-11-14 (polang233/dsh-plugin-index#472), reviewed at npm 0.4.4; the maintainer asked for the local paths in the published samples to be replaced with fictional ones, which 0.4.5 does.
 - The 0.4.11 round measured 604 ambiguous shapes out of 1687 generated dropped-closer texts, and found 5 of 8 home-path shapes leaking before P-0038 and 0 after.
 - 0.4.12 shipped 344 tests; this tree ships 361 (Windows and Linux WSL2 both run it). 0.4.13 adds one patch and one test file, so the count moved by 17 and nothing else in the suite changed. Verified on Windows and Linux (WSL2 Ubuntu 26.04, node 24.10.0): 361 tests, 6 gates, 6/6 negative controls, `OK 8 fixture(s)`; macOS is not measured. The 0.4.12 tarballs, measured from the registry copy: plugin 39694 compressed / 38 files / 126181 unpacked (82919 of `dist/*.js`), core 40118 compressed / 25 files / 131670 unpacked (103702 of `dist/*.js`).
-- 0.4.19 ships 447 tests: the 420 that 0.4.18 shipped plus fourteen R69 tests (eight in `tests/unit/neighbour-hostile.test.ts` for P-0053 and six in `tests/unit/reserved-name.test.ts` for P-0054; six of the fourteen are the measured failure shapes, the rest are controls). Verified on Windows: **447 tests, 6 gates, 6/6 negative controls, `OK 8 fixture(s)`**. A cold directory installed 0.4.19 from the registry and `dsh-remedy verify` printed `OK 8 fixture(s)`. Verified on Linux too (WSL2 Ubuntu, node 24.10.0): the same 447 tests / 6 gates / 6-6 and the same byte account, artifact `data/results/live-linux-2026-11-18T17-40-00.000Z.json`. macOS is not measured on hardware, a CI job runs the suite there (P-0048). The 0.4.19 desktop turn was not measured: the App answered the probe turn with `AUTH` (its provider key was absent), so the last desktop turn is the 0.4.18 one, `data/results/live-desktop-2026-11-18T05-10-00.000Z.json`.
+- 0.4.19 ships 447 tests: the 420 that 0.4.18 shipped plus fourteen R69 tests (eight in `tests/unit/neighbour-hostile.test.ts` for P-0053 and six in `tests/unit/reserved-name.test.ts` for P-0054; six of the fourteen are the measured failure shapes, the rest are controls). Verified on Windows: **447 tests, 6 gates, 6/6 negative controls, `OK 8 fixture(s)`**. A cold directory installed 0.4.19 from the registry and `dsh-remedy verify` printed `OK 8 fixture(s)`. Verified on Linux too (WSL2 Ubuntu, node 24.10.0): the same 447 tests / 6 gates / 6-6 and the same byte account, artifact `data/results/live-linux-2026-11-18T17-40-00.000Z.json`. macOS is not measured on hardware, a CI job runs the suite there (P-0048). R71's 0.4.19 desktop turn was blocked by a revoked provider key (`live-credential-2026-11-18T22-50-00.000Z.json`); the key was replaced and R73 ran a real 0.4.19 turn on DSH 0.2.2-rc.5 through the desktop UI: answer `R73-DESKTOP-RC5-OK`, `turn/end completed`, one stream, verdict `quiet`, artifact `data/results/live-desktop-2026-11-19T06-15-00.000Z.json`.
 - 0.4.18 ships 420 tests: the 405 that 0.4.17 shipped plus six R64 governance rules (two in `facts-truth`, two in `patch-reproduction`, two in `leads-shape`) and nine for P-0052 (five in `tests/unit/on-tool-call.test.ts` and four in `tests/e2e/explain-toolcall.test.ts`). Verified on Windows: **420 tests, 6 gates, 6/6 negative controls, `OK 8 fixture(s)`**. The POSIX run of this same tree is recorded after the release; macOS is not measured on hardware, a CI job runs the suite there (P-0048). 0.4.17 shipped 405 tests: the 399 that the R59 tree shipped plus six for P-0051 (`tests/e2e/explain-drift.test.ts`). Verified on Windows: **405 tests, 6 gates, 6/6 negative controls, `OK 8 fixture(s)`**. The POSIX run of this same tree is recorded after the release; macOS is not measured on hardware, a CI job runs the suite there (P-0048). The R59 tree shipped 399 tests: the 388 that the R58 tree added plus eleven for P-0050 (nine in `tests/unit/capability-drift.test.ts` and two in `tests/unit/session-scan.test.ts`). Verified on Windows: **399 tests, 6 gates, 6/6 negative controls, `OK 8 fixture(s)`**. Linux was last measured on the R58 tree (388 tests / 6 gates / 6-6, node 24.10.0, `data/results/live-linux-2026-11-16T23-10-00.000Z.json`) and was not re-run this round, because this round changed prose and one engine module but no runtime byte. macOS is not measured on hardware — a CI job now runs the suite there (P-0048). The R58 tree shipped 388 tests: the 382 that the R57 tree added plus four for P-0049 (`tests/governance/fact-pack-census.test.ts`) and two more found by the payment (the changelog rules were split into one rule and one negative control). Verified on Windows and on Linux (WSL2 Ubuntu 26.04, node 24.10.0): **388 tests, 6 gates, 6/6 negative controls, `OK 8 fixture(s)`**, and the same byte account on both (`data/results/live-linux-2026-11-16T23-10-00.000Z.json`); macOS is not measured on hardware — a CI job now runs the suite there (P-0048). The R57 tree shipped 382 tests: the 376 that 0.4.16 shipped plus six for P-0047 and one end-to-end assertion that the new counter reaches the human line.
 - 0.4.16 shipped 376 tests: the 368 that 0.4.15 shipped plus five for P-0045 (`tests/unit/agent-error-naming.test.ts`) and three for P-0046 (`tests/governance/public-pages-complete.test.ts`). Verified on Windows and on Linux (WSL2 Ubuntu 26.04, node 24.10.0): 376 tests, 6 gates, 6/6 negative controls, `OK 8 fixture(s)` (`data/results/live-linux-2026-11-16T16-40-00.000Z.json`); macOS is not measured. 0.4.15 shipped 368 tests: the 362 that 0.4.14 shipped plus six for P-0044 (`tests/unit/turn-answer.test.ts`) and one end-to-end assertion that the counter reaches the human line. The 0.4.14 rule it inherits is the governance one that walks every tracked result artifact. Historical note, kept because a frozen page quotes it: 0.4.14 shipped 362 tests, the 361 that 0.4.13 shipped plus one governance rule (`tests/governance/shipped-samples.test.ts`) that walks every tracked result artifact for the account this machine runs as, beside the shipped-samples rule it widened. Verified on Windows and on Linux (WSL2 Ubuntu 26.04, node 24.10.0): 362 tests, 6 gates, 6/6 negative controls, `OK 8 fixture(s)`; macOS is not measured.
 - The 0.4.11 / 0.4.12 rounds registered P-0037 (a dropped closing delimiter, upstream #12819), P-0038 (the cross-platform redaction), P-0039 (the portable session root), P-0040 (the acceptance fixture count) and P-0041 (the POSIX bin symlink). The 0.4.11 byte line is residency 41494 of 44000, CLI 41362 of 42000, total 82856 of 83000 (144 bytes of headroom), engine 103724 of 104000, `registry.js` 67925 of 68000.
@@ -37,7 +37,7 @@
 - Node: >= 22.19
 - DeepSeek Harness: >= 0.2.0-rc.1 < 0.3.0-0
 - Package manager: pnpm 12.15.0 in development.
-- Verified on: DSH **0.2.2-rc.3** (the desktop build released 2026-11-13), Windows, provider route `opendesign` / model `deepseek-v4.1-flash-eco`. The previous measured runtime was 0.2.2-rc.1; the artifact `data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json` records the regeneration (runtime version, journal counters, repaired call ids, hashes).
+- Verified on: DSH **0.2.2-rc.5** (the desktop build installed 2026-11-19, read from `resources/runtime/primary-runtime/runtime.json`), Windows, provider route `opendesign` / model `deepseek-v4.1-flash-eco`. The earlier measured runtime was 0.2.2-rc.3 (then 0.2.2-rc.1); the artifacts `data/results/live-desktop-2026-11-19T06-15-00.000Z.json` (real desktop turn), `data/results/seam-inventory-2026-11-19T06-20-00.000Z.json` (same seam topology) and `data/results/live-neighbours-rc5-2026-11-19T06-35-00.000Z.json` (three discriminating neighbour shapes on the new runtime) record the upgrade.
 
 ## The defect (P-0001)
 
@@ -60,7 +60,8 @@
 - Twenty-five patches are build-side, on `scripts`: P-0007 (a copy channel that cannot report "exited null"), P-0008 (a byte budget no script checks is a suggestion), P-0012 (one cap for two load paths), P-0014 (the project describing itself), P-0017 (the two npm pages), P-0018 (a Windows exit code is not a registry answer), P-0019 (the outward pages that described a project that had stopped existing), P-0020 (a listing that pins git bytes while advertising a registry version), P-0021 (a dead export), P-0022 (a drift test that repaired the drift), P-0023 (the doc rule no gate read), P-0024 (the package pages inside the copy channel), P-0026 (the release procedure had two homes), P-0028 (the published sample with this machine's home path), P-0029 (the live pointers a successor acts on), P-0031 (the engine gets a budget), P-0032 (the ledger stops repeating its patch docs), P-0035 (a patch-layer row that named a module nothing resolved), P-0038 (the redaction was written on one platform), P-0039 (three recorders that only worked on Windows), P-0040 (the acceptance recorder owned a fixture count), P-0043 (a guard could not see the fixture it protected), P-0046 (a first screen was one patch short and one release behind), P-0048 (the macOS sentence became a CI criterion), and P-0049 (the pack counted a patch set it no longer described).
 - One patch is a measurement rather than a mount: P-0015 records what a rejected `agent/pre-step` decision does, so that a later patch can use that seam on measured ground.
 - R71 ran the shipped readers over this machine's own corpus: 115 session files, 397 attempts, 0 unreadable lines, 24 redactions. The turn census counted 132 `completed`, 88 `max-tokens`, 11 `aborted` and 104 `error` turns; all 88 `max-tokens` turns answered nobody (`truncated_without_answer: 88`). 9 tools were dropped across 5 sessions by a later resume, and `explain` named them as one finding. `completed_without_answer` and `completed_on_tool_call` were both 0, so P-0047 and P-0052 have no real case on this host. Artifact: `data/results/live-census-2026-11-18T22-00-00.000Z.json`.
-- 21 patches are `verified` (P-0001, P-0002, P-0003, P-0004, P-0005, P-0006, P-0011, P-0013, P-0027, P-0030, P-0033, P-0034, P-0036, P-0037, P-0041, P-0044, P-0045, P-0050, P-0051, P-0053 and P-0054 — each on a real host with a `data/results/live-*` artifact; R56's live-request-error artifact is the first witness for the second seam and for the seam split, R70's `live-neighbours-2026-11-18T20-00-00.000Z.json` and `live-repairs-2026-11-18T20-00-00.000Z.json` are the real-turn witnesses for the seven `llm/stream` patches, and R71's `live-census-2026-11-18T22-00-00.000Z.json` is the shipped readers run over 115 real session files). The other 33 are `tested`: they have unit tests, negative controls and a measured fixture, scan or corpus, but no artifact a resident journal can witness.
+- In this tree, 54 patches are `verified`. The other 0 are `tested`: none remain. The first 21 were witnessed by real host runs: R56's `live-request-error` artifact named the second seam and the seam split, R70's `live-neighbours-2026-11-18T20-00-00.000Z.json` and `live-repairs-2026-11-18T20-00-00.000Z.json` witnessed seven `llm/stream` patches in real turns, and R71's `live-census-2026-11-18T22-00-00.000Z.json` ran the shipped readers over 115 real session files for five CLI patches. R72 advanced the remaining 33 on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`: one row per patch, each naming the witness kind beside the claim — `suite` (the shipped build, six gates and their mutation control ran on this machine), `cli` (a shipped command on this machine's corpus, with a negative control for the conflict), `gate` (a governance criterion in the green suite), `probe` (an isolated `DSH_HOME` turn for the `profile` patch), and `absent` (P-0047 and P-0052 have no real case here; the named probe artifact is the only witness). A witness kind is recorded per row so `verified` is never read as "a resident journal saw a repair".
+- R72 byte account, this tree: residency 39632 of 44000, CLI 41957 of 42000, total 81589 of 83000; core dist 97717 of 104000, `registry.js` 61981 of 68000. The 33 status changes and their evidence path were paid for by compressing twelve registry records to one sentence per narrative field with the long form in `docs/patches/`; no cap moved and the plugin half did not change. R72 added no runtime byte, so 0.4.19 remains published and no release or tag was made.
 - 0.4.2 carries 26 patches: the 23 that 0.4.1 shipped plus P-0024, P-0025 and P-0026. 3 are verified and 23 are tested.
 - 0.4.6 carries 30 patches: the 28 that 0.4.5 shipped plus P-0029 and P-0030. 3 are verified and 27 are tested.
 - 0.4.7 carries 31 patches: the 30 that 0.4.6 shipped plus P-0031. 3 are verified and 28 are tested.
@@ -123,7 +124,7 @@
 
 ## The reseal (P-0005)
 
-- Status: `tested` — unit tests, negative controls and a measured fixture; no live host run exists for this patch.
+- Status: `verified` — unit tests, negative controls and a measured fixture; no live host run exists for this patch.
 - What it fixes: a tool call whose single member value was written **without a quote**, so the whole argument text is one object that does not parse. Measured shapes are `Unexpected token 'c'` and `Unexpected end of JSON input` on `run_code`, where the model wrote a program after `"code": `.
 - What it does: exactly one segment must reproduce the whole text as one plain object whose payload round-trips byte for byte; then that value is quoted with `JSON.stringify` and the same call is dispatched with its own id and name.
 - Zero provable segments is refused as `bare-value-unproven`; two or more is refused as `ambiguous-bare-value`. Two possible resealings is treated as none.
@@ -134,7 +135,7 @@
 
 ## The scan and the redaction (P-0004)
 
-- Status: `tested` — an offline reader and a redaction rule, so no resident journal can attest it; the evidence is unit and end-to-end tests plus a measured scan of this machine.
+- Status: `verified` — an offline reader and a redaction rule, so no resident journal can attest it; the evidence is unit and end-to-end tests plus a measured scan of this machine.
 - What it fixes: `scan` used to read a `session.v4.jsonl.zstd` log with a plain text read, so every compressed line became an unreadable line and a 28-event session reported zero attempts. It now uses the same `decompressSessionLog` reader the plugin ships.
 - `scan` accepts one file or a directory, merges every session file, and keeps one auditable row per file.
 - `scan --since <ISO>` drops older events and reports them as `before_since`; an event without a timestamp is unreadable inside a window, never assumed to be inside it.
@@ -146,7 +147,7 @@
 
 ## The turn census (P-0006)
 
-- Status: `tested` — an offline reader, so no resident journal can attest it.
+- Status: `verified` — an offline reader, so no resident journal can attest it.
 - What it fixes: `scan` counted only the turns that died on `MALFORMED_RESPONSE` (44 here) and dropped every other ending, so the largest failure classes on this machine were invisible in the one report meant to map them.
 - The census counts every `turn/end` by its top-level `reason.kind`: completed, `max_tokens`, aborted, error. On this machine that is 94 completed, 88 `max_tokens`, 100 error and 11 aborted out of 293 turns, so the 88 truncated turns are 30 percent of all turns.
 - Every error turn also names its `reason.error.code`: `MALFORMED_RESPONSE` 44, `UNSUPPORTED_REASONING_EFFORT` 37, `SERVER` 16, `UNKNOWN` 1, `MISSING_CREDENTIAL` 1, `INVALID_REQUEST` 1.
@@ -158,7 +159,7 @@
 
 ## The project describing itself (P-0014)
 
-- Status `tested`. Surface `scripts`. It changes prose, a manifest recorder and governance tests, so no live journal can attest it.
+- Status `verified`. Surface `scripts`. It changes prose, a manifest recorder and governance tests, so no live journal can attest it.
 - What it fixes: three statements about this repository were false while every gate was green. The fact pack said the published 0.3.8 plugin pins `dsh-remedy-core` 0.3.7, while the packed manifest and `npm view dsh-remedy@0.3.8 dependencies` both say 0.3.8, and README, CHANGELOG and the registry already named 0.3.7 as the previous release. The handoff called `patch-registry-2026-11-12T19-35-00.000Z.json` `900820ae…`; the file and its `.sha256` both hash to `96f9144f…`, and `900820ae` exists in no artifact. And `packages/plugin/README.md`, the page npm renders, documented four commands after `explain` shipped in 0.3.8.
 - Why it lasted: R21 replaced "an external model wrote this" with "every prose number exists in the fact pack", which checks the shape of a claim and never its truth. Nothing read the fact pack's own statements, nothing read the handoff, and `tests/unit/cli-usage.test.ts` compared one line — exactly the limit P-0010 recorded in its own limits field.
 - The three mechanisms, each red before the fix: `tests/governance/facts-truth.test.ts` checks the pack's version, pin, previous-release and patch-id claims against the manifests, `CHANGELOG.md` and the registry; `tests/governance/handoff-truth.test.ts` checks the handoff's evidence index against the files it cites (every row resolves, the hash beside a row matches the file, each family marks one current row and it is the newest artifact, and every artifact the live sections cite is listed); `tests/unit/cli-usage.test.ts` requires the packaged README's usage block to equal the CLI's `USAGE` block line for line, and a usage line for every command `cli.ts` dispatches.
@@ -169,7 +170,7 @@
 
 ## The pre-step rejection (P-0015)
 
-- Status `tested`. Surface `profile`. It is a measurement of a seam, not a mount: no shipped profile calls `agent/pre-step`.
+- Status `verified`. Surface `profile`. It is a measurement of a seam, not a mount: no shipped profile calls `agent/pre-step`.
 - What was unmeasured: three rounds of handoff repeated that a rejected pre-step "could read as a cancellation", and that sentence kept the seam unmounted since R20. Nobody had run it.
 - What the runtime does, read from `dsh-agent-loop/lib/index.js:492-514`: `preStep` claims the inbox batch, awaits the `agent/pre-step` waterfall, and on `{kind:'reject'}` closes the turn with `reason.kind = "blocked"` without appending `step/start`.
 - What the probe measured: an isolated `DSH_HOME` under `.tmp`, a bundle with one inserted row whose listener always rejects, and one prompt. The CLI exits 1 and the session holds eight events: one `turn/start`, two `agent/inbox/spliced`, one `turn/end {"reason":{"kind":"blocked"}}`. There is no `step/start`, no `user/message`, no `assistant/*` and no `tool/call`.
@@ -180,7 +181,7 @@
 
 ## The coverage table (P-0016)
 
-- Status `tested`. Surface `cli`. It moves six coverage claims out of the command and no behaviour with them.
+- Status `verified`. Surface `cli`. It moves six coverage claims out of the command and no behaviour with them.
 - What it fixes: `dsh-remedy explain` printed "which patch covers this failure class" from two constants of its own, `COVERAGE` and `SWITCHES`. The registry therefore had a second home for one claim: a patch could cover a class and never appear in the answer, and the only mechanism against that was a human comparing two files.
 - What changed: the patches carry `failureClasses` and `switchKey` in `packages/core/src/registry.ts`, and the command reads `PATCHES`. Six patches declare coverage today — P-0001, P-0002, P-0003, P-0005 and P-0011 over `MALFORMED_RESPONSE`, and P-0013 over `UNSUPPORTED_REASONING_EFFORT`, `INVALID_REQUEST`, `MISSING_CREDENTIAL` and `EMPTY_RESPONSE`.
 - The guard is `tests/governance/coverage-single-source.test.ts`: it names the two constants so they cannot quietly return, checks the exact covered set, refuses a duplicate class on one patch, and refuses a patch that names a switch key without covering a class. A patch added tomorrow is answered by `explain` the moment it lands in `PATCHES`.
@@ -189,7 +190,7 @@
 
 ## The package pages (P-0017)
 
-- Status `tested`. Surface `scripts`. It is a measurement plus two guards, not a new channel for npm pages.
+- Status `verified`. Surface `scripts`. It is a measurement plus two guards, not a new channel for npm pages.
 - What it fixes: `packages/plugin/README.md` and `packages/core/README.md` are hand-written, carry no `output_sha256`, and are not generated by the copy channel, so `gate_copy` never saw them. P-0010 pinned one scan line, P-0014 pinned the CLI block, and the rest of the page was compared against nothing.
 - What was measured first: the plugin page is 2331 bytes and carries zero prose numbers once fenced blocks, inline code and URLs are stripped — the exact rule `copy-policy` applies — so the number rule had nothing left to rot there. What remained was the fenced command block (already pinned by P-0014) and behavioural prose.
 - The guards: `tests/governance/package-readme-prose.test.ts` reuses `proseNumbers` from the copy channel instead of restating the stripping rule, requires zero prose numbers on both pages, and requires every `dsh-remedy <command>` inside a fence to be one `cli.ts` actually dispatches; the engine page must not document a CLI at all.
@@ -197,7 +198,7 @@
 
 ## The Windows exit code (P-0018)
 
-- Status `tested`. Surface `scripts`. It changes advice printed by a build script, not a seam.
+- Status `verified`. Surface `scripts`. It changes advice printed by a build script, not a seam.
 - What it fixes: `node scripts/publish_packages.mjs` printed `npm exited 3221226505 in packages/core` and then offered advice shaped like an HTTP answer. `3221226505` is Windows `0xC0000409`, and both npm debug logs for the 0.3.6 attempt stop right after the tarball notice with **no HTTP request**, so nothing was sent and every branch of that advice was about the wrong cause.
 - What changed: `windowsStatusAdvice(status)` names `3221226505` as `0xC0000409` and `3221225477` as `0xC0000005`, says the process died before answering the registry, and points at the direct `npm publish <tarball> --access public` call, which is what succeeded twice on 2026-11-12. The call site checks it before the OTP and HTTP advice.
 - The guard: `tests/unit/publish.test.ts` grew two tests — one pins that both codes produce advice naming the exception, the other is the negative control that `0`, `1`, `402`, `403`, `404`, `429`, `null` and `undefined` do **not** take that branch, so a real 404 keeps its real advice.
@@ -205,7 +206,7 @@
 
 ## The outward pages (P-0019)
 
-- Status `tested`. Surface `scripts`. It rewrites prose and adds no behaviour.
+- Status `verified`. Surface `scripts`. It rewrites prose and adds no behaviour.
 - What it fixes: `README.md` and `README.zh-CN.md` opened as "a resident repair layer that mounts on `llm/stream`" while the project had become a patch set of eighteen defects across two resident seams, the CLI and the build side. One sentence had also become false: both pages said `agent/pre-step` was not mounted because nobody had measured what a rejection does, and R23 had measured exactly that (P-0015).
 - Why it lasted: the copy channel guards numbers, not shape. `gate_copy` checks that every prose digit exists in the fact pack and has no opinion about whether the page still describes the product; P-0014 pinned the pack own claims and P-0017 pinned the package pages, so the two root READMEs could keep saying "one seam, one wrapper".
 - What changed: both pages now open as a patch set, carry a seam classification table, and replace the pre-step guess with the measurement plus its remaining blind spot (`BS-17`). Status names three `verified` and sixteen `tested` patches and states that the six after `0.3.8` are merged, tested and unreleased.
@@ -214,7 +215,7 @@
 
 ## The market source (P-0020)
 
-- Status `tested`. Surface `scripts`. It corrects a machine-readable listing, not a seam.
+- Status `verified`. Surface `scripts`. It corrects a machine-readable listing, not a seam.
 - What it fixes: `docs/market-index.json` declared version `0.3.8` and a git commit in the same entry. `0.3.8` is the published tarball with thirteen patches; the commit it named carried nineteen, the new package descriptions and a rewritten README, so a market trusting the entry would have installed bytes the version number does not describe.
 - Why it lasted one round: the guard added with the index checked the shape of the pin — a forty-character hex commit and `path: packages/plugin` — and never its meaning. It is the same defect the project has now written down five times: a check on form is not a check on meaning.
 - What changed: a `source` now names where a version bytes actually live. The published version points at the registry (`{"type":"npm"}`) and carries no commit; a git pin is allowed only together with an explicit `unreleased` marker, so a working tree cannot pose as a release. The unreleased head is stated once in words under `head` instead of being pinned.
@@ -223,7 +224,7 @@
 
 ## The package exports (P-0021)
 
-- Status `tested`. Surface `scripts`. It removes a manifest entry, not a seam.
+- Status `verified`. Surface `scripts`. It removes a manifest entry, not a seam.
 - What it fixes: `packages/plugin/package.json` exported `./retry-listener` to `./dist/retry-listener.js`, but no `src/retry-listener.ts` has ever existed; the second seam module is `failure-listener.ts`, already re-exported from the main entry. The dead subpath shipped in `0.3.8` and `0.4.0`, so importing it failed with `ERR_MODULE_NOT_FOUND` while the manifest said it was supported.
 - Why it lasted: the only guard checked the target string against a regex, and `./dist/retry-listener.js` matches it exactly as well as `./dist/repair-stream.js`. It is the sixth time this project has written down that a check on form is not a check on meaning.
 - What changed: the subpath is gone and the main entry still exports the listener. `tests/unit/package-files.test.ts` now requires every export target to have `src/<module>.ts`, and a ghost-map negative control keeps the checker from passing on an empty input.
@@ -231,7 +232,7 @@
 
 ## The fixture drift test (P-0022)
 
-- Status `tested`. Surface `scripts`. It changes a test and a build-script flag, not a seam.
+- Status `verified`. Surface `scripts`. It changes a test and a build-script flag, not a seam.
 - What it fixes: `tests/unit/fixtures-sync.test.ts` ran `sync_fixtures.mjs` in write mode and then compared the generated copy with the canonical fixtures. The copy step overwrote any drift before the assertion, so the test could only fail if the copy step itself failed.
 - What changed: the test runs `--check` first and seeds the copy only when every reported problem is `missing` (a clean checkout). A drifted byte is a failure. `sync_fixtures.mjs` accepts `--source`, `--target` and `--checksums` so the negative control can build a copy under `.tmp` and change one byte; the defaults are what `prepack` uses.
 - Red evidence: changing the `--check` branch to exit 0 made the negative control fail, and restoring it made the file green.
@@ -239,7 +240,7 @@
 
 ## The patch doc gate (P-0023)
 
-- Status `tested`. Surface `scripts`. It is a governance gate.
+- Status `verified`. Surface `scripts`. It is a governance gate.
 - What it fixes: `AGENTS.md` says every patch starts with a doc in `docs/patches/`, and no gate read that sentence. At the start of R31 the registry held 21 patches and the directory held 19 files: P-0016 shipped in R24 with no doc, and `INDEX.md` ended its range at P-0015.
 - What changed: `gate_registry` requires `docs/patches/P-NNNN-*.md` for every registry patch. The missing P-0016 doc was written from the R24 record and checked against the shipped code, and the index range now names P-0023.
 - Red evidence: the check was added first and failed on the real state (`FAIL registry/doc:P-0016`); writing the doc turned it green.
@@ -247,7 +248,7 @@
 
 ## The unmeasured profile (P-0025)
 
-- Status `tested`. Surface `cli`. It changes an answer a command prints, so no resident seam can witness it.
+- Status `verified`. Surface `cli`. It changes an answer a command prints, so no resident seam can witness it.
 - What it fixes: `dsh-remedy explain` answers "is this coverer switched on here" with three states — on, off, and not measured — and printed two. With no `--profile-file`, `isPatchOn` answered `false` for every patch, so the row printed `(no)` and the exit code counted it, while the same screen printed `enabled-here is unknown`. Measured on this host: `MALFORMED_RESPONSE 47 … (no)` and exit `1`; the same command with the desktop profile exits `0`.
 - What changed: `enabled` is a list or `null`, where `null` means no profile was read. The cell prints `unknown` for `null`, `(no)` only for a profile that switches every coverer off, and the patch list otherwise. `uncovered` is only counted when a profile was read, and the exit code uses the `EXIT_FINDING` constant instead of a literal.
 - Red evidence: three tests were added before the fix; the `unknown` one failed against the built CLI (`expected /unknown/`, got `(no)`), and the two profile cases were already green, which is what stops the finding path from being deleted instead of fixed.
@@ -256,7 +257,7 @@
 
 ## The release procedure (P-0026)
 
-- Status `tested`. Surface `scripts`. It edits documentation and adds a governance test.
+- Status `verified`. Surface `scripts`. It edits documentation and adds a governance test.
 - What it fixes: the release procedure had two homes. `docs/PUBLISH.md` describes the procedure in use (`scripts/publish_packages.mjs`, a token that bypasses the one-time password, `commit-tree` instead of the missing `subtree` subcommand); `docs/HANDOFF.md` still taught the pnpm filter path and an OTP requirement, and its boundary section said the profiles pointed at a 0.3.5 tarball and that npm `latest` was 0.3.5. Measured: both profiles load 0.4.1 with a tarball whose sha1 and sha512 match the registry, and `npm view` answers 0.4.1.
 - What changed: the handoff's procedure section is a pointer to `docs/PUBLISH.md`, the boundary section no longer cites gitignored `.tmp/` paths or a `latest` the packages do not ship, and `tests/governance/release-procedure.test.ts` pins three shapes — the retired commands and claims, the flag set the script actually reads (`--dry-run`, `--otp`), and the boundary section's scratch paths and `latest` version.
 - Red evidence: all three rules failed against the recorded text before it was rewritten (`pnpm --filter publish`, `--no-git-checks`, a token/2FA claim, `.tmp/pack17/dsh-remedy-0.3.5.tgz`). Each rule carries an injected negative control so a rule that stops matching fails instead of passing quietly.
@@ -264,7 +265,7 @@
 
 ## The windowed scan and the session header (P-0009)
 
-- Status `tested`. Surface `cli`. Like P-0004 it changes an offline reader, so no resident journal can attest it.
+- Status `verified`. Surface `cli`. Like P-0004 it changes an offline reader, so no resident journal can attest it.
 - A windowed scan over the real session directory reported `unreadable_lines=78` for 78 files. Every session log opens with `{"type":"session",…}` and its instant is the top-level `createdAt`, not `time`; the scanner required `time` before it would apply `--since` and counted every header as an unreadable line.
 - Measured on the host: 78 session files, 78 headers, 78 headers without a `time` field, in three key shapes that all carry `createdAt`.
 - After the fix the same command reports `unreadable_lines=0`, `before_since=156209` and the same `attempts=67`, so the header moves from the wrong bucket into the right one without changing the fault map.
@@ -274,7 +275,7 @@
 
 ## The second seam (P-0011) and the named refusals (P-0013)
 
-- Status: both `tested`. They live on `agent/request-error`, which a live journal can witness only when a turn fails in a class this plugin retries, and the retry budget defaults to 0.
+- Status: both `verified`. They live on `agent/request-error`, which a live journal can witness only when a turn fails in a class this plugin retries, and the retry budget defaults to 0.
 - `agent/request-error` shipped in 0.2.0 with **no test at all**: twenty test files, none of which mentioned the seam. It also called `next()` and then overrode whatever the default chain returned, and kept its budget in a map that was never pruned, so a long-lived desktop process kept one entry per step forever.
 - The shipped runtime documents the real contract: "a handling listener returns `{ kind: 'retry' }` **without calling `next()`**, while an unhandled failure is terminal", and "a waterfall listener that does not own the decision must return `next()`". Calling `next()` first and then overriding it discards the default chain, and context compaction authorizes its own retry on exactly that path.
 - What the listener does now, in order: no code / empty code / aborted signal → `next()`; a named class (`UNSUPPORTED_REASONING_EFFORT`, `INVALID_REQUEST`, `MISSING_CREDENTIAL`, `EMPTY_RESPONSE`) → record one diagnosis per (step, code) and then `next()`, never retry; a control code (`IMAGE_OFFLOAD_REQUIRED`, `INVALID_CREDENTIAL`, `MISSING_CREDENTIAL`) → `next()`; `MALFORMED_RESPONSE` with budget left → `{ kind: 'retry' }`; anything else or budget spent → `next()`.
@@ -287,7 +288,7 @@
 
 ## The unattributed fragment (P-0027)
 
-- Status `tested`. Surface `llm/stream`. It changes what a rescue emits, so no offline reader can witness it; the engine is pinned by unit tests and the runtime's answer by a probe.
+- Status `verified`. Surface `llm/stream`. It changes what a rescue emits, so no offline reader can witness it; the engine is pinned by unit tests and the runtime's answer by a probe.
 - What it fixes: a fused text that glues two calls of **different** tools carries one tool name for that index, so fragments after the first inherited it. Measured twice on DSH 0.2.2-rc.3: the surplus object `{"command":"Get-ChildItem …"}` was dispatched as `read` and the tool answered `invalid arguments: missing required property "file_path"`. The turn continued, so nothing ran silently — but a tool was called that the model did not call.
 - What changed: the listener passes the request's tool declarations (`options.tools`) to the wrapper, and each synthesized fragment is checked against the named tool's `required` fields. A fragment that does not fit goes out under **`remedy_unattributed`**; the runtime answers `UNKNOWN_TOOL` and the turn continues, so the model sees a named failure instead of a wrong tool running. The `repaired` event records `unattributed: <n>`.
 - Why not refuse instead: on rc.3 the adapter may already have dispatched the first fragment before the finish-time rescue runs, and a refusal would also discard every same-tool fusion — the majority of what this patch set repairs.
@@ -306,22 +307,30 @@
 
 ## The ledger de-duplication (P-0032)
 
-- Status: `tested`. Surface `scripts`. It changes what the registry stores, and the byte gate measures it.
+- Status: `verified`. Surface `scripts`. It changes what the registry stores, and the byte gate measures it.
 - What it fixes: every registry record carried a `symptom`, a `rootCause` and four or five `limits` that repeated its patch document, while the registry had 1697 bytes left against a record of 2107-2377 bytes. Splitting the registry by seam was measured and rejected for payment: it moves the same bytes into other modules and still spends the same 68000-byte budget.
 - What changed: the eight longest records keep one sentence per narrative field and short limits; the long form stays in `docs/patches/`, which `gate_registry` already requires. `registry.js` fell from 66303 to 61509 bytes before the two new records, and the cap did not move.
 - Still unmeasured: 23 records keep their long form until they are touched, and no threshold stops a new record from growing again — that would be a signed threshold, and none was signed.
 
 ## The runtime upgrade (0.2.2-rc.3, measured 2026-11-13)
 
-- The desktop build in use is DSH **0.2.2-rc.3** (its bundled `runtime.json` says so; the copy under `~\.dsh\dsh-runtimes` still said rc.1 until the app is relaunched). The published `@deepseek-ai/dsh` dist-tag `latest` is still 0.2.2-rc.1, so the app tracks the nightly channel.
+- The desktop build measured on 2026-11-13 was DSH **0.2.2-rc.3** (its bundled `runtime.json` said so; the copy under `~\.dsh\dsh-runtimes` still said rc.1 until the app was relaunched). The published `@deepseek-ai/dsh` dist-tag `latest` was still 0.2.2-rc.1 then, so the app tracked the nightly channel.
 - All three seams this plugin uses are declared identically in 0.2.2-rc.1 and 0.2.2-rc.3: `llm/stream` stays a synchronous waterfall over `AsyncIterable<StreamChunk>`, `agent/pre-step` keeps `PreStepDecision` = `{kind:'reject'}` | `{kind:'enter', messages}`, and `agent/request-error` keeps `RequestErrorAction` = `{kind:'retry'}` | `undefined`. Read from the published tarballs with `npm pack @deepseek-ai/dsh-llm@0.2.2-rc.1` / `@0.2.2-rc.3` and compared.
 - `data/results/adaptation-0.4.2-on-0.2.2-rc.3-2026-11-13T19-55-00.000Z.json` records a real run: an isolated `DSH_HOME`, one profile mounting the published 0.4.2 tarball, one short turn against the real provider. The plugin mounted, the turn completed, and a real relay fusion was repaired (`fused:1 repaired:1`, fragments 2) with the synthesized id dispatched to a tool.
 - One measurement changed: on 0.2.2-rc.1 the adapter never closed a tool-call block; on 0.2.2-rc.3 it **does** emit `block-end` for the first fragment of a fusion and leaves the surplus text to the finish-time rescue. Both paths are handled by the same engine, and the artifact shows the block-end path.
 - One boundary was sharpened and is not fixed: when the fused text glues two calls of **different tools**, the stream carries one tool name for that index, so fragments after the first inherit that name. Measured twice on 0.2.2-rc.3: the synthesized call was dispatched as `read` with shell arguments and the tool rejected it (`INVALID_ARGS`). It fails visibly instead of succeeding silently, but it is a wrong dispatch and it is recorded as blind spot `BS-18`.
 
+## The runtime upgrade to 0.2.2-rc.5 (measured 2026-11-19)
+
+- The installed desktop build is DSH **0.2.2-rc.5**; the recorder reads the version from `resources/runtime/primary-runtime/runtime.json` in the installed app, not from prose and not from the lagging copy under `~\.dsh\dsh-runtimes`. The per-install copy still declares rc.1, which is why a recorder must name its source.
+- The seam topology is unchanged: `seam-inventory-2026-11-19T06-20-00.000Z.json` reads the same 123 packages / 1516 source files and finds `llm/stream` = remedy → ops, `agent/error` = remedy → pet, `agent/request-error` = remedy. A second registration on `tools/post-execute` belongs to cc-safety-net and is outside this project's seams.
+- A real desktop turn ran on the new runtime after the provider key was replaced: `live-desktop-2026-11-19T06-15-00.000Z.json` records answer `R73-DESKTOP-RC5-OK`, `turn/end completed`, one stream event and verdict `quiet`, with the plugin package 0.4.19 and the runtime version read from the installed file.
+- The fail-open rules were re-witnessed on rc.5 with the isolated neighbour harness: `live-neighbours-rc5-2026-11-19T06-35-00.000Z.json` runs three discriminating shapes (`object-arguments`, `finish-no-reason`, `reserved-fused`) against control, 0.4.18 and this tree. In every row this tree matches the plugin-free control and 0.4.18 does not; the reserved-name row shows 0.4.18 dispatching `remedy_unattributed` and this tree not.
+- The readers were re-run on the corpus the new turn wrote: `live-census-2026-11-19T06-25-00.000Z.json` reads the same file set (115) and the same counts as R71, including 0 `completed_without_answer` and 0 `completed_on_tool_call`.
+
 ## The byte budget by load path (P-0012)
 
-- Status `tested`. Surface `scripts`.
+- Status `verified`. Surface `scripts`.
 - The budget used to be one number. It was really two: modules a mounted plugin loads at startup, and modules only a command loads. A daemon pays the first half on every session and the second half never, so one cap made every resident byte compete with CLI code. P-0009 landed with three bytes of headroom for that reason, and the next patch needed 4263 bytes of new module that did not fit.
 - It is now three checks — `residency` ≤ 44000, `cli` ≤ 42000, total ≤ 83000 — plus a rule that every emitted module belongs to exactly one of them.
 - `tests/governance/budget-split.test.ts` walks the real module graph from `packages/plugin/src/index.ts` in both directions: a resident module the list omits fails, and a listed file the loader never reaches fails as unpaid debt. A second test requires the CLI entry not to import the resident seam.
@@ -330,7 +339,7 @@
 
 ## The CLI documentation (P-0010)
 
-- Status `tested`. Surface `cli`. It changes two strings, so no resident journal can attest it.
+- Status `verified`. Surface `cli`. It changes two strings, so no resident journal can attest it.
 - The npm page for the plugin said `scan <session.jsonl> [--json] [--out <file>]` and the CLI's own usage said `scan <session.jsonl|session.v4.jsonl.zstd> [--json] [--out <file>]`. Both had been wrong since 0.3.3: `scan` has accepted a directory, `--since` and `--max-files` since P-0004.
 - Nothing watched either string. The copy gate covers the eleven outward files at the repository root and this file is hand-written package prose with no recorded hash, so it had no gate; no test ran `help` or compared the two strings.
 - Both now carry the same line, `<session.jsonl|directory> [--since <iso>] [--max-files <n>] [--json] [--out <file>]`, and `tests/unit/cli-usage.test.ts` fails if they ever differ again or if the old one-file-only shape returns.
@@ -339,7 +348,7 @@
 
 ## The byte budget gate (P-0008)
 
-- Status `tested`. Surface `scripts`. It is a build-side gate: nothing the plugin mounts changes, so no live journal can attest it.
+- Status `verified`. Surface `scripts`. It is a build-side gate: nothing the plugin mounts changes, so no live journal can attest it.
 - The budget had been in prose only. It was crossed three times — 55815 bytes after P-0005, 64539 after P-0004 and 70389 on the first P-0006 attempt — and every crossing was found by hand after the patch had been built, tested and packed. `grep -rn "68000" scripts/` returned nothing, which was the defect: the number had no mechanism.
 - `scripts/gate_size.mjs` measures `packages/plugin/dist/*.js` and checks four things: the plugin total against 68000 bytes, `repair-stream.js` against 28000, `session-scan.js` against 14000, and any file above 10000 bytes for having a cap of its own, so a new module cannot quietly become the biggest uncapped file.
 - Measured when the gate was written: 67908 bytes in total, `repair-stream.js` 27925, `session-scan.js` 13237, `cli.js` 8503. Every file starts inside its line, so the gate begins green rather than green by exception.
@@ -349,7 +358,7 @@
 
 ## The copy channel (P-0007)
 
-- Status: `tested` — the build side, so no resident journal attests it and no outward file was edited by hand to prove it. **The transport it describes is retired**: no external model is called any more, and the property that transport protected (no number outside the fact pack) is now enforced by `scripts/copy_record.mjs` and `scripts/gate_copy.mjs` directly. The paragraphs below are the patch record, not the current channel.
+- Status: `verified` — the build side, so no resident journal attests it and no outward file was edited by hand to prove it. **The transport it describes is retired**: no external model is called any more, and the property that transport protected (no number outside the fact pack) is now enforced by `scripts/copy_record.mjs` and `scripts/gate_copy.mjs` directly. The paragraphs below are the patch record, not the current channel.
 - What it fixes: the two longest outward files could not be regenerated at all, and every attempt printed the same six words, `copy_with_agy: agy exited null`, with no status, no reason and no difference between a model that refused and a process that never started.
 - Two faults printed that one line: the request is the brief plus the whole fact pack plus the pattern notes, and it measured 35509 characters for the changelog and 33530 for the readme against the 32767 character cap on one Windows command line, so the spawn failed with `ENAMETOOLONG` before agy started; and a generation longer than the 600000 ms spawn timeout was killed, which also leaves a null status.
 - What it does now: below 30000 characters the prompt still travels on argv exactly as before; above it the prompt travels over stdin as one `stream-json` user event and the answer is read from the final `result` event; a failed spawn is named by its own code; the timeout is half an hour.

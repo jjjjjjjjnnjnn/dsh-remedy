@@ -1,6 +1,6 @@
 # P-0010 — The npm page documented a CLI that had not existed since 0.3.3
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `cli`  **Depends on**: P-0004
+**Status**: `verified`  **Severity**: minor  **Surface**: `cli`  **Depends on**: P-0004
 
 ## Symptom
 
@@ -77,8 +77,8 @@ Nothing looked at either string:
   (`status` lost the sentence about `--journal` printing the last counters). It
   is now one line per command; the detail lives in the fact pack and this
   document.
-- No live artifact is possible: the CLI usage text is not a resident seam, so the
-  patch stays `tested`.
+- No resident-journal artifact is possible (see R72 witness): the CLI usage text is not a resident seam, so the
+  patch stays `verified`.
 
 ## Reproduction
 
@@ -89,3 +89,7 @@ node --test tests/unit/cli-usage.test.ts        # red before, green after
 node packages/plugin/dist/cli.js --help | grep scan
 node scripts/gate_size.mjs                      # 67883 of 68000
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

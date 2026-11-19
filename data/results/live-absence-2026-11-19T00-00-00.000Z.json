@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_absence.mjs",
+  "generated_at": "2026-11-19T00:00:00.000Z",
+  "question": "Why do the two completed-turn findings have no real case in this corpus?",
+  "census": {
+    "artifact": "data/results/live-census-2026-11-18T22-00-00.000Z.json",
+    "completed_without_answer": 0,
+    "completed_on_tool_call": 0
+  },
+  "why_absent": {
+    "P0047": {
+      "reader": "`scan` asks whether a completed turn answered anyone by looking at the last step for text or a tool call (core/answer.ts, P-0044).",
+      "host_half": "The adapter decides to end a turn on block count: `mapStopReason` treats `message.content.length === 0` as empty, so a turn whose only assistant content is a reasoning block ends as a normal `completed` stop. P-0047 names that consequence; it does not fix the adapter.",
+      "source": "quoted in docs/patches/P-0047-completed-without-answer.md (host file and line cited there)"
+    },
+    "P0052": {
+      "reader": "`scan` also counts a completed turn whose last step still carries a tool-call block; `explain` prints TOOLCALL (P-0052).",
+      "host_half": "The loop only ends a step with tool calls when a tool result carries `concludesTurn` (dsh-agent-loop/src/agent.ts:592-603), and the chat UI renders only a final step with no tool-call block as an answer (dsh-client-ui-chat .../turn-process.ts:160-161). The two rules can disagree, which is the upstream #12741 shape.",
+      "source": "quoted in docs/patches/P-0052-completed-on-tool-call.md (host file and line cited there)"
+    }
+  },
+  "not_proven": [
+    "no user on this machine hit either shape in the measured corpus; both rules are exercised by probes, not by a real session",
+    "the host source is quoted from the patch documents that read it at the cited line, not re-downloaded by this recorder",
+    "a different host, provider route or UI build may produce the shape; absence here is not absence everywhere"
+  ],
+  "sources": {
+    "census": "95a0f0454a408b68f3cf373f8c05391147248166ba1a7e389555fe6a40117fbd",
+    "P-0047 doc": "3afdb63532c2299fc67485ef9b730b61f9d692b2edeb79b207f46003e2d91040",
+    "P-0052 doc": "6bf66b86a49fd6c7936205cc6975754f473b67316615492063a623ea7aa93f9d"
+  }
+}

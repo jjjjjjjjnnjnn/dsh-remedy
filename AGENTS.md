@@ -1,7 +1,7 @@
 # dsh-remedy AGENTS.md
 
 > **产品名**：**dsh-remedy**（处置层 / Remedy）｜**容器仓库**：`DSH-Addition`（本目录是子项目）｜
-> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.19`（已发布，两包 `latest`；两个 profile 在 0.4.19 上；桌面 0.4.19 turn 因 App 的 provider key 缺失未做成）
+> **协作对象**：`../dsh-triage`（分诊：只判断，不修）｜**当前版本**：`0.4.19`（已发布，两包 `latest`；两个 profile 在 0.4.19 上；桌面 0.4.19 turn 因 provider key 被吊销未做成）
 > **Stand**：R69（2026-11-18，**对读不懂的 chunk 失败开放**）——
 > remedy 只能原样放行 / 修复已证实的粘连 / 原样抛回原来的失败，不再制造第四种结局；
 > P-0053 让四条邻居形状从 `TypeError` 变成原样放行，P-0054 让 profile 已拥有的
@@ -15,9 +15,9 @@
 > **基线（2026-11-18）**：`pnpm run verify` = **447 tests / 6 gates**（R69 的树，Windows）；
 > `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.19`（latest）+
 > `dsh-remedy-core@0.4.19`（latest）。
-> 公开仓库 CI 绿，release `v0.1.0` … `v0.4.19`。五十四个补丁：**21 `verified` + 33 `tested`**（R70 把 `llm/stream` 上剩下的 7 条放进真宿主的一轮，R71 把 `cli` 面的 5 条放回本机真语料）。
-> **字节余量（下一轮的第一个约束）**：plugin **81 589 / 83 000（1 411 B；CLI 半边 43 B）**、core **103 531 / 104 000（469 B）**、
-> registry **67 795 / 68 000（205 B —— 两轮都靠压散文付清，下一条记录仍须先压缩或签署抬 cap）**。
+> 公开仓库 CI 绿，release `v0.1.0` … `v0.4.19`。五十四补丁**全部 `verified`、0 `tested`**（R70 升 7 条 `llm/stream`，R71 升 5 条 `cli`，R72 用一份构建/宿主见证升余下 33 条）。
+> **字节余量（下一轮的第一个约束）**：plugin **81 589 / 83 000（1 411 B；CLI 半边 43 B）**、core **97 717 / 104 000（6 283 B）**、
+> registry **61 981 / 68 000（6 019 B —— 三轮都靠压散文付清；新记录仍按 P-0032 先压缩，不抬 cap）**。
 > **平台边界：Windows 与 Linux 实测（同一棵树、同一组数），macOS 未实测**；P-0038 的 `/Users` 形状在 Linux 上是字符串，CI 里有一个 `verify (macos, node 24)` job。
 > **本目录不是 git 根**：提交在 `..`（容器），公开仓库由 `git subtree split --prefix=dsh-remedy` 切出。
 

@@ -1,6 +1,6 @@
 # P-0026 — The release procedure had two homes, and the older one was retired
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0018
+**Status**: `verified`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0018
 
 ## Symptom
 
@@ -82,7 +82,7 @@ the boundary section cites no scratch path and no stale latest
   not caught.
 - The boundary rule looks for `.tmp/` paths and a `latest` version. A stale statement
   phrased without either is still unread.
-- No live artifact is possible: this is documentation plus a governance test.
+- No resident-journal artifact is possible (see R72 witness): this is documentation plus a governance test.
 
 ## Reproduction
 
@@ -92,3 +92,7 @@ node --test tests/governance/handoff-truth.test.ts
 git -C .. log --oneline -1 -- dsh-remedy/docs/PUBLISH.md   # R35 rewrote it
 npm view dsh-remedy version                                # 0.4.1, not 0.3.5
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

@@ -1388,7 +1388,48 @@
         "data/results/publish-2026-11-18T16-10-00.000Z.json",
         "data/results/install-acceptance-2026-11-18T16-20-00.000Z.json"
       ]
+    },
+    {
+      "id": "S76",
+      "gate": "registry",
+      "title": "Can the remaining 33 tested patches be witnessed honestly without one runtime byte?",
+      "axes": {
+        "correctness": "R72 did not change runtime code. It added one recorder that runs the shipped build, all six gates, the mutation control and five CLI commands on this machine at one stamp, then asserts 33 claims before writing. Each row records a witness kind: suite for build-side guards, cli for the offline readers (with a pinned-profile/control pair for CONFLICT), gate for macOS CI, probe for the profile measurement, absent for the two zero counts. Recorders exit 4 and write nothing when a claim fails; the BOM-shaped profile was caught this way and fixed by writing the draft with Node rather than PowerShell.",
+        "reproducibility": "`node scripts/record_r72_live.mjs --sessions <dir> --stamp <ISO>` produced live-r72-2026-11-19T00-00-00.000Z.json; `node scripts/record_absence.mjs --stamp <ISO>` produced live-absence-2026-11-19T00-00-00.000Z.json from the R71 census and the two patch documents. Both carry produced_by, generated_at, sha256 sidecars and a not_proven list. `pnpm run verify` is 447 tests / 6 gates ALL GREEN; `--mutate` is 6/6; `cli verify` prints OK 8 fixture(s).",
+        "compliance": "No cap moved and no runtime byte was added: plugin stays 81589 / 83000, core fell to 97717 / 104000 and registry to 61981 / 68000 after compressing twelve records, paying for 33 status changes and one shared evidence constant (LIVE_R72). No secret or session text is in either artifact. The published 0.4.19 tarball is unchanged; 21/33 in the fact pack is explicitly labelled as the published state, while the current tree is 54 verified / 0 tested.",
+        "ssot": "The registry is the only list of patches; the ledger, the 33 patch docs, the fact pack, both first screens, the handoff state table and the new snapshot patch-registry-2026-11-19T00-00-00.000Z.json all name the same 54 verified ids. Every live copy entry was re-registered after the fact pack moved, so no outward file cites a stale pack hash.",
+        "adversarial": "No resident journal witnessed these patches, and every row plus every patch doc says so: a build/host witness is not a repair seen on a seam. P-0047 and P-0052 remain absent from the real corpus (both counts are 0); their verified status rests on the named probe artifacts, recorded as absent. P-0048 is witnessed by a CI job, not a macOS host run by this recorder. The desktop turn is still blocked by a revoked key (live-credential-*), and was not re-attempted."
+      },
+      "evidence": [
+        "scripts/record_r72_live.mjs",
+        "scripts/record_absence.mjs",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json",
+        "data/results/live-absence-2026-11-19T00-00-00.000Z.json",
+        "data/results/patch-registry-2026-11-19T00-00-00.000Z.json",
+        "docs/patches/P-0015-pre-step-rejection.md",
+        "docs/patches/P-0047-completed-without-answer.md",
+        "docs/patches/P-0052-completed-on-tool-call.md"
+      ]
+    },
+    {
+      "id": "S77",
+      "gate": "size",
+      "title": "Does the DSH 0.2.2-rc.5 upgrade and the new key change any project claim?",
+      "axes": {
+        "correctness": "The installed runtime was read from the app-owned runtime.json (0.2.2-rc.5), never from the stale ~/.dsh copy (rc.1). A real desktop turn through CDP returned the exact marker R73-DESKTOP-RC5-OK with turn/end completed, one stream event and verdict quiet. The seam inventory found the same llm/stream remedy→ops topology, and three discriminating neighbour shapes on the new CLI still satisfy new==control and old!=control, including the reserved-name row where 0.4.18 dispatches the fallback and this tree does not.",
+        "reproducibility": "Four artifacts carry hashes and produced_by: live-desktop-2026-11-19T06-15-00.000Z.json (journal + session + runtime version), seam-inventory-2026-11-19T06-20-00.000Z.json, live-census-2026-11-19T06-25-00.000Z.json and live-neighbours-rc5-2026-11-19T06-35-00.000Z.json. The desktop turn was driven by CDP on port 9222 after rotating the journal; the neighbour runs used the shipped recorder with three arms in isolated DSH_HOMEs.",
+        "compliance": "No runtime byte, cap, version, release or tag changed. The fact pack now names 0.2.2-rc.5 as the verified host and keeps the rc.3 measurements in past tense; the research README no longer hardcodes a host version. All live copy entries were re-registered after the fact pack moved, so no outward file cites a stale pack hash. No key material was written into the repository: the artifact names the source file, never its value.",
+        "ssot": "The runtime version has one home at measurement time (the installed runtime.json), and the artifact names the exact path and its sha256. The handoff state table, the fact pack and the evidence index all name the same four new receipts. Historical rc.3 rows stay in the batch narrative, which handoff-truth treats as \"then\", not \"now\".",
+        "adversarial": "One desktop turn, one profile, one provider route: not a population estimate. The installed app copy under ~/.dsh/dsh-runtimes still declares rc.1, so a recorder that read the wrong file would silently lie — guarded by naming the source. The neighbour harness used the isolated fake endpoint; the real relay path was exercised only by the single desktop turn. macOS is still CI-only."
+      },
+      "evidence": [
+        "data/results/live-desktop-2026-11-19T06-15-00.000Z.json",
+        "data/results/seam-inventory-2026-11-19T06-20-00.000Z.json",
+        "data/results/live-census-2026-11-19T06-25-00.000Z.json",
+        "data/results/live-neighbours-rc5-2026-11-19T06-35-00.000Z.json",
+        "docs/copy/facts/public-repo-facts.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-18T18:00:00.000Z"
+  "updated_at": "2026-11-19T06:40:00.000Z"
 }

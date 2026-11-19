@@ -1,6 +1,6 @@
 # P-0014 — The project's own description is the part nothing checked
 
-**Status**: `tested`  **Severity**: major  **Surface**: `scripts`  **Depends on**: P-0010
+**Status**: `verified`  **Severity**: major  **Surface**: `scripts`  **Depends on**: P-0010
 
 ## Symptom
 
@@ -119,8 +119,8 @@ What was edited to make them green:
   and exactly one hash. A row comparing two publishes (two shasums in one cell) is
   skipped rather than guessed.
 - `gate_copy` still cannot see the handoff or the package README.
-- No live artifact is possible: this patch touches prose, a manifest recorder and
-  governance tests. It stays `tested`.
+- No resident-journal artifact is possible (see R72 witness): this patch touches prose, a manifest recorder and
+  governance tests. It stays `verified`.
 
 ## Reproduction
 
@@ -134,3 +134,7 @@ npm view dsh-remedy@0.3.8 dependencies
 node scripts/copy_record.mjs --freeze --name release-notes-038
 node scripts/gate_copy.mjs
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

@@ -1,6 +1,6 @@
 # P-0023 — The workflow's first step was a sentence nobody read
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0016
+**Status**: `verified`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0016
 
 ## Symptom
 
@@ -53,7 +53,7 @@ is the one this patch recovered.
 - An **orphan** doc with no registry entry is not reported: the gate iterates the
   registry, not the directory. Deleting a patch would leave its doc behind and
   nothing would say so.
-- No live artifact is possible: this is a governance gate.
+- No resident-journal artifact is possible (see R72 witness): this is a governance gate.
 
 ## Reproduction
 
@@ -61,3 +61,7 @@ is the one this patch recovered.
 node scripts/gate_registry.mjs          # green; remove the P-0016 doc and it goes red
 node --test tests/governance/ledgers.test.ts
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

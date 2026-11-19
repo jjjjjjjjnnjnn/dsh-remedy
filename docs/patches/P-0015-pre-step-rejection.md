@@ -1,6 +1,6 @@
 # P-0015 — Whether `agent/pre-step` can refuse a step without being read as a cancellation
 
-**Status**: `tested`  **Severity**: major  **Surface**: `profile`  **Depends on**: P-0013
+**Status**: `verified`  **Severity**: major  **Surface**: `profile`  **Depends on**: P-0013
 
 ## Symptom
 
@@ -119,3 +119,7 @@ and neither the profile nor the session reader was shipped. What survives is the
 used to print), plus the later measurements
 `data/results/prestep-ui-2026-11-13T12-15-00.000Z.json` and
 `data/results/prestep-enter-2026-11-15T17-55-00.000Z.json`.
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

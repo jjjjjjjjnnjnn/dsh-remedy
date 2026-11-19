@@ -1,6 +1,6 @@
 # P-0028 — A published sample carried this machine's home path
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0004
+**Status**: `verified`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0004
 
 ## Symptom
 
@@ -72,3 +72,7 @@ node --test tests/governance/shipped-samples.test.ts
 node scripts/sync_fixtures.mjs --check
 node --test tests/unit/fixtures-sync.test.ts
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

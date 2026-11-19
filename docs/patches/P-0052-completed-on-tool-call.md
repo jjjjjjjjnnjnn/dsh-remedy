@@ -1,6 +1,6 @@
 # P-0052 — a completed turn can end on the tool call the UI does not read
 
-**Status:** `tested` · **Seam:** `cli` (offline reader) · **Upstream:** deepseek-ai/deepseek-harness discussion #12741
+**Status:** `verified` · **Seam:** `cli` (offline reader) · **Upstream:** deepseek-ai/deepseek-harness discussion #12741
 
 ## Symptom
 
@@ -113,3 +113,7 @@ node scripts/record_toolcall_turn.mjs --conclude <run-dir> --control <run-dir> -
   `turn-process.ts:160-161`, not observed on screen.
 - A finding, not a coverage row: no resident seam is involved (the same boundary P-0051
   recorded).
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

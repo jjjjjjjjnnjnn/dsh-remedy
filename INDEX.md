@@ -76,6 +76,10 @@
 | `data/results/hostile-neighbours-2026-11-18T11-30-00.000Z.json` | **R69 修后证据**：九行；四条 remedy 自抛的 `TypeError` 全部变成原样放行，保留名两处都不再派发（sha256 `fc41ee25…`） |
 | `data/results/seam-inventory-2026-11-18T08-10-00.000Z.json` | **R68 接缝盘点**：123 个包 / 1 516 个源文件；`llm/stream` = remedy → ops，`agent/error` = remedy → pet；无第三方保留名占用 |
 | `data/results/bench-repair-2026-11-18T08-20-00.000Z.json` | **R68 开销基准**：文本 +1.5 ms / 4 003 chunk、工具密集 +5.9 ms / 5 251 chunk、一次修复 +0.12 ms |
+| `data/results/live-desktop-2026-11-19T06-15-00.000Z.json` | **桌面真机（R73）· DSH 0.2.2-rc.5 + 0.4.19**：CDP 驱动一轮真 turn，答复 `R73-DESKTOP-RC5-OK`、`turn/end completed`、journal `streams: 1`、verdict `quiet`；runtime 版本读自安装目录的 `runtime.json` |
+| `data/results/live-neighbours-rc5-2026-11-19T06-35-00.000Z.json` | **R73 新运行时复验**：三个判别形状各跑 control / 0.4.18 / 本树，本树与无插件对照同结局、0.4.18 不同；保留名不再派发兜底名 |
+| `data/results/seam-inventory-2026-11-19T06-20-00.000Z.json` | **R73 接缝盘点（0.2.2-rc.5）**：123 包 / 1 516 文件，拓扑与 R68 相同 |
+| `data/results/live-census-2026-11-19T06-25-00.000Z.json` | **R73 新语料复读**：shipped reader 在同一批会话上读数与 R71 一致 |
 | `data/results/live-desktop-2026-11-18T05-10-00.000Z.json` | **桌面真机（R66）· 0.4.18**：答复 `R66-DESKTOP-OK`、`turn/end completed`、journal `streams: 1`、verdict `quiet`；包是 registry 的 0.4.18 tarball，runtime 0.2.2-rc.3 |
 | `data/results/intake-2026-11-18T05-20-00.000Z.json` | **R66 巡检**：3 个来源全应答；92 条去重 discussion / 76 条新候选；判读见 `docs/research/intake-r66-triage.md` |
 | `data/results/live-toolcall-2026-11-17T13-30-00.000Z.json` | **P-0052 本机证据**：conclude 末步 `["text","tool-call"]`、control 第二步 `["text"]`；`completed_on_tool_call=1`、`completed_without_answer=0` |
@@ -179,6 +183,8 @@
 | `scripts/lib/turn-run.mjs` | R70 的只读观测层：读一个 run 目录的 session / journal / 邻居日志，定义「同样的结局」 |
 | `scripts/record_linux_r70.mjs` | R70 的 Linux 半边：读 WSL2 的七个日志、先断言再写 `live-linux-*`（R70 没有运行时字节，所以只主张同树同数） |
 | `scripts/record_live_census.mjs` | R71：把 shipped 的 `scan` / `explain` 跑在本机真语料上 → `live-census-*`；只留计数与类表，**不带会话原文** |
+| `scripts/record_r72_live.mjs` | R72：跑 shipped build / 六门 / 变更对照 / CLI，逐条断言 33 条补丁的见证 → `live-r72-*`；每条带 witness 种类，不成立即 `exit 4` |
+| `scripts/record_absence.mjs` | R72：P-0047 / P-0052 在本机语料都是 0，连同宿主源码行解释「为什么这里没有」→ `live-absence-*` |
 | `scripts/record_credential_probe.mjs` | R71：隔离 home 复用同一份 `.credentials.yaml` 打真实路由 → `live-credential-*`，回答「是 key 死了还是 App 读不到」 |
 | `scripts/scan_plugin_seams.mjs` | R68：只读扫一个 profile 的接缝注册与顺序 → `seam-inventory-*`（不加载插件、不写 profile） |
 | `scripts/bench_repair_overhead.mjs` | R68：`llm/stream` 包装器的每 chunk 开销（三组场景，中位数）→ `bench-repair-*` |

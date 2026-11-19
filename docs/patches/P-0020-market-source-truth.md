@@ -1,6 +1,6 @@
 # P-0020 — The market index claimed to pin git bytes while naming a published tarball
 
-**Status**: `tested`  **Severity**: major  **Surface**: `scripts`  **Depends on**: P-0019
+**Status**: `verified`  **Severity**: major  **Surface**: `scripts`  **Depends on**: P-0019
 
 ## Symptom
 
@@ -69,3 +69,7 @@ node --test tests/governance/distribution-entry.test.ts
 node -e "const j=require('./docs/market-index.json');console.log(j.plugins[0].versions[0].source)"
 npm view dsh-remedy version   # 0.3.8, which is what an npm source resolves
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

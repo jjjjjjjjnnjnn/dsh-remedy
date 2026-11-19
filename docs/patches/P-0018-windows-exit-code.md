@@ -1,6 +1,6 @@
 # P-0018 — A Windows exit code printed as a bare number sent an operator hunting the wrong cause
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0007
+**Status**: `verified`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0007
 
 ## Symptom
 
@@ -74,7 +74,7 @@ that branch, so a real 404 still gets the 404 advice.
 - It cannot prove the crash was the runtime rather than npm misbehaving; what it
   proves is the absence of an HTTP request in both logs, which is why the wording
   is "before it answered the registry" rather than "Windows broke npm".
-- No live artifact is possible: this is advice printed by a build script.
+- No resident-journal artifact is possible (see R72 witness): this is advice printed by a build script.
 
 ## Reproduction
 
@@ -82,3 +82,7 @@ that branch, so a real 404 still gets the 404 advice.
 node --test tests/unit/publish.test.ts        # 22 pass; the two new cases included
 node -e "import('./scripts/publish_packages.mjs').then(m => console.log(m.windowsStatusAdvice(3221226505)))"
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

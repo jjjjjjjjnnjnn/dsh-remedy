@@ -1,6 +1,6 @@
 # P-0022 — The drift test repaired the drift before it looked for it
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0021
+**Status**: `verified`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0021
 
 ## Symptom
 
@@ -55,7 +55,7 @@ fail, and restoring it made the file green again.
 - The `--source/--target/--checksums` flags are a test seam in a build script; a
   future refactor that removes them would break the negative control, and no test
   pins the flags themselves beyond this file.
-- No live artifact is possible: this is a build-side test, not a resident seam.
+- No resident-journal artifact is possible (see R72 witness): this is a build-side test, not a resident seam.
 
 ## Reproduction
 
@@ -65,3 +65,7 @@ node --test tests/unit/fixtures-sync.test.ts        # green, 3 tests
 #   edit scripts/sync_fixtures.mjs so the --check branch exits 0
 #   node --test tests/unit/fixtures-sync.test.ts     # the second test fails
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

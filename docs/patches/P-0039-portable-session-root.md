@@ -1,6 +1,6 @@
 # P-0039 — A recorder that only worked on Windows, and a probe that only worked on Windows
 
-**Status**: `tested`  **Severity**: `minor`  **Surface**: `scripts`  **Depends on**: P-0004, P-0038
+**Status**: `verified`  **Severity**: `minor`  **Surface**: `scripts`  **Depends on**: P-0004, P-0038
 
 ## Symptom
 
@@ -99,3 +99,7 @@ node --test tests/unit/session-root.test.ts          # 6 tests
 #   node -e "console.log(process.env.USERPROFILE ?? '')"   -> empty
 #   DSH_SESSIONS=$HOME/dsh-l6-home/sessions node scripts/record_session_sample.mjs --until <ISO> --stamp <ISO>
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

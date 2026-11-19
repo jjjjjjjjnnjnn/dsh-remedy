@@ -1,6 +1,6 @@
 # P-0024 — The two pages npm renders were outside the copy channel
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0017
+**Status**: `verified`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0017
 
 ## Symptom
 
@@ -52,7 +52,7 @@ newline it always writes.
   published tarball.
 - It does not regenerate the pages from a template. They remain hand-written prose
   that is now registered; a generated page is a different product decision.
-- No live artifact is possible: this is a build-side channel, not a resident seam.
+- No resident-journal artifact is possible (see R72 witness): this is a build-side channel, not a resident seam.
 
 ## Reproduction
 
@@ -62,3 +62,7 @@ node --test tests/governance/package-readme-prose.test.ts
 node scripts/copy_record.mjs --name package-readme-plugin --out packages/plugin/README.md \
   --file docs/copy/raw/package-readme-plugin.txt --force   # refuses a number the pack does not carry
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

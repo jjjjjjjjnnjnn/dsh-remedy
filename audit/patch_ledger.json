@@ -123,69 +123,77 @@
     },
     {
       "id": "P-0007",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.3.4",
       "evidence": [
         "docs/patches/P-0007-copy-channel-transport.md",
         "tests/unit/agy-channel.test.ts",
-        "docs/copy/manifest.json"
+        "docs/copy/manifest.json",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/agy-channel.test.ts",
         "scripts/gate_copy.mjs",
         "scripts/lib/agy-channel.mjs"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0008",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.3.5",
       "evidence": [
         "docs/patches/P-0008-byte-budget-gate.md",
         "scripts/gate_size.mjs",
-        "audit/gate_ledger.json"
+        "audit/gate_ledger.json",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "scripts/gate_size.mjs",
         "tests/governance/ledgers.test.ts",
         "scripts/gate.mjs"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0009",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.3.6",
       "evidence": [
         "docs/patches/P-0009-session-header-window.md",
         "packages/plugin/src/session-scan.ts",
         "tests/unit/session-scan.test.ts",
-        "tests/e2e/cli.test.ts"
+        "tests/e2e/cli.test.ts",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/session-scan.test.ts",
         "tests/e2e/cli.test.ts",
         "packages/plugin/src/session-scan.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0010",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.3.7",
       "evidence": [
         "docs/patches/P-0010-cli-usage-truth.md",
         "packages/plugin/README.md",
         "packages/plugin/src/cli-args.ts",
-        "tests/unit/cli-usage.test.ts"
+        "tests/unit/cli-usage.test.ts",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/cli-usage.test.ts",
         "packages/plugin/README.md",
         "packages/plugin/src/cli-args.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0011",
@@ -205,19 +213,21 @@
     },
     {
       "id": "P-0012",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.3.8",
       "evidence": [
         "scripts/lib/budgets.mjs",
         "scripts/gate_size.mjs",
         "tests/governance/budget-split.test.ts",
-        "docs/patches/P-0012-budget-by-load-path.md"
+        "docs/patches/P-0012-budget-by-load-path.md",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "scripts/gate_size.mjs",
         "tests/governance/budget-split.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0013",
@@ -240,7 +250,7 @@
     },
     {
       "id": "P-0014",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.0",
       "evidence": [
@@ -248,204 +258,230 @@
         "tests/governance/facts-truth.test.ts",
         "tests/governance/handoff-truth.test.ts",
         "tests/unit/cli-usage.test.ts",
-        "docs/copy/facts/public-repo-facts.md"
+        "docs/copy/facts/public-repo-facts.md",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/governance/facts-truth.test.ts",
         "tests/governance/handoff-truth.test.ts",
         "tests/unit/cli-usage.test.ts",
         "scripts/copy_record.mjs"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0015",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.0",
       "evidence": [
         "docs/patches/P-0015-pre-step-rejection.md",
         "data/results/prestep-probe-2026-11-13T07-45-00.000Z.json",
-        "scripts/record_prestep_probe.mjs"
+        "scripts/record_prestep_probe.mjs",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "data/results/prestep-probe-2026-11-13T07-45-00.000Z.json",
         "scripts/record_prestep_probe.mjs",
         "scripts/gate_ssot.mjs"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0016",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.0",
       "evidence": [
         "packages/core/src/registry.ts",
         "packages/core/src/types.ts",
         "packages/plugin/src/explain-command.ts",
-        "tests/governance/coverage-single-source.test.ts"
+        "tests/governance/coverage-single-source.test.ts",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/governance/coverage-single-source.test.ts",
         "tests/e2e/explain.test.ts",
         "packages/core/src/registry.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0017",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.0",
       "evidence": [
         "packages/plugin/README.md",
         "packages/core/README.md",
         "tests/governance/package-readme-prose.test.ts",
-        "docs/patches/P-0017-package-readme-prose.md"
+        "docs/patches/P-0017-package-readme-prose.md",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/governance/package-readme-prose.test.ts",
         "tests/unit/cli-usage.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0018",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.0",
       "evidence": [
         "scripts/publish_packages.mjs",
         "tests/unit/publish.test.ts",
-        "docs/patches/P-0018-windows-exit-code.md"
+        "docs/patches/P-0018-windows-exit-code.md",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/publish.test.ts",
         "scripts/publish_packages.mjs"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0019",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.0",
       "evidence": [
         "docs/patches/P-0019-outward-pages.md",
         "tests/unit/cli-usage.test.ts",
         "packages/plugin/README.md",
-        "packages/core/README.md"
+        "packages/core/README.md",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/cli-usage.test.ts",
         "tests/governance/package-readme-prose.test.ts",
         "tests/governance/facts-truth.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0020",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.0",
       "evidence": [
         "docs/patches/P-0020-market-source-truth.md",
         "docs/market-index.json",
-        "tests/governance/distribution-entry.test.ts"
+        "tests/governance/distribution-entry.test.ts",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/governance/distribution-entry.test.ts",
         "docs/market-index.json"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0021",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.1",
       "evidence": [
         "docs/patches/P-0021-dead-export.md",
         "packages/plugin/package.json",
-        "tests/unit/package-files.test.ts"
+        "tests/unit/package-files.test.ts",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/package-files.test.ts",
         "packages/plugin/package.json"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0022",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.1",
       "evidence": [
         "docs/patches/P-0022-fixture-check-read-only.md",
         "scripts/sync_fixtures.mjs",
-        "tests/unit/fixtures-sync.test.ts"
+        "tests/unit/fixtures-sync.test.ts",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/fixtures-sync.test.ts",
         "scripts/sync_fixtures.mjs"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0023",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.1",
       "evidence": [
         "docs/patches/P-0023-patch-doc-mechanism.md",
         "docs/patches/P-0016-coverage-single-source.md",
-        "scripts/gate_registry.mjs"
+        "scripts/gate_registry.mjs",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "scripts/gate_registry.mjs",
         "docs/patches/P-0016-coverage-single-source.md"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0024",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.2",
       "evidence": [
         "docs/patches/P-0024-package-readme-copy-channel.md",
         "packages/plugin/README.md",
         "packages/core/README.md",
-        "scripts/gate_copy.mjs"
+        "scripts/gate_copy.mjs",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "scripts/gate_copy.mjs",
         "tests/governance/package-readme-prose.test.ts",
         "tests/unit/cli-usage.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0025",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.2",
       "evidence": [
         "packages/plugin/src/explain-command.ts",
         "tests/e2e/explain.test.ts",
-        "packages/plugin/README.md"
+        "packages/plugin/README.md",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/e2e/explain.test.ts",
         "packages/plugin/src/explain-command.ts",
         "tests/governance/coverage-single-source.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0026",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.2",
       "evidence": [
         "docs/HANDOFF.md",
         "docs/PUBLISH.md",
         "scripts/publish_packages.mjs",
-        "tests/governance/release-procedure.test.ts"
+        "tests/governance/release-procedure.test.ts",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/governance/release-procedure.test.ts",
         "tests/governance/handoff-truth.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0027",
@@ -465,35 +501,39 @@
     },
     {
       "id": "P-0028",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.5",
       "evidence": [
         "data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json",
         "tests/governance/shipped-samples.test.ts",
-        "scripts/record_adaptation.mjs"
+        "scripts/record_adaptation.mjs",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/governance/shipped-samples.test.ts",
         "packages/core/src/redact.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0029",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.6",
       "evidence": [
         "docs/patches/P-0029-live-pointers.md",
         "tests/governance/handoff-truth.test.ts",
         "tests/governance/release-procedure.test.ts",
-        "scripts/gate_size.mjs"
+        "scripts/gate_size.mjs",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/governance/handoff-truth.test.ts",
         "tests/governance/release-procedure.test.ts",
         "scripts/gate_size.mjs"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0030",
@@ -516,36 +556,40 @@
     },
     {
       "id": "P-0031",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.7",
       "evidence": [
         "docs/patches/P-0031-core-budget.md",
         "scripts/lib/budgets.mjs",
         "scripts/gate_size.mjs",
-        "tests/governance/budget-split.test.ts"
+        "tests/governance/budget-split.test.ts",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "scripts/gate_size.mjs",
         "scripts/lib/budgets.mjs",
         "tests/governance/budget-split.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0032",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.8",
       "evidence": [
         "docs/patches/P-0032-registry-ledger-dedup.md",
         "packages/core/src/registry.ts",
         "scripts/lib/budgets.mjs",
-        "data/results/patch-registry-2026-11-14T15-56-00.000Z.json"
+        "data/results/patch-registry-2026-11-14T15-56-00.000Z.json",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "scripts/gate_size.mjs",
         "tests/governance/ledgers.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0033",
@@ -582,18 +626,20 @@
     },
     {
       "id": "P-0035",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.9",
       "evidence": [
         "docs/patches/P-0035-patch-row-resolution.md",
         "packages/plugin/cordis.patch.yml",
-        "tests/governance/profile-patch-resolution.test.ts"
+        "tests/governance/profile-patch-resolution.test.ts",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/governance/profile-patch-resolution.test.ts",
         "scripts/gate_namespace.mjs"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0036",
@@ -631,48 +677,54 @@
     },
     {
       "id": "P-0038",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.11 (unreleased on the tree)",
       "evidence": [
         "docs/patches/P-0038-cross-platform-home-paths.md",
         "packages/core/src/redact.ts",
-        "tests/unit/redact-platform.test.ts"
+        "tests/unit/redact-platform.test.ts",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/redact-platform.test.ts",
         "tests/unit/redact.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0039",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.11 (unreleased on the tree)",
       "evidence": [
         "docs/patches/P-0039-portable-session-root.md",
         "scripts/lib/session-root.mjs",
         "tests/unit/session-root.test.ts",
-        "data/results/live-linux-2026-11-15T10-00-00.000Z.json"
+        "data/results/live-linux-2026-11-15T10-00-00.000Z.json",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/session-root.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0040",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.12 (unreleased on the tree)",
       "evidence": [
         "docs/patches/P-0040-acceptance-fixture-count.md",
         "scripts/lib/acceptance.mjs",
         "tests/unit/acceptance.test.ts",
-        "data/results/install-acceptance-2026-11-15T12-20-00.000Z.json"
+        "data/results/install-acceptance-2026-11-15T12-20-00.000Z.json",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/acceptance.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0041",
@@ -692,7 +744,7 @@
     },
     {
       "id": "P-0042",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.13",
       "evidence": [
@@ -701,27 +753,31 @@
         "packages/plugin/src/session-scan.ts",
         "tests/unit/refused-effort.test.ts",
         "tests/e2e/explain-conflict.test.ts",
-        "data/results/prestep-enter-2026-11-15T17-55-00.000Z.json"
+        "data/results/prestep-enter-2026-11-15T17-55-00.000Z.json",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/refused-effort.test.ts",
         "tests/e2e/explain-conflict.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0043",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.14",
       "evidence": [
         "docs/patches/P-0043-shipped-sample-guard-shape.md",
         "tests/governance/shipped-samples.test.ts",
         "data/fixtures/toolcall-fusion/bare-code-value.json",
-        "data/results/live-linux-2026-11-15T15-00-00.000Z.json"
+        "data/results/live-linux-2026-11-15T15-00-00.000Z.json",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/governance/shipped-samples.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0044",
@@ -758,58 +814,66 @@
     },
     {
       "id": "P-0046",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.16 (unreleased on the tree)",
       "evidence": [
         "docs/patches/P-0046-public-page-completeness.md",
-        "tests/governance/public-pages-complete.test.ts"
+        "tests/governance/public-pages-complete.test.ts",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/governance/public-pages-complete.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0047",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.17 (published 2026-11-17)",
       "evidence": [
         "docs/patches/P-0047-completed-without-answer.md",
         "packages/plugin/src/session-scan.ts",
-        "tests/unit/completed-answer.test.ts"
+        "tests/unit/completed-answer.test.ts",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/completed-answer.test.ts",
         "tests/e2e/cli.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0048",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.17 (published 2026-11-17)",
       "evidence": [
         "docs/patches/P-0048-macos-ci-criterion.md",
-        ".github/workflows/ci.yml"
+        ".github/workflows/ci.yml",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "docs/patches/P-0048-macos-ci-criterion.md"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0049",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.17 (published 2026-11-17)",
       "evidence": [
         "docs/patches/P-0049-fact-pack-census.md",
-        "tests/governance/fact-pack-census.test.ts"
+        "tests/governance/fact-pack-census.test.ts",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/governance/fact-pack-census.test.ts",
         "tests/governance/facts-truth.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0050",
@@ -842,17 +906,19 @@
     },
     {
       "id": "P-0052",
-      "status": "tested",
+      "status": "verified",
       "owner": "remedy",
       "since": "0.4.18 (published 2026-11-17)",
       "evidence": [
         "docs/patches/P-0052-completed-on-tool-call.md",
-        "data/results/live-toolcall-2026-11-17T13-30-00.000Z.json"
+        "data/results/live-toolcall-2026-11-17T13-30-00.000Z.json",
+        "data/results/live-r72-2026-11-19T00-00-00.000Z.json"
       ],
       "guards": [
         "tests/unit/on-tool-call.test.ts",
         "tests/e2e/explain-toolcall.test.ts"
-      ]
+      ],
+      "verified_at": "2026-11-19T00:00:00.000Z"
     },
     {
       "id": "P-0053",

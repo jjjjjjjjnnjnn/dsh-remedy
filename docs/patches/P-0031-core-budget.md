@@ -1,6 +1,6 @@
 # P-0031 — The engine every mount loads had no budget, and a comment said it did
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0012
+**Status**: `verified`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0012
 
 ## Symptom
 
@@ -78,3 +78,7 @@ node scripts/gate_size.mjs --mutate
 node --test tests/governance/budget-split.test.ts
 grep -n "CORE_CAP\|CORE_FILE_CAPS\|98 247" scripts/lib/budgets.mjs
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

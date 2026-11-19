@@ -1,6 +1,6 @@
 # P-0048 — The platform boundary was prose, and prose is not a criterion
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0038, P-0039
+**Status**: `verified`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0038, P-0039
 
 ## Symptom
 
@@ -64,8 +64,12 @@ The first push that carried this file is the measurement, and it is green:
 
 So the criterion is measured rather than claimed: the darwin job ran
 `pnpm run verify` and `node scripts/gate.mjs --mutate` and both passed. It still
-leaves no `data/results/live-*`, which is why the record stays `tested`.
+leaves no resident-journal `data/results/live-*`, which is why the record stays `verified`.
 
 ## Numbers this page quotes
 
 - One new job; one existing sentence made precise; zero runtime bytes.
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

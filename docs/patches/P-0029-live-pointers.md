@@ -1,6 +1,6 @@
 # P-0029 — The pointers a successor acts on were prose nobody compared
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0014, P-0026
+**Status**: `verified`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0014, P-0026
 
 ## Symptom
 
@@ -90,3 +90,7 @@ node --test tests/governance/release-procedure.test.ts
 node scripts/gate_size.mjs
 node scripts/gate_size.mjs --mutate
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

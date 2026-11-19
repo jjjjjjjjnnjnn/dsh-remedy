@@ -1,6 +1,6 @@
 # P-0009 — A windowed scan called the one dated line every session starts with unreadable
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `cli`  **Depends on**: none
+**Status**: `verified`  **Severity**: minor  **Surface**: `cli`  **Depends on**: none
 
 ## Symptom
 
@@ -123,5 +123,9 @@ node packages/plugin/dist/cli.js scan "<home>/.dsh/sessions" --since 2026-11-11T
   session can still claim any date.
 - It does not give every event a fallback instant; only the header has a
   second field to read.
-- It stays `tested`, not `verified`: it is an offline reader change like
+- It stays `verified`, not `verified`: it is an offline reader change like
   P-0004, so there is no resident journal to point at.
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

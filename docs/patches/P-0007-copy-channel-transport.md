@@ -2,8 +2,8 @@
 
 ## Status
 
-`tested`. It changes the build-side copy channel, not the resident
-`llm/stream` seam, so no live journal can attest it. See "What this does not
+`verified`. It changes the build-side copy channel, not the resident
+`llm/stream` seam, so no resident journal attests it; see R72 witness. See "What this does not
 do".
 
 ## Severity
@@ -125,3 +125,7 @@ and `node scripts/gate.mjs` prints `ALL GREEN · 5 gates`.
   named cause.
 - It does not make the fact pack smaller, so the stdin path stays the normal path
   from here on.
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

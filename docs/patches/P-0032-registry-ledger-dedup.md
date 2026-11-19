@@ -1,6 +1,6 @@
 # P-0032 — The ledger carried the narrative the patch docs already carried
 
-**Status**: `tested`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0031
+**Status**: `verified`  **Severity**: minor  **Surface**: `scripts`  **Depends on**: P-0031
 
 ## Symptom
 
@@ -78,3 +78,7 @@ node -e "const fs=require('fs');console.log(fs.statSync('packages/core/dist/regi
 node scripts/gate_size.mjs
 node --test tests/governance/ledgers.test.ts
 ```
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_r72_live.mjs",
+  "generated_at": "2026-11-19T00:00:00.000Z",
+  "question": "Do the shipped suite, gates, gates-under-mutation and CLI commands say the truth about this tree and this machine at one stamp?",
+  "runs": {
+    "pnpm run verify": {
+      "exit": 0,
+      "sha256": "f1d86a58f16309762b02b6d7a07f3e3f4b507eabf671aa31b15ee205d68592e8",
+      "green": true
+    },
+    "gate --mutate": {
+      "exit": 0,
+      "sha256": "4199868636360db2c2d6a4276506bf0b733a63dff44efbef7671968ee40cd880",
+      "green": true
+    },
+    "cli verify": {
+      "exit": 0,
+      "sha256": "199944426ebba4225f3ebdddb75e4c161c7d23b1b2e1ef570a1019ebc14dc561",
+      "green": true
+    },
+    "scan --json": {
+      "exit": 1,
+      "sha256": "3c2ce1e9443de6a48e134e54b398d78ebaac3be45693f64c60c2bc7113591d7d",
+      "files": 115,
+      "attempts": 397,
+      "unreadable_lines": 0
+    },
+    "scan --since": {
+      "exit": 1,
+      "sha256": "d2d88f23e8d9bf69f970d4add7849475f861133457e5569840875893ca6d7b44",
+      "unreadable_lines": 0,
+      "before_since": 156209
+    },
+    "explain --sessions": {
+      "exit": 1,
+      "sha256": "598584f83096899b1de323da911303e5c2dced10df24b3536a52049c6876d2a0"
+    },
+    "explain --profile-file xhigh": {
+      "exit": 1,
+      "sha256": "044708f1c2e800786e9932fa18fc4a7d2bd25ce0eca9021ed97a1db76e05e9cd"
+    },
+    "explain --profile-file high (control)": {
+      "exit": 1,
+      "sha256": "299a01264732b1589b128b96654d84a2a37fc21f1ce1afddb778ff5a46a550ab"
+    }
+  },
+  "patches": [
+    {
+      "id": "P-0007",
+      "witness": "suite",
+      "claim": "copy channel recorded the long pages through the manifest writer",
+      "ok": true
+    },
+    {
+      "id": "P-0008",
+      "witness": "suite",
+      "claim": "the byte gate is one of the six gates and the mutation control caught it",
+      "ok": true
+    },
+    {
+      "id": "P-0012",
+      "witness": "suite",
+      "claim": "budgets declares residency/CLI/total caps and the split test passed",
+      "ok": true
+    },
+    {
+      "id": "P-0014",
+      "witness": "suite",
+      "claim": "facts-truth, handoff-truth and cli-usage ran inside the green suite",
+      "ok": true
+    },
+    {
+      "id": "P-0017",
+      "witness": "suite",
+      "claim": "both package pages carry no prose digits and are guarded by the suite",
+      "ok": true
+    },
+    {
+      "id": "P-0018",
+      "witness": "suite",
+      "claim": "the publish wrapper names both Windows exception codes and its test passed",
+      "ok": true
+    },
+    {
+      "id": "P-0019",
+      "witness": "suite",
+      "claim": "the outward pages name every registry patch and the completeness test passed",
+      "ok": true
+    },
+    {
+      "id": "P-0020",
+      "witness": "suite",
+      "claim": "the market index is valid JSON and its entry test passed",
+      "ok": true
+    },
+    {
+      "id": "P-0021",
+      "witness": "suite",
+      "claim": "every exported subpath resolves to a built file",
+      "ok": true
+    },
+    {
+      "id": "P-0022",
+      "witness": "suite",
+      "claim": "the fixture guard runs read-only before comparing",
+      "ok": true
+    },
+    {
+      "id": "P-0023",
+      "witness": "suite",
+      "claim": "gate_registry resolves a doc for every registered id",
+      "ok": true
+    },
+    {
+      "id": "P-0024",
+      "witness": "suite",
+      "claim": "the two package pages are registered in the copy manifest",
+      "ok": true
+    },
+    {
+      "id": "P-0026",
+      "witness": "suite",
+      "claim": "one release procedure and its governance test passed",
+      "ok": true
+    },
+    {
+      "id": "P-0028",
+      "witness": "suite",
+      "claim": "the shipped fused fixture carries <home>, not a machine path",
+      "ok": true
+    },
+    {
+      "id": "P-0029",
+      "witness": "suite",
+      "claim": "the live version pointer and the byte row are read by the green suite",
+      "ok": true
+    },
+    {
+      "id": "P-0031",
+      "witness": "suite",
+      "claim": "the engine has its own cap in the budget module",
+      "ok": true
+    },
+    {
+      "id": "P-0032",
+      "witness": "suite",
+      "claim": "the registry file stayed under its cap while the ledger shortened",
+      "ok": true
+    },
+    {
+      "id": "P-0035",
+      "witness": "suite",
+      "claim": "each patch-layer row resolves to a manifest export",
+      "ok": true
+    },
+    {
+      "id": "P-0038",
+      "witness": "suite",
+      "claim": "redaction recognises Windows, POSIX and file-URL home shapes",
+      "ok": true
+    },
+    {
+      "id": "P-0039",
+      "witness": "suite",
+      "claim": "the session root has one portable definition",
+      "ok": true
+    },
+    {
+      "id": "P-0040",
+      "witness": "suite",
+      "claim": "acceptance counts fixtures from the package and reads eight",
+      "ok": true
+    },
+    {
+      "id": "P-0043",
+      "witness": "suite",
+      "claim": "the JSON-escaped sample also carries <home>",
+      "ok": true
+    },
+    {
+      "id": "P-0046",
+      "witness": "suite",
+      "claim": "the first screens name every patch the registry counts",
+      "ok": true
+    },
+    {
+      "id": "P-0048",
+      "witness": "gate",
+      "claim": "the CI workflow has a macOS job and the suite passed here",
+      "ok": true
+    },
+    {
+      "id": "P-0049",
+      "witness": "suite",
+      "claim": "the fact pack counts the registry it describes",
+      "ok": true
+    },
+    {
+      "id": "P-0010",
+      "witness": "cli",
+      "claim": "the usage line in the shipped README matches the CLI source",
+      "ok": true
+    },
+    {
+      "id": "P-0009",
+      "witness": "cli",
+      "claim": "a windowed scan of the real corpus reads every header and buckets the rest",
+      "ok": true
+    },
+    {
+      "id": "P-0016",
+      "witness": "cli",
+      "claim": "the explain command holds no local coverage table",
+      "ok": true
+    },
+    {
+      "id": "P-0025",
+      "witness": "cli",
+      "claim": "explain without a profile reports unknown, never a finding",
+      "ok": true
+    },
+    {
+      "id": "P-0042",
+      "witness": "cli",
+      "claim": "the refused level pinned in a profile is a finding; a fixed level is not",
+      "ok": true
+    },
+    {
+      "id": "P-0047",
+      "witness": "absent",
+      "claim": "completed_without_answer is 0 in the corpus; the probe is the only witness",
+      "ok": true
+    },
+    {
+      "id": "P-0052",
+      "witness": "absent",
+      "claim": "completed_on_tool_call is 0 in the corpus; the probe is the only witness",
+      "ok": true
+    },
+    {
+      "id": "P-0015",
+      "witness": "probe",
+      "claim": "a rejected step ends blocked with the input discarded, measured in an isolated home",
+      "ok": true
+    }
+  ],
+  "not_proven": [
+    "no resident journal witnessed these patches: the witness is the shipped suite, a shipped CLI read, a governance gate or an isolated probe, and each row says which",
+    "the desktop App was not driven: R71 measured the provider key as revoked (403 api key revoked, 0 model requests), so no 0.4.19 desktop turn is claimed",
+    "P-0047 and P-0052 have no real case in this corpus; the probe artifacts are named in their claims and the status rests on those, not on a corpus case",
+    "P-0048 is a CI criterion; the macOS job is not a macOS host run by this recorder, and the row is marked gate, not cli or suite",
+    "the corpus and the profile are this machine at this stamp; another host may write other sessions"
+  ],
+  "redaction": {
+    "replacements": 0,
+    "kinds": []
+  }
+}

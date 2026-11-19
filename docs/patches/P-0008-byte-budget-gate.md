@@ -2,7 +2,7 @@
 
 ## Status
 
-`tested`. It adds a build-side gate. Nothing the plugin mounts changes, so no
+`verified`. It adds a build-side gate. Nothing the plugin mounts changes, so no
 live journal can attest it. See "What this does not do".
 
 ## Severity
@@ -109,3 +109,7 @@ node scripts/gate.mjs --mutate        # 6/6 gates caught their injected violatio
   time, and the pack size is already tracked separately.
 - It does not replace the structural splits. It makes the next crossing fail
   immediately instead of after a `pnpm pack`.
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

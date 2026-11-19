@@ -9,6 +9,7 @@ const LIVE_NEIGHBOURS = 'data/results/live-neighbours-2026-11-18T20-00-00.000Z.j
 const LIVE_REPAIRS = 'data/results/live-repairs-2026-11-18T20-00-00.000Z.json'
 const LIVE_CENSUS = 'data/results/live-census-2026-11-18T22-00-00.000Z.json'
 const LIVE_IDENTITY = 'data/results/live-identity-2026-11-18T22-40-00.000Z.json'
+const LIVE_R72 = 'data/results/live-r72-2026-11-19T00-00-00.000Z.json'
 const FAIL_OPEN_LIMITS = [
   'a fail-open stream reads quiet: the foreign chunk moves no counter',
   'only the fields the wrapper reads are checked; an ignored field is not validated',
@@ -145,19 +146,16 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0012',
     title: 'One byte cap for two load paths is a cap that taxes the wrong half',
     symptom:
-      'one 68000-byte ceiling counted a mounted plugin and a CLI invocation as the same thing; P-0011 needed 4 263 bytes that did not fit, and paying meant deleting prose a daemon loads',
+      'One byte cap for two load paths is a cap that taxes the wrong half',
     rootCause:
-      'gate_size summed every emitted module into one number and never asked which of them a running plugin imports: the CLI-only half sat beside the bytes that load on every session',
+      'mechanism and counter-evidence: docs/patches/P-0012-budget-by-load-path.md',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['scripts/lib/budgets.mjs', 'docs/patches/P-0012-budget-by-load-path.md'],
+    evidence: ['scripts/lib/budgets.mjs', 'docs/patches/P-0012-budget-by-load-path.md', LIVE_R72],
     guards: ['scripts/gate_size.mjs', 'tests/governance/budget-split.test.ts'],
     limits: [
-      'the caps are recorded, not assumed: they moved twice in one session with the owner signature (budgets.mjs)',
-      'the lists are explicit; the test reads only the relative import graph, so a dynamic import is not caught',
-      'a split budget cannot tell good growth from bad, only which half pays',
-      'it caps emitted JavaScript only, not declarations, fixtures or package-root files',
+      'scope, counter-evidence and what is not proven: docs/patches/P-0012-budget-by-load-path.md',
     ],
   },
   {
@@ -232,9 +230,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'the request (35509 chars for changelog, 33530 for readme) exceeded the 32767-character Windows command line: spawnSync returned ENAMETOOLONG and a null status, as did a timeout kill; transport is now chosen by length',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0007-copy-channel-transport.md', 'docs/copy/manifest.json'],
+    evidence: ['docs/patches/P-0007-copy-channel-transport.md', 'docs/copy/manifest.json', LIVE_R72],
     guards: ['tests/unit/agy-channel.test.ts', 'scripts/gate_copy.mjs', 'scripts/lib/agy-channel.mjs'],
     limits: [
       'no retry across transports: it picks one from the request length and reports the failure',
@@ -250,9 +248,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'the caps lived only in the fact pack and README.md; nothing under scripts/ read them, so a patch that crossed a line stayed green through the whole suite',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0008-byte-budget-gate.md', 'audit/gate_ledger.json'],
+    evidence: ['docs/patches/P-0008-byte-budget-gate.md', 'audit/gate_ledger.json', LIVE_R72],
     guards: ['scripts/gate_size.mjs', 'tests/governance/ledgers.test.ts', 'scripts/gate.mjs'],
     limits: [
       'the gate measures the emitted plugin only: core does not load at startup',
@@ -269,9 +267,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'nothing watched either string: gate_copy covers the root outward files, the package README had no output_sha256 and no gate, and no test compared the two strings, so a red result was impossible',
     surface: 'cli',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0010-cli-usage-truth.md'],
+    evidence: ['docs/patches/P-0010-cli-usage-truth.md', LIVE_R72],
     guards: ['tests/unit/cli-usage.test.ts', 'packages/plugin/README.md', 'packages/plugin/src/cli-args.ts'],
     limits: [
       'the gate set still does not cover packages/*/README.md: the test compares the two scan lines, not the page as a whole',
@@ -287,9 +285,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       '`session-scan.ts` required a numeric `time` before applying the window and counted anything else as unreadable; the `session` header carries `createdAt`, not `time`, so every header fell into that branch',
     surface: 'cli',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0009-session-header-window.md'],
+    evidence: ['docs/patches/P-0009-session-header-window.md', LIVE_R72],
     guards: ['tests/unit/session-scan.test.ts', 'tests/e2e/cli.test.ts', 'packages/plugin/src/session-scan.ts'],
     limits: [
       'only the `session` header is dated by createdAt; an event with no instant stays unreadable',
@@ -300,38 +298,32 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0014',
     title: 'The project describing itself is the part nothing checked',
     symptom:
-      'the fact pack pinned core 0.3.7 and called 0.3.6 the previous release while 0.3.8 shipped, quoted a hash no file hashed to, and the npm page documented four commands after explain shipped',
+      'The project describing itself is the part nothing checked',
     rootCause:
-      'the copy criterion checked the shape of a number and never the pack own statements; gate_ssot read data/results/*.json but never a hash printed in prose; cli-usage.test.ts compared one line',
+      'mechanism and counter-evidence: docs/patches/P-0014-description-truth.md',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0014-description-truth.md', 'docs/copy/facts/public-repo-facts.md'],
+    evidence: ['docs/patches/P-0014-description-truth.md', 'docs/copy/facts/public-repo-facts.md', LIVE_R72],
     guards: ['tests/governance/facts-truth.test.ts', 'tests/governance/handoff-truth.test.ts', 'tests/unit/cli-usage.test.ts', 'scripts/copy_record.mjs'],
     limits: [
-      'the package README is still hand-written prose: USAGE is its guard, not a hash (BS-13 narrows)',
-      'the pack is checked only against other repository files; a claim nothing else records stays unverified',
-      'the hash check skips any evidence row that compares two publishes instead of guessing',
-      'gate_copy cannot see the handoff or the package README: those are governance tests, not gates',
+      'scope, counter-evidence and what is not proven: docs/patches/P-0014-description-truth.md',
     ],
   },
   {
     id: 'P-0015',
     title: 'The seam nobody mounted because nobody measured what refusing looks like',
     symptom:
-      'agent/pre-step stayed unmounted on one sentence repeated in three places: "a rejected step opens no step, but what the user sees has not been measured"; a seam that can refuse before a token was blocked by an unchecked assumption',
+      'The seam nobody mounted because nobody measured what refusing looks like',
     rootCause:
-      'the claim was never run; the loop source answers it: preStep awaits the waterfall and, on a reject, closes the turn with reason "blocked" and no step',
+      'mechanism and counter-evidence: docs/patches/P-0015-pre-step-rejection.md',
     surface: 'profile',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0015-pre-step-rejection.md'],
+    evidence: ['docs/patches/P-0015-pre-step-rejection.md', LIVE_R72],
     guards: ['data/results/prestep-probe-2026-11-13T07-45-00.000Z.json', 'scripts/record_prestep_probe.mjs', 'scripts/gate_ssot.mjs'],
     limits: [
-      'it measures the seam, it does not mount a product on it: nothing calls agent/pre-step in a shipped profile',
-      'the desktop UI render of reason.kind "blocked" stays unmeasured, and the probe ran headless only',
-      'a rejection discards the claimed input: the user retypes the message, so an enter decision is the better default',
-      'only the first proposed step of one turn was exercised',
+      'scope, counter-evidence and what is not proven: docs/patches/P-0015-pre-step-rejection.md',
     ],
   },
   {
@@ -342,9 +334,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'the command predates the registry carrying that claim; its local tables were the only map a user read, and a human diff by eye was the only mechanism',
     surface: 'cli',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['packages/core/src/types.ts', 'packages/plugin/src/explain-command.ts'],
+    evidence: ['packages/core/src/types.ts', 'packages/plugin/src/explain-command.ts', LIVE_R72],
     guards: ['tests/governance/coverage-single-source.test.ts', 'tests/e2e/explain.test.ts', 'packages/core/src/registry.ts'],
     limits: [
       'moves six claims and no behaviour: the printed table is identical before and after',
@@ -356,18 +348,16 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0017',
     title: 'The two pages npm renders had no mechanism at all',
     symptom:
-      'both package pages are hand-written with no output_sha256 and no copy-channel entry, so gate_copy never saw them; 2331 bytes of the plugin page was compared against nothing while being what a stranger installs from',
+      'The two pages npm renders had no mechanism at all',
     rootCause:
-      'the copy channel was built for the repository-root files, and the package pages predate it; each round pinned one more line instead of answering what else was unguarded',
+      'mechanism and counter-evidence: docs/patches/P-0017-package-readme-prose.md',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['packages/plugin/README.md', 'packages/core/README.md', 'docs/patches/P-0017-package-readme-prose.md'],
+    evidence: ['packages/plugin/README.md', 'packages/core/README.md', 'docs/patches/P-0017-package-readme-prose.md', LIVE_R72],
     guards: ['tests/governance/package-readme-prose.test.ts', 'tests/unit/cli-usage.test.ts'],
     limits: [
-      'proves no prose number and no undispatchable command can rot; layout and behavioural claims stay hand-written',
-      'the number rule is the copy channel criterion, not a truth test, so a page can still describe absent behaviour',
-      'core/README.md is held to the weaker half only: it documents a library, not a command',
+      'scope, counter-evidence and what is not proven: docs/patches/P-0017-package-readme-prose.md',
     ],
   },
   {
@@ -378,9 +368,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'npmFailureAdvice only understands HTTP codes; a process killed by the Windows runtime has no HTTP answer and fell through to the generic branch',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0018-windows-exit-code.md'],
+    evidence: ['docs/patches/P-0018-windows-exit-code.md', LIVE_R72],
     guards: ['tests/unit/publish.test.ts', 'scripts/publish_packages.mjs'],
     limits: [
       'names only the two codes this machine produced (0xC0000409, 0xC0000005); another Windows exception still prints raw',
@@ -397,7 +387,7 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'gate_copy guards numbers, not shape: it checks that every prose digit exists in the fact pack and never whether the page still describes the product',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
     evidence: [
       'docs/patches/P-0019-outward-pages.md',
@@ -405,6 +395,7 @@ export const PATCHES: readonly PatchRecord[] = [
       'README.zh-CN.md',
       'packages/plugin/README.md',
       'packages/core/README.md',
+      LIVE_R72,
     ],
     guards: ['tests/unit/cli-usage.test.ts', 'tests/governance/package-readme-prose.test.ts', 'tests/governance/facts-truth.test.ts', 'scripts/gate_copy.mjs'],
     limits: [
@@ -421,9 +412,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'the guard checked the shape of the pin and never its meaning: any hex commit passed, so every document commit forced a re-pin',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0020-market-source-truth.md'],
+    evidence: ['docs/patches/P-0020-market-source-truth.md', LIVE_R72],
     guards: ['tests/governance/distribution-entry.test.ts', 'docs/market-index.json'],
     limits: [
       'it does not turn the repository into a published artifact: the patches it names stay merged and unreleased',
@@ -439,9 +430,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'the test compared the target string against a regex and never the file behind it, so a plausible path passed as well as a real one',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0021-dead-export.md'],
+    evidence: ['docs/patches/P-0021-dead-export.md', LIVE_R72],
     guards: ['tests/unit/package-files.test.ts', 'packages/plugin/package.json'],
     limits: [
       'it checks the source tree, not the packed tarball: a module excluded by files would still pass',
@@ -457,9 +448,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'the test was written as setup plus assertion and the setup was the same operation it claimed to verify, so the negative control had nowhere to run',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0022-fixture-check-read-only.md'],
+    evidence: ['docs/patches/P-0022-fixture-check-read-only.md', LIVE_R72],
     guards: ['tests/unit/fixtures-sync.test.ts', 'scripts/sync_fixtures.mjs'],
     limits: [
       'prepack still runs write mode: packing has to create the copy, only the test is read-only first',
@@ -471,19 +462,16 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0023',
     title: 'The workflow first step was a sentence nobody read',
     symptom:
-      'AGENTS.md says every patch starts with a doc, but gate_registry resolved only evidence and guards: at R31 the registry held 21 patches and docs/patches 19, P-0016 missing, every check green',
+      'The workflow first step was a sentence nobody read',
     rootCause:
-      'the doc was read as prose about the patch rather than as part of it: evidence and guards are paths the gate resolves, so a doc in neither list could be missing with no check noticing',
+      'mechanism and counter-evidence: docs/patches/P-0023-patch-doc-mechanism.md',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0023-patch-doc-mechanism.md'],
+    evidence: ['docs/patches/P-0023-patch-doc-mechanism.md', LIVE_R72],
     guards: ['scripts/gate_registry.mjs', 'docs/patches/P-0016-coverage-single-source.md'],
     limits: [
-      'it checks that a doc exists, not that it is true: a doc can still describe behaviour the code does not have',
-      'it matches by id prefix, which is safe only while ids stay P-NNNN',
-      'an orphan doc with no registry entry is not reported, because the gate iterates the registry rather than the directory',
-      'no live artifact is possible: this is a governance gate',
+      'scope, counter-evidence and what is not proven: docs/patches/P-0023-patch-doc-mechanism.md',
     ],
   },
   {
@@ -494,9 +482,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'the copy channel was defined as "the outward files at the repository root", so the two package pages were read as package metadata rather than as the first thing a stranger opens',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0024-package-readme-copy-channel.md', 'packages/plugin/README.md', 'packages/core/README.md'],
+    evidence: ['docs/patches/P-0024-package-readme-copy-channel.md', 'packages/plugin/README.md', 'packages/core/README.md', LIVE_R72],
     guards: ['scripts/gate_copy.mjs', 'tests/governance/package-readme-prose.test.ts', 'tests/unit/cli-usage.test.ts'],
     limits: [
       'the copy gate checks numbers, bytes and provenance, not truth',
@@ -508,18 +496,16 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0025',
     title: 'An unread profile was reported as a finding',
     symptom:
-      '`explain --sessions <dir>` printed `(no)` in the "enabled here" cell for every covered class and exited 1, while its footer said the answer was unknown without a profile',
+      'An unread profile was reported as a finding',
     rootCause:
-      '`enabled` had two states where the domain has three: `isPatchOn` answered false for a null config, so "nobody read a profile" became "every coverer is switched off" and `uncovered` counted it into the exit code',
+      'mechanism and counter-evidence: docs/patches/P-0025-explain-unknown-profile.md',
     surface: 'cli',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['packages/plugin/README.md'],
+    evidence: ['packages/plugin/README.md', LIVE_R72],
     guards: ['tests/e2e/explain.test.ts', 'packages/plugin/src/explain-command.ts', 'tests/governance/coverage-single-source.test.ts'],
     limits: [
-      'covers "no profile was read"; a profile read without a switch key still falls back to the default, unmeasured',
-      'exit 0 without a profile means "nothing found", not "nothing wrong": pass --profile-file for the old strictness',
-      'the row is tested, not the column widths: a longer patch id still shifts the layout',
+      'scope, counter-evidence and what is not proven: docs/patches/P-0025-explain-unknown-profile.md',
     ],
   },
   {
@@ -530,9 +516,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'handoff-truth checked the status table and the first thing; the release procedure lives after the evidence index, so it was outside the live contract while still being what a successor acts on',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/HANDOFF.md', 'docs/PUBLISH.md', 'scripts/publish_packages.mjs'],
+    evidence: ['docs/HANDOFF.md', 'docs/PUBLISH.md', 'scripts/publish_packages.mjs', LIVE_R72],
     guards: ['tests/governance/release-procedure.test.ts', 'tests/governance/handoff-truth.test.ts'],
     limits: [
       'the test pins the shape of the sections, not the truth of every step',
@@ -566,9 +552,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'redaction was wired into the artifact writers and never into the fixture corpus; P-0004 fixed the reader for three path shapes, not the files already tracked',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json', 'scripts/record_adaptation.mjs'],
+    evidence: ['data/fixtures/toolcall-fusion/session-9045e2ec-seq-526.json', 'scripts/record_adaptation.mjs', LIVE_R72],
     guards: ['tests/governance/shipped-samples.test.ts', 'packages/core/src/redact.ts'],
     limits: [
       'the fixture now carries <home>, so it is no longer a byte-for-byte copy; its note says so',
@@ -584,9 +570,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'no rule compared a live version claim with package.json or the byte row: handoff-truth read the evidence index, release-procedure the command shapes, gate_size only the caps',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0029-live-pointers.md'],
+    evidence: ['docs/patches/P-0029-live-pointers.md', LIVE_R72],
     guards: ['tests/governance/handoff-truth.test.ts', 'tests/governance/release-procedure.test.ts', 'scripts/gate_size.mjs'],
     limits: [
       'offline: the row is compared with package.json, not npm, so it can name a tag nobody published',
@@ -617,38 +603,32 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0031',
     title: 'The engine every mount loads had no budget, and a comment said it did',
     symptom:
-      'P-0012 said core sits outside the size gate and a governance test claimed the package has "its own budget"; no cap existed anywhere, and by R41 the engine every mount loads had reached 98 247 emitted bytes',
+      'The engine every mount loads had no budget, and a comment said it did',
     rootCause:
-      'the budget predates the 0.4.0 split, which added a second package without a second measurement; "its own budget" described a plan, not a file',
+      'mechanism and counter-evidence: docs/patches/P-0031-core-budget.md',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0031-core-budget.md'],
+    evidence: ['docs/patches/P-0031-core-budget.md', LIVE_R72],
     guards: ['scripts/gate_size.mjs', 'scripts/lib/budgets.mjs', 'tests/governance/budget-split.test.ts'],
     limits: [
-      'the cap covers emitted core JavaScript only: .d.ts, fixtures and package-root files are outside it',
-      'it caps the total and the registry file, not each of the other nine modules',
-      'core is still not part of residency: the startup account is two rows read together',
-      'the cap forces a decision (split the registry, or sign a raise) rather than fixing a defect once',
+      'scope, counter-evidence and what is not proven: docs/patches/P-0031-core-budget.md',
     ],
   },
   {
     id: 'P-0032',
     title: 'The ledger carried the narrative its patch docs already carried',
     symptom:
-      'the eight longest records measured 2 107-2 377 bytes each while the registry had 1 697 bytes left, so the next patch could not be recorded without a raise disguised as a split',
+      'The ledger carried the narrative its patch docs already carried',
     rootCause:
-      'the registry and docs/patches/ were both written in long form, so symptom, mechanism and limits existed twice while the code reads only the ledger fields',
+      'mechanism and counter-evidence: docs/patches/P-0032-registry-ledger-dedup.md',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0032-registry-ledger-dedup.md', 'packages/core/src/registry.ts', 'scripts/lib/budgets.mjs', 'data/results/patch-registry-2026-11-14T15-56-00.000Z.json'],
+    evidence: ['docs/patches/P-0032-registry-ledger-dedup.md', 'packages/core/src/registry.ts', 'scripts/lib/budgets.mjs', 'data/results/patch-registry-2026-11-14T15-56-00.000Z.json', LIVE_R72],
     guards: ['scripts/gate_size.mjs', 'tests/governance/ledgers.test.ts'],
     limits: [
-      'the batch compacts 8 of 31 records; the rest keep their long form until touched',
-      'the 68 000 registry cap did not move: measured 66 303 before and 61 509 after',
-      'no per-record threshold was added: that needs the owner signature PROJECT_RULES section 1 requires',
-      'the prose removed is safe only while its doc says it, and gate_registry checks a doc exists (BS-19)',
+      'scope, counter-evidence and what is not proven: docs/patches/P-0032-registry-ledger-dedup.md',
     ],
   },
   {
@@ -696,9 +676,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'the namespace gate checked the shape of the rows but never resolved one against the exports it points into, so a rename in `src/` was only caught by a stranger installing the tarball',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0035-patch-row-resolution.md', 'packages/plugin/cordis.patch.yml'],
+    evidence: ['docs/patches/P-0035-patch-row-resolution.md', 'packages/plugin/cordis.patch.yml', LIVE_R72],
     guards: ['tests/governance/profile-patch-resolution.test.ts', 'scripts/gate_namespace.mjs'],
     limits: [
       'it proves a row resolves, not that the host loads it',
@@ -744,37 +724,32 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0038',
     title: 'The redaction was written on one platform and shipped to three',
     symptom:
-      'a macOS or Linux home path went through `redact()` untouched: 5 of the 8 measured shapes (`/Users/<name>`, `file:///Users/<name>`, `--Users-…`, `--home-…`) left the account name in an artifact',
+      'The redaction was written on one platform and shipped to three',
     rootCause:
-      'two rules each assumed a Windows drive letter, and the session key is built by `projectKey`, which turns every separator into `-`: one project encodes three ways and only the Windows one matched',
+      'mechanism and counter-evidence: docs/patches/P-0038-cross-platform-home-paths.md',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0038-cross-platform-home-paths.md', 'data/results/live-linux-2026-11-15T10-00-00.000Z.json'],
+    evidence: ['docs/patches/P-0038-cross-platform-home-paths.md', 'data/results/live-linux-2026-11-15T10-00-00.000Z.json', LIVE_R72],
     guards: ['tests/unit/redact-platform.test.ts', 'tests/unit/redact.test.ts', 'packages/core/src/redact.ts'],
     limits: [
-      'the three shapes are tested as strings, not produced on their own platform, so this is not "tested on macOS"',
-      '/root/ is deliberately not redacted: the account name is the same string for everyone',
-      'the plugin itself stays platform-independent; only the evidence layer had a platform assumption',
-      'build scripts keep their WINDOWS branch on purpose (Node cannot spawn npm.cmd without a shell)',
+      'scope, counter-evidence and what is not proven: docs/patches/P-0038-cross-platform-home-paths.md',
     ],
   },
   {
     id: 'P-0039',
     title: 'A recorder that only worked on Windows, and said "no sessions" when it failed',
     symptom:
-      'three recorders computed `.dsh/sessions` on Linux/macOS (`USERPROFILE` is unset there) and exited 3 with "no session directory"; an empty `DSH_SESSIONS=` was accepted as the root, pointing them at the current directory',
+      'A recorder that only worked on Windows, and said "no sessions" when it failed',
     rootCause:
-      '`process.env.USERPROFILE ?? join(...)` turned "the variable is missing" into "the home is the empty string", and a join of an empty home is a relative path; the homedir-based recorder was the one that worked on both platforms',
+      'mechanism and counter-evidence: docs/patches/P-0039-portable-session-root.md',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0039-portable-session-root.md', 'scripts/lib/session-root.mjs', 'data/results/live-linux-2026-11-15T10-00-00.000Z.json'],
+    evidence: ['docs/patches/P-0039-portable-session-root.md', 'scripts/lib/session-root.mjs', 'data/results/live-linux-2026-11-15T10-00-00.000Z.json', LIVE_R72],
     guards: ['tests/unit/session-root.test.ts'],
     limits: [
-      'not "runs on macOS": the POSIX branch it takes is the Linux one measured here',
-      'an empty HOME still cannot be resolved; the fallback is a literal ~/.dsh/sessions, not a lookup',
-      'the plugin never read USERPROFILE; only these offline recorders did',
+      'scope, counter-evidence and what is not proven: docs/patches/P-0039-portable-session-root.md',
     ],
   },
   {
@@ -785,9 +760,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'R49 added two canonical fixtures, so the count became eight in three places and stayed six in a fourth: record_install_acceptance.mjs carried both a regex and a claimed string with the old number',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0040-acceptance-fixture-count.md', 'scripts/lib/acceptance.mjs', 'data/results/install-acceptance-2026-11-15T12-20-00.000Z.json'],
+    evidence: ['docs/patches/P-0040-acceptance-fixture-count.md', 'scripts/lib/acceptance.mjs', 'data/results/install-acceptance-2026-11-15T12-20-00.000Z.json', LIVE_R72],
     guards: ['tests/unit/acceptance.test.ts'],
     limits: [
       'the criterion is the count plus every PASS line, not fixture contents: verify still owns what each case must decide',
@@ -820,9 +795,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'P-0013 named the class and `scan` counted it by code, but the level lived only inside the host sentence; `agent/pre-step` `enter` cannot change a selection the loop fixed, and `reject` is disqualified on desktop',
     surface: 'cli',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0042-profile-effort-conflict.md', 'packages/plugin/src/explain-command.ts', 'data/results/prestep-enter-2026-11-15T17-55-00.000Z.json'],
+    evidence: ['docs/patches/P-0042-profile-effort-conflict.md', 'packages/plugin/src/explain-command.ts', 'data/results/prestep-enter-2026-11-15T17-55-00.000Z.json', LIVE_R72],
     guards: ['tests/unit/refused-effort.test.ts'],
     limits: [
       'it names the conflict and exits 1; only changing the profile stops the next dead turn, and it never clamps',
@@ -837,9 +812,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'the guard allowed two separators before `Users`, but the fixture is a JSON string, so one backslash becomes four; a second artifact leaked the name as a bare `ls -l` token no path rule sees',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0043-shipped-sample-guard-shape.md', 'data/fixtures/toolcall-fusion/bare-code-value.json', 'data/results/live-linux-2026-11-15T15-00-00.000Z.json'],
+    evidence: ['docs/patches/P-0043-shipped-sample-guard-shape.md', 'data/fixtures/toolcall-fusion/bare-code-value.json', 'data/results/live-linux-2026-11-15T15-00-00.000Z.json', LIVE_R72],
     guards: ['tests/governance/shipped-samples.test.ts'],
     limits: [
       'the 0.4.13 tarball still carries the name: a published version is fixed forward, not rewritten',
@@ -886,37 +861,32 @@ export const PATCHES: readonly PatchRecord[] = [
     id: 'P-0046',
     title: 'The first screens were one patch short and one release behind',
     symptom:
-      'both READMEs claimed forty-four patches and enumerated the tested ones, but P-0043 appeared in neither; both also put 0.4.14 first under a status sentence calling 0.4.15 published',
+      'The first screens were one patch short and one release behind',
     rootCause:
-      'gate_copy checks numbers, bytes and provenance, not completeness: nothing asked whether a page that advertises the count names every patch',
+      'mechanism and counter-evidence: docs/patches/P-0046-public-page-completeness.md',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0046-public-page-completeness.md'],
+    evidence: ['docs/patches/P-0046-public-page-completeness.md', LIVE_R72],
     guards: ['tests/governance/public-pages-complete.test.ts'],
     limits: [
-      'it reads ids, not sentences: a patch named in a wrong row still satisfies the rule (presence, not placement)',
-      "it pins only the published version; an unpublished release's numbers stay the fact pack's business",
-      'the status sentence is parsed with two fixed shapes, so a rewrite must keep one of them',
-      'it cannot see the two npm package pages: they carry no enumeration, so the rule is vacuous there',
+      'scope, counter-evidence and what is not proven: docs/patches/P-0046-public-page-completeness.md',
     ],
   },
   {
     id: 'P-0047',
     title: 'A turn that finished without answering anyone was never counted',
     symptom:
-      'P-0044 counted truncations that answered nobody and left the other ending out: a `completed` turn whose last message is one `reasoning` block (#13169) happened 0 times here, so the scanner never said',
+      'A turn that finished without answering anyone was never counted',
     rootCause:
-      'the census asks how a turn ended and the answer rule what the last step showed, but only the max-tokens branch joined them; the adapter guard counts blocks, so a reasoning-only message passes as a normal stop',
+      'mechanism and counter-evidence: docs/patches/P-0047-completed-without-answer.md',
     surface: 'cli',
-    status: 'tested',
+    status: 'verified',
     severity: 'major',
-    evidence: ['docs/patches/P-0047-completed-without-answer.md', 'packages/plugin/src/session-scan.ts'],
+    evidence: ['docs/patches/P-0047-completed-without-answer.md', 'packages/plugin/src/session-scan.ts', LIVE_R72],
     guards: ['tests/unit/completed-answer.test.ts', 'tests/e2e/cli.test.ts'],
     limits: [
-      'it counts `completed` only: an error already names its code and an abort was the operator decision',
-      'a reasoning block a client renders still counts as no answer',
-      'the adapter guard that lets the shape through is upstream; this patch names the consequence, it does not repair it',
+      'scope, counter-evidence and what is not proven: docs/patches/P-0047-completed-without-answer.md',
     ],
   },
   {
@@ -927,9 +897,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'the sentence described a CI that did not exist: nothing recorded which platforms run, so not measured meant three different things',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0048-macos-ci-criterion.md', '.github/workflows/ci.yml'],
+    evidence: ['docs/patches/P-0048-macos-ci-criterion.md', '.github/workflows/ci.yml', LIVE_R72],
     guards: ['docs/patches/P-0048-macos-ci-criterion.md', '.github/workflows/ci.yml'],
     limits: [
       'CI is not a host: no `data/results/live-*`, so no patch may claim `verified` on it',
@@ -946,9 +916,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'gate_copy compares outward files with the pack and facts-truth read four claims: nothing compared the pack with the registry',
     surface: 'scripts',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0049-fact-pack-census.md', 'tests/governance/fact-pack-census.test.ts'],
+    evidence: ['docs/patches/P-0049-fact-pack-census.md', 'tests/governance/fact-pack-census.test.ts', LIVE_R72],
     guards: ['tests/governance/fact-pack-census.test.ts', 'tests/governance/facts-truth.test.ts'],
     limits: [
       'presence and counts, not placement: the prose beside an id is not read',
@@ -999,9 +969,9 @@ export const PATCHES: readonly PatchRecord[] = [
     rootCause:
       'the host ends a step with tool calls only when a tool result carries `concludesTurn` (`dsh-agent-loop/src/agent.ts:592-603`), and ui-chat accepts only a final step with no tool-call block (`turn-process.ts:160-161`)',
     surface: 'cli',
-    status: 'tested',
+    status: 'verified',
     severity: 'minor',
-    evidence: ['docs/patches/P-0052-completed-on-tool-call.md', 'data/results/live-toolcall-2026-11-17T13-30-00.000Z.json'],
+    evidence: ['docs/patches/P-0052-completed-on-tool-call.md', 'data/results/live-toolcall-2026-11-17T13-30-00.000Z.json', LIVE_R72],
     guards: ['tests/unit/on-tool-call.test.ts', 'tests/e2e/explain-toolcall.test.ts'],
     limits: [
       'a counter, not a repair: the host decides to conclude and the UI decides what is visible',

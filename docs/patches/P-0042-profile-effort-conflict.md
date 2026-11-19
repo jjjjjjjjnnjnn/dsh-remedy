@@ -1,6 +1,6 @@
 # P-0042 — The profile and the refusal never met, and the seam cannot move the level
 
-**Status**: `tested`  **Severity**: `major`  **Surface**: `cli`  **Depends on**: P-0013, P-0015, P-0041
+**Status**: `verified`  **Severity**: `major`  **Surface**: `cli`  **Depends on**: P-0013, P-0015, P-0041
 
 ## Symptom
 
@@ -132,3 +132,7 @@ nor their `.tmp` home are shipped. The durable half is the recorder
 `data/results/prestep-enter-2026-11-15T17-55-00.000Z.json`) and the census it reads
 (`data/results/scan-r53-2026-11-15T22-05-00.000Z.json`, where `opendesign` /
 `deepseek-v4.1-flash-eco` at `xhigh` was refused 37 times).
+## R72 witness
+
+The status is `verified` on the evidence of `data/results/live-r72-2026-11-19T00-00-00.000Z.json`, which records this patch's claim and names the witness kind (suite, CLI, gate, probe or absent) beside the row. That artifact is a build/host witness at one stamp, not a resident-journal repair; its `not_proven` section says what it does not cover.
+

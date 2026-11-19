@@ -15,12 +15,13 @@
 | `docs/HANDOFF.md` | 交接：五分钟检查 / 当前批次 / 第一件事 / 坑 |
 | `docs/compatibility.md` | R68：waterfall 顺序规则、本机接缝拓扑、每 chunk 开销、被跳过时怎么发现；两个产物都能复跑 |
 | `docs/research/README.md` | 外部反馈 intake：来源、判据、四条约束、同类项目读法（R43 起） |
-| `docs/research/leads.md` | 线索账本：48 条（42 条 DSH + 4 条 Reddit 摘要 + 1 条市场 + 1 条上游源码），带 `source_kind` / `read_depth`；R64 把状态与 decision 对齐，R66 新增 I 表 8 条（全部 `rejected`，无新形状）：0 条 `lead`、7 条 `watching`，其余都是 `patched` / `rejected`（原因在 decision 列） |
+| `docs/research/leads.md` | 线索账本：54 条（48 条 DSH + 4 条 Reddit 摘要 + 1 条市场 + 1 条上游源码；R71 新增 L-0049–L-0051，R74 新增 L-0052–L-0054），带 `source_kind` / `read_depth`；R64 把状态与 decision 对齐，R66 新增 I 表 8 条（全部 `rejected`，无新形状）：0 条 `lead`、7 条 `watching`，其余都是 `patched` / `rejected`（原因在 decision 列） |
 | `docs/research/sources.md` | 七个来源的读法、频率、边界；Reddit 读不到正文的诚实规则 |
 | `docs/research/plan-0.4.9.md` | 0.4.9 计划与结案：来源 → 巡检 → 一条线索 → 一个补丁；§2 记着这一版实际结掉的六条线索 |
 | `docs/research/similar-projects-2026-11-14.md` | 同接缝的五个竞品与上游源码：借了什么机制、拒了什么取舍、每条指回本机 `app.asar` 的行号（R47） |
 | `docs/research/community-2026-11-14.md` | 2026-11-14 的社区盘面事实底稿（star / issue / 下载 / Discussions） |
 | `docs/research/intake-r57-triage.md` | R55 巡检留下的 **79 个候选**的逐桶判读：每个桶的接缝决定、三家值得再读的、以及「这只是判读不是复现」 |
+| `docs/research/intake-r74-triage.md` | R74 巡检留下的 **65 个候选**的逐桶判读：九桶正好覆盖、3 条读全文的结论进 `leads.md` 的 J 表、以及「没有新形状所以不发补丁」 |
 | `docs/research/intake-r66-triage.md` | R66 巡检留下的 **76 个候选**的逐桶判读：五桶 76 条正好覆盖、8 条读全文的结论进 `leads.md` 的 I 表、以及「没有新形状所以不发补丁」 |
 
 ## 代码

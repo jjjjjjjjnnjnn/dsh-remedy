@@ -1429,7 +1429,24 @@
         "data/results/live-neighbours-rc5-2026-11-19T06-35-00.000Z.json",
         "docs/copy/facts/public-repo-facts.md"
       ]
+    },
+    {
+      "id": "S78",
+      "gate": "step-review",
+      "title": "Did the host upgrade bring any external shape back to this project’s seams?",
+      "axes": {
+        "correctness": "The intake read four sources (all answered) and returned 65 candidates not in the ledger. Each was assigned to exactly one of nine title buckets; three that could touch the seams were read in full. #13153 is a third-party pre-step listener (this project only measures that seam in P-0015), #13336 is a host session-writer defect, and #13637 is the adapter content_filter mapping already covered by L-0046. None lands on llm/stream, agent/request-error, cli or profile.",
+        "reproducibility": "`node scripts/collect_leads.mjs --stamp 2026-11-19T07:00:00.000Z --dsh --self --npm --census --sessions <dir>` produced the intake artifact with a sha256 sidecar; the bucket assignment is in .tmp/r74-buckets.txt and the decisions in docs/research/intake-r74-triage.md. The three full reads are cited by URL and date in leads.md J table.",
+        "compliance": "No report text was copied into evidence as if it were a local measurement; the artifact records only which sources answered and which discussion numbers are candidates. No new patch, no runtime byte, no cap or version change. Leads were added with rejected/dup decisions and explicit reasons.",
+        "ssot": "leads.md is the only place a lead gets a status; the triage document cites the intake artifact and the three full reads, and does not duplicate status. INDEX.md’s lead count was updated from 48 to 54 to match the ledger. The handoff state table and evidence index name the same intake artifact.",
+        "adversarial": "Titles can hide the real seam, so nine buckets are a triage, not a proof; the three full reads are the ones that could plausibly touch a seam we use. STREAM_CLOSED reports stay watching because this host still has no such class (L-0011/L-0045). A future intake may still find a shape that title bucketing missed."
+      },
+      "evidence": [
+        "data/results/intake-2026-11-19T07-00-00.000Z.json",
+        "docs/research/intake-r74-triage.md",
+        "docs/research/leads.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-19T06:40:00.000Z"
+  "updated_at": "2026-11-19T07:10:00.000Z"
 }

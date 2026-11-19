@@ -149,3 +149,15 @@ R55 账在这张表里活了两轮没人发现，而它早已过期。
 | L-0049 | <https://github.com/deepseek-ai/deepseek-harness/discussions/11151> | `dsh` | `full` | 2026-10-27 | pi-ai v2（rc.2 起） | `SessionFormatError`（空 tool identity） | `llm/stream` | **patched（P-0033 + P-0027）** | R71 本机复现：邻居插件在真 turn 里递 `id="" name=""` 的 `block-end`，**无插件**的对照逐字死在 `format v4 tool/result at seq 19 requires toolCallId matching its tool source`（无 `turn/end`，退出 1）。本树铸 id（P-0033）并用兜底名（P-0027）发出，turn `completed`、宿主回 `UNKNOWN_TOOL`。证据 `data/results/live-identity-2026-11-18T22-40-00.000Z.json`；报告建议在 `llm-pi-ai` 的 `toolcall_end` 补空身份校验，那是 adapter，out-of-seam。 |
 | L-0050 | <https://github.com/deepseek-ai/deepseek-harness/discussions/10732> | `dsh` | `full` | 2026-10-23 | pi-ai v2（rc.2 起） | `SessionFormatError`（空 tool identity） | `llm/stream` | **rejected (dup)** | 与 L-0049 同一条链路、同一份会话（`session-20fc753c…`），只是附了 fork 的修复；判 dup，结论与证据合并到 L-0049。 |
 | L-0051 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13611> | `dsh` | `title` | 2026-11-18 | ? | `MALFORMED_RESPONSE`（stop_reason `refusal`） | out-of-seam（adapter） | **rejected (dup)** | R71 只读摘要（标题级）：与 L-0043 / P-0034 是同一类——适配器把合法 stop reason 当未知、抛 `MALFORMED_RESPONSE`；P-0034 只负责「本接缝把它记成一次 error 而不是安静」，`stopReason()` 不在本接缝。 |
+
+## J. R74 新读的（2026-11-19 的巡检：四源应答，65 个候选未进账本）
+
+> 判读见 `docs/research/intake-r74-triage.md`：65 条按标题归九桶（每条恰好一次），
+> 三条可能碰到本接缝的读了全文——都不落回本项目的四个接缝，所以没有新补丁。
+
+| id | source | source_kind | read_depth | reported | version | class | seam | status | decision |
+|---|---|---|---|---|---|---|---|---|---|
+| L-0052 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13153> | `dsh` | `full` | 2026-11 | 0.2.2-rc.2 | unknown (`Cannot read properties of undefined (reading 'kind')`) | `agent/pre-step` | **rejected (out-of-seam)** | R74：第三方 `dsh-repeat-tool-reminder` 的监听器无守卫地读 `message.source.kind`，pre-step 批次里没有 `source` 的消息会让整轮失败。本项目只在 P-0015 里**测量**这条接缝，没有挂载产品（桌面 UI 还把拒绝画成已完成），所以别的插件在这里崩溃修不到；与 #7363 同族，记录不碰。 |
+| L-0053 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13336> | `dsh` | `full` | 2026-11 | 0.2.2-rc.3 | `INVALID_REQUEST`（空 user message） | out-of-seam（session writer） | **rejected (out-of-seam)** | R74：失败轮点「继续」会把空内容 user message 写进会话，严格的 OpenAI 兼容网关随后每轮回 400，`INVALID_REQUEST` 又不可继续。缺的是宿主的写句柄与 continuation 策略；我们的 `scan`/`explain` 只读这些会话，不改宿主。属 L-0021/L-0022 同族，记录不碰。 |
+| L-0054 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13637> | `dsh` | `full` | 2026-11 | ? | `PI_AI_ERROR`（content_filter） | out-of-seam（adapter） | **rejected (dup)** | R74：adapter 把 `content_filter` 压成 `PI_AI_ERROR`，既不在 `DEFAULT_RETRYABLE_CODES` 也不在 `CONTINUABLE_FAILURES`。这与 L-0046 是同一条 adapter 边界；P-0034 只负责本接缝看到它时记成一次 error，不改 `classifyPiAiError`。判 dup。 |
+

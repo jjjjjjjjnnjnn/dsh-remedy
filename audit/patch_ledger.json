@@ -947,6 +947,20 @@
       "guards": [
         "tests/unit/reserved-name.test.ts"
       ]
+    },
+    {
+      "id": "P-0055",
+      "status": "verified",
+      "owner": "remedy",
+      "since": "(unreleased on the tree)",
+      "evidence": [
+        "docs/patches/P-0055-reach-newest-from-registry.md",
+        "data/results/live-reach-2026-11-20T09-10-00.000Z.json"
+      ],
+      "guards": [
+        "tests/governance/promotion.test.ts",
+        "scripts/record_reach_truth.mjs"
+      ]
     }
   ]
 }

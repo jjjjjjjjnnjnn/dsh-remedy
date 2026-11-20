@@ -73,7 +73,7 @@ Repo: <URL>
 ### 3.2 X（中文根帖）
 
 ```
-dsh-remedy 0.4.20 已发布：在 DSH 的 llm/stream 接缝上拆开已证实的粘连调用，读不懂的原样放行；附带离线 scan/explain。五十四个补丁全部有见证，但不改 app.asar、不制造假成功。仓库：<URL>
+dsh-remedy 0.4.20 已发布：在 DSH 的 llm/stream 接缝上拆开已证实的粘连调用，读不懂的原样放行；附带离线 scan/explain。五十五个补丁全部有见证，但不改 app.asar、不制造假成功。仓库：<URL>
 ```
 
 ### 3.3 Reddit（标题 + 正文骨架，按版规改写）

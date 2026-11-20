@@ -24,6 +24,9 @@ HN / V2EX 是否由本人发帖、dsh.so 表单是否 `Submitted`、DSH Discussi
 ## 规则
 
 1. 不把 npm 下载总量当用户数；只比较**带窗口的 latest share**。
+   `newest` 是 registry 上最新的**两个已发布版本**，不是下载窗口里恰好有行的两个键：
+   发布日晚于窗口 `end` 的版本进 `missing`（写明 `published_after_window_end`），
+   `comparable: false`，那天的 share 只能当下界读；跨天比较前先确认两边的 `missing` 都为空。
 2. 数字必须带窗口与生成时间；读不到写 `unreachable`，绝不写 0。
 3. 不刷 star、不刷票、不重复发帖；「submitted」≠「listed」，「listed」≠「recommended」。
 4. 安静的一天是有效结果，写「no change」即可。

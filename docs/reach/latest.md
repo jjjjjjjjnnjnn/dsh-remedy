@@ -1,15 +1,15 @@
-# Reach 2026-11-19
+# Reach 2026-11-20
 
-generated_at: 2026-11-19T07:57:20.445Z
+generated_at: 2026-11-20T09:28:45.343Z
 repo: jjjjjjjjnnjnn/dsh-remedy
 
 ## Machine-checkable half
 
 - npm window: last-week
-- dsh-remedy: downloads 4912 · latestShare 6.9% · newest 0.4.18, 0.4.17
-- dsh-remedy-core: downloads 4915 · latestShare 5.9% · newest 0.4.18, 0.4.17
-- GitHub views: {"count":92}
-- GitHub clones: {"count":2137,"ciCloneBaseline":400,"humanish":1737}
+- dsh-remedy: downloads 4508 · latestShare 3.0% · newest 0.4.20, 0.4.19 · window 2026-11-12..2026-11-18 · 0.4.20 missing (published_after_window_end) · lower bound, not comparable
+- dsh-remedy-core: downloads 4435 · latestShare 3.1% · newest 0.4.20, 0.4.19 · window 2026-11-12..2026-11-18 · 0.4.20 missing (published_after_window_end) · lower bound, not comparable
+- GitHub views: {"count":130}
+- GitHub clones: {"count":2560,"ciCloneBaseline":400,"humanish":2160}
 - Referrers: "unreachable"
 - Release assets: [{"name":"plugin tarball","releases":0,"downloads":0,"perRelease":0},{"name":"core tarball","releases":0,"downloads":0,"perRelease":0}]
 
@@ -23,7 +23,8 @@ repo: jjjjjjjjnnjnn/dsh-remedy
 
 ## dev.to
 
-- 19 visitors, 1 star, 1,416 clones: what a launch actually looked like: https://dev.to/jjjjjjjjnnjnn/19-visitors-1-star-1416-clones-what-a-launch-actually-looked-like-43pi — 2 reactions / 4 comments
+- What a repair layer can and cannot do on DSH's llm/stream seam: https://dev.to/jjjjjjjjnnjnn/what-a-repair-layer-can-and-cannot-do-on-dshs-llmstream-seam-2ejm — 0 reactions / 0 comments
+- 19 visitors, 1 star, 1,416 clones: what a launch actually looked like: https://dev.to/jjjjjjjjnnjnn/19-visitors-1-star-1416-clones-what-a-launch-actually-looked-like-43pi — 2 reactions / 7 comments
 
 ## Manual checks (signed-in browser)
 
@@ -36,6 +37,7 @@ repo: jjjjjjjjnnjnn/dsh-remedy
 ## Honesty
 
 - npm totals are not users; only latestShare with a window is compared.
+- newest comes from the registry; a release outside the download window is missing, never a zero, and makes the share a lower bound.
 - Unreachable sources are recorded as unreachable, never as zero.
 - A quiet day is a valid result: it is recorded as "no change".
 

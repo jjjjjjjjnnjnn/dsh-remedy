@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_reach_truth.mjs",
+  "generated_at": "2026-11-20T09:10:00.000Z",
+  "claim": "latestShare must name the two newest published versions; a version outside the download window is missing, not a silent zero",
+  "packages": {
+    "dsh-remedy": {
+      "window": {
+        "start": "2026-11-12",
+        "end": "2026-11-18"
+      },
+      "published": 32,
+      "downloads": 4508,
+      "rows": 31,
+      "latestShare": {
+        "share": 0.02994676131322094,
+        "top": 135,
+        "total": 4508,
+        "newest": [
+          "0.4.20",
+          "0.4.19"
+        ],
+        "newestSource": "registry",
+        "missing": [
+          {
+            "version": "0.4.20",
+            "reason": "published_after_window_end"
+          }
+        ],
+        "comparable": false
+      }
+    },
+    "dsh-remedy-core": {
+      "window": {
+        "start": "2026-11-12",
+        "end": "2026-11-18"
+      },
+      "published": 31,
+      "downloads": 4435,
+      "rows": 30,
+      "latestShare": {
+        "share": 0.030665163472378805,
+        "top": 136,
+        "total": 4435,
+        "newest": [
+          "0.4.20",
+          "0.4.19"
+        ],
+        "newestSource": "registry",
+        "missing": [
+          {
+            "version": "0.4.20",
+            "reason": "published_after_window_end"
+          }
+        ],
+        "comparable": false
+      }
+    }
+  },
+  "before": {
+    "docs/reach/2026-11-19.md": [
+      "- dsh-remedy: downloads 4912 · latestShare 6.9% · newest 0.4.18, 0.4.17",
+      "- dsh-remedy-core: downloads 4915 · latestShare 5.9% · newest 0.4.18, 0.4.17",
+      "- npm totals are not users; only latestShare with a window is compared."
+    ],
+    "docs/reach/2026-11-20.md": [
+      "- dsh-remedy: downloads 4508 · latestShare 8.3% · newest 0.4.19, 0.4.18",
+      "- dsh-remedy-core: downloads 4435 · latestShare 7.6% · newest 0.4.19, 0.4.18",
+      "- npm totals are not users; only latestShare with a window is compared."
+    ]
+  },
+  "sources": {
+    "pure_module": "scripts/lib/reach.mjs",
+    "reporter": "scripts/traffic-report.mjs",
+    "ledger": "docs/reach/README.md"
+  },
+  "not_proven": [
+    "a snapshot of npm at one stamp; the per-version window rolls forward daily and a missing row may appear later",
+    "the unit test checks the same rule on fixtures, so a live source failure cannot turn into a green artifact",
+    "this does not measure users: download totals and latest share are machine readings"
+  ]
+}

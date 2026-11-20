@@ -12,9 +12,15 @@
  *
  * Every source is read-only. An unreachable source is reported as `unreachable`,
  * never as zero. Exit 0 for a report, 2 when a required source cannot be read.
+ *
+ * `newest` comes from the registry, not from the download window: a release made
+ * after the window closed has no row yet and is named in `missing`, so the share
+ * never quietly compares a different pair of versions from one day to the next.
+ * The arithmetic itself lives in scripts/lib/reach.mjs (pure, no I/O).
  */
 
 import { execFileSync } from 'node:child_process'
+import { latestShare } from './lib/reach.mjs'
 
 const REPO = 'jjjjjjjjnnjnn/dsh-remedy'
 const PACKAGES = ['dsh-remedy', 'dsh-remedy-core']
@@ -34,24 +40,10 @@ async function npmJson(url) {
   return response.json()
 }
 
-/** Semver ordering without prerelease noise. Exported for the rule tests. */
-export function versionRank(version) {
-  const parts = String(version).split('-')[0].split('.').map((part) => Number(part) || 0)
-  return (parts[0] || 0) * 1e6 + (parts[1] || 0) * 1e3 + (parts[2] || 0)
-}
-
-/**
- * Share of downloads carried by the two newest versions. Two, not one: a user
- * who installed last week has not upgraded, and a one-day-old release is noisy.
- */
-export function latestShare(versions, rank = versionRank) {
-  const names = Object.keys(versions ?? {})
-  if (names.length === 0) return null
-  const total = names.reduce((sum, name) => sum + (Number(versions[name]) || 0), 0)
-  if (total === 0) return null
-  const newest = names.slice().sort((a, b) => rank(b) - rank(a)).slice(0, 2)
-  const top = newest.reduce((sum, name) => sum + (Number(versions[name]) || 0), 0)
-  return { share: top / total, top, total, newest }
+/** Published versions and their timestamps, from the registry packument. */
+async function registryMeta(name) {
+  const packument = await npmJson(`https://registry.npmjs.org/${encodeURIComponent(name)}`)
+  return { published: Object.keys(packument.versions ?? {}), time: packument.time ?? {} }
 }
 
 /** Release assets grouped by kind, with per-release rate to expose self-verification. */
@@ -76,11 +68,16 @@ for (const name of PACKAGES) {
     const perVersion = await npmJson(`https://api.npmjs.org/versions/${name}/${PERIOD}`)
     const versions = perVersion.downloads && typeof perVersion.downloads === 'object' ? perVersion.downloads : {}
     const point = await npmJson(`https://api.npmjs.org/downloads/point/${PERIOD}/${name}`)
+    let meta = null
+    try { meta = await registryMeta(name) } catch (error) { fail(`registry:${name}`, error) }
+    const window = { start: point.start ?? null, end: point.end ?? null }
     npm[name] = {
       period: PERIOD,
+      window,
       downloads: typeof point.downloads === 'number' ? point.downloads : null,
       versions,
-      latestShare: latestShare(versions),
+      published: meta ? meta.published : null,
+      latestShare: latestShare(versions, meta?.published ?? null, window.end, meta?.time ?? {}),
     }
   } catch (error) { fail(`npm:${name}`, error) }
 }
@@ -131,6 +128,9 @@ const report = {
   unreachable: errors,
   honesty: [
     'npm totals are not users; only latestShare with a window is comparable',
+    'newest means the two newest published versions, not the newest keys that happen to have download rows',
+    'a version published after the window closed is named in missing, never counted as zero',
+    'a share with missing entries is not comparable with another day',
     'GitHub clones include CI checkout traffic; the baseline is run count x 4 jobs',
     'release assets are downloaded back for verification; perRelease near 2 is us',
     'a missing source is recorded as unreachable, never as zero',
@@ -143,7 +143,11 @@ else {
   for (const name of PACKAGES) {
     const p = npm[name]
     if (!p) continue
-    process.stdout.write(`${name}: downloads ${String(p.downloads)} · latestShare ${p.latestShare === null ? 'n/a' : (p.latestShare.share * 100).toFixed(1) + '%'} (${p.latestShare?.newest.join(', ') ?? ''})\n`)
+    const share = p.latestShare
+    const note = share?.missing.length
+      ? `; missing ${share.missing.map((m) => `${m.version} (${m.reason})`).join(', ')}; not comparable`
+      : ''
+    process.stdout.write(`${name}: downloads ${String(p.downloads)} · latestShare ${share === null ? 'n/a' : (share.share * 100).toFixed(1) + '%'} (${share?.newest.join(', ') ?? 'n/a'}${note})\n`)
   }
   process.stdout.write(`github views ${JSON.stringify(report.github.views)} · clones ${JSON.stringify(report.github.clones)}\n`)
   process.stdout.write(`referrers ${JSON.stringify(report.github.referrers)}\n`)

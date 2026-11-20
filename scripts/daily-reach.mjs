@@ -141,6 +141,11 @@ if (process.argv.includes('--json')) {
       week: p.downloads,
       newest: p.latestShare?.newest?.join(', ') ?? null,
       share: p.latestShare?.share ?? null,
+      missing: p.latestShare?.missing ?? null,
+      comparable: p.latestShare?.comparable ?? null,
+      newest_source: p.latestShare?.newestSource ?? null,
+      window_start: p.window?.start ?? null,
+      window_end: p.window?.end ?? null,
       window: t.window
     })),
     catalogue,
@@ -167,7 +172,13 @@ const lines = [
   '## Machine-checkable half',
   '',
   `- npm window: ${t.window ?? 'unknown'}`,
-  ...Object.entries(t.npm ?? {}).map(([name, p]) => `- ${name}: downloads ${String(p.downloads)} · latestShare ${p.latestShare === null ? 'n/a' : (p.latestShare.share * 100).toFixed(1) + '%'} · newest ${p.latestShare?.newest.join(', ') ?? 'n/a'}`),
+  ...Object.entries(t.npm ?? {}).map(([name, p]) => {
+    const s = p.latestShare
+    const note = s?.missing.length
+      ? ` · ${s.missing.map((m) => `${m.version} missing (${m.reason})`).join(', ')} · lower bound, not comparable`
+      : ''
+    return `- ${name}: downloads ${String(p.downloads)} · latestShare ${s === null ? 'n/a' : (s.share * 100).toFixed(1) + '%'} · newest ${s?.newest.join(', ') ?? 'n/a'} · window ${p.window?.start ?? '?'}..${p.window?.end ?? '?'}${note}`
+  }),
   `- GitHub views: ${JSON.stringify(t.github?.views ?? 'unreachable')}`,
   `- GitHub clones: ${JSON.stringify(t.github?.clones ?? 'unreachable')}`,
   `- Referrers: ${JSON.stringify(t.github?.referrers ?? 'unreachable')}`,
@@ -188,6 +199,7 @@ const lines = [
   '## Honesty',
   '',
   '- npm totals are not users; only latestShare with a window is compared.',
+  '- newest comes from the registry; a release outside the download window is missing, never a zero, and makes the share a lower bound.',
   '- Unreachable sources are recorded as unreachable, never as zero.',
   '- A quiet day is a valid result: it is recorded as "no change".',
   '',

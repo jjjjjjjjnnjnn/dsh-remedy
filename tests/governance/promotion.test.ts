@@ -18,6 +18,8 @@ test('the promotion playbook keeps the human-only and measured-number rules', ()
     'Action restricted',
     '24 小时',
     '不要复制',
+    '跨项目',
+    '7 天',
   ]) {
     assert.ok(play.includes(needed), `the playbook lost the rule: ${needed}`)
   }
@@ -50,9 +52,22 @@ test('the reach ledger records windows, manual checks and unreachable sources', 
 })
 
 test('latestShare separates a crawler fleet from human concentration', async () => {
-  const url = new URL('../../scripts/traffic-report.mjs', import.meta.url)
+  // Import the pure module, not traffic-report.mjs: the reporter performs I/O
+  // at import time and exits 2 when every source is unreachable.
+  const url = new URL('../../scripts/lib/reach.mjs', import.meta.url)
   const mod = await import(url.href) as {
-    latestShare: (versions: Record<string, number>) => { share: number } | null
+    latestShare: (
+      versions: Record<string, number>,
+      published?: string[] | null,
+      windowEnd?: string | null,
+      publishedAt?: Record<string, string>,
+    ) => {
+      share: number
+      newest: string[]
+      newestSource: string
+      missing: Array<{ version: string; reason: string }>
+      comparable: boolean
+    } | null
     versionRank: (version: string) => number
   }
   assert.equal(mod.versionRank('0.4.20'), mod.versionRank('0.4.20'))
@@ -62,6 +77,23 @@ test('latestShare separates a crawler fleet from human concentration', async () 
   assert.ok(flat !== null && concentrated !== null)
   assert.ok(concentrated.share > flat.share + 0.3, 'humans concentrate on the newest two versions')
   assert.equal(mod.latestShare({}), null, 'no data is not a zero share')
+
+  // The measured R81 shape: 0.4.20 is published but after the window closed.
+  const published = ['0.4.18', '0.4.19', '0.4.20']
+  const times = { '0.4.19': '2026-11-18T17:16:14.472Z', '0.4.20': '2026-11-19T07:22:05.341Z' }
+  const lagged = mod.latestShare({ '0.4.19': 135, '0.4.18': 241 }, published, '2026-11-18', times)
+  assert.deepEqual(lagged?.newest, ['0.4.20', '0.4.19'], 'newest comes from the registry')
+  assert.deepEqual(lagged?.missing, [{ version: '0.4.20', reason: 'published_after_window_end' }])
+  assert.equal(lagged?.comparable, false, 'a missing row makes the share a lower bound')
+  assert.equal(lagged?.newestSource, 'registry')
+  const complete = mod.latestShare({ '0.4.20': 1000, '0.4.19': 135 }, published, '2026-11-20', times)
+  assert.equal(complete?.comparable, true, 'with both rows present the share is comparable')
+  assert.deepEqual(complete?.missing, [])
+  const fallback = mod.latestShare({ '0.4.19': 135, '0.4.18': 241 })
+  assert.equal(fallback?.newestSource, 'downloads', 'without a registry the source is named')
+  assert.equal(fallback?.comparable, false, 'a window-derived pair is not comparable')
+  const wrongWindow = mod.latestShare({ '0.4.19': 135 }, published, null, times)
+  assert.deepEqual(wrongWindow?.missing, [{ version: '0.4.20', reason: 'no_row_in_window' }])
 })
 
 test('the repo defers status to the knowledge-base bus', () => {

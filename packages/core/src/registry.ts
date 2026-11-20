@@ -10,6 +10,7 @@ const LIVE_REPAIRS = 'data/results/live-repairs-2026-11-18T20-00-00.000Z.json'
 const LIVE_CENSUS = 'data/results/live-census-2026-11-18T22-00-00.000Z.json'
 const LIVE_IDENTITY = 'data/results/live-identity-2026-11-18T22-40-00.000Z.json'
 const LIVE_R72 = 'data/results/live-r72-2026-11-19T00-00-00.000Z.json'
+const LIVE_REACH = 'data/results/live-reach-2026-11-20T09-10-00.000Z.json'
 const FAIL_OPEN_LIMITS = [
   'a fail-open stream reads quiet: the foreign chunk moves no counter',
   'only the fields the wrapper reads are checked; an ignored field is not validated',
@@ -1012,6 +1013,24 @@ export const PATCHES: readonly PatchRecord[] = [
       'a rescue that might not have needed the fallback name is abandoned on purpose',
       'it only sees the declarations the request carries; a later or hidden tool is invisible',
       'the abandoned rescue is visible only as the provider error, with no counter of its own',
+    ],
+  },
+  {
+    id: 'P-0055',
+    title: 'The reach metric called a window key "newest"',
+    symptom:
+      'the 2026-11-20 reach file named 0.4.19/0.4.18 as newest although 0.4.20 was published the day before, so two days of latest share compared different pairs of versions',
+    rootCause:
+      'latestShare sorted the npm download-window keys; a release published after the window closed has no row and was silently excluded, and the test imported the I/O script that could exit 2',
+    surface: 'scripts',
+    status: 'verified',
+    severity: 'minor',
+    evidence: ['docs/patches/P-0055-reach-newest-from-registry.md', LIVE_REACH],
+    guards: ['tests/governance/promotion.test.ts', 'scripts/record_reach_truth.mjs'],
+    limits: [
+      'a share with missing versions is a lower bound, not comparable across days',
+      'the registry defines published; the download window defines rows, and the two can disagree',
+      'download counts are machine readings, not users',
     ],
   },
 ]

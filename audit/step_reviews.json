@@ -1545,7 +1545,28 @@
         "INDEX.md",
         "tests/governance/promotion.test.ts"
       ]
+    },
+    {
+      "id": "S84",
+      "gate": "step-review",
+      "title": "Can the reach metric call a window key 'newest' without lying about comparability?",
+      "axes": {
+        "correctness": "latestShare now takes the published version list from the registry; a missing row is named with a reason and comparable is false while any newest version lacks a row. The share is a stated lower bound rather than an invented zero.",
+        "reproducibility": "The pure module is testable without I/O, the recorder asserts every claim against live npm before writing, and the patch doc names four runnable reproduction commands. The before and after human lines are in the reach ledger.",
+        "compliance": "No runtime byte, cap, version, release or tag changed; scripts are outside all byte caps. The bus snapshot only gains fields. The promotion playbook now carries the cross-project 7-day rule the bus was already warning about.",
+        "ssot": "The registry owns the version set, the download endpoint owns the rows, and the pure module owns the definition; the fact pack, first screens and handoff state table are updated in one chain through the copy channel.",
+        "adversarial": "A zero row was the tempting lie: the live sample would have reported 8.3% over a pair that no longer existed. The recorder refuses to write when the window is unnamed, the newest pair disagrees with the registry, or a missing version has a row."
+      },
+      "evidence": [
+        "scripts/lib/reach.mjs",
+        "scripts/traffic-report.mjs",
+        "scripts/daily-reach.mjs",
+        "scripts/record_reach_truth.mjs",
+        "tests/governance/promotion.test.ts",
+        "docs/patches/P-0055-reach-newest-from-registry.md",
+        "data/results/live-reach-2026-11-20T09-10-00.000Z.json"
+      ]
     }
   ],
-  "updated_at": "2026-11-19T09:00:00.000Z"
+  "updated_at": "2026-11-20T09:10:00.000Z"
 }

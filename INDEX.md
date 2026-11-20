@@ -29,6 +29,8 @@
 | `scripts/traffic-report.mjs` / `catalog-status.mjs` | R77：latest share / 触达汇总 / 目录状态（零依赖，unreachable 不写 0） |
 | `scripts/lib/reach.mjs` | R81：`versionRank` 与 `latestShare` 的纯函数；`newest` 取自 registry 已发布版本，窗口外版本进 `missing`，有缺行就不可比；测试只导入本模块，不联网 |
 | `scripts/record_reach_truth.mjs` | R81：把上述定义放到 live npm 上逐条断言后写 `live-reach-*`，形状不成立就 `exit 4` |
+| `scripts/record_neighbour_contract.mjs` | R82：读外层 observer 的 chunk 日志，断言 fail-open 与对照逐字节相同、修复的 tool-call block 可追踪且 arguments 可 parse，先断言后写 `live-neighbours-contract-*` |
+| `tests/fixtures/outer-chunk-observer/` | R82：`prepend: true` 的外层 listener 夹具，只记录 chunk 形状不改流；`summarizeChunk` 由单测钉住 |
 | `docs/research/negative-feedback-2026-11-19.md` | R75：全网 57 次查询 + 两篇批评报道原文的收集与判读；外部印证已有方案，不当证据、不扩范围 |
 | `docs/research/intake-r74-triage.md` | R74 巡检留下的 **65 个候选**的逐桶判读：九桶正好覆盖、3 条读全文的结论进 `leads.md` 的 J 表、以及「没有新形状所以不发补丁」 |
 | `docs/research/intake-r66-triage.md` | R66 巡检留下的 **76 个候选**的逐桶判读：五桶 76 条正好覆盖、8 条读全文的结论进 `leads.md` 的 I 表、以及「没有新形状所以不发补丁」 |
@@ -226,6 +228,7 @@
 | `tests/governance/fact-pack-census.test.ts` | P-0049 的三条规则：事实包点名每个 registry id；每个接缝条目的计数与队伍等于该接缝的实际集合；包里称作已发布的版本有 CHANGELOG 小节 |
 | `tests/unit/on-tool-call.test.ts` | P-0052 的规则：末步有 tool-call 才算；文本+tool-call、只有 tool-call、控制 run、max_tokens、缺消息五种形状 |
 | `tests/unit/neighbour-hostile.test.ts` | P-0053 的八条：四条 remedy 自抛的 `TypeError` 变成原样放行，外加三条负对照与一条「foreign 之后不再修复」 |
+| `tests/unit/outer-chunk-observer.test.ts` / `tests/governance/adr-0002-downstream.test.ts` | R82：外层 observer 的形状摘要（null / 无 reason 的 finish / 对象 arguments / 可 parse 的修复块），以及 ADR 0002 必须点名单一证据与 remedy 在外层、dsh-ops 在内层 |
 | `tests/unit/reserved-name.test.ts` | P-0054 的六条：保留名被拥有时救援放弃、无名 `block-end` 保留原字节，以及三条 P-0027 / P-0030 的负对照 |
 | `tests/fixtures/neighbour-bad-chunks/` | R70 的探针插件（不进包）：在同一条 seam 上产出适配器不会产出的 chunk，并注册场景需要的工具；`scenarios.mjs` 是三个脚本共用的词表 |
 | `tests/e2e/explain-toolcall.test.ts` | P-0052 的 finding：正值打 `TOOLCALL` 并退出 1；文本-only、reasoning-only、无 `--sessions` 三条负对照 |

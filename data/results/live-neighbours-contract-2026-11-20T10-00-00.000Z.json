@@ -1,0 +1,557 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_neighbour_contract.mjs",
+  "generated_at": "2026-11-20T10:00:00.000Z",
+  "question": "What does an outermost llm/stream listener receive after the repair layer?",
+  "topology": {
+    "order": "dsh-remedy (load_index 16) is outermost; dsh-ops (20) is inner; observer registers with prepend:true (cordis register() unshifts)",
+    "source": "data/results/seam-inventory-2026-11-19T08-05-00.000Z.json and @deepseek-ai/cordis/lib/index.js:336"
+  },
+  "scenarios": {
+    "healthy": {
+      "identical": true,
+      "control": {
+        "version": "0.4.20",
+        "exit_code": 0,
+        "saw_main_stream": true,
+        "chunks": [
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "text"
+          },
+          {
+            "type": "text-delta",
+            "index": 0
+          },
+          {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "text"
+            }
+          },
+          {
+            "type": "usage"
+          },
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "stop",
+              "code": null
+            }
+          },
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "text"
+          },
+          {
+            "type": "text-delta",
+            "index": 0
+          },
+          {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "text"
+            }
+          },
+          {
+            "type": "usage"
+          },
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "stop",
+              "code": null
+            }
+          }
+        ],
+        "sequence_sha256": "9753208a9207305ff450206ceb2a3c8a456ee19962c6eeefcd1042344a9ba6ae",
+        "observer_sha256": "c47a30d59c95412e2ef2377d552d997e369b1648c8825047bc5a074d70501dfe"
+      },
+      "remedy": {
+        "version": "0.4.20",
+        "exit_code": 0,
+        "saw_main_stream": true,
+        "chunks": [
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "text"
+          },
+          {
+            "type": "text-delta",
+            "index": 0
+          },
+          {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "text"
+            }
+          },
+          {
+            "type": "usage"
+          },
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "stop",
+              "code": null
+            }
+          },
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "text"
+          },
+          {
+            "type": "text-delta",
+            "index": 0
+          },
+          {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "text"
+            }
+          },
+          {
+            "type": "usage"
+          },
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "stop",
+              "code": null
+            }
+          }
+        ],
+        "sequence_sha256": "9753208a9207305ff450206ceb2a3c8a456ee19962c6eeefcd1042344a9ba6ae",
+        "observer_sha256": "c47a30d59c95412e2ef2377d552d997e369b1648c8825047bc5a074d70501dfe"
+      }
+    },
+    "bare-value": {
+      "identical": false,
+      "control": {
+        "version": "0.4.20",
+        "exit_code": 1,
+        "saw_main_stream": true,
+        "chunks": [
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "error",
+              "code": "MALFORMED_RESPONSE"
+            }
+          },
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "text"
+          },
+          {
+            "type": "text-delta",
+            "index": 0
+          },
+          {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "text"
+            }
+          },
+          {
+            "type": "usage"
+          },
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "stop",
+              "code": null
+            }
+          }
+        ],
+        "sequence_sha256": "fe8da2126a2fb5300b49abe71c153790c08ddae4e042268114eb53a63561d114",
+        "observer_sha256": "de0576be8937bf0e4a54b7f9113f353b3fc22d9c3eb28c8a7b5ca45d0cef1962"
+      },
+      "remedy": {
+        "version": "0.4.20",
+        "exit_code": 0,
+        "saw_main_stream": true,
+        "chunks": [
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "tool-call"
+          },
+          {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "tool-call",
+              "id": "call_remedy_1",
+              "name": "capture",
+              "arguments": "{\"code\": \"\\nconsole.log(1)\\nconsole.log(2)\\n\", \"note\": \"r70\"}",
+              "arguments_kind": "string"
+            }
+          },
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "stop",
+              "code": null
+            }
+          },
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "text"
+          },
+          {
+            "type": "text-delta",
+            "index": 0
+          },
+          {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "text"
+            }
+          },
+          {
+            "type": "usage"
+          },
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "stop",
+              "code": null
+            }
+          },
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "text"
+          },
+          {
+            "type": "text-delta",
+            "index": 0
+          },
+          {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "text"
+            }
+          },
+          {
+            "type": "usage"
+          },
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "stop",
+              "code": null
+            }
+          }
+        ],
+        "sequence_sha256": "f8a5db4d65a5d06000f00b2ac72a2b3ea4b0f317c804b3b1d83d094b34b68066",
+        "observer_sha256": "967944a26eaf1e67bee2201616e09635a47998b09e727e82b4f96ab83559ceb5"
+      }
+    },
+    "object-arguments": {
+      "identical": true,
+      "control": {
+        "version": "0.4.20",
+        "exit_code": 0,
+        "saw_main_stream": true,
+        "chunks": [
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "tool-call"
+          },
+          {
+            "type": "tool-call-delta",
+            "index": 0,
+            "id": "call_r70_object",
+            "name": "capture"
+          },
+          {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "tool-call",
+              "id": "call_r70_object",
+              "name": "capture",
+              "arguments": "{\"code\":\"x\"}",
+              "arguments_kind": "object"
+            }
+          },
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "stop",
+              "code": null
+            }
+          },
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "text"
+          },
+          {
+            "type": "text-delta",
+            "index": 0
+          },
+          {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "text"
+            }
+          },
+          {
+            "type": "usage"
+          },
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "stop",
+              "code": null
+            }
+          },
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "text"
+          },
+          {
+            "type": "text-delta",
+            "index": 0
+          },
+          {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "text"
+            }
+          },
+          {
+            "type": "usage"
+          },
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "stop",
+              "code": null
+            }
+          }
+        ],
+        "sequence_sha256": "a60428f73210d3fd19d1581ff7ca94a949ebb4f4301abd5b312a9d4f1974272d",
+        "observer_sha256": "032c48074ab6d7b2742d7fc8e58e22fe05a9417497b94fc84ff1d68024be6c0f"
+      },
+      "remedy": {
+        "version": "0.4.20",
+        "exit_code": 0,
+        "saw_main_stream": true,
+        "chunks": [
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "tool-call"
+          },
+          {
+            "type": "tool-call-delta",
+            "index": 0,
+            "id": "call_r70_object",
+            "name": "capture"
+          },
+          {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "tool-call",
+              "id": "call_r70_object",
+              "name": "capture",
+              "arguments": "{\"code\":\"x\"}",
+              "arguments_kind": "object"
+            }
+          },
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "stop",
+              "code": null
+            }
+          },
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "text"
+          },
+          {
+            "type": "text-delta",
+            "index": 0
+          },
+          {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "text"
+            }
+          },
+          {
+            "type": "usage"
+          },
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "stop",
+              "code": null
+            }
+          },
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "text"
+          },
+          {
+            "type": "text-delta",
+            "index": 0
+          },
+          {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "text"
+            }
+          },
+          {
+            "type": "usage"
+          },
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "stop",
+              "code": null
+            }
+          }
+        ],
+        "sequence_sha256": "a60428f73210d3fd19d1581ff7ca94a949ebb4f4301abd5b312a9d4f1974272d",
+        "observer_sha256": "032c48074ab6d7b2742d7fc8e58e22fe05a9417497b94fc84ff1d68024be6c0f"
+      }
+    },
+    "finish-no-reason": {
+      "identical": true,
+      "control": {
+        "version": "0.4.20",
+        "exit_code": 0,
+        "saw_main_stream": true,
+        "chunks": [
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "text"
+          },
+          {
+            "type": "text-delta",
+            "index": 0
+          },
+          {
+            "type": "finish",
+            "reason": null
+          },
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "text"
+          },
+          {
+            "type": "text-delta",
+            "index": 0
+          },
+          {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "text"
+            }
+          },
+          {
+            "type": "usage"
+          },
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "stop",
+              "code": null
+            }
+          }
+        ],
+        "sequence_sha256": "493eb31e651f4ea0eb0a509a9fc3235b8dd5fcfcec56ffd62752c55c0365b0e8",
+        "observer_sha256": "ad8319f10bc7a2ba104b1d54395bdf70919372d1a6e579345c784615a103bc4c"
+      },
+      "remedy": {
+        "version": "0.4.20",
+        "exit_code": 0,
+        "saw_main_stream": true,
+        "chunks": [
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "text"
+          },
+          {
+            "type": "text-delta",
+            "index": 0
+          },
+          {
+            "type": "finish",
+            "reason": null
+          },
+          {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "text"
+          },
+          {
+            "type": "text-delta",
+            "index": 0
+          },
+          {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "text"
+            }
+          },
+          {
+            "type": "usage"
+          },
+          {
+            "type": "finish",
+            "reason": {
+              "kind": "stop",
+              "code": null
+            }
+          }
+        ],
+        "sequence_sha256": "493eb31e651f4ea0eb0a509a9fc3235b8dd5fcfcec56ffd62752c55c0365b0e8",
+        "observer_sha256": "ad8319f10bc7a2ba104b1d54395bdf70919372d1a6e579345c784615a103bc4c"
+      }
+    }
+  },
+  "claim": {
+    "pass_through": "healthy, object-arguments and finish-no-reason produce a chunk-identical sequence with or without remedy",
+    "repair": "bare-value produces a paired tool-call block with a traceable id, a name and arguments that parse; the adapter failure is gone"
+  },
+  "not_proven": [
+    "dsh-ops is not mounted in this isolated home: a malformed finish from an inner neighbour would be read by dsh-ops before remedy sees it on the desktop profile",
+    "the observer is a fixture, not a shipped third-party plugin; no claim is made about a listener that mutates chunks",
+    "one host, one route, one model and four scenarios; a different adapter may emit other shapes"
+  ]
+}

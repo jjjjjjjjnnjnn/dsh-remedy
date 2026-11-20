@@ -83,3 +83,38 @@ R68 的接缝盘点回答的是“谁在同一条链上”；这一份回答的�
 - 代价比估计高：代码净增约 2.2 KB，而不是 250–400 B。付款是压注释，plugin 从 82 859 降到
   81 589，core 103 560，registry 67 824（余量 176 B）。cap 一个没动。
 - 仍未做：`verified` 需要一次带邻居插件的真实 turn；本轮两条都是 `tested`。
+
+## 下游半截与拓扑（R82 实测，零运行时字节）
+
+R69 只回答了“remedy 自己看到坏 chunk 时怎么做”，没有回答**外层消费者看到什么**。
+R82 用一个 `prepend: true` 的 observer 插件（`tests/fixtures/outer-chunk-observer/`）
+在真宿主 turn 里记录 remedy 之后的每一段 chunk，产物
+`data/results/live-neighbours-contract-2026-11-20T10-00-00.000Z.json`。
+
+**拓扑先纠正**：桌面 profile 上 `llm/stream` 是 **remedy（load_index 16，最外层）→ dsh-ops（20，内层）**
+（`data/results/seam-inventory-2026-11-19T08-05-00.000Z.json`；cordis `register()` 对
+`prepend: true` 用 `unshift`，见 `@deepseek-ai/cordis/lib/index.js:336`）。因此 dsh-ops 在
+remedy **内侧**：它先读 adapter / 更内层邻居的 chunk，不是 remedy 的下游。
+本 ADR 早先若写成“fail open 把坏 chunk 推给 dsh-ops”，方向是反的，此处更正。
+
+**实测的三条**：
+
+- `healthy` / `object-arguments` / `finish-no-reason`：有 remedy 与无 remedy 的 observer
+  chunk 序列逐字节相同。特别是 `finish` 没有 `reason` 时，外层读到的是
+  `reason: null`，remedy 没有替它编一个；无 dsh-ops 的宿主继续正常收尾。
+- `bare-value`（已证实的粘连）：无 remedy 的 observer 先读到
+  `finish{error, MALFORMED_RESPONSE}`、退出 1；有 remedy 的 observer 读到成对的
+  `block-start` / `block-end`（同一 index），`block` 带可追踪 id `call_remedy_1`、
+  名字 `capture`、以及**能各自 parse 的 arguments 字符串**，随后 `finish{stop}`、退出 0。
+  这就是“修好了”在下游可以被独立验证的形状，而不是只对内部计数成立。
+- 任何 `finish` 之后都不会在未开新 `block-start` 前再出现 chunk（observer 记录的序列满足）。
+
+**仍不归本接缝**：dsh-ops 的 listener 只读 `chunk.type === 'finish'` 与
+`chunk.reason.kind`（`lib/projections/native/read-dedup.js:104-108`），没有守卫。
+所以**更内层**的邻居若递来缺 `reason` 的 `finish`，会先在 dsh-ops 里 `reading 'kind'` 崩掉，
+remedy 根本看不到那一帧；这属于别人的插件与该插件自己的接缝，fail open 不改变它。
+反过来，dsh-ops 自己产出的坏帧会原样经过 remedy 抵达宿主——本轮测得宿主在没有 dsh-ops
+的隔离树里能继续，但没有在桌面 profile 上把 dsh-ops 一起挂进 harness，这一点仍未被真机见证。
+
+结论不变：**放行 / 修已证实的粘连 / 原样抛回**三种结局；R82 只是把“放行”和“修好”
+在**外层消费者眼里**分别长什么样，变成了可复跑的读数。

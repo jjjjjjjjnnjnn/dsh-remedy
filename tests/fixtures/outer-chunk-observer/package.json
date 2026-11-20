@@ -1,0 +1,7 @@
+{
+  "name": "r82-observer",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "description": "R82 test fixture: an outermost llm/stream listener that records the chunk sequence it receives from the next listener."
+}

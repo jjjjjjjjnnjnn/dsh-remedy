@@ -1566,7 +1566,27 @@
         "docs/patches/P-0055-reach-newest-from-registry.md",
         "data/results/live-reach-2026-11-20T09-10-00.000Z.json"
       ]
+    },
+    {
+      "id": "S85",
+      "gate": "step-review",
+      "title": "Can fail-open and a proven repair be witnessed from the outside, not from the wrapper's own counters?",
+      "axes": {
+        "correctness": "An observer registered with prepend:true sits outside remedy; its chunk log shows pass-through sequences identical to the no-remedy control, and a repaired stream with a paired tool-call block, a traceable id, a name and arguments that parse.",
+        "reproducibility": "Both fixture plugins are in tests/fixtures, the harness lives in .tmp and the recorder asserts every claim before writing. Four scenarios times two arms were run as real host turns; the unit tests pin the observer's summarizer and the governance test pins the ADR's citation.",
+        "compliance": "No runtime byte, cap, version, release, tag or registry record changed. The ADR corrects an earlier direction error: on the desktop profile remedy is outermost and dsh-ops is inner.",
+        "ssot": "The ADR points at one live artifact and names the seam inventory plus the cordis source line that settle the ordering; no second topology claim is introduced.",
+        "adversarial": "The recorder refuses a run whose control is not plugin-free, whose fail-open sequence differs from control, whose synthesized arguments do not parse, or whose finish is followed by a chunk without a new block-start. The harness does not mount dsh-ops, and the artifact says so instead of claiming a desktop witness."
+      },
+      "evidence": [
+        "tests/fixtures/outer-chunk-observer/index.js",
+        "tests/unit/outer-chunk-observer.test.ts",
+        "tests/governance/adr-0002-downstream.test.ts",
+        "scripts/record_neighbour_contract.mjs",
+        "docs/adr/0002-fail-open-on-foreign-chunks.md",
+        "data/results/live-neighbours-contract-2026-11-20T10-00-00.000Z.json"
+      ]
     }
   ],
-  "updated_at": "2026-11-20T09:10:00.000Z"
+  "updated_at": "2026-11-20T10:05:00.000Z"
 }

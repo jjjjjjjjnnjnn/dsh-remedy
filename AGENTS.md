@@ -12,12 +12,12 @@
 > **接手先读**：`docs/AGENT-WORKFLOW.md`（负责 Agent 的单一入口）→ `docs/HANDOFF.md` → `docs/research/README.md` → `docs/research/leads.md` → `PROJECT_RULES.md` → `INDEX.md`
 > **R43 起的主线**是外部反馈 → 稳定补丁：报告只是线索，本机复现后才有补丁；来源与方法见 `docs/research/`。R56 的教训：**接缝名写在补丁里不算数，要在宿主源码里核对接缝真的会被派发**。
 >
-> **基线（2026-11-20 · R82）**：`pnpm run verify` = **461 tests / 6 gates**（含 R77/R78/R79 的七条推广治理测试与 R82 的七条外层 observer 测试，Windows）；
+> **基线（2026-11-20 · R83）**：`pnpm run verify` = **465 tests / 6 gates**（含 R77/R78/R79 的七条推广治理测试、R82 的七条外层 observer 测试与 R83 的四条 seams 命令测试，Windows）；
 > `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.20`（latest）+
 > `dsh-remedy-core@0.4.20`（latest）。
 > 公开仓库 CI 绿，release `v0.1.0` … `v0.4.20`。五十五补丁**全部 `verified`、0 `tested`**（R70 升 7 条 `llm/stream`，R71 升 5 条 `cli`，R72 用一份构建/宿主见证升余下 33 条，R81 加 P-0055 的 reach 读数见证）。
-> **字节余量（下一轮的第一个约束）**：plugin **81 589 / 83 000（1 411 B；CLI 半边 43 B）**、core **98 833 / 104 000（5 167 B）**、
-> registry **63 097 / 68 000（4 903 B —— 四轮都靠压散文付清；新记录仍按 P-0032 先压缩，不抬 cap）**。
+> **字节余量（下一轮的第一个约束）**：plugin **72 196 / 83 000（10 618 B；CLI 半边 1 186 B）**、core **95 712 / 104 000（8 288 B）**、
+> registry **62 474 / 68 000（5 526 B —— 用 dist 去注释 + 搬进 core 付清 seams 命令，不抬 cap；新记录仍按 P-0032 先压缩）**。
 > **平台边界：Windows 与 Linux 实测（同一棵树、同一组数），macOS 未实测**；P-0038 的 `/Users` 形状在 Linux 上是字符串，CI 里有一个 `verify (macos, node 24)` job。
 > **本目录不是 git 根**：提交在 `..`（容器），公开仓库由 `git subtree split --prefix=dsh-remedy` 切出。
 

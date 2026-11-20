@@ -76,7 +76,7 @@ export const RESIDENCY_FILES = [
 ]
 
 /** Files only a CLI invocation loads. */
-export const CLI_FILES = ['cli.js', 'cli-args.js', 'scan-command.js', 'session-scan.js', 'explain-command.js']
+export const CLI_FILES = ['cli.js', 'cli-args.js', 'scan-command.js', 'session-scan.js', 'explain-command.js', 'seams-command.js']
 
 export const RESIDENCY_CAP = 44000
 export const CLI_CAP = 42000

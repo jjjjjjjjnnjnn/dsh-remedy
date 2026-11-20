@@ -58,6 +58,7 @@ dsh-remedy status  [--json] [--journal <file>]
 dsh-remedy repair  [<file>] [--name <tool>] [--id <call-id>] [--max-calls <n>] [--truncated] [--json]
 dsh-remedy scan    <session.jsonl|directory> [--since <iso>] [--max-files <n>] [--json] [--out <file>]
 dsh-remedy explain [--sessions <dir>] [--profile-file <cordis.patch.yml>]
+dsh-remedy seams   [--profile <name>] [--dir <path>] [--json]
 dsh-remedy verify  [--json]
 ```
 
@@ -74,6 +75,12 @@ in that last column: the coverers, `(no)` for a profile that switches them off,
 and `unknown` when no profile was named — an unread profile is not a finding, so
 `explain` exits `0` in that case and `1` only when a profile it read switches
 every coverer of a class the host hits off.
+
+`seams` reads a DSH profile without loading any plugin and prints which installed
+packages register on the same seam, in waterfall order (outermost first; a
+`prepend` registration unshifts). A shared seam is a finding and exits `1`;
+`--json` carries the same inventory. It cannot see a listener registered
+dynamically or through an indirection.
 
 Exit codes: `0` ok · `1` finding · `2` usage · `3` unavailable.
 

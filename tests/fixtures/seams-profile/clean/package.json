@@ -1,0 +1,5 @@
+{
+  "name": "seams-fixture-clean",
+  "private": true,
+  "dsh": { "profile": { "bundles": ["a-plugin"] } }
+}

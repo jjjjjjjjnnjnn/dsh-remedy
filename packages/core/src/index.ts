@@ -49,6 +49,11 @@ export { endingOf, ENDINGS, messageAnswers, messageOnToolCall, noteAssistantMess
 export type { HeaderTools, ToolLoss } from './capability.js'
 export { capabilityDrift, lostTools } from './capability.js'
 
+export type { SeamInventory, SeamPackage, SeamRegistration, SeamRow } from './seams.js'
+export { buildInventory, orderRegistrants, registrationsIn, reservedUsesIn } from './seams.js'
+export type { ProfileScan } from './seams-fs.js'
+export { scanProfile } from './seams-fs.js'
+
 export type { RemedyCounters, RemedyState, RemedyVerdict } from './verdict.js'
 export { formatRemedyVerdict, judgeRemedy } from './verdict.js'
 

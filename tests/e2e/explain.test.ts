@@ -128,7 +128,7 @@ test('a covered class whose patch is on is not a finding', () => {
   assert.equal(status, 0, out)
 })
 
-test('the usage text and the CLI name the same five commands', () => {
+test('the usage text and the CLI name the same six commands', () => {
   const usage = run(['--help']).out
   const declared = usage
     .split(/\r?\n/)
@@ -137,7 +137,7 @@ test('the usage text and the CLI name the same five commands', () => {
     .map((line) => line.split(' ')[1] ?? '')
   assert.deepEqual(
     [...new Set(declared)].sort(),
-    ['explain', 'repair', 'scan', 'status', 'verify'],
+    ['explain', 'repair', 'scan', 'seams', 'status', 'verify'],
     'a command that exists in the switch but not in the usage text is invisible to a user',
   )
 })

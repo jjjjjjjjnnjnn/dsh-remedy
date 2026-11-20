@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * `dsh-remedy` CLI: status · repair · scan · explain · verify.
+ * `dsh-remedy` CLI: status · repair · scan · explain · seams · verify.
  * Exit codes: 0 ok · 1 finding · 2 usage · 3 unavailable (missing file).
  */
 
@@ -28,6 +28,7 @@ import {
 } from './cli-args.js'
 import { cmdScan } from './scan-command.js'
 import { cmdExplain } from './explain-command.js'
+import { cmdSeams } from './seams-command.js'
 
 function fixtureDir(): URL | null {
   // Installed tarball: dist/../fixtures; source checkout: dist/../../../data.
@@ -226,6 +227,8 @@ function main(argv: readonly string[]): number {
       return cmdScan(args)
     case 'explain':
       return cmdExplain(args)
+    case 'seams':
+      return cmdSeams(args)
     case 'verify':
       return cmdVerify(args)
     default:

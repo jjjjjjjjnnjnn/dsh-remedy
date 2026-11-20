@@ -1,0 +1,5 @@
+{
+  "name": "seams-fixture-conflict",
+  "private": true,
+  "dsh": { "profile": { "bundles": ["a-plugin", "b-plugin"] } }
+}

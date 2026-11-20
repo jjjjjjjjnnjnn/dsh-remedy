@@ -1586,7 +1586,28 @@
         "docs/adr/0002-fail-open-on-foreign-chunks.md",
         "data/results/live-neighbours-contract-2026-11-20T10-00-00.000Z.json"
       ]
+    },
+    {
+      "id": "S86",
+      "gate": "step-review",
+      "title": "Can the seam inventory ship as a command without a second classifier or a raised cap?",
+      "axes": {
+        "correctness": "The pure classifier and the read-only profile walker live in core; the in-repo scanner imports the same classifier through a thin bridge, and the CLI command calls the same core exports, so the ordering rules cannot drift.",
+        "reproducibility": "Two checked-in profile fixtures and four e2e assertions pin the finding, JSON order, quiet case and unavailable case. The CLI resolves a path explicitly; no machine-specific profile is required for the test.",
+        "compliance": "No cap moved and no version changed. The new CLI module was first too large by 5866 bytes; payment was moving the walker into core and enabling dist comment stripping in both tsconfigs, with source comments kept.",
+        "ssot": "The fact pack carries the new byte account, both first screens carry the new usage line through the copy channel, and compatibility.md names the shipped command alongside the in-repo recorder.",
+        "adversarial": "The command exits 1 for a shared seam and 3 for a missing profile rather than reporting an empty inventory. It reads call sites only, so a dynamic or indirect registration is reported as absent, and the docs say so."
+      },
+      "evidence": [
+        "packages/core/src/seams.ts",
+        "packages/core/src/seams-fs.ts",
+        "packages/plugin/src/seams-command.ts",
+        "tests/e2e/seams.test.ts",
+        "tests/fixtures/seams-profile/conflict/package.json",
+        "docs/compatibility.md",
+        "docs/copy/facts/public-repo-facts.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-20T10:05:00.000Z"
+  "updated_at": "2026-11-20T10:30:00.000Z"
 }

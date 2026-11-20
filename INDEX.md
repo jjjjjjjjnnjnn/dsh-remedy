@@ -27,10 +27,13 @@
 | `docs/reach/README.md` / `latest.md` / `2026-11-19.md` | R77：每日触达台账（机器一半 + 人工清单） |
 | `scripts/daily-reach.mjs --json` | R78：输出 `promotion-snapshot/v1`，本机知识库宣传总线 `kb promo collect` 直接消费 |
 | `scripts/traffic-report.mjs` / `catalog-status.mjs` | R77：latest share / 触达汇总 / 目录状态（零依赖，unreachable 不写 0） |
+| `packages/core/src/seams.ts` / `seams-fs.ts` | R83：接缝判据与只读 profile 遍历器的唯一真相源；仓库扫描器与 shipped `seams` 命令共用，不再有两份拓扑规则 |
+| `packages/plugin/src/seams-command.ts` | R83：`dsh-remedy seams [--profile] [--dir] [--json]`，只读、共用接缝退出 1、缺 profile 退出 3 |
 | `scripts/lib/reach.mjs` | R81：`versionRank` 与 `latestShare` 的纯函数；`newest` 取自 registry 已发布版本，窗口外版本进 `missing`，有缺行就不可比；测试只导入本模块，不联网 |
 | `scripts/record_reach_truth.mjs` | R81：把上述定义放到 live npm 上逐条断言后写 `live-reach-*`，形状不成立就 `exit 4` |
 | `scripts/record_neighbour_contract.mjs` | R82：读外层 observer 的 chunk 日志，断言 fail-open 与对照逐字节相同、修复的 tool-call block 可追踪且 arguments 可 parse，先断言后写 `live-neighbours-contract-*` |
 | `tests/fixtures/outer-chunk-observer/` | R82：`prepend: true` 的外层 listener 夹具，只记录 chunk 形状不改流；`summarizeChunk` 由单测钉住 |
+| `tests/fixtures/seams-profile/{conflict,clean}/` / `tests/e2e/seams.test.ts` | R83：两个最小 profile 夹具，钉住共用接缝退出 1、`--json` 排序、无冲突退出 0、缺 profile 退出 3 |
 | `docs/research/negative-feedback-2026-11-19.md` | R75：全网 57 次查询 + 两篇批评报道原文的收集与判读；外部印证已有方案，不当证据、不扩范围 |
 | `docs/research/intake-r74-triage.md` | R74 巡检留下的 **65 个候选**的逐桶判读：九桶正好覆盖、3 条读全文的结论进 `leads.md` 的 J 表、以及「没有新形状所以不发补丁」 |
 | `docs/research/intake-r66-triage.md` | R66 巡检留下的 **76 个候选**的逐桶判读：五桶 76 条正好覆盖、8 条读全文的结论进 `leads.md` 的 I 表、以及「没有新形状所以不发补丁」 |

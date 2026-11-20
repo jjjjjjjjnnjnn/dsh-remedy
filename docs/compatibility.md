@@ -82,10 +82,13 @@
 ```powershell
 node scripts/scan_plugin_seams.mjs --profile desktop --stamp <ISO>
 node scripts/bench_repair_overhead.mjs --stamp <ISO>
+dsh-remedy seams --profile desktop            # 已安装包版本，不需要仓库
 ```
 
-第一条只读 `package.json` 与已构建的 JS，不加载插件、不启动 DSH、不写 profile；
-第二条在进程内挂一个最小 context，跑三组合成流。两条都会先断言再写盘。
+第一条只读 `package.json` 与已构建的 JS，不加载插件、不启动 DSH、不写 profile，并落证据；
+第三条是它的 shipped 版本（`packages/core/src/seams-{fs,}.ts` 里的同一套判据），
+给不克隆仓库的人用：打印同一条接缝上的注册顺序，共用接缝时退出 1。
+第二条在进程内挂一个最小 context，跑三组合成流。前两条都会先断言再写盘。
 
 ## 8. 这份文件不证明什么
 

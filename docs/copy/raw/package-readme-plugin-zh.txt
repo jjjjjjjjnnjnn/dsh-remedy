@@ -32,6 +32,7 @@ dsh-remedy status  [--json] [--journal <file>]
 dsh-remedy repair  [<file>] [--name <tool>] [--id <call-id>] [--max-calls <n>] [--truncated] [--json]
 dsh-remedy scan    <session.jsonl|directory> [--since <iso>] [--max-files <n>] [--json] [--out <file>]
 dsh-remedy explain [--sessions <dir>] [--profile-file <cordis.patch.yml>]
+dsh-remedy seams   [--profile <name>] [--dir <path>] [--json]
 dsh-remedy verify  [--json]
 ```
 
@@ -41,6 +42,10 @@ dsh-remedy verify  [--json]
 `explain` 按失败类回答：本机命中多少次、哪个补丁覆盖它、以及它在你指定的 profile 里是否启用；
 **没给 `--profile-file` 时那一列写 `unknown`、退出码是 0**——没测过的 profile 不算发现。
 `repair` 不给文件就读 stdin，给 `.json` 夹具则读它的 `arguments` 字段。
+
+`seams` 只读一个 DSH profile、不加载任何插件，列出哪些已装包注册在同一条接缝上，并按 waterfall
+顺序（最外层在前；`prepend` 注册会插队）写出。共用接缝算发现、退出 `1`；`--json` 给同一份清单。
+它看不见运行时动态注册或经过间接层的注册。
 
 退出码：`0` 正常 · `1` 有发现 · `2` 用法 · `3` 读不了这个输入。
 

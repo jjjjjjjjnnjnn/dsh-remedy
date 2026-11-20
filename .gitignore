@@ -1,7 +1,12 @@
 # --- Node / pnpm ---
 node_modules/
+# R83 fixture: a synthetic profile must carry its own node_modules to be testable in CI.
+!tests/fixtures/seams-profile/**/node_modules/
+!tests/fixtures/seams-profile/**/node_modules/**
 *.tsbuildinfo
 **/dist/
+!tests/fixtures/seams-profile/**/dist/
+!tests/fixtures/seams-profile/**/dist/**
 .pnpm-store/
 
 # --- local runtime scratch (never committed) ---

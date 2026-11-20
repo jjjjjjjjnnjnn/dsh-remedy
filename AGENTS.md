@@ -16,7 +16,7 @@
 > `node scripts/gate.mjs --mutate` = **6-6**。npm：`dsh-remedy@0.4.20`（latest）+
 > `dsh-remedy-core@0.4.20`（latest）。
 > 公开仓库 CI 绿，release `v0.1.0` … `v0.4.20`。五十五补丁**全部 `verified`、0 `tested`**（R70 升 7 条 `llm/stream`，R71 升 5 条 `cli`，R72 用一份构建/宿主见证升余下 33 条，R81 加 P-0055 的 reach 读数见证）。
-> **字节余量（下一轮的第一个约束）**：plugin **72 196 / 83 000（10 618 B；CLI 半边 1 186 B）**、core **95 712 / 104 000（8 288 B）**、
+> **字节余量（下一轮的第一个约束）**：plugin **72 196 / 83 000（10 618 B；CLI 半边 1 186 B）**、core **95 999 / 104 000（8 001 B）**、
 > registry **62 474 / 68 000（5 526 B —— 用 dist 去注释 + 搬进 core 付清 seams 命令，不抬 cap；新记录仍按 P-0032 先压缩）**。
 > **平台边界：Windows 与 Linux 实测（同一棵树、同一组数），macOS 未实测**；P-0038 的 `/Users` 形状在 Linux 上是字符串，CI 里有一个 `verify (macos, node 24)` job。
 > **本目录不是 git 根**：提交在 `..`（容器），公开仓库由 `git subtree split --prefix=dsh-remedy` 切出。

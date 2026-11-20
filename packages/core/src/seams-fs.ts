@@ -6,7 +6,9 @@ import { registrationsIn, reservedUsesIn, type SeamPackage } from './seams.js'
 export interface ProfileScan {
   readonly packages: SeamPackage[]
   readonly unreadable_dirs: readonly string[]
+  readonly skipped_large_files: readonly string[]
   readonly files_read: number
+  readonly bytes_read: number
 }
 
 const RESERVED = ['remedy_unattributed']
@@ -41,7 +43,9 @@ export function scanProfile(profileDir: string): ProfileScan {
   } catch { /* an unreadable order yields null load indices */ }
   const packages: SeamPackage[] = []
   const unreadable_dirs: string[] = []
+  const skipped_large_files: string[] = []
   let files_read = 0
+  let bytes_read = 0
   for (const dir of pkgDirs(join(profileDir, 'node_modules'))) {
     let pkg: { name?: unknown; version?: unknown }
     try { pkg = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')) } catch {
@@ -53,9 +57,11 @@ export function scanProfile(profileDir: string): ProfileScan {
     const reserved = new Set<string>()
     for (const f of sources(dir)) {
       try {
-        if (statSync(f).size > 4e6) continue
+        const size = statSync(f).size
+        if (size > 4e6) { skipped_large_files.push(`${pkg.name}:${relative(dir, f).replaceAll('\\', '/')}`); continue }
         const text = readFileSync(f, 'utf8')
         files_read += 1
+        bytes_read += size
         for (const r of reservedUsesIn(text, RESERVED)) reserved.add(r)
         for (const r of registrationsIn(text)) {
           const prev = reg.get(r.seam)
@@ -66,5 +72,5 @@ export function scanProfile(profileDir: string): ProfileScan {
     const index = bundles.indexOf(pkg.name)
     packages.push({ name: pkg.name, version: typeof pkg.version === 'string' ? pkg.version : null, load_index: index < 0 ? null : index, registrations: [...reg.values()], reserved: [...reserved] })
   }
-  return { packages, unreadable_dirs, files_read }
+  return { packages, unreadable_dirs, skipped_large_files, files_read, bytes_read }
 }

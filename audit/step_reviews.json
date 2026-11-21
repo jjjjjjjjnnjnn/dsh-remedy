@@ -1645,7 +1645,24 @@
         "data/results/live-external-fusion-2026-11-21T16-25-00.000Z.json",
         "docs/PROMOTION.md"
       ]
+    },
+    {
+      "id": "S89",
+      "gate": "step-review",
+      "title": "Can the approved promotion actions be executed without this repo posting or writing channel state?",
+      "axes": {
+        "correctness": "A dispatch ticket was created for agent-promotion with the fact card, the 270-character limit and the seven-gate requirement; the repo only added a fact card and outline for HN/V2EX, never a publishable body.",
+        "reproducibility": "The HN/V2EX section points at现取 commands and the exact artifact path, so a reader can re-measure every number before writing prose.",
+        "compliance": "No code, cap, version or copy entry changed. Posting stays in agent-promotion; HN/V2EX remain human-written and human-posted; the r/SideProject freeze and cross-project 7-day rule are in the dispatch.",
+        "ssot": "Channel state stays in the KB bus; docs/PROMOTION.md only carries the fact card and this repo's local actions, as the boundary section requires.",
+        "adversarial": "The dispatch forbids the two tempting overclaims — that we drove the reporter's gateway, and that their 18/39 figure is our measurement — and limits the action to X while other channels are in cooldown."
+      },
+      "evidence": [
+        "docs/PROMOTION.md",
+        "docs/HANDOFF.md",
+        "docs/research/intake-r85-triage.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-21T16:30:00.000Z"
+  "updated_at": "2026-11-21T16:40:00.000Z"
 }

@@ -67,7 +67,7 @@
 ### 3.1 X（英文根帖，≤270 字符）
 
 ```
-dsh-remedy 0.4.20 is out. It repairs tool-call arguments on the DSH llm/stream seam, names refusals, and ships an offline scan/explain. 54 patches, all with a live or build/host witness. It never changes app.asar and never turns a failed turn into a fake success.
+dsh-remedy 0.4.20 is out. It repairs tool-call arguments on the DSH llm/stream seam, names refusals, and ships an offline scan/explain. 55 patches, all with a live or build/host witness. It never changes app.asar and never turns a failed turn into a fake success.
 Repo: <URL>
 ```
 
@@ -88,9 +88,36 @@ dsh-remedy 0.4.20 已发布：在 DSH 的 llm/stream 接缝上拆开已证实的
 
 场景 → 机制（接缝与判据）→ 一条实测数字 → 三条边界 → 一个问题。正文由本人写。
 
-### 3.5 HN / V2EX
+### 3.5 HN / V2EX（事实卡 + 提纲，不代写）
 
-**不代写**。只把本文件 §1 事实卡 + §3 骨架交给本人。
+两个平台都禁止 AI 生成正文（含润色）。下面只有事实、结构与问答素材；**正文与回帖由本人写、本人发**。
+
+**事实卡（现取，所有数字指回事实包 / 产物）**
+
+| 项 | 值 | 来源 |
+|---|---|---|
+| 版本 | 0.4.20，两包 `latest` | `npm view dsh-remedy version` / 事实包 |
+| 补丁 | 55 个，全部 `verified`，无新补丁 | `node packages/plugin/dist/cli.js status --json` |
+| 验证 | 465 tests / 6 gates / `--mutate` 6-6 / `cli verify` OK 8 | `pnpm run verify` 等（R85 树） |
+| 接缝 | 常驻 `llm/stream` 与 `agent/request-error`，拒绝只抵达 `agent/error` | `docs/compatibility.md` |
+| 平台 | Windows / Linux 实测，macOS 只有 CI job | 事实包 |
+| 外部印证 | 公开 #13983（2026-11-21）在 0.2.2-rc.5 上贴出 `Received arguments:` 后两个完整 JSON 对象；报告测到 18/39 轮挂掉、重试 2/2 成功并要求保留错误文本 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13983> |
+| 本机复现 | 脱敏后的参数文本喂给 shipped engine → 两段各自 parse、两个唯一 id | `data/results/live-external-fusion-2026-11-21T16-25-00.000Z.json` |
+| 判读 | 62 条候选归八桶、13 条读全文、12 条新线索；其余均为已覆盖或 out-of-seam | `docs/research/intake-r85-triage.md` |
+
+**结构提纲**（不涉及正文措辞）：场景（一次粘连调用让整轮失败） → 机制（只拆能证明的粘连；读不懂的原样放行；修不了就抛） → 一条实测数字（上面的本机复现） → 三条边界 → 一个收尾问题。
+
+**三条必须带的边界**：不改 `app.asar`；不做插件市场、不替用户选包；macOS 只有 CI job。再加一条本次特有的：外部报告的崩溃率是**对方的测量**，本机只证明「这个形状我们的引擎能修」，没有驱动对方的网关。
+
+**可能被问到的问题与诚实答案**
+
+- 「为什么不直接改适配器？」→ 那是 out-of-seam；上游 index 冲突与 `DEFAULT_RETRYABLE_CODES` 不在本插件的声明接缝上。
+- 「为什么不重试？」→ 第二接缝的 P-0011 只做有界重试且不覆盖宿主默认策略；把失败改成重试成功会违反「失败即失败」。
+- 「坏会话行能不能自动修？」→ 我们的 `scan` 只读、只数 `unreadable_lines`；宿主 resume reader 不归本接缝。
+- 「会不会拖慢流？」→ 一次已证实修复的开销约 +0.13 ms（`data/results/bench-repair-2026-11-19T09-10-00.000Z.json`），不是用户数。
+- 「外部数字可信吗？」→ 引 URL 与日期，明确标注是对方测量；本机只读形状。
+
+**发布台账**由 `agent-promotion` 走总线；本文件不放第二份状态。
 
 ## 4. 发布记录
 

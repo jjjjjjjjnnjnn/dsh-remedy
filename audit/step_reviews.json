@@ -1625,7 +1625,27 @@
         "docs/reach/2026-11-21.md",
         "docs/reach/README.md"
       ]
+    },
+    {
+      "id": "S88",
+      "gate": "step-review",
+      "title": "Can an external report add evidence without becoming a patch or a hosted gateway claim?",
+      "axes": {
+        "correctness": "The only reproduced shape is the public report's fused argument text, which the shipped engine repairs into two parseable calls; the gateway's index collision and host retry codes remain upstream facts, quoted with the URL and rates.",
+        "reproducibility": "The recorder embeds a redacted copy of the quoted arguments, asserts the whole text fails to parse and each repaired fragment parses, and writes a hashed artifact; the 62 candidates were bucketed by a script that asserts exact-once coverage.",
+        "compliance": "No runtime byte, cap, version, release, tag or patch count changed; no foreign session text was copied verbatim; posting stays with agent-promotion and a dispatch ticket was created instead of a direct post.",
+        "ssot": "The lead register and the two new research docs carry the conclusions; channel state stays in the KB bus, whose facts, plan and collect were refreshed today.",
+        "adversarial": "The triage names the tempting wrong moves — tolerating a collided index, changing host retry codes, repairing a corrupt session line, validating other seams — and marks each out-of-seam instead of absorbing it."
+      },
+      "evidence": [
+        "docs/research/intake-r85-triage.md",
+        "docs/research/negative-feedback-2026-11-21.md",
+        "docs/research/leads.md",
+        "scripts/record_external_fusion.mjs",
+        "data/results/live-external-fusion-2026-11-21T16-25-00.000Z.json",
+        "docs/PROMOTION.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-21T08:05:00.000Z"
+  "updated_at": "2026-11-21T16:30:00.000Z"
 }

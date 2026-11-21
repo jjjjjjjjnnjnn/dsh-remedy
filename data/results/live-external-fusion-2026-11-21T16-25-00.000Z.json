@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_external_fusion.mjs",
+  "generated_at": "2026-11-21T16:25:00.000Z",
+  "claim": "the public report's fused-argument shape is repaired by the shipped engine into two calls whose arguments each parse",
+  "source": {
+    "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/13983",
+    "reported": "2026-11-21",
+    "host": "0.2.2-rc.5 (macOS 26.3 arm64, openai-completions, deepseek-v4.1-flash, reasoningEffort max)",
+    "shape": "two parallel bash calls streamed with the same tool_call index; adapter concatenated their argument texts"
+  },
+  "measured": {
+    "fused_length": 181,
+    "split_slices": 2,
+    "whole_text_parses": false,
+    "status": "repaired",
+    "calls": [
+      {
+        "id": "call_00_reported",
+        "name": "bash",
+        "arguments": "{\"command\":\"ls -la <home>/platformio/\",\"description\":\"Inspect platformio home state\"}"
+      },
+      {
+        "id": "call_00_reported#remedy-1",
+        "name": "bash",
+        "arguments": "{\"command\":\"curl -s --max-time 25 <url>\",\"description\":\"Find LittleFS partition subtype lookup\"}"
+      }
+    ],
+    "fragments_parse": true,
+    "ids_unique": true
+  },
+  "not_proven": [
+    "the reporter's gateway was not driven from this machine; the collapse rates and session counts are external, quoted in the lead register",
+    "paths and URLs in the quoted arguments were redacted before being written here",
+    "this reproduces the shape the adapter hands to the seam, not the upstream index-collision bug inside pi-ai"
+  ]
+}

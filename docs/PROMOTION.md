@@ -39,6 +39,7 @@
 | 字节账 | `node scripts/gate_size.mjs` 与事实包字节段 |
 | 平台边界 | `docs/compatibility.md`（Windows / Linux 实测，macOS 只有 CI job） |
 | 分发状态 | `node scripts/catalog-status.mjs` |
+| 外部印证（新增 2026-11-21） | `docs/research/intake-r85-triage.md` / `docs/research/negative-feedback-2026-11-21.md`：公开 #13983 在 0.2.2-rc.5 上给出 P-0001 的粘连参数原文；本机 `data/results/live-external-fusion-2026-11-21T16-25-00.000Z.json` 证明 shipped engine 把两段各自 parse 成两个调用 |
 
 **三条诚实边界**（每一版都要带）：
 1. 不改宿主 `app.asar`，只在声明的接缝上改 chunk。
@@ -108,4 +109,6 @@ dsh-remedy 0.4.20 已发布：在 DSH 的 llm/stream 接缝上拆开已证实的
 | 2026-11-19 | Reddit 排期 | `docs/reddit-outreach.md` | 每版定制文案 + 发后 JSON 验证 + 站级过滤不重发 | 队列，逐日最多两版 |
 
 > 本轮新增记录由 `scripts/daily-reach.mjs` 写入 `docs/reach/<date>.md`；人工渠道的回帖与结论写回本表，并在总线 `ledger/` 登记。两处不一致时以总线为准。
+
+**2026-11-21 推广动作**：`kb promo facts dsh-remedy`（事实卡已刷新）、`kb promo plan`（今日 `post: 0`，无新版本就不发帖）、`kb promo collect dsh-remedy`（`stale: false`）；新证据经工单 `TSK-20261121-017-dsh-remedy…` 派给 `agent-promotion`，要求写进事实卡但等下一个发布版本或本人确认后再排期。HN / V2EX 仍只交事实卡，本人写本人发；r/SideProject 停投至 2026-12-19。
 

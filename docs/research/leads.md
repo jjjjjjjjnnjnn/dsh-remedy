@@ -161,3 +161,24 @@ R55 账在这张表里活了两轮没人发现，而它早已过期。
 | L-0053 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13336> | `dsh` | `full` | 2026-11 | 0.2.2-rc.3 | `INVALID_REQUEST`（空 user message） | out-of-seam（session writer） | **rejected (out-of-seam)** | R74：失败轮点「继续」会把空内容 user message 写进会话，严格的 OpenAI 兼容网关随后每轮回 400，`INVALID_REQUEST` 又不可继续。缺的是宿主的写句柄与 continuation 策略；我们的 `scan`/`explain` 只读这些会话，不改宿主。属 L-0021/L-0022 同族，记录不碰。 |
 | L-0054 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13637> | `dsh` | `full` | 2026-11 | ? | `PI_AI_ERROR`（content_filter） | out-of-seam（adapter） | **rejected (dup)** | R74：adapter 把 `content_filter` 压成 `PI_AI_ERROR`，既不在 `DEFAULT_RETRYABLE_CODES` 也不在 `CONTINUABLE_FAILURES`。这与 L-0046 是同一条 adapter 边界；P-0034 只负责本接缝看到它时记成一次 error，不改 `classifyPiAiError`。判 dup。 |
 
+## K. R85 新读的（2026-11-21 的巡检：四源应答，62 个候选未进账本）
+
+> 判读见 `docs/research/intake-r85-triage.md`（62 条按标题归八桶、每条恰好一次）与
+> `negative-feedback-2026-11-21.md`（web 半边当天没有新的负面文章）。
+> 13 条读了全文；只有 #13983 的形状在本机复现，其余为已覆盖或 out-of-seam。没有新补丁。
+
+| id | source | source_kind | read_depth | reported | version | class | seam | status | decision |
+|---|---|---|---|---|---|---|---|---|---|
+| L-0055 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13983> | `dsh` | `full` | 2026-11-21 | 0.2.2-rc.5 | `MALFORMED_RESPONSE`（粘连参数） | `llm/stream` | **patched（P-0001）** | R85：报告中的 `Received arguments:` 后是两个完整 JSON 对象；本机用 shipped engine 复现该形状——两段各自 parse、两个唯一 id，证据 `live-external-fusion-2026-11-21T16-25-00.000Z.json`。外部测到 18/39 轮挂掉与网关 index 冲突属上游；报告建议保留错误文本正是 P-0001 的输入契约。 |
+| L-0056 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13945> | `dsh` | `full` | 2026-11-20 | 0.2.1-rc.5（也查了 rc.5/master） | `SessionFormatError`（空 tool identity） | `llm/stream` | **patched（P-0033 + P-0027）** | R85：Kimi `openai-responses` 路由的空名与空 provider id 让 V4 replay 每轮 400；P-0033 铸可追踪 id、P-0027 给兜底名，本机已有 pi-ai 路由的 `live-identity-*` 见证，该路由特有的 replay 行为未在本机量。 |
+| L-0057 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13822> | `dsh` | `full` | 2026-11-19 | 0.2.1-rc.3 | `completed_without_answer`（reasoning-only） | `cli` | **patched（P-0047）** | R85：`completed` 的 assistant 只有 reasoning、没有 text 也没有 tool call，正是 P-0047 的形状；本机探针 `live-completed-*` 已证明 `scan` 能命名。宿主 `EMPTY_RESPONSE` 重试策略不归本接缝。 |
+| L-0058 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13787> | `dsh` | `full` | 2026-11-19 | 0.2.2-rc.5 | `PI_AI_ERROR`（未枚举的 stop reason） | out-of-seam（adapter） | **rejected (out-of-seam)** | R85：Vertex 返回的 finishReason 不在 `@google/genai` 枚举里，pi-ai `mapStopReason()` 直接 throw；P-0034 只命名本侧看到的失败，改不到 adapter 的映射表。 |
+| L-0059 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13803> | `dsh` | `full` | 2026-11-19 | 0.2.2-rc.2 | `MALFORMED_RESPONSE`（非法 JSON 转义） | out-of-seam（adapter） | **rejected (dup)** | R85：`input_json_delta` 里的 `\$` 让 Messages adapter 的 `JSON.parse` 整轮拒绝，失败消息不带原始参数文本；与 L-0003/L-0005 同一段 catch，本机 cense 也没有该形状。 |
+| L-0060 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13790> | `dsh` | `full` | 2026-11-19 | 0.2.2-rc.3 | `INVALID_REQUEST`（未完成的工具调用） | out-of-seam（session/adapter） | **rejected (out-of-seam)** | R85：进程被杀后 `tool_use` 没有 `tool_result`，DeepSeek Messages 的历史校验让该会话每轮失败；pi-ai 有补结果兜底而该 adapter 没有。宿主的补结果策略不归本接缝。 |
+| L-0061 | <https://github.com/deepseek-ai/deepseek-harness/discussions/13916> | `dsh` | `full` | 2026-11-20 | 0.2.2-rc.1 | 会话日志坏行 | `cli`（离线读取器） | **rejected (out-of-seam)** | R85：一条截断的 `tool/result` 让宿主 resume exit 1。我们的 `scan` 只数 `unreadable_lines`（本机 0），不修宿主的逐行解析；不据此加补丁。 |
+| L-0062 | <https://github.com/deepseek-ai/deepseek-harness/discussions/10877> | `dsh` | `full` | 2026-10-24 | nightly 44.7.0 | `INVALID_REQUEST`（消息缺 role） | out-of-seam（agent.inject） | **rejected (out-of-seam)** | R85：`agent.inject()` 不做运行时校验，坏消息被持久化后每轮 422。本项目只在 P-0015 里测量 `agent/pre-step`，没有挂 `inject`。 |
+| L-0063 | <https://github.com/deepseek-ai/deepseek-harness/discussions/14003> | `dsh` | `full` | 2026-11-21 | 0.2.2-rc.5 | skill frontmatter 静默失败 | out-of-seam（skill 发现） | **rejected (out-of-seam)** | R85：YAML description 里未加引号的冒号让 skill 在斜杠菜单里消失且没有任何警告；不是本项目的四个接缝，只记录不碰。 |
+| L-0064 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12348> | `dsh` | `full` | 2026-11-05 | ? | `UNKNOWN_TOOL`（capability drift） | `cli` | **rejected (dup)** | R85：跨 profile resume 丢掉已调过的工具，与 L-0047 / P-0050 同族；本机 census 已有 9 对实测 drift，规则在 `core/capability.ts`，不重复开补丁。 |
+| L-0065 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12057> | `dsh` | `full` | 2026-11-03 | 0.2.1-rc.3（声明支持 rc.3+） | 同类插件（并行提示） | out-of-seam | **rejected (out-of-seam)** | R85：第三方并行调度提示插件，报告了多调用轮占比 3.2% → 22.6% 的自测。只读设计，不抄代码；本项目不注入提示，也没有调度接缝。 |
+| L-0066 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12102> | `dsh` | `full` | 2026-11-04 | ? | 性能抱怨（写代码越来越慢） | out-of-seam | **rejected (out-of-seam)** | R85：用户抱怨 DSH 变慢并求插件配置建议，没有可复现的形状，也没有落回四个接缝；只作推广语境，不据此扩张范围到性能或插件推荐。 |
+

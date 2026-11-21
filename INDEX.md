@@ -35,6 +35,8 @@
 | `tests/fixtures/outer-chunk-observer/` | R82：`prepend: true` 的外层 listener 夹具，只记录 chunk 形状不改流；`summarizeChunk` 由单测钉住 |
 | `tests/fixtures/seams-profile/{conflict,clean}/` / `tests/e2e/seams.test.ts` | R83：两个最小 profile 夹具，钉住共用接缝退出 1、`--json` 排序、无冲突退出 0、缺 profile 退出 3 |
 | `docs/research/negative-feedback-2026-11-19.md` | R75：全网 57 次查询 + 两篇批评报道原文的收集与判读；外部印证已有方案，不当证据、不扩范围 |
+| `docs/research/intake-r85-triage.md` / `negative-feedback-2026-11-21.md` | R85：四源巡检 62 候选归八桶（每条恰好一次）+ 13 条全文；#13983 在 0.2.2-rc.5 上复现 P-0001 的粘连参数形状，本机 shipped engine 已复现；web 半边当天无新负面文章 |
+| `scripts/record_external_fusion.mjs` | R85：把公开报告的粘连参数形状脱敏后喂给 shipped engine，断言两段各自 parse、id 不碰撞后写 `live-external-fusion-*` |
 | `docs/research/intake-r74-triage.md` | R74 巡检留下的 **65 个候选**的逐桶判读：九桶正好覆盖、3 条读全文的结论进 `leads.md` 的 J 表、以及「没有新形状所以不发补丁」 |
 | `docs/research/intake-r66-triage.md` | R66 巡检留下的 **76 个候选**的逐桶判读：五桶 76 条正好覆盖、8 条读全文的结论进 `leads.md` 的 I 表、以及「没有新形状所以不发补丁」 |
 

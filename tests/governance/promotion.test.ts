@@ -40,15 +40,29 @@ test('the project promotion page names only versions the fact pack knows', () =>
   }
 })
 
-test('the reach ledger records windows, manual checks and unreachable sources', () => {
+test('the reach ledger records windows, manual checks and unreachable sources', async () => {
   const readme = read('docs/reach/README.md')
   assert.ok(readme.includes('latest share'), 'the ledger must name the derived metric')
   assert.ok(readme.includes('unreachable'), 'a missing source must not become zero')
   const latest = read('docs/reach/latest.md')
   assert.match(latest, /generated_at: \d{4}-\d{2}-\d{2}T/)
   assert.ok(latest.includes('## Manual checks'), 'the signed-in half must stay visible')
-  const days = read('docs/reach/2026-11-19.md')
-  assert.ok(days.includes('# Reach'), 'the daily file must exist with a heading')
+  const { readdirSync } = await import('node:fs')
+  const { fileURLToPath } = await import('node:url')
+  const dir = fileURLToPath(new URL('../../docs/reach/', import.meta.url))
+  const dated = readdirSync(dir)
+    .filter((name) => /^\d{4}-\d{2}-\d{2}\.md$/.test(name))
+    .sort()
+    .at(-1)
+  assert.notEqual(dated, undefined, 'there must be at least one daily reach file')
+  const daily = read(`docs/reach/${String(dated)}`)
+  const heading = daily.split(/\r?\n/)[0]?.trim() ?? ''
+  const day = String(dated).replace(/\.md$/, '')
+  assert.equal(heading, `# Reach ${day}`, 'a daily file must start with its own dated heading, not a bootstrap stub')
+  assert.match(daily, /generated_at: \d{4}-\d{2}-\d{2}T/)
+  assert.ok(daily.includes('## Manual checks'), 'the daily file must keep the signed-in half')
+  // Negative control: the old writer's leading "# Reach" stub must fail the rule.
+  assert.notEqual('# Reach', `# Reach ${day}`, 'a bare stub is not a dated heading')
 })
 
 test('latestShare separates a crawler fleet from human concentration', async () => {

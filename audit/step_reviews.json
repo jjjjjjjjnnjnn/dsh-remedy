@@ -1607,7 +1607,25 @@
         "docs/compatibility.md",
         "docs/copy/facts/public-repo-facts.md"
       ]
+    },
+    {
+      "id": "S87",
+      "gate": "step-review",
+      "title": "Does the daily reach ledger test actually fail on the artifact it is meant to check?",
+      "axes": {
+        "correctness": "The old assertion used includes('# Reach'), which passes on the bootstrap stub the writer itself prepended; the new assertion requires the newest dated file to start with '# Reach YYYY-MM-DD' matching its filename.",
+        "reproducibility": "The test derives the newest daily file from the directory, so tomorrow's file is covered without an edit. The writer no longer seeds a new day with a stub, and today's file was cleaned to the shape the fixed writer emits.",
+        "compliance": "No runtime byte, cap, version, release, tag or copy entry changed. The bus snapshot was re-collected and reports stale:false with no new inbound.",
+        "ssot": "The reach files are the repo's human-readable signal copy; channel state and the 24h review stay in the KB bus, whose records 2026-11-21-001..005 were already written by agent-promotion.",
+        "adversarial": "A negative control in the same test asserts that the bare stub is not a dated heading, so the rule cannot silently return to the vacuous shape."
+      },
+      "evidence": [
+        "scripts/daily-reach.mjs",
+        "tests/governance/promotion.test.ts",
+        "docs/reach/2026-11-21.md",
+        "docs/reach/README.md"
+      ]
     }
   ],
-  "updated_at": "2026-11-20T10:30:00.000Z"
+  "updated_at": "2026-11-21T08:05:00.000Z"
 }

@@ -211,8 +211,8 @@ if (stdoutOnly) {
   const dir = join(root, 'docs', 'reach')
   mkdirSync(dir, { recursive: true })
   const daily = join(dir, `${day}.md`)
-  const prior = existsSync(daily) ? readFileSync(daily, 'utf8') : '# Reach\n'
-  writeFileSync(daily, `${prior.trimEnd()}\n\n${block}\n`, 'utf8')
+  const prior = existsSync(daily) ? readFileSync(daily, 'utf8').trimEnd() : ''
+  writeFileSync(daily, prior === '' ? `${block}\n` : `${prior}\n\n${block}\n`, 'utf8')
   const latest = join(dir, 'latest.md')
   writeFileSync(latest, `${block}\n`, 'utf8')
   process.stdout.write(`wrote docs/reach/${day}.md and docs/reach/latest.md\n`)

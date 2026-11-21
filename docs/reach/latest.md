@@ -1,15 +1,15 @@
-# Reach 2026-11-20
+# Reach 2026-11-21
 
-generated_at: 2026-11-20T09:28:45.343Z
+generated_at: 2026-11-21T08:00:11.650Z
 repo: jjjjjjjjnnjnn/dsh-remedy
 
 ## Machine-checkable half
 
 - npm window: last-week
-- dsh-remedy: downloads 4508 · latestShare 3.0% · newest 0.4.20, 0.4.19 · window 2026-11-12..2026-11-18 · 0.4.20 missing (published_after_window_end) · lower bound, not comparable
-- dsh-remedy-core: downloads 4435 · latestShare 3.1% · newest 0.4.20, 0.4.19 · window 2026-11-12..2026-11-18 · 0.4.20 missing (published_after_window_end) · lower bound, not comparable
-- GitHub views: {"count":130}
-- GitHub clones: {"count":2560,"ciCloneBaseline":400,"humanish":2160}
+- dsh-remedy: downloads 4299 · latestShare 7.1% · newest 0.4.20, 0.4.19 · window 2026-11-13..2026-11-19
+- dsh-remedy-core: downloads 4244 · latestShare 7.8% · newest 0.4.20, 0.4.19 · window 2026-11-13..2026-11-19
+- GitHub views: {"count":154}
+- GitHub clones: {"count":2897,"ciCloneBaseline":400,"humanish":2497}
 - Referrers: "unreachable"
 - Release assets: [{"name":"plugin tarball","releases":0,"downloads":0,"perRelease":0},{"name":"core tarball","releases":0,"downloads":0,"perRelease":0}]
 

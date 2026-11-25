@@ -1,4 +1,4 @@
-name: verify
+﻿name: verify
 
 # The standalone public repository pipeline. The container repository has its
 # own workflow that runs each project with `working-directory`; this file is the
@@ -22,7 +22,7 @@ jobs:
       matrix:
         node: ['22', '24']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
         with:
           version: 12.15.0
@@ -47,7 +47,7 @@ jobs:
     name: verify (windows, node 24)
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
         with:
           version: 12.15.0
@@ -62,7 +62,7 @@ jobs:
     name: verify (macos, node 24)
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
         with:
           version: 12.15.0

@@ -182,3 +182,22 @@ R55 账在这张表里活了两轮没人发现，而它早已过期。
 | L-0065 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12057> | `dsh` | `full` | 2026-11-03 | 0.2.1-rc.3（声明支持 rc.3+） | 同类插件（并行提示） | out-of-seam | **rejected (out-of-seam)** | R85：第三方并行调度提示插件，报告了多调用轮占比 3.2% → 22.6% 的自测。只读设计，不抄代码；本项目不注入提示，也没有调度接缝。 |
 | L-0066 | <https://github.com/deepseek-ai/deepseek-harness/discussions/12102> | `dsh` | `full` | 2026-11-04 | ? | 性能抱怨（写代码越来越慢） | out-of-seam | **rejected (out-of-seam)** | R85：用户抱怨 DSH 变慢并求插件配置建议，没有可复现的形状，也没有落回四个接缝；只作推广语境，不据此扩张范围到性能或插件推荐。 |
 
+## L. R87 新读的（2026-11-25 的巡检：四源应答，53 个候选未进账本）
+
+> 判读见 `docs/research/intake-r87-triage.md`（53 条按标题归七桶、每条恰好一次）。
+> 10 条读了全文；#14168 是本机复现的**拒绝**（不是修复），其余为已覆盖或 out-of-seam。
+> 宿主仍 0.2.2-rc.5，上游 0.2.3 是 alpha，本轮不升级。没有新补丁。
+
+| id | source | source_kind | read_depth | reported | version | class | seam | status | decision |
+|---|---|---|---|---|---|---|---|---|---|
+| L-0067 | <https://github.com/deepseek-ai/deepseek-harness/discussions/14168> | `dsh` | `full` | 2026-11-23 | 0.2.2-rc.5 | `MALFORMED_RESPONSE`（同一调用被拆成三个 item） | `llm/stream` | **rejected (no defect)** | R87：三个 item 属于同一次 `ask_user_question` 调用，逐 item 守卫在第一个 `{` 就抛错，本侧只收到第一个片段；本机复现为拒绝（`not-an-object-sequence`），拼起来才是合法 JSON。按 P-0037 的唯一性规则，任何跨片段的边界都是猜，拒绝才是正确结局。证据 `live-external-refusal-2026-11-25T16-35-00.000Z.json`。 |
+| L-0068 | <https://github.com/deepseek-ai/deepseek-harness/discussions/7123> | `dsh` | `full` | 2026-09-19 | 0.1.5-rc.2（11-23 桌面复现） | `completed_without_answer`（reasoning-only） | `cli` | **patched（P-0047）** | R87：整轮只有 reasoning、`outputTokens == reasoningTokens`、`turn/end` 记 `completed`；评论定位到 adapter 的 `mapStopReason` 只数 `content.length`。这正是 P-0047 的读取器形状，宿主重试策略与 adapter 判空仍是 out-of-seam。 |
+| L-0069 | <https://github.com/deepseek-ai/deepseek-harness/discussions/14188> | `dsh` | `full` | 2026-11-23 | 0.2.2-rc.1 / rc.3 / master | `completed` 停在工具调用（subagent 报告丢失） | `cli`＋out-of-seam（subagent） | **patched（P-0052）** | R87：子会话最后一步是 tool-call 时，父会话收到「left no closing message」；`assistant-output.ts` 与 `continuation-messages.ts` 对「非空」的口径不一致。P-0052 只数主循环的同类形状；subagent 的折叠逻辑不归本接缝。 |
+| L-0070 | <https://github.com/deepseek-ai/deepseek-harness/discussions/14269> | `dsh` | `full` | 2026-11-24 | 0.2.2-rc.5 | 核心工具在 resume 后缺失 | out-of-seam（preset 绑定） | **rejected (out-of-seam)** | R87：`agents.resume()` 恢复会话却没有绑定 agent preset，导致核心工具全丢；与 P-0050 的「resume 丢掉已调过的工具」同属后果层，但机制是 preset 组合为空，不是 request header 丢声明。修宿主绑定不归本接缝。 |
+| L-0071 | <https://github.com/deepseek-ai/deepseek-harness/discussions/14114> | `dsh` | `full` | 2026-11-22 | ? | 上下文用量异常（146k tokens） | out-of-seam | **rejected (out-of-seam)** | R87：本地模型下一条短消息送出 146k tokens；评论分别指向第三方插件的上下文注入与 token meter 的 `request/header`。没有本机形状，也没有落回四个接缝。 |
+| L-0072 | <https://github.com/deepseek-ai/deepseek-harness/discussions/14237> | `dsh` | `full` | 2026-11-24 | 0.2.2-rc.5 | 会话被重启打断后永久只读 | out-of-seam（UI 复活死锁） | **rejected (out-of-seam)** | R87：宿主重启后 `interrupted` 会话的 composer 永久锁死，复活需要「发一条消息」而这个控件正被禁用；UI 死锁，不属于本项目的接缝。 |
+| L-0073 | <https://github.com/deepseek-ai/deepseek-harness/discussions/14015> | `dsh` | `full` | 2026-11-21 | 0.2.1-rc.2 / rc.5 | 会话写租约 API 请求 | out-of-seam（session persistence） | **rejected (out-of-seam)** | R87：请求「不读日志也能拿写租约」以便插件修复被格式规则拒绝的会话。本项目只读、不写 `~/.dsh`；会话修复插件是另一个产品。 |
+| L-0074 | <https://github.com/deepseek-ai/deepseek-harness/discussions/14039> | `dsh` | `full` | 2026-11-22 | 0.2.1-rc.2 | `TRANSPORT`（悬空附件引用） | out-of-seam（attachment） | **rejected (out-of-seam)** | R87：会话历史引用不存在的附件对象，真因 `ATTACHMENT_NOT_FOUND` 被包成 `TRANSPORT` 并重试 5 次；错误包装与重试都发生在宿主侧。 |
+| L-0075 | <https://github.com/deepseek-ai/deepseek-harness/discussions/14076> | `dsh` | `full` | 2026-11-22 | 0.2.2-rc.1 | `EXECUTOR_UNAVAILABLE`（temp 目录消失） | out-of-seam（sandbox） | **rejected (out-of-seam)** | R87：resume 后会话私有的 `--temp` 目录已被清理且不再重建，所有命令 exit 127；沙箱运行时与目录生命周期不归本接缝。 |
+| L-0076 | <https://github.com/deepseek-ai/deepseek-harness/discussions/14280> | `dsh` | `full` | 2026-11-25 | 0.2.2-rc.5 | 工具参数语义（`owner: ""` 与 `unowned` 冲突） | out-of-seam（team tool） | **rejected (out-of-seam)** | R87：`team_task_list` 把空字符串当过滤条件并与 `unowned` 互斥；这是 team 工具的 schema 归一化，不是本项目的接缝。 |
+

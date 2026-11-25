@@ -1662,7 +1662,25 @@
         "docs/HANDOFF.md",
         "docs/research/intake-r85-triage.md"
       ]
+    },
+    {
+      "id": "S90",
+      "gate": "step-review",
+      "title": "Is refusing a split-call report the correct outcome, and can the round say so without a patch?",
+      "axes": {
+        "correctness": "The three fragments belong to one call; the per-item adapter guard rejects the first fragment, so the seam receives only `{`. The shipped engine rejects it with `not-an-object-sequence` and accepts only the fully joined text, which is what P-0037's uniqueness rule requires.",
+        "reproducibility": "The recorder embeds the public example, asserts the expected status and code for each prefix, and writes a hashed artifact. The 53 candidates were bucketed by a script that asserts exact-once coverage.",
+        "compliance": "No runtime byte, cap, version, release or patch count changed. The installed host stays 0.2.2-rc.5; the upstream 0.2.3 alpha releases were recorded but not installed.",
+        "ssot": "The triage doc and the lead register carry the decisions; the host version comes from the installed runtime.json, not from release prose; promotion state stays in the bus.",
+        "adversarial": "The tempting move was to stitch fragments by adjacency; the report itself warns that neighbouring indices are message items, so the triage names that as a guess and keeps the refusal."
+      },
+      "evidence": [
+        "docs/research/intake-r87-triage.md",
+        "docs/research/leads.md",
+        "scripts/record_external_refusal.mjs",
+        "data/results/live-external-refusal-2026-11-25T16-35-00.000Z.json"
+      ]
     }
   ],
-  "updated_at": "2026-11-21T16:40:00.000Z"
+  "updated_at": "2026-11-25T16:40:00.000Z"
 }

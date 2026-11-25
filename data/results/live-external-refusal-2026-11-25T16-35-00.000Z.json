@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "produced_by": "scripts/record_external_refusal.mjs",
+  "generated_at": "2026-11-25T16:35:00.000Z",
+  "claim": "the reported split-call shape reaches this seam as an unprovable fragment, and the shipped engine refuses it instead of guessing a boundary",
+  "source": {
+    "url": "https://github.com/deepseek-ai/deepseek-harness/discussions/14168",
+    "reported": "2026-11-25",
+    "host": "0.2.2-rc.5 (macOS arm64, openai-responses, kimi-k3.1-pro)",
+    "shape": "one ask_user_question call split across three function_call items; the per-item guard throws on the first fragment"
+  },
+  "measured": [
+    {
+      "label": "fragment-1 (the only bytes the failure message carries)",
+      "text": "{",
+      "expect": "rejected",
+      "status": "rejected",
+      "code": "not-an-object-sequence",
+      "calls": 0,
+      "parses": false
+    },
+    {
+      "label": "fragment-1+2",
+      "text": "{\"questions\":[{\"header\":\"Meal\",\"id\":\"meal\",\"question\":\"What should we eat tomorrow?\"}]",
+      "expect": "rejected",
+      "status": "rejected",
+      "code": "not-an-object-sequence",
+      "calls": 0,
+      "parses": false
+    },
+    {
+      "label": "all three fragments joined",
+      "text": "{\"questions\":[{\"header\":\"Meal\",\"id\":\"meal\",\"question\":\"What should we eat tomorrow?\"}]}",
+      "expect": "unchanged",
+      "status": "unchanged",
+      "code": "already-valid",
+      "calls": 0,
+      "parses": true
+    }
+  ],
+  "why_refusal_is_the_answer": "the three fragments belong to one call; the adapter rejects each item separately and the failure text this side sees contains only the first fragment. Any boundary between fragments would be a guess, which this project forbids (P-0037’s rule: repair only when the proof is unique).",
+  "not_proven": [
+    "the reporter’s OpenAI Responses route was not driven from this machine; their stable replay is theirs",
+    "the adapter-side per-item validation and the host default retry list are out-of-seam",
+    "a future adapter that forwards the joined text would change this case, and the recorder would then need a new stamp"
+  ]
+}

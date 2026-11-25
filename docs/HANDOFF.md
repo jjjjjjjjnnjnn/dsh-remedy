@@ -3,7 +3,7 @@
 > **下一会话从 `dsh-remedy/` 开始。** 读本文件 → `PROJECT_RULES.md` → `AGENTS.md` 即可开工。
 > 本目录是**公开仓库根**；`dsh-triage/` 在父目录，是另一个项目，不属于本仓库。
 
-## 三十秒状态（2026-11-19 · R76 收口）
+## 三十秒状态（2026-11-25 · R87 巡检收口）
 
 | 项 | 值 |
 |---|---|
@@ -89,6 +89,13 @@ git -C .. log --oneline -3
 **E. 公开面**
 
 - 提交 `f5918ca`（tree 与容器 `main:dsh-remedy` 相等）推上 `main`，CI run `45576304828` 四 job 全 success；零代码、不打 tag、不发 release、不 bump。
+
+**F. 交接说明（本会话收口）**
+
+- **不要升级到 0.2.3 alpha**。安装版保持 `0.2.2-rc.5`；等 0.2.3 stable 发布后，由本人确认再按三件套（`runtime.json` → `scan_plugin_seams` → 桌面真 turn → 邻居 harness）重跑。
+- 下一位从 `docs/AGENT-WORKFLOW.md` §0 四条命令开始；本文件「三十秒状态」的测试数是 **465 / 6 / 6-6**。
+- 推广队列在总线：dev.to 稿 11-27、Reddit 稿 11-26；本仓库不发帖。HN/V2EX 的事实卡与提纲在 `docs/PROMOTION.md` §3.5，正文由本人写。
+- 两次巡检刚做过（R85 / R87），下一轮不要立刻再巡检；没有新补丁，下一个号仍是 **P-0056**。
 
 ## 当前批次（R86，2026-11-21）
 
@@ -4239,9 +4246,9 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 
 ## 下一位 agent 的第一件事
 
-**A. 现在是哪一版。** `0.4.20` 已发布（两包 `latest = 0.4.20`），本树就是这份发布树；公开仓库的 tag / release 随后补记。五十五补丁**全部 `verified`**、0 `tested`——R70 用坏邻居升 7 条 `llm/stream`，R71 用真语料 census 升 5 条 `cli`，R72 用一份构建/宿主见证升余下 33 条，R81 加 P-0055 的 reach 读数见证，四轮都只改证据与台账，**运行时一个字节没加，所以不升版本**。字节账：plugin 72 196 / 83 000（10 618 B，CLI 半边 1 186 B）、core **95 999 / 104 000（8 001 B）**、registry **62 474 / 68 000（5 526 B）**。两个 profile 在 0.4.20 上。**桌面 turn 已在 DSH 0.2.2-rc.5 + 新 key 上跑通**（`live-desktop-2026-11-19T06-15-00.000Z.json`，答复 `R73-DESKTOP-RC5-OK`）；版本从安装目录的 `runtime.json` 读，不从 `~/.dsh/dsh-runtimes` 的旧拷贝读。
+**A. 现在是哪一版。** `0.4.20` 已发布（两包 `latest = 0.4.20`），本树就是这份发布树。五十五补丁**全部 `verified`**、0 `tested`——R70 用坏邻居升 7 条 `llm/stream`，R71 用真语料 census 升 5 条 `cli`，R72 用一份构建/宿主见证升余下 33 条，R81 加 P-0055 的 reach 读数见证，四轮都只改证据与台账，**运行时一个字节没加，所以不升版本**。字节账：plugin 72 196 / 83 000（10 618 B，CLI 半边 1 186 B）、core **95 999 / 104 000（8 001 B）**、registry **62 474 / 68 000（5 526 B）**。两个 profile 在 0.4.20 上。**桌面 turn 已在 DSH 0.2.2-rc.5 + 新 key 上跑通**（`live-desktop-2026-11-19T06-15-00.000Z.json`，答复 `R73-DESKTOP-RC5-OK`）；版本从安装目录的 `runtime.json` 读，不从 `~/.dsh/dsh-runtimes` 的旧拷贝读。
 
-**B. 主线（R43+）：外部反馈 → 稳定补丁。** R43–R66 的结案见历史批次；R69 把读不懂的 chunk 变成「放行 / 修 / 原样抛」三种结局（P-0053 / P-0054）；R70 用坏邻居在真宿主 turn 上把 `llm/stream` 的 7 条升到 `verified`；R71 把 shipped reader 放回本机 115 个真会话上，把 `cli` 的 5 条升到 `verified`，并复现了上游 #11151 / #10732（空 tool identity）→ 判 `patched (P-0033 + P-0027)`。账本共 **51 条线索**（R71 新增 L-0049 / L-0050 / L-0051）。**R71 的巡检已经做过**，68 条候选分七桶、只有那一条形状落回本接缝；下一轮不要立刻再巡检。
+**B. 主线（R43+）：外部反馈 → 稳定补丁。** R43–R66 的结案见历史批次；R69 把读不懂的 chunk 变成「放行 / 修 / 原样抛」三种结局（P-0053 / P-0054）；R70 用坏邻居在真宿主 turn 上把 `llm/stream` 的 7 条升到 `verified`；R71 把 shipped reader 放回本机 115 个真会话上，把 `cli` 的 5 条升到 `verified`。**R85 / R87 两次巡检的结论**：公开 #13983 在 0.2.2-rc.5 上给出 P-0001 的粘连参数原文，本机 shipped engine 已复现（`live-external-fusion-2026-11-21T16-25-00.000Z.json`）；公开 #14168 把一次调用拆成三个 item，本机复现为**拒绝**（`live-external-refusal-2026-11-25T16-35-00.000Z.json`），不是修复。账本共 **76 条线索**（L-0055…L-0076 是 R85/R87 新增）。**两次巡检都已做过**（R85 62 条候选、R87 53 条候选），下一轮不要立刻再来；宿主仍 0.2.2-rc.5，**不要升级到 0.2.3 alpha**（稳定版发布后再按三件套走）。
 
 **C. 接手第一件事：先跑绿，再看 D。**
 
@@ -4249,15 +4256,16 @@ core 10.7 kB / 16 文件、plugin 21.6 kB / 19 文件。正式发布用
 pnpm install ; pnpm run verify ; node scripts/gate.mjs --mutate ; node packages/plugin/dist/cli.js verify
 ```
 
-四条应当是 **465 / 6 gates ALL GREEN / 6-6 / OK 8 fixture(s)**；Linux 用同一组数（`live-linux-2026-11-18T23-10-00.000Z.json`）。不绿先修根因，再读 D。**提交前跑 `pnpm run verify`，不要只跑 `gate.mjs`**（R70 的红就是只跑后者放过去的）。
+四条应当是 **465 / 6 gates ALL GREEN / 6-6 / OK 8 fixture(s)**；Linux 最近一次是 R81 树的 454 / 6 / 6-6（`live-linux-2026-11-18T23-10-00.000Z.json`），R82/R83 后的测试只在本机 Windows 跑过。不绿先修根因，再读 D。**提交前跑 `pnpm run verify`，不要只跑 `gate.mjs`**（R70 的红就是只跑后者放过去的）。
 
-**D. 下一件事（R84）**
+**D. 下一件事（R88）**
 
-1. **宿主再升级的套路**：读安装目录 `runtime.json` 定版本 → `scan_plugin_seams` 看拓扑 → CDP 跑一轮桌面真 turn → 隔离邻居 harness 复验判别形状 → 更新事实包与状态表。R73 是首发样例，R75 的 08:00 / 08:05 / 08:10 / 08:20 四份产物是第二遍稳定性样例，照抄即可。
-2. **#10115**（workflow / subagent 截断输出）：本机仍无形状，R66 与 R71 两次结论一致；不要回头追 `leads.md` 里已判过的旧条目。
-3. **一次巡检**：R71 刚做过，不必立刻再做；要做就用 `node scripts/collect_leads.mjs --stamp <ISO> --sessions ~/.dsh/sessions`（S-REDDIT 读不到，记 null 不记 0）。
-4. **外部反馈**：`docs/research/negative-feedback-2026-11-19.md` 已把两篇批评报道与边界记入方案；再收集时仍按 README §0 当线索，只有本机复现的形状才可能变成补丁，不因差评扩张到市场 / 权限 / UI。
-5. **字节与公开面**：registry 余量 5 526 B（新记录仍按 P-0032 先压散文，不抬 cap）；公开仓库已同步到 R83（`ecb2354`，CI `44717291577` 四 job 全绿；首次红 `44716447519` 的教训见 R83 批次 D）；后续照此路线并如实写 run id。
+1. **稳定版宿主升级的套路（只在稳定版发布后做）**：读安装目录 `runtime.json` 定版本 → `scan_plugin_seams` 看拓扑 → CDP 跑一轮桌面真 turn → 隔离邻居 harness 复验判别形状 → 更新事实包与状态表。R73 是首发样例，R75 的 08:00 / 08:05 / 08:10 / 08:20 四份产物是第二遍稳定性样例，照抄即可。**0.2.3 目前只有 alpha，不升级、不跑三件套；等 stable 再动。**
+2. **不要回头追**：`leads.md` 里已判过的旧条目（A 表、L-0010、L-0043–L-0054、L-0055–L-0076）都已结案；两次巡检（R85 / R87）刚做过，不要立刻再来。
+3. **若要再做一次巡检**：`node scripts/collect_leads.mjs --stamp <ISO> --dsh --self --npm --sessions ~/.dsh/sessions`；S-REDDIT 读不到时记 null，不记 0。判读按 `intake-r87-triage.md` 的八/七桶法，每条恰好一次。
+4. **外部反馈的读法**：报告是线索，不是证据；只有本机复现的形状才可能变成补丁。**“拒绝”也是结论**：R87 的 #14168 证明跨片段猜边界必须拒绝，不要为了“修得更多”而放宽 P-0037。
+5. **推广（状态只在总线）**：`kb promo status` / `kb promo plan` / `kb promo collect` 是每日入口；发帖、回帖、`kb promo record` 只由 `agent-promotion` 执行。当前队列：dev.to 稿 11-27、Reddit 稿 11-26（跨项目 7 天规则）；r/SideProject 停投至 2026-12-19；HN / V2EX 只交事实卡，本人写本人发（`docs/PROMOTION.md` §3.5）。
+6. **字节与公开面**：registry 余量 5 526 B（新记录仍按 P-0032 先压散文，不抬 cap）；公开仓库已同步到 R87（`f5918ca`，CI `45576304828` 四 job 全绿）；后续照此路线并如实写 run id。
 
 **不要重做**：R70/R71 的真宿主 turn 与真语料 census 已有收据；`docs/research/leads.md` 里已判过的旧条目（尤其 A 表、L-0010、L-0043–L-0048）不要回头追。再次巡检用 `node scripts/collect_leads.mjs --stamp <ISO> --sessions ~/.dsh/sessions`（R71 的做法；S-REDDIT 仍然读不到，记 null 不记 0）。
 
@@ -4265,6 +4273,8 @@ pnpm install ; pnpm run verify ; node scripts/gate.mjs --mutate ; node packages/
 
 | 文件 | 状态 | 说明 |
 |---|---|---|
+| `live-external-refusal-2026-11-25T16-35-00.000Z.json` | 绿 | **R87 #14168 的拒绝读数**：三个片段属于同一次调用，单独 `{` 与 `{`+中段都被 rejected（`not-an-object-sequence`），三片拼起来才是合法 JSON；按 P-0037 拒绝而不是猜边界（sha256 `e560908b3955…`） |
+| `live-external-fusion-2026-11-21T16-25-00.000Z.json` | 绿 | **R85 #13983 的粘连读数**：脱敏后的两段 JSON 拼在一起，整段不 parse、两段各自 parse、id 不碰撞；报告建议保留错误文本正是 P-0001 的输入契约（sha256 `7aafcea3d467…`） |
 | `live-neighbours-contract-2026-11-20T10-00-00.000Z.json` | 绿 | **R82 外层 observer 读数**：四场景 × 两臂真宿主 turn；三个 fail-open 形状与无 remedy 对照序列逐字节相同，`finish` 缺 `reason` 读作 `reason: null`；`bare-value` 修复在下游是成对 tool-call block、`call_remedy_1` / `capture`、arguments 可各自 parse（sha256 `43c3147d25a1…`） |
 | `live-reach-2026-11-20T09-10-00.000Z.json` | 绿 | **R81 P-0055 的 npm 真机读数**：两包窗口 `2026-11-12..2026-11-18`，`newest` = 0.4.20 / 0.4.19，0.4.20 在 `missing`（`published_after_window_end`）、`comparable: false`；recorder 先断言后写（sha256 `9382471fc787…`） |
 | `patch-registry-2026-11-20T09-20-00.000Z.json` | 绿 | **当前**快照：R81 树的五十五补丁、全部 `verified`（sha256 `fda39dd24cd8c…`） |
